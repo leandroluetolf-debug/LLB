@@ -17,6 +17,17 @@ approximate; downloads are on the [Releases](https://github.com/NoopApp/noop/rel
 
 ---
 
+## 1.81 — Start a workout from the Workouts screen + an honest Smart-alarm note
+
+- **New (Android):** start a workout straight from the **Workouts** screen, not only from Live — the
+  same searchable sport picker and GPS toggle, with a compact running banner and an **End** button
+  while a session is in progress.
+- **Changed (Android):** the **Smart alarm** now says plainly that it's experimental, and that a
+  WHOOP 5/MG only arms it when **Experimental mode** is on — so your wake time is no longer silently
+  saved against a strap that was never armed. Keep a backup alarm until you've confirmed it wakes you.
+
+---
+
 ## 1.80 — Journal logging + an Imperial/Metric units toggle
 
 - **New (Mac and Android):** a journal card on Insights — quick yes/no chips for behaviours (caffeine,

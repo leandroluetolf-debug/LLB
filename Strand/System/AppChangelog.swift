@@ -7,7 +7,7 @@ enum AppChangelog {
 
     /// Bump this when you add a release below. The "What's New" sheet shows automatically when the
     /// stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
-    static let currentVersion = "1.80"
+    static let currentVersion = "1.81"
 
     struct Release: Identifiable {
         let version: String
@@ -19,6 +19,14 @@ enum AppChangelog {
 
     /// Newest first.
     static let releases: [Release] = [
+        Release(
+            version: "1.81",
+            title: "Start a workout from the Workouts screen, and an honest Smart-alarm note",
+            date: "June 2026",
+            items: [
+                "New (Android): start a workout straight from the Workouts screen, not only from Live — the same sport picker and GPS toggle, with a compact running banner and an End button while one's in progress.",
+                "Changed (Android): the Smart alarm now says plainly that it's experimental and that a WHOOP 5/MG only arms it when Experimental mode is on — so the wake time isn't silently saved against a strap that was never armed. Keep a backup alarm.",
+            ]),
         Release(
             version: "1.80",
             title: "Journal logging + an Imperial/Metric units toggle",
