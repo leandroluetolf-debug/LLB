@@ -7,7 +7,7 @@ enum AppChangelog {
 
     /// Bump this when you add a release below. The "What's New" sheet shows automatically when the
     /// stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
-    static let currentVersion = "1.67"
+    static let currentVersion = "1.68"
 
     struct Release: Identifiable {
         let version: String
@@ -19,6 +19,21 @@ enum AppChangelog {
 
     /// Newest first.
     static let releases: [Release] = [
+        Release(
+            version: "1.68",
+            title: "Sleep figures, HR zones, charging & calibration — a big community-driven update",
+            date: "June 2026",
+            items: [
+                "New (Mac and Android): your workouts now show an HR Zones card — time spent in each heart-rate zone for imported sessions, with a duration-weighted summary.",
+                "New (Mac and Android): a \"· Charging\" indicator on the battery pill when your strap is on the charger.",
+                "Improved (Mac and Android): sleep tiles now prefer WHOOP's own imported figures (sleep performance, consistency, need, debt) when available, falling back to NOOP's on-device estimate otherwise — and Android now imports those four figures too.",
+                "New (Android): the sleep screen draws a real hypnogram from the per-epoch stages, not just a summary.",
+                "New (Mac): recovery shows \"Calibrating — N of 4 nights\" while it learns your baseline, instead of a misleading empty ring.",
+                "New (Mac): \"History synced N ago\" in Today and the menu bar, so you can see at a glance when your strap last offloaded.",
+                "New (Mac): the illness early-warning can post a system notification when it first flags a day (opt-in, off by default, once per day); Android already did this.",
+                "New (Mac): a firmware wake-up alarm for WHOOP 5/MG — experimental: arming is confirmed, but a strap-driven wake hasn't been verified yet, so don't rely on it as your only alarm there. WHOOP 4 is the proven path.",
+                "Most of this release came from a generous community contribution — thank you.",
+            ]),
         Release(
             version: "1.67",
             title: "Track a workout manually",

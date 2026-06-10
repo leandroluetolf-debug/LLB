@@ -434,6 +434,22 @@
         }
       }
     },
+    "%lld of %lld nights": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld nights"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von %lld Nächten"
+          }
+        }
+      }
+    },
     "%lld overlapping days · %@ %@ correlation": {
       "localizations": {
         "en": {
@@ -1074,6 +1090,22 @@
         }
       }
     },
+    "Battery %lld%% · Charging": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery %lld%% · Charging"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akku %lld%% · Lädt"
+          }
+        }
+      }
+    },
     "Behaviour Effects": {
       "localizations": {
         "en": {
@@ -1374,6 +1406,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kalender"
+          }
+        }
+      }
+    },
+    "Calibrating": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibrating"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalibrierung"
           }
         }
       }
@@ -2610,6 +2658,22 @@
         }
       }
     },
+    "Get the latest release": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get the latest release"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neueste Version laden"
+          }
+        }
+      }
+    },
     "Got it": {
       "localizations": {
         "en": {
@@ -2818,6 +2882,22 @@
         }
       }
     },
+    "History synced %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History synced %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf synchronisiert %@"
+          }
+        }
+      }
+    },
     "Hours asleep": {
       "localizations": {
         "en": {
@@ -2894,6 +2974,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wie das funktioniert"
+          }
+        }
+      }
+    },
+    "HR Zones": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HR Zones"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HF-Zonen"
           }
         }
       }
@@ -3218,6 +3314,22 @@
         }
       }
     },
+    "Learning your baseline — %lld of %lld nights.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learning your baseline — %lld of %lld nights."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Baseline wird gelernt — %lld von %lld Nächten."
+          }
+        }
+      }
+    },
     "Let the coach use my data": {
       "localizations": {
         "en": {
@@ -3246,22 +3358,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Leicht"
-          }
-        }
-      }
-    },
-    "Light-sleep window": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Light-sleep window"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leichtschlaf-Fenster"
           }
         }
       }
@@ -4210,6 +4306,22 @@
         }
       }
     },
+    "Not synced yet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not synced yet"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht synchronisiert"
+          }
+        }
+      }
+    },
     "Nothing imported yet. On an iPhone: Health app, tap your photo, Export All Health Data, then import the .zip here in Data Sources.": {
       "localizations": {
         "en": {
@@ -4382,6 +4494,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Open-Source-BLE-Reverse-Engineering-Arbeit. Danke."
+          }
+        }
+      }
+    },
+    "Opens the GitHub releases page in your browser. NOOP itself makes no network connections — the macOS sandbox has no network entitlement.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the GitHub releases page in your browser. NOOP itself makes no network connections — the macOS sandbox has no network entitlement."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die GitHub-Releases-Seite in deinem Browser. NOOP selbst stellt keine Netzwerkverbindungen her — die macOS-Sandbox hat keine Netzwerk-Berechtigung."
           }
         }
       }
@@ -5474,6 +5602,22 @@
         }
       }
     },
+    "Share of imported zone time, duration-weighted across sessions — approximate.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share of imported zone time, duration-weighted across sessions — approximate."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteil der importierten Zonenzeit, zeitgewichtet über alle Einheiten — Näherungswert."
+          }
+        }
+      }
+    },
     "Should you push today?": {
       "localizations": {
         "en": {
@@ -5842,6 +5986,22 @@
         }
       }
     },
+    "Strap sync": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strap sync"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strap-Sync"
+          }
+        }
+      }
+    },
     "Stress": {
       "localizations": {
         "en": {
@@ -6015,6 +6175,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die Entwicklung unterstützen"
+          }
+        }
+      }
+    },
+    "Syncing strap history…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncing strap history…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strap-Verlauf wird synchronisiert…"
           }
         }
       }
@@ -6499,22 +6675,6 @@
         }
       }
     },
-    "Wake up to this many minutes early if the Mac stays awake & connected and a light phase is detected.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wake up to this many minutes early if the Mac stays awake & connected and a light phase is detected."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wache bis zu so viele Minuten früher auf, wenn der Mac wach & verbunden bleibt und eine Leichtschlafphase erkannt wird."
-          }
-        }
-      }
-    },
     "We compare today's resting heart rate and HRV to your own 30-day baseline. A higher-than-usual resting HR and a lower-than-usual HRV both push the score up — classic signs the body is activated. The combined shift is mapped onto a 0–3 scale: 0 is calm, 1.5 sits at your baseline, 3 is highly activated.": {
       "localizations": {
         "en": {
@@ -6671,6 +6831,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Whoop"
+          }
+        }
+      }
+    },
+    "Whoop import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop import"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop-Import"
           }
         }
       }

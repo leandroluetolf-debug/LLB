@@ -17,6 +17,40 @@ approximate; downloads are on the [Releases](https://github.com/NoopApp/noop/rel
 
 ---
 
+## 1.68 — Sleep figures, HR zones, charging, calibration (thanks iHateSubscriptions, #88)
+
+A large community contribution (#88), reviewed hard and reimplemented as our own commit onto v1.67.
+Eleven small features from a gap analysis against the official app; adopted on both platforms after a
+full build-verify (Android suite green, both Swift packages + the macOS app target compile).
+
+- **Imported per-workout HR zones** (Mac + Android): a new "HR Zones" card on Workouts — time-in-zone
+  for imported sessions, duration-weighted aggregate labelled approximate. Both parsers tolerate both
+  stored key shapes (`z1..z5` Mac / `zone1..zone5` Android).
+- **Charging indicator** (Mac + Android): the already-decoded BATTERY_LEVEL charging bit surfaced as a
+  "· Charging" suffix on the battery pill; freshness-gated on Android, cleared on disconnect.
+- **Prefer imported WHOOP sleep figures** (Mac + Android) on the headline tiles
+  (`sleep_performance`/`sleep_consistency`/`sleep_need_min`/`sleep_debt_min`), with the on-device
+  APPROXIMATE recompute as fallback. Android premise fix: `parseCycleSeries` now lands those four keys
+  as `metricSeries` rows the Explore/Compare UI already referenced but nothing wrote.
+- **Real hypnogram** (Android): the Sleep hero renders the stager's persisted per-epoch segments.
+- **Recovery cold-start "Calibrating — N of 4 nights"** (Mac): Today ring + synthesis card; retires the
+  misleading "0 DEPLETED" empty ring. Pure helper in `StrandAnalytics` (7 Android oracle cases ported).
+- **Sync-status surfacing** (Mac): "History synced N ago" / stall warning in Today › Data Sources + the
+  menu-bar popover; `relativeAgo` mirrored value-for-value with the Android twin.
+- **Illness early-warning notification** (Mac): the opt-in toggle now posts a real system notification on
+  the clear→raised transition, once per local day (Android already did). Fixed a double-`requestAuthorization`
+  + day-key-set-inside-the-grant-callback bug found in review, so the once-per-day limit holds even if
+  notifications were declined.
+- **5/MG firmware alarm** (Mac): byte-identical to the hardware-confirmed Android rev-4 golden frame.
+  **Experimental on WHOOP 5/MG** — arming is ACKed on hardware, a strap-driven wake-fire has not been
+  captured yet; the smart-alarm card now says so. WHOOP 4 path byte-for-byte unchanged.
+- **Cleanup**: removed the dead "light-sleep window" stepper (stored but never read — no wake-window
+  watcher exists) and `Tools/translate-de.py` now pins UTF-8 (a Windows run had mojibaked the umlauts).
+- **Kept the macOS AI Coach.** The contribution proposed removing it for an "offline by construction" Mac;
+  we kept it instead — it's opt-in, bring-your-own-key, and works in the distributed (unsandboxed) build,
+  so removing a working feature wasn't the right call. Privacy docs already describe it as the one
+  transparent opt-in network exception. Gemini provider support (#89) is on the list, on both platforms.
+
 ## 1.67 — Manual workout tracking (Mac + Android)
 
 - **New feature: start/stop a workout yourself** (top Reddit request). A "Start workout" button on the
