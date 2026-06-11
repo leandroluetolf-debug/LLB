@@ -1,0 +1,76 @@
+# Auto-update the Homebrew Cask on every release (#141).
+#
+# On a published release this regenerates `Casks/noop.rb` in the tap repo
+# (NoopApp/homebrew-noop) with the new version + the macOS zip's SHA256, so
+# `brew upgrade --cask noop` just works. Anonymity-safe: the tap commit is
+# authored as NoopApp, and the only credential is a fine-grained PAT scoped to
+# Contents:write on the tap repo (never the maintainer's identity).
+#
+# DISABLED until set up — it runs only when the repo variable
+# HOMEBREW_TAP_ENABLED is "true". See docs/HOMEBREW.md for the 2 one-time steps
+# (create the tap repo; add the HOMEBREW_TAP_TOKEN secret + the variable).
+name: Update Homebrew Cask
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish to the cask (e.g. v1.94)"
+        required: true
+
+concurrency:
+  group: homebrew-cask
+  cancel-in-progress: false
+
+jobs:
+  cask:
+    runs-on: macos-15
+    if: ${{ vars.HOMEBREW_TAP_ENABLED == 'true' }}
+    steps:
+      - name: Resolve tag + version
+        id: v
+        run: |
+          TAG="${{ github.event.release.tag_name || github.event.inputs.tag }}"
+          echo "tag=$TAG"            >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}"    >> "$GITHUB_OUTPUT"
+
+      - name: Download macOS zip + compute SHA256
+        id: sha
+        run: |
+          VER="${{ steps.v.outputs.version }}"
+          URL="https://github.com/NoopApp/noop/releases/download/${{ steps.v.outputs.tag }}/NOOP-v${VER}-macos.zip"
+          echo "Fetching $URL"
+          curl -fSL "$URL" -o noop.zip
+          echo "sha256=$(shasum -a 256 noop.zip | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate + push the cask
+        env:
+          TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          VER="${{ steps.v.outputs.version }}"
+          SHA="${{ steps.sha.outputs.sha256 }}"
+          git clone "https://NoopApp:${TOKEN}@github.com/NoopApp/homebrew-noop.git" tap
+          mkdir -p tap/Casks
+          # NOTE: ${VER}/${SHA} are expanded by bash; #{version} stays literal for Ruby.
+          cat > tap/Casks/noop.rb <<EOF
+          cask "noop" do
+            version "${VER}"
+            sha256 "${SHA}"
+
+            url "https://github.com/NoopApp/noop/releases/download/v#{version}/NOOP-v#{version}-macos.zip"
+            name "NOOP"
+            desc "Standalone, fully offline companion app for WHOOP straps"
+            homepage "https://github.com/NoopApp/noop"
+
+            app "NOOP.app"
+
+            caveats "NOOP ships anonymously and is unsigned (no Apple Developer ID), so on first launch macOS Gatekeeper will block it: right-click NOOP in /Applications and choose Open, then Open again. Update later with: brew upgrade --cask noop."
+          end
+          EOF
+          cd tap
+          git -c user.name=NoopApp -c user.email=thenoopapp@gmail.com add Casks/noop.rb
+          git -c user.name=NoopApp -c user.email=thenoopapp@gmail.com \
+            commit -m "noop ${VER}" || { echo "no change"; exit 0; }
+          git push

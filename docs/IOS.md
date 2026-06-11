@@ -1,11 +1,19 @@
-# iOS Provisions & Port Plan
+# iOS Port — Status, Structure & Lessons
 
-> **Experimental, build-from-source community port — not an officially distributed app.** This
-> document describes an **experimental, build-it-yourself iOS port of NOOP** ([PR #42](../../../pull/42)),
-> **not** an officially maintained or distributed product. There is no download: iOS has no
-> anonymous distribution path — the App Store and TestFlight both require a real Apple Developer
-> identity — so distribution is impossible while NOOP stays anonymous. Build it yourself in Xcode if
-> you want to run it. (macOS remains the reference implementation; Android ships as a full app.)
+> **Folded into `main` (v1.94), build-from-source only.** The iOS app target (`NOOPiOS` +
+> `NOOPiOSWidgets`) now lives on `main` and builds against current code — `xcodegen generate` then
+> build the `NOOPiOS` scheme in Xcode. There is **no download**: iOS has no anonymous distribution
+> path (App Store and TestFlight both require a real Apple Developer identity), so distribution is
+> impossible while NOOP stays anonymous. Build it yourself in Xcode if you want to run it. A CI job
+> ([`app-build.yml`](../.github/workflows/app-build.yml)) compiles **both** the macOS and iOS targets
+> on every change so iOS can't silently break. (macOS is the reference implementation; Android ships
+> as a full app.) The reconciliation that brought the [PR #42](../../../pull/42) port onto current
+> `main` is summarised in **"Lessons from the fold-in"** below.
+
+> ℹ️ **Cross-platform engineering lives in [`CROSS_PLATFORM.md`](CROSS_PLATFORM.md)** — the shared-code
+> boundary across the macOS / iOS / Android clients, the `Platform.swift` shim convention, the
+> Swift↔Kotlin parity discipline, and the playbook for adding a feature across all three. Read that
+> first if you're building something that should land on more than one client.
 
 This document describes how NOOP — a standalone, fully offline companion app for
 WHOOP straps — is positioned for iOS, what already works, and the concrete plan
@@ -472,16 +480,30 @@ targets:
 
 ---
 
-## Port checklist
+## Port checklist — done in the v1.94 fold-in
 
-- [ ] Add `StrandiOS` app target depending on the five existing packages (no package changes).
-- [ ] Construct `CBCentralManager` with `CBCentralManagerOptionRestoreIdentifierKey: BLEManager.restoreID`.
-- [ ] Add `UIBackgroundModes: [bluetooth-central]` and `NSBluetoothAlwaysUsageDescription`.
-- [ ] Replace `MenuBarExtra` with a WidgetKit widget (+ optional Live Activity); reuse `StrandDesign` views.
-- [ ] Build an iOS action layer: drop `lockScreen`, keep `buzzBack`/`markMoment`/`none`, expose **App Intents** for inbound automation and `shortcuts://` / x-callback-url for outbound.
-- [ ] Swap `NSPasteboard` → `UIPasteboard` behind an `#if os` helper.
-- [ ] Add a `HealthKitBridge` doing two-way Apple Health (read live + write NOOP metrics), mapping `HKSample`s onto the existing `StrandImport` models and `WhoopStore` ingest path. Add the HealthKit capability and the two Health usage strings.
-- [ ] Verify BLE on a **physical iPhone** with a real strap (no Simulator BLE).
+- [x] `StrandiOS` + `NOOPiOSWidgets` app targets depending on the five existing packages (no package changes).
+- [x] `CBCentralManager` built with `CBCentralManagerOptionRestoreIdentifierKey` (in `AppModel+iOS`).
+- [x] `UIBackgroundModes: [bluetooth-central]` + `NSBluetoothAlwaysUsageDescription` in the iOS Info.plist.
+- [x] `MenuBarExtra` replaced by a WidgetKit widget + Live Activity (`StrandiOSWidgets`), reusing `StrandDesign`.
+- [x] iOS action layer: `lockScreen` returns false on iOS, `buzzBack`/`markMoment` portable, **App Intents** exposed (`StrandiOS/System/NOOPAppIntents.swift`).
+- [x] Clipboard + URL-open routed through `Platform.swift` (`PlatformPasteboard`/`PlatformOpen`).
+- [x] `HealthKitBridge` two-way Apple Health (read live + write NOOP metrics). _(See the device-id follow-up flagged below.)_
+- [ ] **Still TODO (needs hardware):** verify BLE on a **physical iPhone** with a real strap — CoreBluetooth has no Simulator. This is the one thing CI/compile can't cover.
+
+> **Open follow-up:** `HealthKitBridge.writeBack` reads NOOP-computed metrics under `deviceId = "my-whoop"`, but the on-device *computed* scores (recovery/HRV/…) are persisted under the **computed** id `"my-whoop-noop"` — so the Apple-Health write-back may read little/nothing for a strap-only user. Behavioural (not a compile issue); fix when the iOS HealthKit path gets device-tested.
+
+---
+
+## Lessons from the fold-in (v1.94)
+
+How PR #42's port was brought onto current `main` — useful the next time a screen has to span platforms.
+
+- **Don't merge a stale port; reconcile it.** PR #42 was ~9 releases behind (139 commits, conflicting). A direct merge would have fought conflicts in shared files the macOS app *also* uses. Instead we stood up a **fresh `StrandiOS` target** on current `main` and **harvested** the field-proven iOS-only files (app shell, HealthKit, widgets, App Intents, the `Platform`/`DocumentPicker`/`FileExport` shims), then applied small guards to the shared screens. The shared **packages already built for iOS** (every `Package.swift` declares `.iOS(.v16)`), so ~90% of the code needed nothing.
+- **The macOS-only API surface is small + enumerable.** Folding in iOS only required touching these in shared code: file dialogs (`NSSavePanel`/`NSOpenPanel` → `DocumentPicker`/`FileExport`), `NSWorkspace.activateFileViewerSelecting` ("reveal in Finder", `#if os(macOS)`-guarded out), clipboard/`NSImage`/`NSWorkspace.open` (→ `Platform.*`), `MacActions.lockScreen` (returns false on iOS) / `runShortcut` (→ `PlatformOpen`), and two macOS-only SwiftUI modifiers (`.toggleStyle(.checkbox)`, `.onExitCommand`). The macOS-only *files* (`StrandApp`, `RootView`, `MenuBar`, notification settings) are **excluded from the iOS target** in `project.yml`.
+- **`ContentView` vs `RootTabView`.** macOS uses a `NavigationSplitView` sidebar (`ContentView` → `RootView`); iOS uses a `TabView` (`RootTabView`). The fold-in's one real drift was `ContentView` (not excluded) referencing the excluded `RootView`. Fix: exclude `ContentView.swift` from iOS and render `RootTabView` via `iOSRootView`, which reproduces the same onboarding / Terms / What's-New gates around the tab bar.
+- **CI is stricter than a bleeding-edge local Xcode — on purpose.** The first `app-build` run was red: `AppleHealthView` interpolated a `String?` into a `LocalizedStringKey` subtitle (`"\(optional)"`). A current local Xcode tolerates it as a deprecation (and renders `Optional(...)`); the runner's older Xcode rejects it. The maintainer can't device-test iOS, so the **CI compile gate on an older Xcode is the safety net** — treat its failures as real and fix the source (don't pin the runner to bleeding-edge).
+- **Anonymity when harvesting a community branch:** the fetched PR branch carried a real-name commit author. The pre-push hook scans `git log --all`, so **delete the fetched PR ref (and any worktree branches) before pushing**, and re-author harvested files as `NoopApp`. (`git checkout <ref> -- <paths>` brings the *content*; commit it yourself.)
 
 ---
 
