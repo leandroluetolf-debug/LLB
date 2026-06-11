@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Questions, help & discussion — r/NOOPApp
+    url: https://www.reddit.com/r/NOOPApp/
+    about: For setup help, questions, tips and release news, join the subreddit. (Please still file confirmed bugs as a GitHub issue, with a strap log.)
