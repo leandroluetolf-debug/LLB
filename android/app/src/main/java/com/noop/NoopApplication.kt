@@ -21,6 +21,13 @@ import com.noop.ui.NoopPrefs
  */
 class NoopApplication : Application() {
 
+    override fun onCreate() {
+        super.onCreate()
+        // Record any uncaught crash to a file so it rides along in the shareable strap log — a
+        // device-specific crash (e.g. Insights #224/#267) is otherwise lost to an unreachable logcat.
+        CrashCapture.install(this)
+    }
+
     /** Process-wide Room-backed store. One instance shared by the UI and the background service. */
     val repository: WhoopRepository by lazy {
         WhoopRepository(WhoopDatabase.get(this).whoopDao())

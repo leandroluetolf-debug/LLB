@@ -28,9 +28,14 @@ object LogExport {
             }
             val body = logText.ifBlank { "(strap log is empty — connect to your strap, reproduce the issue, then share again)" }
 
+            // Append the last captured crash (if any) so a device-specific crash like the Insights
+            // tab (#224/#267) arrives with its real stack trace instead of being unreachable.
+            val crash = com.noop.CrashCapture.lastCrash(context)
+            val crashSection = if (crash != null) "\n\n${"─".repeat(40)}\nLast crash:\n$crash" else ""
+
             val dir = File(context.cacheDir, "logs").apply { mkdirs() }
             val file = File(dir, "noop-strap-log.txt")
-            file.writeText(header + "\n" + body)
+            file.writeText(header + "\n" + body + crashSection)
 
             val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
             val send = Intent(Intent.ACTION_SEND).apply {
