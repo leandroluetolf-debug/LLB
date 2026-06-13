@@ -18,6 +18,15 @@
       "screenshotURLs": [],
       "versions": [
         {
+          "version": "2.10.0",
+          "buildVersion": "54",
+          "date": "2026-06-13",
+          "localizedDescription": "Sleep-debt ledger, daytime stress timeline, recovery forecast, day-by-day Today navigation, battery+streak strip, and a smoother Live tab.",
+          "downloadURL": "https://github.com/NoopApp/noop/releases/download/v2.10.0/NOOP-v2.10.0-ios.ipa",
+          "size": 6008653,
+          "minOSVersion": "17.0"
+        },
+        {
           "version": "2.9.0",
           "buildVersion": "53",
           "date": "2026-06-13",
@@ -208,12 +217,12 @@
           "NSHealthUpdateUsageDescription": "NOOP writes the metrics it computes from your strap back into Apple Health, on-device and only when you allow it."
         }
       },
-      "version": "2.9.0",
-      "buildVersion": "53",
+      "version": "2.10.0",
+      "buildVersion": "54",
       "versionDate": "2026-06-13",
-      "versionDescription": "Background GPS tracking, in-app sleep-time editing, log-for-tomorrow, Rest-score tile, vital provenance, and a read-only local MCP package.",
-      "downloadURL": "https://github.com/NoopApp/noop/releases/download/v2.9.0/NOOP-v2.9.0-ios.ipa",
-      "size": 5909650,
+      "versionDescription": "Sleep-debt ledger, daytime stress timeline, recovery forecast, day-by-day Today navigation, battery+streak strip, and a smoother Live tab.",
+      "downloadURL": "https://github.com/NoopApp/noop/releases/download/v2.10.0/NOOP-v2.10.0-ios.ipa",
+      "size": 6008653,
       "minOSVersion": "17.0"
     }
   ],
