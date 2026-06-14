@@ -63,6 +63,18 @@ Prefer to build it yourself (which also grants HealthKit/widgets under your own 
 [PR #42](../../../pull/42) port onto current `main` is summarised in **"Lessons from the fold-in"**
 below.
 
+> 🛠️ **Signing it under your own Apple ID** (thanks @gingerbeardman for the recipe). Apple requires a
+> bundle id and an app group that are unique to *your* developer account, so for each target that has
+> them (the `NOOPiOS` app **and** the `NOOPiOSWidgets` extension):
+> 1. **Select your Team** (Signing & Capabilities).
+> 2. **Change the bundle id** to your own reverse-domain prefix (e.g. `com.yourdomain.noop`).
+> 3. **Change the App Group** to match (e.g. `group.com.yourdomain.noop`) — the app and the widget
+>    extension must share the *same* group.
+>
+> Set the team + bundle prefix in **`project.yml`** and re-run `xcodegen` so the change survives
+> regeneration instead of being overwritten. The App Group is only needed for the **widgets / Live
+> Activity** — if you don't need those, you can skip wiring it and the core app still builds.
+
 > ℹ️ **Cross-platform engineering lives in [`CROSS_PLATFORM.md`](CROSS_PLATFORM.md)** — the shared-code
 > boundary across the macOS / iOS / Android clients, the `Platform.swift` shim convention, the
 > Swift↔Kotlin parity discipline, and the playbook for adding a feature across all three. Read that

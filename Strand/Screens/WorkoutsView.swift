@@ -35,6 +35,12 @@ struct WorkoutsView: View {
     @State private var range: Range = .all
     private let usesPreviewRows: Bool
 
+    // iPhone (.compact) can't fit the labelled "Add workout" button beside the 5-segment range pill —
+    // the button got crushed into a tall sliver (#234/#339). Stack them there; iPad/Mac keep one row.
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    #endif
+
     /// The add/edit sheet target: `.some(nil)` = add a new workout, `.some(row)` = edit `row`,
     /// `nil` = sheet closed. Wrapped in Identifiable so `.sheet(item:)` can drive presentation.
     @State private var sheet: WorkoutSheetTarget?
@@ -144,11 +150,23 @@ struct WorkoutsView: View {
     private func rangeBar(rows: [WorkoutRow], effectiveRange: Range) -> some View {
         let fellBack = effectiveRange != range
         let caption = rangeCaption(rows: rows, effectiveRange: effectiveRange, fellBack: fellBack)
+        #if os(iOS)
+        let stacked = hSizeClass == .compact
+        #else
+        let stacked = false
+        #endif
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 12) {
+            if stacked {
+                // iPhone: button on its own row, the range pill full-width below — no crushed sliver.
                 addWorkoutButton
-                Spacer()
                 SegmentedPillControl(Range.allCases, selection: $range) { $0.label }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(spacing: 12) {
+                    addWorkoutButton
+                    Spacer()
+                    SegmentedPillControl(Range.allCases, selection: $range) { $0.label }
+                }
             }
             Text(caption)
                 .font(StrandFont.footnote)

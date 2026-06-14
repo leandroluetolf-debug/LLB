@@ -201,16 +201,15 @@ private fun RangeBar(
     onAdd: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            AddWorkoutButton(onAdd)
-            Spacer(Modifier.weight(1f))
-            SegmentedPillControl(
-                items = WorkoutRange.entries,
-                selection = range,
-                label = { it.label },
-                onSelect = onSelect,
-            )
-        }
+        // Phone width can't fit the labelled Add button beside the 5-segment range pill without
+        // crushing/clipping one — stack them (button, then pill), matching the iPhone fix (#234/#339).
+        AddWorkoutButton(onAdd)
+        SegmentedPillControl(
+            items = WorkoutRange.entries,
+            selection = range,
+            label = { it.label },
+            onSelect = onSelect,
+        )
         val unit = if (rowCount == 1) "session" else "sessions"
         val caption = if (fellBack) {
             "$rowCount $unit · sparse — widened to ${effectiveRange.caption}"
