@@ -25,7 +25,7 @@ object AppChangelog {
      * Bump this when you add a release below. The "What's New" sheet shows automatically when the
      * stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
      */
-    const val CURRENT_VERSION = "4.2.3"
+    const val CURRENT_VERSION = "4.2.5"
 
     data class Release(
         val version: String,
@@ -36,6 +36,14 @@ object AppChangelog {
 
     /** Newest first. */
     val releases: List<Release> = listOf(
+        Release(
+            version = "4.2.5",
+            title = "Trends report explains its scores",
+            date = "June 2026",
+            items = listOf(
+                "The shareable Trends report now spells out where each number comes from. A new \"How to read this\" legend flags HRV, Resting HR and Sleep as measured from the strap, and makes clear that Recovery and Strain are NOOP's own on-device scores, not clinical measures — so it's safe to hand the PDF to a doctor or coach without your scores being mistaken for lab values. Thanks @subscriptiondestroyer (#457).",
+            ),
+        ),
         Release(
             version = "4.2.3",
             title = "Deep history backlog drains without manual taps",

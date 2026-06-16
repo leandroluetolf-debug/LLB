@@ -17,6 +17,10 @@ approximate; downloads are on the [Releases](https://github.com/NoopApp/noop/rel
 
 ---
 
+## 4.2.5 — Trends report explains its scores (all platforms)
+
+- The shareable Trends report now carries a **"How to read this"** legend, so it's clearer when you hand the PDF to a doctor, coach or friend: HRV, Resting HR and Sleep duration are flagged as **measured** from the strap, while **Recovery and Strain are spelled out as NOOP's own on-device scores (not clinical measures)** — Recovery as a daily readiness composite, Strain as cardiovascular load from heart rate. The numbers stay (they're still useful as your own trend); now nobody reading it has to guess which are measured vs. computed, or how. Thanks @subscriptiondestroyer (#457). *(Adding workouts, stress and extra vitals like respiratory rate and skin temp to the report is tracked as a follow-up.)*
+
 ## 4.2.4 — Trends report export now opens the share sheet on iPhone (iOS fix)
 
 - Fixed the **Export PDF** button on the Trends report doing nothing on iPhone. The report opens in a sheet, but the share sheet was being presented from the wrong place (behind the report that was already on screen), so iOS silently dropped it and the export appeared to fail. NOOP now presents the share sheet from the top-most screen, so it slides up correctly and you can save the PDF to Files, AirDrop it, or send it on. Thanks @subscriptiondestroyer (#455). *(iOS-only fix — the macOS and Android exports were unaffected; they're functionally unchanged in this release.)*

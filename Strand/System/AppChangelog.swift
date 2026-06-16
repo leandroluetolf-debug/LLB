@@ -7,7 +7,7 @@ enum AppChangelog {
 
     /// Bump this when you add a release below. The "What's New" sheet shows automatically when the
     /// stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
-    static let currentVersion = "4.2.4"
+    static let currentVersion = "4.2.5"
 
     struct Release: Identifiable {
         let version: String
@@ -19,6 +19,13 @@ enum AppChangelog {
 
     /// Newest first.
     static let releases: [Release] = [
+        Release(
+            version: "4.2.5",
+            title: "Trends report explains its scores",
+            date: "June 2026",
+            items: [
+                "**The shareable Trends report now spells out where each number comes from.** A new \"How to read this\" legend flags HRV, Resting HR and Sleep as *measured* from the strap, and makes clear that **Recovery and Strain are NOOP's own on-device scores, not clinical measures** — so it's safe to hand the PDF to a doctor or coach without your scores being mistaken for lab values. Thanks @subscriptiondestroyer (#457).",
+            ]),
         Release(
             version: "4.2.4",
             title: "Trends report export now opens the share sheet (iPhone)",

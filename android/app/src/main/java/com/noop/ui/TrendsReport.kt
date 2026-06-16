@@ -354,6 +354,14 @@ object TrendsReportRenderer {
 
     private fun drawFooter(canvas: Canvas, generatedOn: String) {
         val y = PAGE_H - MARGIN - 12f
+        // Provenance legend (#457): make clear which numbers are measured vs. NOOP's own derived scores,
+        // so a clinician reading the PDF isn't misled into treating Recovery/Strain as clinical measures.
+        // Sits above the hairline; wraps to the page width (~4 lines at this size).
+        val legend = "How to read this: HRV, Resting HR and Sleep duration are measured from the strap. " +
+            "Recovery and Strain are NOOP's own on-device scores, not clinical measures — Recovery is a " +
+            "daily readiness composite (HRV, resting HR, sleep and skin-temp trend), and Strain is " +
+            "cardiovascular load derived from heart rate."
+        drawWrapped(canvas, legend, MARGIN, y - 52f, PAGE_W - 2 * MARGIN, 11f, 9f, sans, TEXT_TERTIARY)
         line(canvas, MARGIN, y - 14f, PAGE_W - MARGIN, y - 14f, HAIRLINE)
         text(
             canvas,
