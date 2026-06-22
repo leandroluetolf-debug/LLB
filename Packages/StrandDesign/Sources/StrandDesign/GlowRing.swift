@@ -49,8 +49,8 @@ public struct GlowRing: View {
             // A TIGHT glow hugging the arc — subtle, additive on dark, hidden on light. Kept narrow so
             // the ring stays crisp; the sharp arc below carries the read.
             arc.stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                .blur(radius: lineWidth * 0.45)
-                .opacity(0.45)
+                .blur(radius: lineWidth * 0.3)
+                .opacity(0.22)
                 .additiveBloom()
 
             // The crisp, solid arc.

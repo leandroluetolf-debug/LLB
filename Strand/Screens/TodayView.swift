@@ -1415,7 +1415,7 @@ struct TodayView: View {
     private func chargeRing(score: Double?, d: DailyMetric?, diameter: CGFloat) -> some View {
         if let s = score {
             GlowRing(fraction: s / 100, value: s, format: { "\(Int($0.rounded()))" },
-                     color: StrandPalette.chargeColor, diameter: diameter, lineWidth: diameter * 0.085)
+                     color: StrandPalette.chargeColor, diameter: diameter, lineWidth: diameter * 0.055)
         } else {
             emptyHeroRing(diameter: diameter) { ringEmptyOverlay(d: d) }
         }
@@ -1428,7 +1428,7 @@ struct TodayView: View {
         if effortStrain(d) != nil, let gv = effortGaugeValue(d) {
             GlowRing(fraction: gv / effortGaugeMax, value: gv,
                      format: { effortScale == .whoop ? String(format: "%.1f", $0) : "\(Int($0.rounded()))" },
-                     color: StrandPalette.effortColor, diameter: diameter, lineWidth: diameter * 0.085)
+                     color: StrandPalette.effortColor, diameter: diameter, lineWidth: diameter * 0.055)
         } else {
             emptyHeroRing(diameter: diameter) { ringNoData() }
         }
@@ -1439,7 +1439,7 @@ struct TodayView: View {
     private func restRing(diameter: CGFloat) -> some View {
         if let s = restScore {
             GlowRing(fraction: s / 100, value: s, format: { "\(Int($0.rounded()))" },
-                     color: StrandPalette.restColor, diameter: diameter, lineWidth: diameter * 0.085)
+                     color: StrandPalette.restColor, diameter: diameter, lineWidth: diameter * 0.055)
         } else {
             emptyHeroRing(diameter: diameter) { ringNoData() }
         }
@@ -1450,7 +1450,7 @@ struct TodayView: View {
     private func emptyHeroRing<Overlay: View>(diameter: CGFloat, @ViewBuilder overlay: () -> Overlay) -> some View {
         ZStack {
             Circle().stroke(StrandPalette.textPrimary.opacity(0.10),
-                            style: StrokeStyle(lineWidth: diameter * 0.085, lineCap: .round))
+                            style: StrokeStyle(lineWidth: diameter * 0.055, lineCap: .round))
             overlay()
         }
         .frame(width: diameter, height: diameter)
