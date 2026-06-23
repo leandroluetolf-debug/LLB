@@ -422,6 +422,20 @@ object NoopPrefs {
         of(context).edit().putBoolean(KEY_HYDRATION_TRACKING, enabled).apply()
     }
 
+    /** "Day-cycle background" (#698): the time-of-day scene (sunrise / day / dusk / night) behind the
+     *  Today screen. Default ON — it's the v7 atmosphere. Some people find the moving scene distracting
+     *  and want a plain dark canvas, so turning this off makes TodayScreen drop the SceneScreenBackground
+     *  and fall back to the flat surface; the cards already sit on an opaque canvas, so they stay just as
+     *  readable. Mirrors macOS @AppStorage("noop.showDayCycleBackground"). */
+    const val KEY_SHOW_DAY_CYCLE_BACKGROUND = "noop.showDayCycleBackground"
+
+    fun showDayCycleBackground(context: Context): Boolean =
+        of(context).getBoolean(KEY_SHOW_DAY_CYCLE_BACKGROUND, true)
+
+    fun setShowDayCycleBackground(context: Context, enabled: Boolean) {
+        of(context).edit().putBoolean(KEY_SHOW_DAY_CYCLE_BACKGROUND, enabled).apply()
+    }
+
     /** Coach on-device signals (v5): when ON, the opt-in BYO-key Coach's grounding context may include a
      *  SUMMARY-ONLY line of on-device correlations + Lab Book markers (no raw egress). A SECOND opt-in on
      *  top of the existing "let the coach use my data" consent. Default OFF — keeps the anonymity posture. */

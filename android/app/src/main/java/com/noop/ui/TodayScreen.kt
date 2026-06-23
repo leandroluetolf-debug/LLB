@@ -276,6 +276,10 @@ fun TodayScreen(
     // Both are loaded off the main thread and re-read as the day's data grows; SharedPreferences isn't
     // reactive, so the toggle is read once into local state.
     val hydrationEnabled = remember { NoopPrefs.hydrationTracking(context) }
+    // Day-cycle scene backdrop (#698). Default ON. When off, Today drops the SceneScreenBackground and
+    // the scaffold paints the plain dark surface canvas instead. SharedPreferences isn't reactive, so
+    // this is read once into local state (mirrors iOS @AppStorage in TodayView).
+    val showDayCycleBackground = remember { NoopPrefs.showDayCycleBackground(context) }
     var hydrationTotalMl by remember { mutableStateOf(0.0) }
     LaunchedEffect(days, hydrationEnabled) {
         hydrationTotalMl = if (hydrationEnabled) {
@@ -622,7 +626,9 @@ fun TodayScreen(
         // dark scrim so the white header text stays legible. The cards float OVER it on the flat canvas
         // below. Replaces the in-card hero scene (removed from the hero Box below). Mirrors iOS TodayView
         // passing `topBackground: AnyView(SceneScreenBackground())`. No glow.
-        topBackground = { SceneScreenBackground() },
+        // #698 — gated on the "Day-cycle background" setting (default ON). Off passes null, so the scaffold
+        // paints the plain dark surface canvas instead, mirroring iOS's `showDayCycleBackground ? ... : nil`.
+        topBackground = if (showDayCycleBackground) { { SceneScreenBackground() } } else null,
     ) {
         // The header recording-status (COMPONENT 3) the top-bar light reflects: Recording while the strap
         // is connected and a live HR is streaming, else "Last synced Xm ago" from the last offload, else

@@ -396,6 +396,9 @@ fun SettingsScreen(vm: AppViewModel) {
     var themeMode by remember { mutableStateOf(AppearancePrefs.mode) }
     // Chart colours (Titanium / Classic) — re-colours gauges + charts; ChartStylePrefs mirrors it live.
     var chartStyle by remember { mutableStateOf(ChartStylePrefs.style) }
+    // Day-cycle background (#698) — the time-of-day scene behind Today. Default ON. SharedPreferences
+    // isn't reactive, so the Switch mirrors into local state; TodayScreen reads the same pref on entry.
+    var showDayCycleBackground by remember { mutableStateOf(NoopPrefs.showDayCycleBackground(context)) }
 
     // SAF launchers — CreateDocument for export, OpenDocument for import.
     val exportLauncher = rememberLauncherForActivityResult(
@@ -832,6 +835,42 @@ fun SettingsScreen(vm: AppViewModel) {
                         chartStyle = style
                         ChartStylePrefs.set(context, style)
                     },
+                )
+            }
+
+            // Day-cycle background (#698): the time-of-day scene behind Today. On by default. Off swaps it
+            // for a plain dark canvas for people who find the moving scene distracting. Takes effect next
+            // time Today is opened (the pref is read once on entry, like the other Today-screen toggles).
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Day-cycle background",
+                        style = NoopType.subhead,
+                        color = Palette.textPrimary,
+                    )
+                    Text(
+                        "Shows a soft sunrise, day, dusk and night scene behind the Today screen. Turn it off for a plain dark canvas — your cards stay exactly as readable.",
+                        style = NoopType.footnote,
+                        color = Palette.textTertiary,
+                    )
+                }
+                Switch(
+                    checked = showDayCycleBackground,
+                    onCheckedChange = {
+                        showDayCycleBackground = it
+                        NoopPrefs.setShowDayCycleBackground(context, it)
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Palette.surfaceBase,
+                        checkedTrackColor = Palette.accent,
+                        uncheckedThumbColor = Palette.textSecondary,
+                        uncheckedTrackColor = Palette.surfaceInset,
+                        uncheckedBorderColor = Palette.hairline,
+                    ),
                 )
             }
         }

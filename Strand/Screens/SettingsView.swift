@@ -68,6 +68,9 @@ struct SettingsView: View {
     @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.system.rawValue
     // Chart colour style: Titanium (brand) or Classic (throwback red→green). Re-colours gauges + charts.
     @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.titanium.rawValue
+    // Day-cycle scene backdrop behind Today (#698). Default ON. Off swaps the scene for a plain dark
+    // canvas. TodayView reads the same key to gate its SceneScreenBackground.
+    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = true
     // Hydration tracker (opt-in, MVP). Default OFF — when off the hydration dashboard card + detail are
     // hidden. Mirrors the Android pref so the toggle reads the same on both platforms.
     @AppStorage(HydrationStore.enabledKey) private var hydrationEnabled = false
@@ -623,6 +626,22 @@ struct SettingsView: View {
                     .onChangeCompat(of: useNavyIcon) { applyAppIcon($0) }
                 }
                 #endif
+
+                Divider().overlay(StrandPalette.hairline).padding(.vertical, 4)
+                // MARK: Day-cycle background — the time-of-day scene behind Today (#698). On by default.
+                // Off swaps it for the plain dark canvas for people who find the moving scene distracting.
+                Toggle(isOn: $showDayCycleBackground) {
+                    Text("Day-cycle background")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                }
+                .toggleStyle(.switch)
+                .tint(StrandPalette.accent)
+                Text("Shows a soft sunrise, day, dusk and night scene behind the Today screen. Turn it off for a plain dark canvas — your cards stay exactly as readable.")
+                    .font(StrandFont.caption)
+                    .foregroundStyle(StrandPalette.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
