@@ -141,7 +141,10 @@ private enum class Destination(
 
     // Group: System
     Automations("automations", "Automations", Icons.Filled.Bolt),
-    SmartAlarm("smart_alarm", "Smart Alarm", Icons.Filled.Alarm),
+    // "Wake Window" is the NOOP phone-based smart wake (light-sleep detection inside a window, with a
+    // guaranteed OS backup alarm). Renamed from "Smart Alarm" so it no longer collides with the strap
+    // firmware Smart alarm in Automations (#730). Route id stays "smart_alarm" — display string only.
+    SmartAlarm("smart_alarm", "Wake Window", Icons.Filled.Alarm),
     Devices("devices", "Devices", Icons.Filled.Sensors),
     DataSources("data_sources", "Data Sources", Icons.Filled.Storage),
     FusedRecord("fused_record", "Your Data, Fused", Icons.AutoMirrored.Filled.CompareArrows),
@@ -168,7 +171,7 @@ private enum class Destination(
 private data class DrawerGroup(val header: String, val items: List<Destination>)
 
 // Mirrors the iOS RootTabView `moreTab` grouping + order one-for-one. Today / Trends / Sleep are NOT
-// listed (they're bottom-bar tabs, exactly as on iOS). Android-only screens (Vital Signs, Smart Alarm,
+// listed (they're bottom-bar tabs, exactly as on iOS). Android-only screens (Vital Signs, Wake Window,
 // Notifications, Devices) are slotted into the matching iOS group.
 private val drawerGroups: List<DrawerGroup> = listOf(
     DrawerGroup("Insights", listOf(

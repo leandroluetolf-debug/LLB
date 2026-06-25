@@ -68,8 +68,10 @@ fun SmartAlarmScreen(vm: AppViewModel) {
     // spacing unchanged (LazyColumn reproduces the eager `spacedBy(20.dp)`); only on-screen cards compose +
     // are accessibility-walked.
     LazyScreenScaffold(
-        title = "Smart alarm",
-        subtitle = "Wake in a lighter sleep phase — with a guaranteed backup at the window's end.",
+        // "Wake Window" so this NOOP phone-based smart wake doesn't collide with the strap firmware
+        // Smart alarm over in Automations (#730). Same feature, just a non-colliding name.
+        title = "Wake Window",
+        subtitle = "Wake in a lighter sleep phase, with a guaranteed backup at the window's end.",
     ) {
         // The guaranteed-wake card always shows so the safety promise is the first thing read.
         item { WindowCard(enabled = enabled, targetMinutes = targetMinutes, windowMinutes = windowMinutes) }

@@ -23,7 +23,7 @@ struct SmartAlarmView: View {
     private static let weekdayOrder = [2, 3, 4, 5, 6, 7, 1]
 
     var body: some View {
-        ScreenScaffold(title: "Smart alarm",
+        ScreenScaffold(title: "Wind-Down",
                        subtitle: "A gentle evening wind-down nudge to help you reach your wake time rested.") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                 windowHero
