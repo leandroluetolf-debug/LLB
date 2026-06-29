@@ -50,6 +50,10 @@ packages:
     path: Packages/StrandImport
   StrandDesign:
     path: Packages/StrandDesign
+  # Clean-room local Oura ring BLE protocol (framing, auth, decoders, driver). Pure value types,
+  # zero CoreBluetooth, so it stays headless/JVM-testable; the app target imports it for OuraLiveSource.
+  OuraProtocol:
+    path: Packages/OuraProtocol
   # Compresses the full-database `.noopbak` backup (single-entry deflate ZIP) in DataBackup.swift.
   # Already resolved transitively via StrandImport; linked directly so the app target can
   # `import ZIPFoundation`. Same exact version as StrandImport's, so SPM resolves one copy.
@@ -118,6 +122,7 @@ targets:
       - package: StrandDesign
       - package: MarkdownUI
       - package: ZIPFoundation
+      - package: OuraProtocol
   StrandTests:
     type: bundle.unit-test
     platform: macOS
@@ -128,6 +133,7 @@ targets:
       - target: Strand
       - package: WhoopProtocol
       - package: WhoopStore
+      - package: OuraProtocol
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

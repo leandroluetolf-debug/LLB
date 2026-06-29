@@ -819,6 +819,58 @@ final class AppModel: ObservableObject {
         }
     }
 
+    // MARK: - Oura adopt (factory-reset-and-adopt)
+
+    /// The live adopt outcome of the active Oura ring, mirrored off the coordinator's live `OuraLiveSource`
+    /// so the Add-device wizard can drive its "Taking over your ring" step to success or an honest Failed
+    /// WITHOUT reaching into the BLE layer. nil when no Oura source is live or no adopt is in flight. PARITY:
+    /// the Android wizard observes the same coarse outcome to leave its Adopting step.
+    @Published private(set) var ouraAdoptPhase: OuraLiveSource.AdoptPhase = .idle
+    /// The active Oura ring's honest needs-pairing message (mirrored off the live source), surfaced verbatim
+    /// on the wizard's Failed step. nil when the ring is fine or no Oura source is live.
+    @Published private(set) var ouraNeedsPairing: String?
+    /// Combine subscriptions mirroring the live Oura source's `adoptPhase` / `needsPairing` into the two
+    /// published properties above. Re-bound whenever the active Oura source changes.
+    private var ouraAdoptCancellables = Set<AnyCancellable>()
+
+    /// Take over a factory-reset Oura ring: grant the coordinator explicit adopt consent for THIS ring (so
+    /// its live session may run the one-time key install, s3.2), register it active (which starts that live
+    /// session), then begin mirroring its adopt outcome for the wizard. The irreversible-consent gate has
+    /// ALREADY been passed in the wizard (the consent tick + the "Take over this ring?" confirm); this is the
+    /// commit. Never prompts to make-active (the takeover IS the user's new active source).
+    func adoptOuraRing(_ device: PairedDevice) {
+        sourceCoordinator?.requestOuraAdopt(deviceId: device.id)
+        // Reset the mirror so a previous attempt's outcome never leaks into this one.
+        ouraAdoptPhase = .idle
+        ouraNeedsPairing = nil
+        registerDevice(device, makeActive: true)
+        bindOuraAdoptMirror()
+    }
+
+    /// (Re)bind the adopt-outcome mirror to whichever `OuraLiveSource` the coordinator has live now and on
+    /// every later swap. `flatMap` switches to the current source's `adoptPhase` (defaulting to `.idle` when
+    /// there is no source), so the published value always tracks the live source without leaking subscriptions.
+    private func bindOuraAdoptMirror() {
+        ouraAdoptCancellables.removeAll()
+        guard let coordinator = sourceCoordinator else { return }
+        coordinator.$ouraSource
+            .flatMap { source -> AnyPublisher<OuraLiveSource.AdoptPhase, Never> in
+                source?.$adoptPhase.eraseToAnyPublisher()
+                    ?? Just(.idle).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.ouraAdoptPhase = $0 }
+            .store(in: &ouraAdoptCancellables)
+        coordinator.$ouraSource
+            .flatMap { source -> AnyPublisher<String?, Never> in
+                source?.$needsPairing.eraseToAnyPublisher()
+                    ?? Just(nil).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.ouraNeedsPairing = $0 }
+            .store(in: &ouraAdoptCancellables)
+    }
+
     /// How many on-screen surfaces currently want the realtime HR stream (the Live tab and the
     /// in-exercise LiveWorkoutView, which can be open at the same time , the workout sheet sits over
     /// Live, or is reached straight from the Workouts tab without Live ever appearing). The stream

@@ -1,6 +1,7 @@
 import SwiftUI
 import StrandDesign
 import WhoopStore
+import OuraProtocol
 
 // MARK: - Devices
 //
@@ -254,7 +255,19 @@ private struct DeviceCard: View {
                             .foregroundStyle(StrandPalette.textSecondary)
                     }
                     Spacer()
+                    // Locally-adopted Oura is Beta: a non-dot Beta chip sits beside the usual state pill.
+                    if device.sourceKind == .oura {
+                        StatePill("Beta", tone: .warning, showsDot: false)
+                    }
                     statePill
+                }
+
+                // Honest local-takeover state row for an adopted Oura ring that is paired but not the
+                // active+connected source right now. States the single-owner reality plainly (if the ring
+                // was reset again or re-claimed in the Oura app, NOOP no longer owns it) without faking a
+                // live reading. Suppressed for the active+connected ring and for removed rings.
+                if device.sourceKind == .oura && !isLiveConnected && device.status == .paired {
+                    ouraLocalStateNote
                 }
 
                 // What this device CAPTURES — honest, per-model (not the generic stored set, which would
@@ -348,6 +361,7 @@ private struct DeviceCard: View {
         if device.sourceKind == .ftms { return "figure.run.treadmill" }
         if device.sourceKind == .huami { return "waveform.path.ecg.rectangle" }
         if device.sourceKind == .liveAppleWatch { return "applewatch" }
+        if device.sourceKind == .oura { return "circle.circle" }
         return SourceCoordinator.isWhoop(device) ? "applewatch.side.right" : "heart.circle"
     }
 
@@ -373,6 +387,23 @@ private struct DeviceCard: View {
         if device.status == .archived { return "Removed · data kept" }
         if isLiveConnected { return "Connected now" }
         return "Last seen \(relativeAgo(TimeInterval(device.lastSeenAt)))"
+    }
+
+    /// Honest paired-but-not-connected note for a locally-adopted Oura ring. Amber heads-up, no fabricated
+    /// reading: re-states the single-owner reality so the user understands why a re-reset / Oura re-claim
+    /// would break NOOP's ownership.
+    private var ouraLocalStateNote: some View {
+        HStack(alignment: .top, spacing: 6) {
+            Image(systemName: "info.circle")
+                .font(StrandFont.caption)
+                .foregroundStyle(StrandPalette.statusWarning)
+                .frame(width: 14)
+                .accessibilityHidden(true)
+            Text("Paired locally. NOOP owns this ring while it holds the key. If you reset it again or set it up in the Oura app, NOOP no longer owns it and you would re-add it to take it over.")
+                .font(StrandFont.caption)
+                .foregroundStyle(StrandPalette.statusWarning)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     /// A battery SF Symbol matching the charge band (mirrors the menu-bar battery glyph buckets).
@@ -422,6 +453,28 @@ struct DeviceCapabilityProfile {
                 captures: "Heart rate (live, best-effort)",
                 powers: "Powers the live console + Effort — no Charge, Rest or Sleep",
                 footnote: "Experimental: live heart rate where the band exposes it. Some bands need a pairing we can't do yet — NOOP will say so honestly and never show a made-up number. No sleep, recovery, skin temp, SpO₂ or steps.")
+        }
+        // EXPERIMENTAL locally-adopted Oura ring (gen 3/4/5). The gen is carried on `model` ("Oura Ring
+        // 3/4/5") and recovered with OuraRingGen.from(model:). NOOP reads the ring's OWN raw signals + open
+        // HRV/sleep-phase tags and computes its own Charge/Effort/Rest; it NEVER reads Oura's encrypted
+        // Readiness/Sleep scores, and claims NO absolute SpO₂ %. Estimates carry "*"; a signal it can't read
+        // stays "-". Per-gen copy and the canonical Beta caveat (spec
+        // docs/superpowers/specs/2026-06-29-oura-onboarding-ux.md s3/s4).
+        if d.sourceKind == .oura {
+            let gen = OuraRingGen.from(model: d.model)
+            // gen3/4 are verified-shape; gen5 ("newer") carries the least-proven caveat.
+            let newer = (gen == .gen5)
+            let captures = newer
+                ? "Heart rate* · HRV* · Sleep* · Resting HR* · Skin temp* · Battery*"
+                : "Heart rate · HRV* · Sleep · Resting HR · Skin temp* · Battery"
+            let powers = newer
+                ? "Powers Effort now; Charge and Rest once enough nights and decode are confirmed"
+                : "Powers Charge, Effort, Rest and Sleep"
+            return DeviceCapabilityProfile(
+                displayModel: "\(gen.displayName) (Beta)",
+                captures: captures,
+                powers: powers,
+                footnote: "Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, and HRV needs you to be still. No Oura Readiness or SpO₂ percentage comes off the ring (import an Oura file for those).")
         }
         // Apple Watch (live HealthKit source). UNLIKE the WHOOP/strap branches, the watch's stored
         // capability `Set` is already the honest per-model trim (AppleWatchDevice only adds a metric
@@ -531,6 +584,15 @@ struct DeviceCardCatalog: View {
                      status: .paired, addedAt: 0, lastSeenAt: 0)
     }
 
+    /// A locally-adopted Oura ring (sourceKind `.oura`), built with mock data so the honest per-gen Beta
+    /// card renders deterministically WITHOUT a ring. `model` carries the gen ("Oura Ring 3/4/5").
+    static func oura(_ model: String, status: DeviceStatus = .paired) -> PairedDevice {
+        PairedDevice(id: "oura-demo-\(model)", brand: "Oura", model: model, nickname: nil,
+                     peripheralId: "00000000-0000-0000-0000-0000000000aa", sourceKind: .oura,
+                     capabilities: [.hr, .hrv, .spo2, .skinTemp, .sleep],
+                     status: status, addedAt: 0, lastSeenAt: 0)
+    }
+
     var body: some View {
         ScreenScaffold(title: "Devices",
                        subtitle: "What each band captures — and what NOOP uses it for.") {
@@ -548,6 +610,33 @@ struct DeviceCardCatalog: View {
                 // Apple Watch, with an older-model trimmed set (no SpO₂ / wrist temp) so the honest
                 // capability read renders deterministically alongside the straps.
                 DeviceCard(device: Self.watch([.hr, .hrv, .sleep, .steps]),
+                           isActive: false, isLiveConnected: false,
+                           onMakeActive: {}, onRename: {}, onRemove: {})
+                // Locally-adopted Oura ring (Beta): per-gen honest capability copy + the Beta chip + the
+                // paired-but-not-connected local-state note, all without a ring on-wrist.
+                DeviceCard(device: Self.oura("Oura Ring 3"),
+                           isActive: false, isLiveConnected: false,
+                           onMakeActive: {}, onRename: {}, onRemove: {})
+            }
+        }
+    }
+}
+
+/// DEBUG-only: just the locally-adopted Oura device card, active + connected, so `--demo-screen ouradevice`
+/// can screenshot the Beta Oura card (battery + "Active · Live") WITHOUT a ring. Same file as `DeviceCard`
+/// so it can reach it. Stripped from Release.
+struct OuraDeviceDemoScreen: View {
+    var body: some View {
+        ScreenScaffold(title: "Devices",
+                       subtitle: "A locally-adopted Oura ring, in beta.") {
+            VStack(spacing: NoopMetrics.gap) {
+                // Active + connected so the card shows "Active · Live" + a live battery readout.
+                DeviceCard(device: DeviceCardCatalog.oura("Oura Ring 3"),
+                           isActive: true, isLiveConnected: true, liveBatteryPct: 71,
+                           onMakeActive: {}, onRename: {}, onRemove: {})
+                // A second, paired-but-not-connected gen-4 ring so the honest local-state note + per-gen
+                // copy render in the same shot.
+                DeviceCard(device: DeviceCardCatalog.oura("Oura Ring 4"),
                            isActive: false, isLiveConnected: false,
                            onMakeActive: {}, onRename: {}, onRemove: {})
             }

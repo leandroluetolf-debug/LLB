@@ -195,22 +195,48 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         )
 
     /**
-     * A DISCOVERY-ONLY EXPERIMENTAL [com.noop.ble.OuraProbeSource] for the Add-Oura wizard. Detects the
-     * ring and reports the honest dead-end (no open live stream → use file import). Never streams or
-     * persists. Mirrors the macOS AddDeviceWizard's throwaway OuraProbeSource.
+     * A DISCOVERY-ONLY EXPERIMENTAL [com.noop.ble.OuraLiveSource] for the Add-Oura wizard. Runs its OWN
+     * scan (it owns its OWN scanner + GATT, never the WHOOP client) and never persists or feeds live state
+     * here - the [SourceCoordinator] owns connection once the ring becomes active. The live sink / persist
+     * are no-ops and the auth key is null (discovery has no need to authenticate), so the scanner only ever
+     * surfaces nearby rings via its `discovered` / `scanning` StateFlows. Mirrors the macOS
+     * AddDeviceWizard's discovery-only OuraLiveSource (deviceId "scan-preview", no-op persist).
+     *
+     * A concrete [com.noop.oura.OuraRingGen] is required by the constructor; gen3 (the verified-corpus
+     * default) is fine for discovery since the wizard's pick step confirms the real generation from the
+     * model the user selects. The MTU clamp / command set never run during a scan-only session.
      */
-    fun makeOuraScanner(): com.noop.ble.OuraProbeSource =
-        // Route the probe's diagnostics (incl. the honest "no open live stream" dead-end) into the SAME
-        // exported strap log the active path uses (issue #421 parity), so a tester's Oura wizard scan is
-        // captured. The source self-prefixes "Oura: "; [externalLog] redacts addresses. Statuses / service
-        // UUIDs / counts only, never a device address.
-        com.noop.ble.OuraProbeSource(context = appContext, log = { ble.externalLog(it) })
+    fun makeOuraScanner(): com.noop.ble.OuraLiveSource =
+        com.noop.ble.OuraLiveSource(
+            context = appContext,
+            deviceId = "scan-preview",
+            ringGen = com.noop.oura.OuraRingGen.GEN3,
+            liveSink = { _, _ -> },
+            authKey = { null },
+            persist = { _, _ -> },
+            // Route the scanner's diagnostics into the SAME exported strap log the active path uses
+            // (issue #421 parity), so a tester's Oura wizard scan is captured. The source self-prefixes
+            // "Oura: "; [externalLog] redacts addresses. Statuses / service UUIDs / counts only, never a
+            // device address.
+            log = { ble.externalLog(it) },
+        )
 
     // MARK: - Add-a-device wizard (multi-WHOOP, MW-4) — thin pass-throughs to the BLE client.
 
     /** WHOOP straps surfaced by the wizard's present-scan ([presentWhoopScan]), WITHOUT auto-connecting.
      *  The wizard observes this directly so its pick list updates as straps appear. */
     val discoveredWhoops: StateFlow<List<com.noop.ble.WhoopBleClient.DiscoveredWhoop>> = ble.discoveredWhoops
+
+    /** The active Oura ring's live adopt outcome, mirrored from the [com.noop.ble.SourceCoordinator]. The
+     *  Add-Oura wizard observes this to leave its Adopting step: streaming -> success/close, failed -> the
+     *  honest Failed step. Idle whenever no Oura source is live. Mirrors Swift `AppModel.ouraAdoptPhase`. */
+    val ouraAdoptPhase: StateFlow<com.noop.ble.OuraLiveSource.AdoptPhase> =
+        noopApp.sourceCoordinator.ouraAdoptPhase
+
+    /** The active Oura ring's honest needs-pairing message (null when none), mirrored from the
+     *  [com.noop.ble.SourceCoordinator]. The wizard treats a non-null value during Adopting as an honest
+     *  failure too. Mirrors Swift `AppModel.ouraNeedsPairing`. */
+    val ouraNeedsPairing: StateFlow<String?> = noopApp.sourceCoordinator.ouraNeedsPairing
 
     /**
      * Point the WHOOP scan at a specific family, then present nearby straps WITHOUT auto-connecting (the
@@ -239,6 +265,28 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         addPairedDevice(device)
         if (makeActive) setActiveDevice(device.id)
     }
+
+    /**
+     * Store the 16-byte Oura application install key for a ring (keyed by its registry device id) in the
+     * encrypted, Keystore-backed [com.noop.ble.OuraInstallKeyStore]. The Add-Oura wizard's Advanced path
+     * calls this with the user-supplied key so the live [com.noop.ble.OuraLiveSource]'s authKey closure can
+     * read it on the next connect. The key is unsigned bytes 0..255; a wrong-length key is rejected by the
+     * store. Mirrors the macOS OuraKeyStore.save. The key is never logged.
+     */
+    fun saveOuraInstallKey(deviceId: String, key: IntArray): Boolean =
+        com.noop.ble.OuraInstallKeyStore.save(appContext, deviceId, key)
+
+    /**
+     * Arm (or clear) the one-shot adopt-intent for an Oura ring (keyed by its registry device id). The
+     * Add-Oura wizard's DESTRUCTIVE factory-reset-and-adopt path calls this with true AFTER its
+     * irreversible-consent gate and second destructive confirm, BEFORE registering the ring active, so the
+     * [com.noop.ble.SourceCoordinator] consumes it when it builds the live source and permits the dangerous
+     * post-factory-reset key install for that one session (OURA_PROTOCOL.md s3.2). The Advanced-key path
+     * NEVER calls this (it authenticates with the user's own key and must not reset the ring). One-shot:
+     * the source consumes it on the next connect.
+     */
+    fun armOuraAdopt(deviceId: String) =
+        com.noop.ble.OuraInstallKeyStore.setPendingAdopt(appContext, deviceId, true)
 
     // Body profile (age/sex/weight/height + HR-max override) — the same SharedPreferences
     // store the Settings screen edits. Feeds the on-device scorer's HRmax/zones/calories.

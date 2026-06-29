@@ -344,7 +344,12 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
                 }
                 composable(Destination.FusedRecord.route) { FusedRecordRoute(viewModel) }
                 composable(Destination.AppleHealth.route) { AppleHealthScreen(viewModel) }
-                composable(Destination.Devices.route) { DevicesScreen(viewModel) }
+                composable(Destination.Devices.route) {
+                    DevicesScreen(
+                        viewModel,
+                        onUseFileImport = { nav.navigateTopLevel(Destination.DataSources.route) },
+                    )
+                }
                 composable(Destination.DataSources.route) { DataSourcesScreen(viewModel) }
                 composable(Destination.BackupSync.route) { BackupSyncScreen() }
                 composable(Destination.Notifications.route) { NotificationsSettingsScreen(viewModel) }

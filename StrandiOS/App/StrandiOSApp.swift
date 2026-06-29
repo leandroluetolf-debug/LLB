@@ -265,6 +265,13 @@ enum DemoScreens {
         case "fitnessage": return AnyView(FitnessAgeDemoScreen())
         case "vitality": return AnyView(VitalityDemoScreen())
         case "addwizard": return AnyView(AddWizardDemoHost())
+        // Oura onboarding: the Add-device wizard deep-linked straight to the Oura factory-reset-and-adopt
+        // prep step (the Beta banner + get/lose card + the red irreversible-consent gate), screenshot-able
+        // WITHOUT a ring.
+        case "ouraonboarding": return AnyView(OuraOnboardingDemoHost())
+        // Oura device card: the locally-adopted Oura ring card (Beta chip + per-gen honest capability copy
+        // + battery + local-state note), rendered with mock data, no ring required.
+        case "ouradevice": return AnyView(OuraDeviceDemoScreen())
         default:         return nil
         }
     }
@@ -279,5 +286,16 @@ enum DemoScreens {
 private struct AddWizardDemoHost: View {
     @EnvironmentObject var live: LiveState
     var body: some View { AddDeviceWizard(live: live, onClose: {}) }
+}
+
+/// DEBUG-only host so `--demo-screen ouraonboarding` renders the Add-device wizard deep-linked to the
+/// Oura factory-reset-and-adopt prep step (the Beta banner + what-you-get/what-you-lose card + the red
+/// irreversible-consent gate). A SwiftUI View body is main-actor, so it can pull the injected LiveState
+/// and seed the wizard's `startAt` into the Oura prep step without a ring present.
+private struct OuraOnboardingDemoHost: View {
+    @EnvironmentObject var live: LiveState
+    var body: some View {
+        AddDeviceWizard(live: live, onClose: {}, startAt: (.oura, .prep))
+    }
 }
 #endif

@@ -19,10 +19,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Watch
@@ -71,7 +73,13 @@ import kotlinx.coroutines.launch
 // state and reloads it after every mutation via [reload].
 
 @Composable
-fun DevicesScreen(viewModel: AppViewModel) {
+fun DevicesScreen(
+    viewModel: AppViewModel,
+    /** Routes to the non-destructive file-import lane (Data Sources). The Oura adopt wizard's "Keep the
+     *  Oura app instead (import a file)" link and every honest Oura failure offer this. Defaults to a no-op
+     *  so existing call sites keep compiling; AppRoot wires it to navigate to Data Sources. */
+    onUseFileImport: () -> Unit = {},
+) {
     val scope = rememberCoroutineScope()
     val live by viewModel.live.collectAsStateWithLifecycle()
 
@@ -160,6 +168,9 @@ fun DevicesScreen(viewModel: AppViewModel) {
         AddDeviceWizard(
             viewModel = viewModel,
             onClose = { showAddWizard = false; reload() },
+            // The Oura gate's file-import links close the wizard and route to Data Sources, so the
+            // non-destructive lane is always one tap away (it is never the only door).
+            onUseFileImport = { showAddWizard = false; reload(); onUseFileImport() },
         )
     }
 
@@ -287,7 +298,23 @@ private fun DeviceCard(
                     Text(displayName(device), style = NoopType.headline, color = Palette.textPrimary)
                     Text(profile.displayModel, style = NoopType.subhead, color = Palette.textSecondary)
                 }
+                // Locally-adopted Oura is Beta: a non-dot Beta chip sits beside the usual state pill.
+                if (device.sourceKind == SourceKind.oura.name) {
+                    StatePill("Beta", tone = StrandTone.Warning, showsDot = false)
+                    Spacer(Modifier.width(6.dp))
+                }
                 StatePill(device, isActive, isLiveConnected)
+            }
+
+            // Honest local-takeover state row for an adopted Oura ring that is paired but not the
+            // active+connected source right now. States the single-owner reality plainly (if the ring was
+            // reset again or re-claimed in the Oura app, NOOP no longer owns it) without faking a live
+            // reading. Suppressed for the active+connected ring and for removed rings. Mirrors the macOS
+            // ouraLocalStateNote.
+            if (device.sourceKind == SourceKind.oura.name && !isLiveConnected &&
+                device.status == DeviceStatus.paired.name
+            ) {
+                OuraLocalStateNote()
             }
 
             // What this device CAPTURES — honest, per-model (not the generic stored set, which would
@@ -624,6 +651,7 @@ internal fun displayName(device: PairedDeviceRow): String {
 private fun deviceIcon(device: PairedDeviceRow): ImageVector = when {
     device.sourceKind == SourceKind.ftms.name -> Icons.AutoMirrored.Filled.DirectionsRun
     device.sourceKind == SourceKind.huami.name -> Icons.Filled.GraphicEq
+    device.sourceKind == SourceKind.oura.name -> Icons.Filled.Circle
     SourceCoordinator.isWhoop(device) -> Icons.Filled.Watch
     else -> Icons.Filled.FavoriteBorder
 }
@@ -663,6 +691,33 @@ private fun deviceProfile(device: PairedDeviceRow): DeviceCapabilityProfile {
             footnote = "Experimental: live heart rate where the band exposes it. Some bands need a pairing " +
                 "we can't do yet — NOOP will say so honestly and never show a made-up number. No sleep, " +
                 "recovery, skin temp, SpO₂ or steps.",
+        )
+    }
+    // EXPERIMENTAL locally-adopted Oura ring (gen 3/4/5). The gen is carried on `model` ("Oura Ring
+    // 3/4/5") and recovered with OuraRingGen.from(model). NOOP reads the ring's OWN raw signals + open
+    // HRV/sleep-phase tags and computes its own Charge/Effort/Rest; it NEVER reads Oura's encrypted
+    // Readiness/Sleep scores, and claims NO absolute SpO₂ %. Estimates carry "*"; a signal it can't read
+    // stays "-". Per-gen copy + the canonical Beta caveat (spec
+    // docs/superpowers/specs/2026-06-29-oura-onboarding-ux.md s3/s4). Mirrors the macOS Oura branch.
+    if (device.sourceKind == SourceKind.oura.name) {
+        val gen = com.noop.oura.OuraRingGen.from(device.model)
+        // gen3/4 are verified-shape; gen5 ("newer") carries the least-proven caveat.
+        val newer = gen == com.noop.oura.OuraRingGen.GEN5
+        val captures = if (newer)
+            "Heart rate* · HRV* · Sleep* · Resting HR* · Skin temp* · Battery*"
+        else
+            "Heart rate · HRV* · Sleep · Resting HR · Skin temp* · Battery"
+        val powers = if (newer)
+            "Powers Effort now; Charge and Rest once enough nights and decode are confirmed"
+        else
+            "Powers Charge, Effort, Rest and Sleep"
+        return DeviceCapabilityProfile(
+            displayModel = "${gen.displayName} (Beta)",
+            captures = captures,
+            powers = powers,
+            footnote = "Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, " +
+                "and HRV needs you to be still. No Oura Readiness or SpO₂ " +
+                "percentage comes off the ring (import an Oura file for those).",
         )
     }
     // Generic heart-rate strap: live HR + R-R only; drives the live console + Effort, nothing nightly.
@@ -716,6 +771,27 @@ private fun CapabilityInfoRow(icon: androidx.compose.ui.graphics.vector.ImageVec
     ) {
         Icon(icon, contentDescription = null, tint = Palette.textTertiary, modifier = Modifier.size(14.dp))
         Text(text, style = NoopType.caption, color = Palette.textSecondary)
+    }
+}
+
+/**
+ * Honest paired-but-not-connected note for a locally-adopted Oura ring (Beta). Amber heads-up, no
+ * fabricated reading: re-states the single-owner reality so the user understands why a re-reset or an Oura
+ * re-claim would break NOOP's ownership. Mirrors the macOS DeviceCard.ouraLocalStateNote (no em-dashes).
+ */
+@Composable
+private fun OuraLocalStateNote() {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.Top,
+    ) {
+        Icon(Icons.Filled.Info, contentDescription = null, tint = Palette.statusWarning, modifier = Modifier.size(14.dp))
+        Text(
+            "Paired locally. NOOP owns this ring while it holds the key. If you reset it again or set it " +
+                "up in the Oura app, NOOP no longer owns it and you would re-add it to take it over.",
+            style = NoopType.caption,
+            color = Palette.statusWarning,
+        )
     }
 }
 

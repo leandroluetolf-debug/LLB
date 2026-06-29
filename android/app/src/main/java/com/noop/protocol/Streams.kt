@@ -15,6 +15,36 @@ data class HrSample(val ts: Int, val bpm: Int)
 data class RrInterval(val ts: Int, val rrMs: Int)
 
 /**
+ * A raw-ADC SpO2 sample at wall-clock unix seconds [ts]. Mirrors the Room `Spo2Sample` (red/ir)
+ * and the Swift `SpO2Sample(red:ir:unit:)` shape so [StreamPersistence.toBatch] is a 1:1 widen.
+ * Historically only the type-47 historical-offload path produced these; the live carrier now also
+ * carries them so a single-value optical source (the Oura ring exposes ONE combined SpO2 reading,
+ * not separate red/ir channels) can flow live. Such a source puts its raw value in [red] and
+ * leaves [ir] at 0 (an unread channel, never a fabricated second reading).
+ *
+ * [unit] preserves the decoder's own scale tag (e.g. "raw_adc"/"raw"/"dc_raw") so a downstream
+ * reader never assumes a percentage. This mirrors the unit fidelity the Swift `SpO2Sample` carries,
+ * so the unit is not silently dropped on the Kotlin side at the carrier level. (The Room `Spo2Sample`
+ * entity has no unit column yet; the carrier-level tag documents the convention until a migration
+ * adds one.)
+ */
+data class Spo2Sample(val ts: Int, val red: Int, val ir: Int, val unit: String = "raw_adc")
+
+/**
+ * A skin-temperature sample at wall-clock unix seconds [ts]. Mirrors the Room `SkinTempSample` and
+ * the Swift `SkinTempSample(raw:unit:)` shape.
+ *
+ * UNIT CONVENTION (codebase-wide): [raw] is an integer in CENTI-degrees C (°C = raw / 100). The WHOOP
+ * @73 historical path stores raw at this scale and the analytics reader (AnalyticsEngine /
+ * wornNightlySkinTempC, both platforms) divides raw by 100 to recover °C. The live Oura path stores
+ * the SAME celsius * 100, so a given decoded celsius yields an IDENTICAL raw integer on Android and
+ * macOS. [unit] carries the scale tag ("centi_c") explicitly so it is never silently assumed; it
+ * mirrors the Swift `SkinTempSample.unit`. (The Room entity has no unit column yet; this carrier-level
+ * tag plus this comment document the convention until a migration adds one.)
+ */
+data class SkinTempSample(val ts: Int, val raw: Int, val unit: String = "raw_adc")
+
+/**
  * A device event. [ts] is real RTC unix seconds (already wall-clock, never offset). [kind] is the
  * event label (e.g. "BATTERY_LEVEL(3)", "WRIST_OFF(10)"); [payload] carries any extra decoded
  * fields with `event`/`event_timestamp` removed.
@@ -39,6 +69,10 @@ data class Streams(
     val rr: MutableList<RrInterval> = mutableListOf(),
     val events: MutableList<WhoopEvent> = mutableListOf(),
     val battery: MutableList<BatterySample> = mutableListOf(),
+    // spo2/skinTemp default empty so every existing WHOOP-path constructor/extractStreams call site is
+    // unchanged; only a source that decodes these biometric signals live (the Oura ring) populates them.
+    val spo2: MutableList<Spo2Sample> = mutableListOf(),
+    val skinTemp: MutableList<SkinTempSample> = mutableListOf(),
 ) {
     companion object {
         val EMPTY: Streams get() = Streams()

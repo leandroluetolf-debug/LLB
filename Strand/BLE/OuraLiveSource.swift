@@ -1,0 +1,763 @@
+import Foundation
+import Combine
+import CoreBluetooth
+import Security
+import WhoopProtocol
+import WhoopStore
+import OuraProtocol
+
+/// EXPERIMENTAL, ISOLATED live-BLE source for the Oura ring (gen 3/4/5), driven by the clean-room
+/// `OuraProtocol.OuraDriver`.
+///
+/// This is a real transport (it replaced an earlier honest dead-end probe): it decodes the ring's OWN
+/// raw signals + open event tags (HR / IBI / HRV / SpO2 / temp / sleep-phase / battery), persists them
+/// under the ring's `deviceId`, and lets NOOP compute its own Charge/Rest from those streams exactly like
+/// a WHOOP day. It NEVER reads or surfaces Oura's encrypted readiness/sleep scores (honest-data
+/// invariant), and when a signal can't be read it stays at "-", never a fabricated value (Huami precedent).
+///
+/// WHOOP-FIRST ISOLATION (identical to `StandardHRSource` / `HuamiHRSource`): this class runs its OWN
+/// `CBCentralManager` and never imports, calls, or shares state with `BLEManager` / `WhoopBleClient`. The
+/// WHOOP path cannot regress. The only shared surfaces are `LiveState` and the injected closures
+/// (`persist`, `log`, `onBattery`). All BLE specifics live here; all protocol specifics live in the pure,
+/// headless-testable `OuraDriver` (no CoreBluetooth in that package).
+///
+/// Honest about the handshake, step by step:
+///   1. Scan for the Oura GATT service and filter discoveries by `OuraRingGen.recognise`.
+///   2. Connect, discover the write/notify characteristics, enable notifications on ...0003.
+///   3. Run the application auth challenge through `OuraDriver` (GetAuthNonce -> compute proof ->
+///      Authenticate). The 16-byte install key is injected via `authKey`; when it is nil (or auth fails
+///      because the ring is in factory reset / wrong key) we surface an HONEST `needsPairing` message and
+///      stream NO data rather than faking one.
+///   3a. ADOPT (factory-reset ring + explicit consent only): when the ring is in factory reset (auth status
+///      `inFactoryReset` / no key) AND `adoptIntent == true`, the transport PROVISIONS a fresh 16-byte key:
+///      it writes the dangerous `0x24` install, awaits the `0x25` OK ack, persists the key to `OuraKeyStore`,
+///      then re-runs auth with the new key (s3.2). Without `adoptIntent` the dangerous opcode is NEVER sent;
+///      we announce needs-pairing instead. A failed install is honest (Failed), never a fake success.
+///   4. On auth success, run the gen-appropriate live-HR enable triplet; HR/IBI then streams as 0x2F
+///      sub-op 0x28 pushes which the driver decodes.
+///   5. Decoded events map onto `Streams` via `OuraStreamMapping` and persist in 30/30s batches; live HR
+///      also feeds `LiveState`; battery feeds `onBattery`.
+@MainActor
+public final class OuraLiveSource: NSObject, ObservableObject {
+
+    // MARK: - Public model
+
+    /// An Oura ring seen during a scan.
+    public struct DiscoveredRing: Identifiable, Equatable {
+        public let id: UUID
+        public let name: String
+        public let rssi: Int
+        /// Best-effort generation guess from the advertised name (confirmed by the model the user picks).
+        public let detectedGen: OuraRingGen?
+    }
+
+    /// The coarse adopt outcome the wizard observes while it is in its "Taking over your ring" state, so it
+    /// can drive Adopting -> success (on `.streaming`/connected) and Adopting -> an honest Failed (on
+    /// `.failed`). It is ONLY meaningful for an adopt-intent connection; a read-only connect stays `.idle`
+    /// until it streams (or surfaces `needsPairing`). PARITY: the Android twin exposes the same coarse
+    /// adopt outcome the Compose wizard observes to leave its Adopting step.
+    public enum AdoptPhase: Equatable, Sendable {
+        case idle            // no adopt in flight (the default; a read-only connect never leaves this until streaming)
+        case installingKey   // the dangerous 0x24 install was written; awaiting the 0x25 ack (an install IS running)
+        case streaming       // auth (re-auth on the adopt path) succeeded and HR/IBI is streaming: adoption complete
+        case failed          // an honest dead-end (no ack / ack != OK / re-auth failed / no key): never a fake success
+    }
+
+    @Published public private(set) var discovered: [DiscoveredRing] = []
+    @Published public private(set) var scanning: Bool = false
+    @Published public private(set) var batteryPct: Int? = nil
+    /// Set to an HONEST explanation string when the ring needs a pairing/key handshake NOOP can't complete
+    /// (no install key, or the ring is in factory reset, or the key was rejected). nil otherwise. The UI
+    /// surfaces this instead of a fake reading. Cleared on stop/disconnect.
+    @Published public private(set) var needsPairing: String? = nil
+    /// The live adopt outcome (see `AdoptPhase`). The wizard observes this to leave its Adopting step. Reset
+    /// to `.idle` on every connect/stop/disconnect so a stale outcome never drives a transition.
+    @Published public private(set) var adoptPhase: AdoptPhase = .idle
+
+    // MARK: - BLE UUIDs (from the platform-pure OuraGatt facts)
+
+    /// The Oura base service (gen3/4/5). `OuraGatt` keeps the raw strings so the package stays
+    /// CoreBluetooth-free; the app turns them into `CBUUID` here.
+    private static let service = CBUUID(string: OuraGatt.serviceUUID)
+    private static let writeChar = CBUUID(string: OuraGatt.writeCharacteristicUUID)
+    private static let notifyChar = CBUUID(string: OuraGatt.notifyCharacteristicUUID)
+
+    /// The `0x25` SetAuthKey-response outer opcode (`25 01 <status>`, status `0x00` = OK). Per
+    /// OURA_PROTOCOL.md s3.2. This is the install-ack the adopt key-install awaits.
+    private static let setAuthKeyRespOp: UInt8 = 0x25
+
+    // MARK: - Dependencies (injected - no BLEManager / WhoopBleClient reference)
+
+    private let live: LiveState
+    private let deviceId: String
+    private let persist: (Streams) -> Void
+    private let log: (String) -> Void
+    private let onBattery: (Int) -> Void
+    /// The ring generation (carried on `PairedDevice.model`, recovered via `OuraRingGen.from(model:)`).
+    /// Selects the MTU clamp, which characteristics to discover, and the live-HR command set.
+    private let ringGen: OuraRingGen
+    /// Supplies the 16-byte application install key (from the Keychain) for this ring, or nil. A nil key
+    /// drives the honest `needsPairing` path: the driver answers `.needsKeyInstall` and we never fake data.
+    private let authKey: () -> Data?
+    /// When false (the wizard's discovery-only scanner) this source never writes `LiveState` or persists.
+    private let feedsLive: Bool
+    /// EXPLICIT, USER-GRANTED adopt consent for THIS connection. Default FALSE. The dangerous installKey
+    /// opcode (`0x24`) may be sent ONLY when this is true: it is what gates the post-factory-reset key
+    /// provisioning (s3.2). It is set true by the adopt flow AFTER the wizard's irreversible-consent gate
+    /// (the consent tick AND the "Take over this ring?" confirm), and it gates the driver's `allowKeyInstall`
+    /// so a read-only / Advanced-key connection can NEVER install a key. Set once at construction (the
+    /// coordinator builds a fresh source per connection, so a new value just means a new source).
+    private let adoptIntent: Bool
+
+    // MARK: - Protocol state machine (pure - holds NO BLE handle)
+
+    /// The transport-agnostic driver. Re-created on each connect so a fresh session re-runs auth (the
+    /// app key is session-scoped). nil until a connection begins.
+    private var driver: OuraDriver?
+    /// Reassembles notification fragments into complete TLV inner records across feeds.
+    private let reassembler = OuraReassembler()
+
+    /// Logs the FIRST live HR sample of a connection only (never every push); reset on stop/disconnect.
+    private var loggedFirstHR = false
+    /// True once the live-HR stream has been requested, so the disconnect handler can tell "we never got
+    /// authenticated/streaming" (-> honest note) from "the link just dropped".
+    private var reachedStreaming = false
+    /// The freshly-generated 16-byte key written to the ring during an adopt key install. Held in memory
+    /// ONLY between writing the `0x24` install and receiving the `0x25` ack: it is persisted to the keystore
+    /// ONLY on an OK ack (so a failed/absent ack never leaves a key the next session would wrongly trust).
+    /// Cleared on stop/disconnect/failure.
+    private var pendingInstallKey: Data?
+
+    // MARK: - CoreBluetooth state (OWN central, separate from WHOOP)
+
+    private var central: CBCentralManager!
+    private var peripheral: CBPeripheral?
+    private var writeCharacteristic: CBCharacteristic?
+    /// A peripheral asked to connect before `centralManagerDidUpdateState` reported `.poweredOn`.
+    private var pendingConnectID: UUID?
+    /// Peripherals retained by identifier so a chosen one survives until connection (exact
+    /// StandardHRSource seenPeripherals/pendingConnectID/retrievePeripherals pattern).
+    private var seenPeripherals: [UUID: CBPeripheral] = [:]
+
+    // MARK: - Sample buffer
+
+    /// Buffered decoded events, flushed to `persist` in batches to keep the write path off the
+    /// per-notification hot loop. Each entry carries the arrival wall-clock `ts` (the events themselves
+    /// only carry a ring-clock value, so the transport stamps wall-clock, exactly as the Standard path).
+    private var buffer: [(events: [OuraEvent], ts: Int)] = []
+    private var lastFlush: Date = .init()
+    private let flushCount = 30
+    private let flushInterval: TimeInterval = 30
+
+    // MARK: - Live-HR re-engagement
+
+    /// Daytime-HR auto-reverts after ~20 s (OURA_PROTOCOL.md s5.7), so while a live session is open we
+    /// re-send the enable+subscribe every ~15 s. nil when no session is streaming.
+    private var reengageTimer: Timer?
+    private let reengageInterval: TimeInterval = 15
+
+    // MARK: - Init
+
+    /// - Parameters:
+    ///   - live: the shared `LiveState` the Live UI observes.
+    ///   - deviceId: the datastore device id these samples are attributed to.
+    ///   - ringGen: the ring generation (selects MTU clamp + command set).
+    ///   - authKey: supplies the 16-byte install key from the Keychain, or nil to drive `needsPairing`.
+    ///   - persist: wired by the app to `store.insert(_, deviceId:)`. Called on the main actor.
+    ///   - log: connect-lifecycle diagnostics sink, wired at the composition root to the same strap log
+    ///     `BLEManager` writes to (issue #421). Every line is prefixed "Oura: ". Defaults to a no-op.
+    ///   - onBattery: fired with the ring's battery percent (0-100). Default no-op.
+    ///   - feedsLive: when false (the discovery-only wizard scanner) this source never touches LiveState
+    ///     or persists. Default true.
+    ///   - adoptIntent: EXPLICIT user-granted adopt consent for this connection. Default FALSE. Only when
+    ///     true may the dangerous `0x24` installKey opcode ever be sent (the post-factory-reset provisioning,
+    ///     s3.2). The standard live path leaves it false (read-only / Advanced-key), so a key is NEVER
+    ///     installed outside the wizard's irreversible-consent adopt flow.
+    public init(live: LiveState,
+                deviceId: String,
+                ringGen: OuraRingGen,
+                authKey: @escaping () -> Data?,
+                persist: @escaping (Streams) -> Void = { _ in },
+                log: @escaping (String) -> Void = { _ in },
+                onBattery: @escaping (Int) -> Void = { _ in },
+                feedsLive: Bool = true,
+                adoptIntent: Bool = false) {
+        self.live = live
+        self.deviceId = deviceId
+        self.ringGen = ringGen
+        self.authKey = authKey
+        self.persist = persist
+        self.log = log
+        self.onBattery = onBattery
+        self.feedsLive = feedsLive
+        self.adoptIntent = adoptIntent
+        super.init()
+        // Dedicated queue-less central -> callbacks arrive on the main queue, matching @MainActor.
+        self.central = CBCentralManager(delegate: self, queue: nil)
+    }
+
+    // MARK: - Scanning
+
+    /// Scan for Oura rings advertising the Oura GATT service, keeping only ones the ring-gen recogniser
+    /// accepts as an Oura ring.
+    public func scan() {
+        discovered.removeAll()
+        seenPeripherals.removeAll()
+        scanning = true
+        needsPairing = nil
+        log("Oura: scanning for an Oura ring (service \(OuraGatt.serviceUUID))")
+        guard central.state == .poweredOn else {
+            log("Oura: Bluetooth not powered on (state=\(central.state.rawValue)) - scan deferred until ready")
+            return
+        }
+        central.scanForPeripherals(withServices: [Self.service],
+                                   options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+    }
+
+    public func stopScan() {
+        scanning = false
+        if central.state == .poweredOn { central.stopScan() }
+    }
+
+    // MARK: - Connecting
+
+    /// Connect to the chosen ring and start the auth -> enable -> stream flow. Mirrors the
+    /// StandardHRSource cached-by-identifier-first, else scan-then-connect pattern.
+    public func connect(_ id: UUID) {
+        stopScan()
+        needsPairing = nil
+        let p = seenPeripherals[id] ?? central.retrievePeripherals(withIdentifiers: [id]).first
+        guard let p else {
+            // Never seen by this Mac/iPhone yet -> remember it and scan; didDiscover connects on sight.
+            pendingConnectID = id
+            log("Oura: ring \(id) not cached yet - scanning to find it")
+            scan()
+            return
+        }
+        seenPeripherals[id] = p
+        peripheral = p
+        p.delegate = self
+        guard central.state == .poweredOn else {
+            pendingConnectID = id
+            log("Oura: Bluetooth not powered on - connect to \(id) deferred until ready")
+            return
+        }
+        log("Oura: connecting to \(id)")
+        central.connect(p, options: nil)
+    }
+
+    /// Tear down: cancel the connection, stop scanning, flush, clear all transient state. Idempotent.
+    public func stop() {
+        stopScan()
+        pendingConnectID = nil
+        stopReengageTimer()
+        if let p = peripheral { central.cancelPeripheralConnection(p) }
+        peripheral = nil
+        writeCharacteristic = nil
+        driver?.stop()
+        driver = nil
+        reassembler.reset()
+        loggedFirstHR = false
+        reachedStreaming = false
+        pendingInstallKey = nil
+        adoptPhase = .idle
+        batteryPct = nil
+        needsPairing = nil
+        flush()                       // persist anything still buffered
+        if feedsLive { live.connected = false }
+    }
+
+    // MARK: - Driver wiring
+
+    /// Write the bytes for each command the driver returned, logging the label only (never an address).
+    private func write(_ commands: [OuraCommand]) {
+        guard let peripheral, let writeCharacteristic else { return }
+        let mtuPayload = ringGen.maxWritePayload   // gen-appropriate clamp (gen3=200, gen4/5=244)
+        for cmd in commands {
+            guard cmd.bytes.count <= mtuPayload else {
+                log("Oura: skipping \(cmd.label) - \(cmd.bytes.count)B exceeds the \(mtuPayload)B write window")
+                continue
+            }
+            log("Oura: -> \(cmd.label)")
+            peripheral.writeValue(Data(cmd.bytes), for: writeCharacteristic, type: .withoutResponse)
+        }
+    }
+
+    /// Advance the driver with a transition and write whatever it asks for next.
+    private func advance(_ transition: OuraTransition) {
+        guard let driver else { return }
+        let commands = driver.nextStep(after: transition)
+        write(commands)
+        // Surface the driver's coarse phase honestly into the UI state.
+        switch driver.phase {
+        case .needsKeyInstall:
+            // A factory-reset ring (auth status inFactoryReset) or no key available. The dangerous key
+            // install is the ONLY thing that recovers it, and ONLY with explicit adopt consent: provision
+            // when `adoptIntent`, otherwise stay honest (never loop the dangerous command).
+            if adoptIntent {
+                provisionKeyInstall()
+            } else {
+                announceNeedsPairing(reason: .factoryResetOrNoKey)
+            }
+        case .authFailed(let status):
+            announceNeedsPairing(reason: .authFailed(status))
+        case .streaming:
+            if !reachedStreaming {
+                reachedStreaming = true
+                adoptPhase = .streaming   // re-auth after an install (or a normal auth) reached the stream: adoption complete
+                pendingInstallKey = nil   // an OK ack already persisted the key; nothing left in flight
+                log("Oura: live-HR enabled - streaming HR / IBI")
+                startReengageTimer()
+            }
+        default:
+            break
+        }
+    }
+
+    // MARK: - Adopt key-install handshake (s3.2) - ONLY ever reached with explicit adopt consent
+
+    /// PROVISION a fresh key into a factory-reset ring (OURA_PROTOCOL.md s3.2). Reached ONLY from `advance`
+    /// when `driver.phase == .needsKeyInstall` AND `adoptIntent == true`. Steps: (1) generate a fresh
+    /// cryptographically-random 16-byte key; (2) ask the driver for the dangerous `24 10 <key>` install
+    /// command (the driver's own `allowKeyInstall`/phase gate is the second guard) and write it; (3) hold the
+    /// key in memory and mark `.installingKey` (an install IS now running). The key is NOT persisted yet: it
+    /// is written to the keystore only once the ring acks OK (`handleKeyInstallAck`), so a failed install
+    /// never leaves a key the next session would wrongly trust. On any build/RNG failure we stay honest.
+    private func provisionKeyInstall() {
+        guard adoptIntent else { return }                 // belt-and-braces: never provision without consent
+        guard pendingInstallKey == nil else { return }    // an install is already in flight; don't double-send
+        guard let driver else { return }
+        guard let key = Self.randomInstallKey() else {
+            announceNeedsPairing(reason: .installFailed("could not generate a key"))
+            return
+        }
+        guard let cmd = driver.beginKeyInstall(key: [UInt8](key)) else {
+            // The driver refused (wrong phase / not allowed / build failed): stay honest, never retry blind.
+            announceNeedsPairing(reason: .installFailed("the install command could not be prepared"))
+            return
+        }
+        pendingInstallKey = key
+        adoptPhase = .installingKey
+        log("Oura: installing NOOP's key on the reset ring")
+        write([cmd])
+    }
+
+    /// Handle the ring's `0x25` SetAuthKey ack (OURA_PROTOCOL.md s3.2: `25 01 00`, status byte `0x00` = OK).
+    /// On OK: persist the freshly-provisioned key under this `deviceId` (so every future session authenticates
+    /// with it), then drive the driver's `keyInstallAcknowledged()` to re-run the auth handshake (GetAuthNonce
+    /// then Authenticate) with the NEW key. On a non-OK status (or a missing pending key) announce an honest
+    /// failure and do NOT retry the dangerous command.
+    private func handleKeyInstallAck(status: UInt8) {
+        guard let driver, let key = pendingInstallKey else { return }
+        guard status == 0x00 else {
+            announceNeedsPairing(reason: .installFailed("the ring did not accept the key (status \(status))"))
+            return
+        }
+        // Persist ONLY on OK, so a failed/absent ack never leaves a wrongly-trusted key behind.
+        guard OuraKeyStore.save(key, deviceId: deviceId) else {
+            announceNeedsPairing(reason: .installFailed("the installed key could not be stored"))
+            return
+        }
+        log("Oura: key installed and stored - re-running auth with the new key")
+        pendingInstallKey = nil
+        // Re-auth with the freshly-installed key. The driver returns enable-notify + get-nonce; the nonce
+        // response then flows through the normal handleSecure -> advance path to streaming.
+        write(driver.keyInstallAcknowledged())
+    }
+
+    /// A fresh 16-byte application key for the adopt install, from the system CSPRNG. Per OURA_PROTOCOL.md
+    /// s3 the key is exactly 16 bytes; `SecRandomCopyBytes` is the same CSPRNG the rest of the app relies on.
+    /// Returns nil if the RNG fails (then the caller stays honest rather than installing a weak key).
+    private static func randomInstallKey() -> Data? {
+        var bytes = [UInt8](repeating: 0, count: OuraKeyStore.keyLength)
+        guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else { return nil }
+        return Data(bytes)
+    }
+
+    // MARK: - Buffer / persistence
+
+    private func enqueue(_ events: [OuraEvent]) {
+        guard !events.isEmpty else { return }
+        buffer.append((events: events, ts: Int(Date().timeIntervalSince1970)))
+        if buffer.count >= flushCount || Date().timeIntervalSince(lastFlush) >= flushInterval {
+            flush()
+        }
+    }
+
+    private func flush() {
+        guard feedsLive, !buffer.isEmpty else { lastFlush = Date(); return }
+        for entry in buffer {
+            // Pure, unit-tested mapping (events -> Streams) keyed by arrival wall-clock ts. A signal that
+            // could not be decoded never reaches here, so a missing stream stays empty, never faked.
+            persist(OuraStreamMapping.streams(from: entry.events, at: entry.ts))
+        }
+        buffer.removeAll()
+        lastFlush = Date()
+    }
+
+    // MARK: - Live ingest
+
+    /// Fold decoded events into live state (HR / R-R) + the persist buffer. Battery is surfaced
+    /// immediately (it is a status, not a sample row). Out-of-range HR is dropped, never shown.
+    private func ingest(_ events: [OuraEvent]) {
+        guard !events.isEmpty else { return }
+        for e in events {
+            switch e {
+            case .hr(let hr):
+                guard hr.bpm >= 30, hr.bpm <= 220 else { continue }   // physiological gate
+                if !loggedFirstHR {
+                    loggedFirstHR = true
+                    log("Oura: receiving live data - first HR \(hr.bpm) bpm")
+                }
+                if feedsLive {
+                    live.heartRate = hr.bpm
+                    live.connected = true
+                }
+            case .ibi(let ibi):
+                if feedsLive { live.setRRIntervals([ibi.ibiMs]) }
+            case .battery(let bat):
+                batteryPct = bat.percent
+                onBattery(bat.percent)
+                log("Oura: battery \(bat.percent)%")
+            default:
+                break   // HRV / SpO2 / temp / sleep-phase persist via the buffer, not live state
+            }
+        }
+        // Everything decoded (incl. HR/IBI) also persists so the day scores like a WHOOP day.
+        enqueue(events)
+    }
+
+    // MARK: - Re-engagement timer (daytime-HR auto-reverts ~20s)
+
+    private func startReengageTimer() {
+        stopReengageTimer()
+        let t = Timer.scheduledTimer(withTimeInterval: reengageInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.reengageLiveHR() }
+        }
+        reengageTimer = t
+    }
+
+    private func stopReengageTimer() {
+        reengageTimer?.invalidate()
+        reengageTimer = nil
+    }
+
+    /// Re-send the live-HR enable+subscribe so the ~20 s auto-revert never silently stops the stream.
+    private func reengageLiveHR() {
+        guard let driver, reachedStreaming else { return }
+        write(driver.reengageLiveHRCommands())
+    }
+
+    // MARK: - Honest needs-pairing fallback (Huami precedent)
+
+    private enum NeedsPairingReason {
+        case factoryResetOrNoKey
+        case authFailed(OuraAuthStatus)
+        case installFailed(String)
+    }
+
+    /// Record + log the honest "this ring needs a pairing handshake NOOP can't complete" outcome (once),
+    /// and drop the link so no half-authenticated session lingers. We never fabricate a reading. Also marks
+    /// `adoptPhase = .failed` so an in-flight adopt's Adopting step lands on a REACHABLE honest Failed state
+    /// (file-import + Advanced-key fallbacks), and clears any in-flight install key WITHOUT persisting it (a
+    /// failed install must never leave a wrongly-trusted key). RECOVERY-HONEST: a factory-reset ring is NOT
+    /// bricked; re-pairing it in the Oura app brings it back. We never claim a key was installed here.
+    private func announceNeedsPairing(reason: NeedsPairingReason) {
+        // A failed install must drop its pending key whether or not this is the first announce.
+        pendingInstallKey = nil
+        adoptPhase = .failed
+        guard needsPairing == nil else { return }
+        let detail: String
+        switch reason {
+        case .factoryResetOrNoKey:
+            detail = "NOOP needs the ring's install key to read it live, and that pairing handshake isn't set up yet."
+        case .authFailed(let status):
+            detail = "The ring rejected the pairing handshake (status \(status.rawValue))."
+        case .installFailed(let why):
+            detail = "NOOP couldn't take over this ring (\(why))."
+        }
+        let recovery = " The ring isn't bricked: re-pair it in the Oura app to recover it."
+        let msg = detail + " Live data isn't available - export from the Oura app and import the file instead." + recovery
+        needsPairing = msg
+        log("Oura: \(msg)")
+        stopReengageTimer()
+        if feedsLive { live.connected = false }
+        if let p = peripheral { central.cancelPeripheralConnection(p) }
+    }
+
+    // CB delegate callbacks live in the @preconcurrency extensions below. The queue-less central delivers
+    // them on the main thread, so MainActor isolation is sound; @preconcurrency lets this @MainActor type
+    // satisfy the nonisolated CoreBluetooth requirements (same pattern as StandardHRSource / BLEManager).
+}
+
+// MARK: - CBCentralManagerDelegate
+
+extension OuraLiveSource: @preconcurrency CBCentralManagerDelegate {
+    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+        case .poweredOn:
+            // Replay any intent that arrived before the radio was ready.
+            if let id = pendingConnectID, let p = seenPeripherals[id] {
+                pendingConnectID = nil
+                central.connect(p, options: nil)
+            } else if scanning {
+                central.scanForPeripherals(withServices: [Self.service],
+                                           options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+            }
+        default:
+            // Radio off / unauthorized / resetting -> the link is not live.
+            if feedsLive { live.connected = false }
+        }
+    }
+
+    public func centralManager(_ central: CBCentralManager,
+                               didDiscover peripheral: CBPeripheral,
+                               advertisementData: [String: Any],
+                               rssi RSSI: NSNumber) {
+        let advName = advertisementData[CBAdvertisementDataLocalNameKey] as? String
+        let name = advName ?? peripheral.name ?? ""
+        // The scan already filters on the Oura service, but re-check the name through the gen recogniser
+        // so a coincidental service match without an Oura-shaped name is dropped (best-effort).
+        let detectedGen = OuraRingGen.recognise(advertisedName: name)
+        let id = peripheral.identifier
+        let firstSight = seenPeripherals[id] == nil
+        seenPeripherals[id] = peripheral
+        if firstSight { log("Oura: found \(name.isEmpty ? "Oura ring" : name) (\(id)) rssi \(RSSI.intValue)") }
+        let ring = DiscoveredRing(id: id,
+                                  name: name.isEmpty ? "Oura" : name,
+                                  rssi: RSSI.intValue,
+                                  detectedGen: detectedGen)
+        if let idx = discovered.firstIndex(where: { $0.id == id }) {
+            discovered[idx] = ring
+        } else {
+            discovered.append(ring)
+        }
+        // If we were scanning specifically to reach this ring (a not-yet-cached active ring), connect now.
+        if pendingConnectID == id {
+            pendingConnectID = nil
+            connect(id)
+        }
+    }
+
+    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        log("Oura: connected - discovering services")
+        peripheral.delegate = self
+        // Fresh driver per connection so a new session re-runs auth (the app key is session-scoped). The
+        // driver's `allowKeyInstall` is gated on this connection's adopt consent ONLY: with no consent the
+        // dangerous `0x24` installKey can never be sequenced, so a read-only / Advanced-key connect stays
+        // honest (it announces needs-pairing instead of provisioning). Per OURA_PROTOCOL.md s3.2.
+        driver = OuraDriver(ringGen: ringGen,
+                            authKey: authKey().map { [UInt8]($0) },
+                            allowKeyInstall: adoptIntent)
+        reachedStreaming = false
+        loggedFirstHR = false
+        pendingInstallKey = nil
+        adoptPhase = .idle
+        reassembler.reset()
+        peripheral.discoverServices([Self.service])
+    }
+
+    public func centralManager(_ central: CBCentralManager,
+                               didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        log("Oura: WARNING failed to connect - \(error?.localizedDescription ?? "unknown error")")
+        if feedsLive { live.connected = false }
+    }
+
+    public func centralManager(_ central: CBCentralManager,
+                               didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+        if let error = error {
+            log("Oura: disconnected - \(error.localizedDescription)")
+        } else {
+            log("Oura: disconnected (clean)")
+        }
+        stopReengageTimer()
+        driver?.stop()
+        driver = nil
+        reassembler.reset()
+        writeCharacteristic = nil
+        loggedFirstHR = false
+        reachedStreaming = false
+        pendingInstallKey = nil
+        // A disconnect MID-install is an honest failure (no ack came); a disconnect after streaming leaves
+        // the completed `.streaming` outcome intact so the wizard's success transition isn't undone.
+        if adoptPhase == .installingKey { adoptPhase = .failed }
+        batteryPct = nil
+        flush()
+        if feedsLive { live.connected = false }
+        if self.peripheral?.identifier == peripheral.identifier { self.peripheral = nil }
+    }
+}
+
+// MARK: - CBPeripheralDelegate
+
+extension OuraLiveSource: @preconcurrency CBPeripheralDelegate {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        if let error = error {
+            log("Oura: WARNING service discovery failed - \(error.localizedDescription)")
+            return
+        }
+        guard let services = peripheral.services else {
+            log("Oura: services discovered but the list was empty")
+            return
+        }
+        guard let svc = services.first(where: { $0.uuid == Self.service }) else {
+            log("Oura: Oura service NOT FOUND - this ring may not expose the expected GATT layout")
+            return
+        }
+        log("Oura: Oura service found - discovering characteristics")
+        // Discover the write + notify chars (gen5 also advertises ...0004/5/6, which v1 discovers but
+        // never writes to). RingGen drives which to discover.
+        let charUUIDs = OuraGatt.characteristicUUIDs(for: ringGen).map { CBUUID(string: $0) }
+        peripheral.discoverCharacteristics(charUUIDs, for: svc)
+    }
+
+    public func peripheral(_ peripheral: CBPeripheral,
+                           didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        if let error = error {
+            log("Oura: WARNING characteristic discovery failed - \(error.localizedDescription)")
+            return
+        }
+        guard let chars = service.characteristics else {
+            log("Oura: characteristics discovered but the list was empty")
+            return
+        }
+        if let wc = chars.first(where: { $0.uuid == Self.writeChar }) {
+            writeCharacteristic = wc
+            log("Oura: write characteristic found")
+        } else {
+            log("Oura: write characteristic NOT FOUND - cannot drive the ring")
+        }
+        if let nc = chars.first(where: { $0.uuid == Self.notifyChar }) {
+            log("Oura: notify characteristic found - enabling notifications")
+            peripheral.setNotifyValue(true, for: nc)
+        } else {
+            log("Oura: notify characteristic NOT FOUND - cannot read the ring")
+        }
+    }
+
+    public func peripheral(_ peripheral: CBPeripheral,
+                           didUpdateNotificationStateFor characteristic: CBCharacteristic,
+                           error: Error?) {
+        guard characteristic.uuid == Self.notifyChar else { return }
+        if let error = error {
+            log("Oura: WARNING enabling notifications FAILED - \(error.localizedDescription) - ring will send no data")
+            return
+        }
+        log("Oura: notifications enabled (isNotifying=\(characteristic.isNotifying)) - beginning auth")
+        // Notifications are live: tell the driver we're ready. It returns the auth-nonce request (or, with
+        // no key, drives the honest needs-pairing path).
+        advance(.ready)
+    }
+
+    public func peripheral(_ peripheral: CBPeripheral,
+                           didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        guard error == nil, let value = characteristic.value, characteristic.uuid == Self.notifyChar else { return }
+        let bytes = [UInt8](value)
+        // The notify char carries TWO framings on the same channel (OURA_PROTOCOL.md s2):
+        //   - 0x2F secure-session sub-frames (auth nonce/status, enable ACKs, live-HR pushes)
+        //   - inner TLV event records (IBI / HRV / SpO2 / temp / sleep-phase / battery)
+        // Split the notification into outer frames; route 0x2F ones through the driver's secure handler,
+        // and feed the remainder to the reassembler as TLV records.
+        guard let driver else { return }
+        let frames = OuraFraming.parseOuterFrames(bytes)
+        // The `0x25` SetAuthKey-response is an OUTER frame (NOT a 0x2F secure sub-frame): `25 01 <status>`,
+        // status `0x00` = OK (OURA_PROTOCOL.md s3.2). It only ever arrives during an adopt install we
+        // initiated, so handle it ONLY while a key install is pending; otherwise it is ignored (never fed to
+        // the TLV decoder, where its op byte would be misread as a record type). Per OURA_PROTOCOL.md s3.2.
+        if pendingInstallKey != nil,
+           let ackFrame = frames.first(where: { $0.op == Self.setAuthKeyRespOp }) {
+            handleKeyInstallAck(status: ackFrame.body.first ?? 0xFF)
+            return
+        }
+        if frames.contains(where: { $0.op == OuraFraming.secureSessionOp }) {
+            for frame in frames where frame.op == OuraFraming.secureSessionOp {
+                guard let secure = OuraFraming.parseSecureFrame(frame) else { continue }
+                handleSecure(driver.handleSecureFrame(secure))
+            }
+            // Any non-secure outer frames in the same notification are TLV records; fall through to decode.
+            // The 0x25 ack (if any) is consumed above, so it never reaches here.
+            let tlvBytes = frames.filter { $0.op != OuraFraming.secureSessionOp && $0.op != Self.setAuthKeyRespOp }
+                                 .flatMap { [$0.op, UInt8($0.body.count)] + $0.body }
+            if !tlvBytes.isEmpty {
+                ingest(driver.ingest(notification: tlvBytes, reassembler: reassembler))
+            }
+            return
+        }
+        // No secure frame in this notification: treat the whole value as TLV record bytes.
+        ingest(driver.ingest(notification: bytes, reassembler: reassembler))
+    }
+
+    /// Act on what the driver resolved a 0x2F secure sub-frame to.
+    private func handleSecure(_ routing: OuraDriver.SecureRouting) {
+        switch routing {
+        case .nonce(let nonce):
+            log("Oura: auth nonce received - submitting proof")
+            advance(.nonceReceived(nonce))
+        case .authStatus(let status):
+            if status.isSuccess {
+                log("Oura: auth OK - enabling live HR")
+            } else {
+                log("Oura: WARNING auth status \(status.rawValue)")
+            }
+            advance(.authCompleted(status))
+        case .enableAck:
+            advance(.enableAckReceived)
+        case .liveHRPush(let body):
+            guard let driver else { return }
+            ingest(driver.ingestLiveHRPush(body: body))
+        case .unhandled:
+            break
+        }
+    }
+}
+
+// MARK: - Oura install-key Keychain accessor
+
+/// Keychain Services wrapper for the per-ring 16-byte Oura application install key. Mirrors the
+/// `AIKeyStore` generic-password pattern (`Strand/AI/AICoach.swift`) so the key never lands in
+/// UserDefaults, a plist, or on disk in the clear. The key is scoped per `deviceId` (the `account`), so
+/// each registered ring has its own item. The install key is written here from exactly two places: the
+/// adopt key-install handshake (on an OK `0x25` ack, `OuraLiveSource.handleKeyInstallAck`) and the wizard's
+/// Advanced "I already have my ring's key" path. This accessor only stores/reads/clears it.
+public enum OuraKeyStore {
+    private static let service = "com.noop.oura.installkey"
+    /// The fixed key length per OURA_PROTOCOL.md s3 (16-byte application auth key).
+    public static let keyLength = 16
+
+    private static func baseQuery(deviceId: String) -> [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: deviceId,
+        ]
+    }
+
+    /// Store (or replace) the 16-byte install key for `deviceId`. A wrong-length key is rejected (no
+    /// partial key is ever stored, so a later read can't return a malformed key).
+    @discardableResult
+    public static func save(_ key: Data, deviceId: String) -> Bool {
+        guard key.count == keyLength else { return false }
+        SecItemDelete(baseQuery(deviceId: deviceId) as CFDictionary)
+        var attrs = baseQuery(deviceId: deviceId)
+        attrs[kSecValueData as String] = key
+        attrs[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        return SecItemAdd(attrs as CFDictionary, nil) == errSecSuccess
+    }
+
+    /// Read the stored 16-byte install key for `deviceId`, or nil if none is set (or the stored item is
+    /// the wrong length, which is treated as absent so the honest needs-pairing path runs).
+    public static func read(deviceId: String) -> Data? {
+        var query = baseQuery(deviceId: deviceId)
+        query[kSecReturnData as String] = kCFBooleanTrue
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        guard status == errSecSuccess, let data = item as? Data, data.count == keyLength else { return nil }
+        return data
+    }
+
+    /// Remove the stored install key for `deviceId`.
+    public static func clear(deviceId: String) {
+        SecItemDelete(baseQuery(deviceId: deviceId) as CFDictionary)
+    }
+}
