@@ -7,7 +7,7 @@ enum AppChangelog {
 
     /// Bump this when you add a release below. The "What's New" sheet shows automatically when the
     /// stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
-    static let currentVersion = "7.5.0"
+    static let currentVersion = "7.6.0"
 
     struct Release: Identifiable {
         let version: String
@@ -19,6 +19,16 @@ enum AppChangelog {
 
     /// Newest first.
     static let releases: [Release] = [
+        Release(
+            version: "7.6.0",
+            title: "Faster, smoother, more languages, and a big pile of fixes",
+            date: "June 2026",
+            items: [
+                "**Faster, with a lot of fixes.** The lag after importing Apple Health data is gone, Today opens on today again after an update (not your first ever day), the active-workout stats no longer get cut off, and the alarm page reads correctly.",
+                "**Your imports go further.** Workouts now come in from Apple Health, Health Connect days that arrived as an import now earn their own Charge and Rest, the Oura file import accepts more export shapes, and Back up to a folder works on iPhone.",
+                "**Now in Spanish and Italian.** Two more full translations, with more to come.",
+                "**Sleep, navigation and devices.** A single night is no longer split into a separate nap, the More tab remembers which sections you left open, the Insights questions roll over to each new day, and your strap firmware version now shows on the Devices screen.",
+            ]),
         Release(
             version: "7.5.0",
             title: "Local Oura ring support: use your Oura ring with no Oura app (beta)",
