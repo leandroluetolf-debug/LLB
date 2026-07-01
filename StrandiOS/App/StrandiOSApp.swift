@@ -113,11 +113,14 @@ struct StrandiOSApp: App {
                 // seq back there too, where WidgetKit reloads DO count against the daily budget. Hence the
                 // foreground gate: publish only while .active (foreground-initiated reloads are budget
                 // exempt); a background bump is covered by the widget's own 15-minute timeline policy and
-                // by the .active republish on return. Deliberately does NOT push the watch here:
-                // complication transfers have a ~50/day budget and need their own gate.
+                // by the .active republish on return.
                 .onReceive(model.repo.$refreshSeq.dropFirst()) { _ in
                     guard scenePhase == .active else { return }
                     Task { await WidgetSnapshot.publish(from: model) }
+                    // The watch rides the same active-only hook because the bridge now SELF-THROTTLES
+                    // (30-minute spacing + headline-change dedup, both must pass, see WatchSessionBridge),
+                    // so a refresh storm can't burn the ~50/day complication transfer budget.
+                    Task { await watch.pushLatest(from: model) }
                 }
                 // #581: the `noop://import-health` deep link the iOS Shortcut opens after building the
                 // HealthKit-free payload. Filter on the host so other future schemes don't trip the

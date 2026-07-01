@@ -23,7 +23,16 @@ import WhoopStore   // DailyMetric (the anchor row's recovery / strain / sleep f
 final class WatchSessionBridge: NSObject, ObservableObject {
 
     /// The most recent snapshot we built + sent, surfaced for debug / a Settings "watch sync" readout.
+    /// Also one half of the push gate below: a rebuilt snapshot whose headline values match this one is
+    /// not worth a budgeted transfer, so `pushLatest` skips it.
     @Published private(set) var lastSent: WatchScoreSnapshot?
+    /// When the last snapshot was actually pushed, the other half of the push gate. nil until the first
+    /// push of this process, which therefore always passes the spacing check.
+    private var lastPushedAt: Date?
+    /// Minimum spacing between pushes (30 minutes). Complication/context transfers ride a system budget
+    /// (~50/day for complication updates), so `pushLatest` never sends more often than this, and only
+    /// when the headline values actually changed. BOTH checks must pass; see `shouldPush`.
+    static let minPushInterval: TimeInterval = 30 * 60
     /// Whether a watch is currently paired + has the NOOP watch app installed + is reachable enough to
     /// receive context. Application context still queues for delivery when the watch is briefly away, so
     /// this is informational, not a gate on sending.
@@ -56,19 +65,54 @@ final class WatchSessionBridge: NSObject, ObservableObject {
     /// widget). It reads the SAME most-recent scored day the widget anchors on, so the wrist, the widget
     /// and Today never disagree about which day they describe.
     ///
+    /// SELF-THROTTLED (the watch budget gate): callers may invoke this as often as they like, the push
+    /// only goes out when `shouldPush` passes, at most once per `minPushInterval` AND only when the
+    /// snapshot's headline values differ from the last push. A skipped snapshot is not lost: the next
+    /// trigger (a refreshSeq bump, a foreground, a launch) rebuilds it fresh off the same model.
+    ///
     /// `async` because Rest (sleep_performance) lives in a computed metric series rather than a
     /// `DailyMetric` column, so it needs an `exploreSeries` read (mirrors `WidgetSnapshot.publish`).
     func sendLatest(from model: AppModel) async {
         let snap = await Self.buildSnapshot(from: model)
+        let now = Date()
+        guard shouldPush(snap, now: now) else { return }
+        lastPushedAt = now
         send(snap)
     }
 
     /// Build the latest snapshot off `model` and push it to the watch. The entrypoint the iOS app entry
-    /// calls from the SAME refresh that republishes the Home-screen widget (scenePhase active + after a
-    /// Health sync), so the wrist updates in lockstep with the widget instead of only ever showing
-    /// placeholder data. Thin alias over `sendLatest`; named for the app-entry call site to read clearly.
+    /// calls from the SAME refresh that republishes the Home-screen widget (scenePhase active, after a
+    /// Health sync, and on an active-phase refreshSeq bump), so the wrist updates in lockstep with the
+    /// widget instead of only ever showing placeholder data. Thin alias over `sendLatest` and therefore
+    /// self-throttled the same way; named for the app-entry call site to read clearly.
     func pushLatest(from model: AppModel) async {
         await sendLatest(from: model)
+    }
+
+    /// The budget gate: complication/context transfers share a ~50/day system budget, so a push must
+    /// pass BOTH checks. (1) Spacing: at least `minPushInterval` since the last actual push (nil = never
+    /// pushed this process, passes). (2) Substance: the snapshot's HEADLINE values differ from the last
+    /// pushed one, so an unchanged dashboard never burns a transfer re-stating the same scores.
+    private func shouldPush(_ snap: WatchScoreSnapshot, now: Date) -> Bool {
+        if let at = lastPushedAt, now.timeIntervalSince(at) < Self.minPushInterval { return false }
+        return Self.headlineChanged(from: lastSent, to: snap)
+    }
+
+    /// Whether the headline content of `next` differs from the last-pushed snapshot. Headline = the
+    /// scores (with their calibrating flags), the sleep summary line, and the day the scores are ABOUT.
+    /// `hr` and `asOf` are deliberately NOT headline: hr ticks ~1 Hz and `asOf` differs on every build,
+    /// so counting either as "changed" would defeat the dedup and re-send identical scores all day.
+    /// nil `last` (nothing pushed yet) always counts as changed.
+    static func headlineChanged(from last: WatchScoreSnapshot?, to next: WatchScoreSnapshot) -> Bool {
+        guard let last else { return true }
+        return last.charge != next.charge
+            || last.chargeCalibrating != next.chargeCalibrating
+            || last.effort != next.effort
+            || last.effortCalibrating != next.effortCalibrating
+            || last.rest != next.rest
+            || last.restCalibrating != next.restCalibrating
+            || last.sleepSummary != next.sleepSummary
+            || last.scoreDay != next.scoreDay
     }
 
     /// Build the snapshot off the app state. Pure read; no side effects. Split out so the wiring is easy
