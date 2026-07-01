@@ -259,10 +259,11 @@ struct AppleWatchSetupView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .entitlementMissing:
-                    // A free-signed sideload was re-signed without the HealthKit entitlement, so the
-                    // request can never present and the app can never appear under Settings › Health.
-                    // Give the honest path instead of an impossible Settings instruction (mirrors #348).
-                    Text("This install can't connect to Apple Health directly. It was sideloaded with a free signing profile, which doesn't include Apple's Health permission, so there's nothing to grant here.")
+                    // The sideload was re-signed without the HealthKit entitlement (free Apple IDs always
+                    // lack it, and some paid reseller certs do too, #930), so the request can never present
+                    // and the app can never appear under Settings › Health. Give the honest path instead
+                    // of an impossible Settings instruction (mirrors #348).
+                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to grant here.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)

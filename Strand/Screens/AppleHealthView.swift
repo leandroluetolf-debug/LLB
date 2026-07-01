@@ -390,12 +390,12 @@ struct AppleHealthView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .entitlementMissing:
-                    // #348 — a free-signed sideload (AltStore / Sideloadly / free Apple ID) was re-signed
-                    // WITHOUT the HealthKit entitlement, so "Enable Apple Health" can never work and the
-                    // app can never appear under Settings › Health › Data Access & Devices. Give the
-                    // honest path instead of impossible Settings instructions: bring data in via a file
-                    // import or the HealthKit-free Shortcuts export.
-                    Text("This install can't connect to Apple Health directly. It was sideloaded with a free signing profile, which doesn't include Apple's Health permission — so there's nothing to enable, and NOOP won't appear under Settings › Health.")
+                    // #348 / #930: the sideload was re-signed WITHOUT the HealthKit entitlement (free
+                    // Apple IDs always lack it; some paid reseller certs do too), so "Enable Apple Health"
+                    // can never work and the app can never appear under Settings › Health › Data Access
+                    // & Devices. Give the honest path instead of impossible Settings instructions: bring
+                    // data in via a file import or the HealthKit-free Shortcuts export.
+                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to enable, and NOOP won't appear under Settings › Health.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
