@@ -17,6 +17,20 @@ approximate; downloads are on the [Releases](https://github.com/NoopApp/noop/rel
 
 ---
 
+## 7.8.0: the everything update (all platforms)
+
+The biggest single release since 7.0. Performance for large libraries (cached Today and Apple
+Health loads, launch without redundant work, roughly 2x faster live decoding, smooth Compare
+charts on multi-year data, and backup/restore/export/delete off the UI thread), chart pinch-zoom
+and pan that actually win against the day swipe on iPhone with Android at parity, a search field
+for the Mac sidebar, an opt-in overnight-only mode for Continuous HRV at about half the battery
+cost, the fix for Charge and Rest pinning to an old night (duplicate sleep from a drifting strap
+clock is now detected, healed and re-scored), the silent Buzz Strap shortcut fixed with
+acknowledged writes, mid-session widget refresh with a budget-aware watch gate, Bowling in the
+sports list, and complete Spanish and Chinese (Simplified and Traditional) with a refreshed
+Italian. Community contributions reimplemented with credit: quanturtle, ryanbr, dpguglielmi,
+subscriptiondestroyer. Thank you.
+
 ## 7.7.1: bug fixes (Effort, the widget's day, and Oura reconnect) (all platforms)
 
 - **Effort stops reading zero after a strap swap.** If a band was re-added through the device manager, the Today heart-rate curve and Effort could come back empty. They now read whichever strap is actually paired.

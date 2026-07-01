@@ -7,7 +7,7 @@ enum AppChangelog {
 
     /// Bump this when you add a release below. The "What's New" sheet shows automatically when the
     /// stored last-seen version is behind this. (Decoupled from the bundle version on purpose.)
-    static let currentVersion = "7.7.1"
+    static let currentVersion = "7.8.0"
 
     struct Release: Identifiable {
         let version: String
@@ -19,6 +19,21 @@ enum AppChangelog {
 
     /// Newest first.
     static let releases: [Release] = [
+        Release(
+            version: "7.8.0",
+            title: "The everything update",
+            date: "July 2026",
+            items: [
+                "**Much faster with years of history.** Today and the Apple Health tab load from caches, launch skips a burst of redundant work, live decoding is about twice as fast, the Compare chart stays smooth on multi-year data, and backing up, restoring, exporting or deleting data no longer locks the app up.",
+                "**Pinch to zoom, for real this time.** The Today heart-rate chart's zoom shipped earlier but the gesture could never actually win against the day swipe, so it felt broken. That's fixed properly on iPhone, and Android gets the same pinch and pan. Double-tap resets.",
+                "**Find any screen.** The Mac sidebar has a search field now: type a few letters and every matching section opens.",
+                "**Continuous HRV, overnight only.** A new option runs the live HRV stream just during your quiet hours: the same nightly readings at roughly half the battery cost. Daytime Stress readings get sparser with it on.",
+                "**Charge and Rest stop sticking on an old night.** A strap with a drifting clock could re-bank the same night twice and pin your scores to the stale copy. Duplicates are now caught, cleaned up and re-scored automatically.",
+                "**The Buzz Strap shortcut buzzes again.** One-shot buzzes now use the exact sequence the strap is known to answer, delivered as acknowledged writes so a busy connection can't silently drop them.",
+                "**Widgets keep up.** The iPhone widget refreshes during long sessions instead of freezing at the last app open, and the Apple Watch gets fresher snapshots within its update budget.",
+                "**NOOP en español, and in Chinese.** Spanish and Chinese (Simplified and Traditional) are complete, and Italian is refreshed. Community-contributed, with thanks.",
+                "**And a pile more.** Bowling in the sports list, workout cards keep even heights, the ring labels center properly, clearer guidance when a signing profile lacks the Health permission, and a guard against straps whose clock claims to be in the future.",
+            ]),
         Release(
             version: "7.7.1",
             title: "Bug fixes: Effort, the widget's day, and Oura reconnect",
