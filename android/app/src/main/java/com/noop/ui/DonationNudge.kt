@@ -104,14 +104,6 @@ fun DonationNudgeCard() {
                 style = NoopType.footnote, color = Palette.textSecondary,
             )
             Text(
-                "${"%,d".format(DonationStats.DOWNLOADS)}+ downloads so far - ${DonationStats.DONORS} donors.",
-                style = NoopType.footnote, color = Palette.textPrimary,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .background(Palette.accentMuted)
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
-            )
-            Text(
                 "If it's saving you a subscription, a suggested \$50+ - a fraction of a year of WHOOP - " +
                     "genuinely keeps the project alive. Anything is appreciated. Crypto only; the project stays anonymous.",
                 style = NoopType.footnote, color = Palette.textSecondary,
