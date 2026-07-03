@@ -14,6 +14,9 @@ import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(AppKit)
+import AppKit
+#endif
 #if canImport(CoreMotion)
 import CoreMotion
 #endif
@@ -27,6 +30,12 @@ extension Color {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         if UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a) {
             return (Double(r), Double(g), Double(b), Double(a))
+        }
+        #elseif canImport(AppKit)
+        // macOS has no UIKit; without this the sky keyframes all resolved to the white fallback below,
+        // so the whole day-of-sky rendered white on mac. NSColor in sRGB gives the same components UIKit does.
+        if let ns = NSColor(self).usingColorSpace(.sRGB) {
+            return (Double(ns.redComponent), Double(ns.greenComponent), Double(ns.blueComponent), Double(ns.alphaComponent))
         }
         #endif
         return (1, 1, 1, 1)

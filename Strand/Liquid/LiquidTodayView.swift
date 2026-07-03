@@ -243,6 +243,11 @@ struct LiquidTodayView: View {
                     .liquidSheetDoneChrome { showSupport = false }
             }
         }
+        #if os(macOS)
+        // Hide the mac window toolbar's vibrant material so the full-bleed day-of-sky reads dark + edge-to-edge
+        // at the top instead of the white scroll-under-titlebar wash.
+        .toolbarBackground(.hidden, for: .windowToolbar)
+        #endif
     }
 
     // MARK: - Liquid pull-to-refresh

@@ -72,6 +72,11 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
             .ignoresSafeArea()
         }
         .modifier(RefreshableIfNeeded(onRefresh: onRefresh))
+        #if os(macOS)
+        // The mac window toolbar's default vibrant material washed the top of the liquid day-of-sky WHITE
+        // (the scroll-under-titlebar blend). Hide it so the sky reads edge-to-edge and dark, like iOS.
+        .toolbarBackground(.hidden, for: .windowToolbar)
+        #endif
     }
 
     /// The header + content column. `lazy` swaps the eager `VStack` for a `LazyVStack` so a long
