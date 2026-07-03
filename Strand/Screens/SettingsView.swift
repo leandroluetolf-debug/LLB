@@ -167,7 +167,11 @@ struct SettingsView: View {
 
     var body: some View {
         ScreenScaffold(title: "Settings",
-                       subtitle: "Your numbers, your strap, and how NOOP works. All on \(Platform.deviceNounPhrase).") {
+                       subtitle: "Your numbers, your strap, and how NOOP works. All on \(Platform.deviceNounPhrase).",
+                       // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends / Devices:
+                       // a fixed, full-bleed time-of-day sky behind the scroll content (it does not scroll).
+                       // Settings' own frosted cards sit on the dark canvas below the sky band, unchanged.
+                       topBackground: liquidScaffoldSky()) {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 // Everyday sections stay expanded (S3): the ones a first-run user actually needs.
                 profilePhotoCard.staggeredAppear(index: 0)
@@ -410,7 +414,7 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("Steps estimate calibration. \(stepsCalibrationSummary). Opens the calibration screen.")
                 Text("For a WHOOP 4.0, which sends no step count: NOOP estimates steps from motion, calibrated to your phone. Tap to see how close it is and adjust it.")
                     .font(StrandFont.footnote)
@@ -954,7 +958,7 @@ struct SettingsView: View {
                 }
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(LiquidPressStyle())
             .accessibilityLabel("Open Test Centre")
         }
     }
@@ -1569,7 +1573,7 @@ struct SettingsView: View {
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.accent)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("Open Backup and Sync to a folder")
             }
         }
@@ -1702,7 +1706,7 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("How NOOP works")
 
                 // How your scores work — the honest explainer for Charge / Effort / Rest and the
@@ -1731,7 +1735,7 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("How your scores work")
 
                 // About Apple Watch data: the honest capability/confidence page for running NOOP off
@@ -1763,7 +1767,7 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("About Apple Watch data")
 
                 // Storage (#590) — on-device space breakdown (database, leftover import Inbox, stranded
@@ -1793,7 +1797,7 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("Storage")
 
                 #if os(iOS)
@@ -2012,7 +2016,7 @@ struct SettingsView: View {
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(LiquidPressStyle())
         .accessibilityLabel("Diagnostics")
     }
 
@@ -2146,7 +2150,7 @@ private struct SettingsDisclosureGroup<Content: View>: View {
                 }
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(LiquidPressStyle())
             .accessibilityLabel(title)
             .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
             .accessibilityHint("Shows the advanced settings sections")
