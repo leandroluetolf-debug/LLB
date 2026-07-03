@@ -81,10 +81,10 @@ final class AutoWorkoutDetectorTraceTests: XCTestCase {
             "dedup sport=running kept=strap(richness=5) dropped=apple(richness=1) (same activity, richer kept)")
         // #975: the engine detected-bout decision line , persisted (no overlap) and dropped (overlaps a real).
         XCTAssertEqual(
-            AutoWorkoutDetector.detectedBoutLine(verdict: "persisted", durMin: 42, avgBpm: 148),
+            WorkoutsTrace.detectedBoutLine(verdict: "persisted", durMin: 42, avgBpm: 148),
             "detectedBout verdict=persisted durMin=42 avgBpm=148")
         XCTAssertEqual(
-            AutoWorkoutDetector.detectedBoutLine(verdict: "droppedOverlap", durMin: 42, avgBpm: 148,
+            WorkoutsTrace.detectedBoutLine(verdict: "droppedOverlap", durMin: 42, avgBpm: 148,
                                                  overlapSource: "manual"),
             "detectedBout verdict=droppedOverlap durMin=42 avgBpm=148 overlapSource=manual")
     }
