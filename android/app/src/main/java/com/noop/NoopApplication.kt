@@ -1,6 +1,8 @@
 package com.noop
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import com.noop.ble.SourceCoordinator
 import com.noop.ble.WhoopBleClient
@@ -9,6 +11,7 @@ import com.noop.data.DeviceRegistry
 import com.noop.data.WhoopDatabase
 import com.noop.data.WhoopRepository
 import com.noop.ui.NoopPrefs
+import java.util.Locale
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -26,8 +29,14 @@ import kotlinx.coroutines.runBlocking
  */
 class NoopApplication : Application() {
 
+    override fun attachBaseContext(base: Context) {
+        // LLB is German-only: force de regardless of system language.
+        super.attachBaseContext(base.withLocale(Locale.GERMAN))
+    }
+
     override fun onCreate() {
         super.onCreate()
+        Locale.setDefault(Locale.GERMAN)
         // Record any uncaught crash to a file so it rides along in the shareable strap log — a
         // device-specific crash (e.g. Insights #224/#267) is otherwise lost to an unreachable logcat.
         CrashCapture.install(this)
@@ -113,4 +122,10 @@ class NoopApplication : Application() {
         NoopPrefs.of(this).getString("noop.selectedWhoopModel", null)
             ?.let { runCatching { WhoopModel.valueOf(it) }.getOrNull() }
             ?: WhoopModel.WHOOP4
+}
+
+private fun Context.withLocale(locale: Locale): Context {
+    val config = Configuration(resources.configuration)
+    config.setLocale(locale)
+    return createConfigurationContext(config)
 }

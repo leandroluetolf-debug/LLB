@@ -22,15 +22,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import java.io.File
 
 // MARK: - Profile picture (optional, on-device avatar)
@@ -236,39 +235,21 @@ fun ProfileAvatar(
                 modifier = Modifier.size(size).clip(CircleShape),
             )
         } else {
-            // No photo: the LLB loop mark (open green ring + white core) — the brand glyph, matching the
-            // iOS default avatar. The user's chosen photo path is untouched; this is only the fallback.
-            LoopMark(modifier = Modifier.fillMaxSize())
+            // No photo: LLB wordmark on dark tile — matches the launcher icon.
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF0E1116)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    "LLB",
+                    color = Color(0xFFE8E8E8),
+                    fontSize = (size.value * 0.28f).sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                )
+            }
         }
-    }
-}
-
-/**
- * The LLB loop mark drawn as a fallback avatar: an OPEN ~80% recovery ring (round caps, starting at 12
- * o'clock, clockwise) in the recovery green with a solid WHITE centre core dot. Matches the iOS BrandMark
- * shape but in the Apple-Fitness green + white core. CLEAN/flat — no glow, no halo. Decorative.
- */
-@Composable
-private fun LoopMark(modifier: Modifier = Modifier) {
-    val ring = Palette.statusPositive   // recovery / "on" green, a design token (no hardcoded hex)
-    val core = if (Palette.isLight) Palette.textPrimary else Color.White
-    Canvas(modifier = modifier) {
-        val stroke = size.minDimension * 0.13f
-        val radius = (size.minDimension - stroke) / 2f
-        val topLeft = Offset(center.x - radius, center.y - radius)
-        val arcSize = Size(radius * 2f, radius * 2f)
-        val capStroke = Stroke(width = stroke, cap = StrokeCap.Round)
-        // Open recovery-ring arc: ~80% (288°), −90° start (12 o'clock), clockwise.
-        drawArc(
-            color = ring,
-            startAngle = -90f,
-            sweepAngle = 288f,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = capStroke,
-        )
-        // Solid white "core" dot at the centre.
-        drawCircle(color = core, radius = stroke * 0.7f, center = center)
     }
 }

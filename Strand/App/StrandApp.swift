@@ -25,6 +25,7 @@ struct StrandApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.locale, Locale(identifier: "de"))
                 .environmentObject(model)
                 .environmentObject(model.live)
                 .environmentObject(model.repo)

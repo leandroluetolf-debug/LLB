@@ -412,11 +412,6 @@ fun SettingsScreen(vm: AppViewModel, onOpenTestCentre: () -> Unit = {}) {
     // Display-only; the stored value never changes. Mirrors into local state like the toggles above.
     var effortScale by remember { mutableStateOf(UnitPrefs.effortScale(context)) }
 
-    // App icon (v3 "Titanium & Gold") — machined-titanium (.IconDefault) or blued-titanium (.IconNavy).
-    // SharedPreferences isn't reactive, so the segmented control drives this local mirror; flipping it
-    // enables exactly one launcher alias via PackageManager (see setAppIcon below).
-    var appIconNavy by remember { mutableStateOf(NoopPrefs.appIconNavy(context)) }
-
     // Theme (System / Light / Dark) — drives NoopTheme; AppearancePrefs mirrors it in snapshot state.
     var themeMode by remember { mutableStateOf(AppearancePrefs.mode) }
     // Chart colours (Titanium / Classic) — re-colours gauges + charts; ChartStylePrefs mirrors it live.
@@ -911,33 +906,11 @@ fun SettingsScreen(vm: AppViewModel, onOpenTestCentre: () -> Unit = {}) {
             }
         }
 
-        // --- App icon (v3 "Titanium & Gold") ---
-        // Two staged launcher icons — machined titanium (default) and blued/dark-blue titanium. The
-        // swap is done by enabling exactly one <activity-alias> (.IconDefault / .IconNavy) at runtime;
-        // the launcher may take a beat (or briefly disappear/redraw) while it re-reads the icon.
-        SettingsSection(
-            icon = Icons.Filled.Palette,
-            title = "App icon",
-            blurb = "Choose how LLB looks on your home screen. The launcher may take a moment to refresh the icon after you change it.",
-        ) {
-            FormRow(label = "Icon") {
-                SegmentedPillControl(
-                    items = listOf(false, true),
-                    selection = appIconNavy,
-                    label = { if (it) "Blue Titanium" else "Titanium" },
-                    onSelect = { navy ->
-                        appIconNavy = navy
-                        setAppIcon(context, navy)
-                    },
-                )
-            }
-        }
-
         // --- Strap ---
         SettingsSection(
             icon = Icons.Filled.Sensors,
-            title = "Strap",
-            blurb = "LLB pairs directly with your WHOOP over Bluetooth: no WHOOP app, no cloud.",
+            title = "Band",
+            blurb = "LLB verbindet sich direkt per Bluetooth mit deinem WHOOP — keine WHOOP-App, keine Cloud.",
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Row(
@@ -2259,49 +2232,6 @@ fun SettingsScreen(vm: AppViewModel, onOpenTestCentre: () -> Unit = {}) {
                     color = Palette.textTertiary,
                 )
 
-                RowDivider()
-
-                // Contact — opens email for questions / feedback / bugs (no donations).
-                val contactInteraction = remember { MutableInteractionSource() }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .liquidPress(contactInteraction)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Palette.accent.copy(alpha = 0.10f))
-                        .border(1.dp, Palette.accent.copy(alpha = 0.25f), RoundedCornerShape(10.dp))
-                        .clickable(
-                            interactionSource = contactInteraction,
-                            indication = null,
-                        ) {
-                            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                data = Uri.parse("mailto:$SUPPORT_EMAIL")
-                                putExtra(Intent.EXTRA_SUBJECT, "LLB")
-                            }
-                            try {
-                                context.startActivity(intent)
-                            } catch (_: ActivityNotFoundException) {
-                                Toast.makeText(context, "Email us at $SUPPORT_EMAIL", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                        .padding(horizontal = 14.dp, vertical = 12.dp)
-                        .semantics { contentDescription = "Contact at $SUPPORT_EMAIL" },
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Contact", style = NoopType.headline, color = Palette.textPrimary)
-                            Text(
-                                "Questions, feedback, bugs: $SUPPORT_EMAIL",
-                                style = NoopType.footnote,
-                                color = Palette.textSecondary,
-                            )
-                        }
-                        Text("›", style = NoopType.title2, color = Palette.accent)
-                    }
-                }
             }
         }
 
@@ -2373,41 +2303,6 @@ fun SettingsScreen(vm: AppViewModel, onOpenTestCentre: () -> Unit = {}) {
             }
         }
     }
-}
-
-private const val SUPPORT_EMAIL = "thenoopapp@gmail.com"
-
-// MARK: - App icon swap (v3 "Titanium & Gold")
-
-/**
- * The two launcher-icon aliases declared in AndroidManifest.xml. Exactly one is ever enabled — the
- * enabled one is the app's home-screen entry point and supplies the launcher icon.
- */
-private const val ALIAS_DEFAULT = "com.noop.IconDefault" // machined titanium
-private const val ALIAS_NAVY = "com.noop.IconNavy"       // blued / dark-blue titanium
-
-/**
- * Persist the chosen launcher icon and flip the manifest aliases so exactly one is enabled:
- * [navy] true enables `.IconNavy` and disables `.IconDefault`, false does the inverse. We use
- * DONT_KILL_APP so the toggle doesn't tear down our own process. The home launcher may briefly hide
- * and redraw the icon (or take a few seconds) while it re-reads the component state — that's expected
- * and is the only user-visible side effect.
- */
-private fun setAppIcon(context: Context, navy: Boolean) {
-    NoopPrefs.setAppIconNavy(context, navy)
-    val pm = context.packageManager
-    pm.setComponentEnabledSetting(
-        ComponentName(context, ALIAS_NAVY),
-        if (navy) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-        PackageManager.DONT_KILL_APP,
-    )
-    pm.setComponentEnabledSetting(
-        ComponentName(context, ALIAS_DEFAULT),
-        if (navy) PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        else PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-        PackageManager.DONT_KILL_APP,
-    )
 }
 
 // MARK: - Waist stepper (optional VO₂max input)

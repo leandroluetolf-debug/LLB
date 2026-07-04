@@ -16,8 +16,7 @@ struct SupportView: View {
                 }
                 .staggeredAppear(index: 0)
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
-                    SectionHeader("Help & Contact", overline: "Get in touch")
-                    contactCard
+                    SectionHeader("Built on", overline: "Credits")
                     builtOnCard
                 }
                 .staggeredAppear(index: 1)
@@ -51,23 +50,6 @@ struct SupportView: View {
                     .foregroundStyle(StrandPalette.accent)
                     .accessibilityHidden(true)
             }
-        }
-    }
-
-    private var contactCard: some View {
-        NoopCard {
-            Button {
-                if let url = URL(string: "mailto:\(ProjectInfo.contactEmail)") { PlatformOpen.url(url) }
-            } label: {
-                groupedRow(icon: "envelope.fill", tint: StrandPalette.accent,
-                           title: "Get in touch",
-                           detail: String(localized: "Questions, feedback, bugs: \(ProjectInfo.contactEmail)"),
-                           showsChevron: true)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Email \(ProjectInfo.contactEmail)")
-            .help("Email \(ProjectInfo.contactEmail)")
         }
     }
 

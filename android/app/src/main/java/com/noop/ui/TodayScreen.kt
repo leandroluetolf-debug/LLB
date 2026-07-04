@@ -360,7 +360,7 @@ fun TodayScreen(
 
     // "Your cards" customisable dashboard (WHOOP "My Dashboard"), a persisted, reorderable selection of
     // metric cards. Empty/unset shows the sensible default set (Stress / Fitness age / Vitality + HRV +
-    // Resting HR). The "CUSTOMISE" link on the section header opens a local sheet (no new nav destination).
+    // Resting HR). The "ANPASSEN" link on the section header opens a local sheet (no new nav destination).
     // Persistence is display-only, these cards read the SAME values the rest of Today already loads.
     // SharedPreferences isn't reactive, so it's mirrored into local state and re-read when the editor saves.
     var showDashboardEditor by remember { mutableStateOf(false) }
@@ -960,7 +960,7 @@ fun TodayScreen(
             1 -> "Yesterday"
             else -> {
                 val keyDate = runCatching { LocalDate.parse(selectedDayKey) }.getOrNull() ?: selectedDay
-                keyDate.format(DateTimeFormatter.ofPattern("EEEE", Locale.US))
+                keyDate.format(DateTimeFormatter.ofPattern("EEEE", Locale.GERMAN))
             }
         }
         // Human date line under the title — "Friday, 3 July" (weekday + day + month), NOT a numeric date.
@@ -968,7 +968,7 @@ fun TodayScreen(
         // the iOS `dateLine` (EEEE, d MMMM). Mirrors iOS's date-under-title block.
         val humanDate = run {
             val keyDate = runCatching { LocalDate.parse(selectedDayKey) }.getOrNull() ?: selectedDay
-            keyDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.US))
+            keyDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.GERMAN))
         }
         Box(modifier = Modifier.fillMaxWidth().staggeredAppear(0)) {
             LiquidTodayHeader(
@@ -1135,15 +1135,10 @@ fun TodayScreen(
         }
         }
 
-        // HEART RATE, the live HR thread / trend card, directly under the hero — the SAME order as the iOS
-        // liquid Today (scene → heartRateSection → yourCardsSection). It carries its own live-HR thread + the
-        // banked 5-minute fallback + the "connect your strap" empty state, all self-contained (its own data
-        // loads), so moving it up here is a pure re-order that preserves every binding. Mirrors iOS
-        // heartRateSection sitting first after the hero.
+        // HEART RATE, then YOUR CARDS. No staggeredAppear on HR: index 5 used to animate over the
+        // "Deine Karten" header (which used staggeredAppear(2)) and hide the day label.
         item {
-        Box(modifier = Modifier.fillMaxWidth().staggeredAppear(5)) {
             HeartRateTrendCard(viewModel, days, selectedDay, todayDate, displayMetric, effortScale)
-        }
         }
 
         // YOUR CARDS, the user-customisable dashboard (WHOOP "My Dashboard"). Surfaces a persisted,
@@ -2612,15 +2607,19 @@ private fun YourCardsSection(
     onOpenCoupled: () -> Unit,
     onCustomise: () -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxWidth().staggeredAppear(2)) {
-        Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = Metrics.space14),
+        verticalArrangement = Arrangement.spacedBy(Metrics.gap),
+    ) {
             // Header: "YOUR CARDS" overline + a right-aligned blue CUSTOMISE action (the WHOOP ✎ affordance).
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Overline("Your cards", modifier = Modifier.weight(1f))
+                Overline("Deine Karten", modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = onCustomise,
                     colors = ButtonDefaults.textButtonColors(contentColor = Palette.accent),
-                    modifier = Modifier.semantics { contentDescription = "Customise your cards" },
+                    modifier = Modifier.semantics { contentDescription = "Karten anpassen" },
                 ) {
                     Icon(
                         Icons.Filled.Tune,
@@ -2679,7 +2678,6 @@ private fun YourCardsSection(
                     ),
                 )
             }
-        }
     }
 }
 
@@ -4221,9 +4219,9 @@ private fun HeartRateTrendCard(
         }.getOrDefault(emptyList())
     }
     val selectedLabel = when (selectedDay) {
-        today -> "Today"
-        today.minusDays(1) -> "Yesterday"
-        else -> selectedDay.format(DateTimeFormatter.ofPattern("d MMM", Locale.US))
+        today -> "Heute"
+        today.minusDays(1) -> "Gestern"
+        else -> selectedDay.format(DateTimeFormatter.ofPattern("d MMM", Locale.GERMAN))
     }
 
     // #863: a sparse/empty selected day used to `return` here and render NOTHING, which read as "the graph
@@ -4231,19 +4229,22 @@ private fun HeartRateTrendCard(
     // (a calibrating 4.0 banks HR slowly) rather than that the screen broke. We intentionally do NOT silently
     // swap in a different day's curve here (that day-swap reload behaviour was rejected in #605, see above);
     // the honest empty state is the parity-matched fix. Mirrors the iOS Today HR card's empty branch.
+    // Layout: everything lives INSIDE one card (no floating SectionHeader) so it cannot paint over the
+    // "Deine Karten" header below — staggeredAppear on the parent used to stack the empty card on top.
     if (buckets.size < 2) {
-        SectionHeader("Heart Rate", overline = selectedLabel)
         NoopCard {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Overline("Beats per minute")
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Overline(selectedLabel)
+                Text("Herzfrequenz", style = NoopType.headline, color = Palette.textPrimary)
+                Text("Schläge pro Minute", style = NoopType.footnote, color = Palette.textTertiary)
                 Text(
                     if (selectedDay == today) {
-                        "Calibrating , no heart rate banked yet today. Your curve fills in as the strap offloads."
+                        "Noch keine Herzfrequenz für heute. Die Kurve füllt sich, sobald das Band Daten überträgt — oder wenn du es trägst und verbindest."
                     } else {
-                        "No heart rate for this day. Step back to a day the strap was worn."
+                        "Keine Herzfrequenz an diesem Tag. Wähle einen Tag, an dem das Band getragen wurde."
                     },
-                    style = NoopType.footnote,
-                    color = Palette.textTertiary,
+                    style = NoopType.subhead,
+                    color = Palette.textSecondary,
                 )
             }
         }
@@ -4273,17 +4274,18 @@ private fun HeartRateTrendCard(
     val visAvg = visBpm.average().roundToInt()
     val visMin = visBpm.min().roundToInt()
 
-    SectionHeader("Heart Rate", overline = selectedLabel)
     NoopCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             // Header, mirrors the macOS ChartCard (title + subtitle, trailing read-out).
+            // Day label + title live inside the card so they never overlap "Deine Karten" below.
             Row(verticalAlignment = Alignment.Top) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Overline("Beats per minute")
+                    Overline(selectedLabel)
+                    Text("Herzfrequenz", style = NoopType.headline, color = Palette.textPrimary)
                     val subtitle = if (selectedDay == today) {
-                        "5-minute average | since midnight"
+                        "5-Minuten-Mittel · seit Mitternacht"
                     } else {
-                        "5-minute average | selected day"
+                        "5-Minuten-Mittel · gewählter Tag"
                     }
                     Text(
                         subtitle,

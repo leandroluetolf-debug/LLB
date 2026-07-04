@@ -57,6 +57,7 @@ struct StrandiOSApp: App {
     var body: some Scene {
         WindowGroup {
             iOSRootView()
+                .environment(\.locale, Locale(identifier: "de"))
                 .environmentObject(model)
                 .environmentObject(model.live)
                 .environmentObject(model.repo)

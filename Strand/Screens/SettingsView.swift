@@ -67,9 +67,6 @@ struct SettingsView: View {
     @AppStorage(UnitPrefs.effortScaleKey) private var effortScaleRaw = EffortScale.hundred.rawValue
     // Live-HR Live Activity (Lock Screen + Dynamic Island), iOS only (#336). Default on.
     @AppStorage(UnitPrefs.liveActivityKey) private var liveActivityEnabled = true
-    // Alternate app icon (iOS only) — false = Titanium (primary AppIcon), true = Blue Titanium
-    // ("AppIcon-Navy"). Display-only preference; the live switch goes through setAlternateIconName.
-    @AppStorage("appIcon.alt") private var useNavyIcon = false
     // Light/Dark/System theme. Read by both app roots' .preferredColorScheme; default follows the OS.
     @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.system.rawValue
     // Chart colour style: Titanium (brand) or Classic (throwback red→green). Re-colours gauges + charts.
@@ -660,20 +657,6 @@ struct SettingsView: View {
                     .fixedSize()
                     .accessibilityLabel("Chart colours")
                 }
-                #if os(iOS)
-                FormRow(label: "App icon") {
-                    Picker("App icon", selection: $useNavyIcon) {
-                        Text("Default").tag(false)
-                        Text("Navy").tag(true)
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                    .fixedSize()
-                    .accessibilityLabel("App icon")
-                    .onChangeCompat(of: useNavyIcon) { applyAppIcon($0) }
-                }
-                #endif
-
                 Divider().overlay(StrandPalette.hairline).padding(.vertical, 4)
                 // MARK: Day-cycle background — the time-of-day scene behind Today (#698). On by default.
                 // Off swaps it for the plain dark canvas for people who find the moving scene distracting.
@@ -692,28 +675,6 @@ struct SettingsView: View {
             }
         }
     }
-
-    #if os(iOS)
-    /// Apply the alternate-icon choice. Runs on the main actor (UIKit requirement) and tolerates the
-    /// no-op cases (already-set, unsupported); on failure it surfaces the error and reverts the toggle
-    /// so the control never disagrees with what's actually on the Home Screen.
-    private func applyAppIcon(_ useNavy: Bool) {
-        Task { @MainActor in
-            let target = useNavy ? "AppIcon-Navy" : nil
-            // No-op if iOS already shows the requested icon (avoids a needless system prompt).
-            guard UIApplication.shared.supportsAlternateIcons,
-                  UIApplication.shared.alternateIconName != target else { return }
-            do {
-                try await UIApplication.shared.setAlternateIconName(target)
-            } catch {
-                useNavyIcon = !useNavy
-                backupAlertTitle = String(localized: "Couldn't change the app icon")
-                backupAlertMessage = error.localizedDescription
-                showBackupAlert = true
-            }
-        }
-    }
-    #endif
 
     // MARK: - Strap
 

@@ -1,26 +1,9 @@
 import SwiftUI
 
-// MARK: - BrandMark — the LLB logo mark (Titanium & Gold)
-//
-// The app's identity glyph, rendered natively for use as a hero on onboarding,
-// "about", and empty states. Per the design handoff ("Engraved" app-icon
-// direction + the brand glyph spec):
-//
-//   • a circular DEEP-NAVY tile (Circle filled with the navy ramp, a faint top
-//     sheen, and a 1px hairline rim), over which sits
-//   • an OPEN GOLD recovery ring — an ~80% arc starting at 12 o'clock (-90°) and
-//     sweeping clockwise, stroked with the gold ramp and round-capped (a THICK
-//     stroke to match the app icon), and
-//   • a solid GOLD CORE DOT centred ("on-device core").
-//
-// Gold-on-navy, matching the app icon (the maintainer's brand direction, 2026-06-15).
-//
-// It reads as the "O" in LLB and as a small echo of the hero recovery ring.
-// CLEAN and flat by design: no bloom, no shadow, no glow — the titanium does the
-// depth via its gradient + sheen, the gold ring does the accent. Everything is
-// driven off a single `size`, so the mark stays crisp from a 28pt list avatar up
-// to a 120pt onboarding hero.
+// MARK: - BrandMark — the LLB wordmark (matches the launcher icon)
 
+/// Square dark tile with a bold **LLB** wordmark — same look as the home-screen icon.
+/// Scales from a small list avatar up to an onboarding hero.
 public struct BrandMark: View {
 
     /// Edge length of the square mark; everything scales from this.
@@ -30,90 +13,20 @@ public struct BrandMark: View {
         self.size = size
     }
 
-    // The open ring sweeps ~80% of a full turn (≈291° of 364, per the logo spec),
-    // starting at 12 o'clock and going clockwise — the same orientation as the
-    // hero recovery ring, so the two read as one family.
-    private let openFraction: Double = 0.80
-    private var startAngle: Angle { .degrees(-90) }
-
-    // Proportions derived from `size` so the mark is resolution-independent.
-    private var ringInset: CGFloat { size * 0.20 }          // tile edge → ring band
-    private var ringWidth: CGFloat { size * 0.13 }          // THICK gold stroke (matches the icon)
-    private var ringDiameter: CGFloat { size - ringInset * 2 }
-    private var coreDiameter: CGFloat { size * 0.18 }       // centre core dot
-    private var rimWidth: CGFloat { max(1, size * 0.008) }  // ~1px hairline rim
-
     public var body: some View {
         ZStack {
-            navyTile
-            goldRing
-            coreDot
+            RoundedRectangle(cornerRadius: size * 0.18, style: .continuous)
+                .fill(Color(hex: "#0E1116"))
+            Text("LLB")
+                .font(.system(size: size * 0.28, weight: .bold, design: .default))
+                .foregroundStyle(Color(hex: "#E8E8E8"))
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("LLB"))
         .accessibilityAddTraits(.isImage)
-    }
-
-    // MARK: Deep-navy tile
-
-    /// The navy disc the gold mark sits on — a deep-navy vertical ramp (lifted at
-    /// the top, deeper at the bottom) with a faint cool top sheen and a soft
-    /// hairline rim, matching the app icon. No shadow — flat and clean.
-    private var navyTile: some View {
-        Circle()
-            .fill(
-                LinearGradient(
-                    colors: [Color(hex: "#1A1E24"), Color(hex: "#0E1116")],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            // Faint cool top sheen — a soft light catch across the upper third (flat, no bloom).
-            .overlay(
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color(hex: "#2A2F37").opacity(0.5), .clear],
-                            startPoint: .top,
-                            endPoint: .center
-                        )
-                    )
-                    .opacity(0.6)
-            )
-            // 1px hairline rim so the disc reads cleanly on the navy canvas.
-            .overlay(
-                Circle().strokeBorder(StrandPalette.hairline, lineWidth: rimWidth)
-            )
-    }
-
-    // MARK: Open gold recovery ring
-
-    /// The open ~80% gold arc — round-capped, stroked with the gold ramp via an
-    /// AngularGradient so the metal shifts along the sweep (light → gold → deep),
-    /// matching how the hero recovery ring fills.
-    private var goldRing: some View {
-        RecoveryArc(
-            startAngle: startAngle,
-            spanDegrees: 360 * openFraction,
-            fraction: 1,
-            lineWidth: ringWidth
-        )
-        .stroke(
-            StrandPalette.chargeColor,
-            style: StrokeStyle(lineWidth: ringWidth, lineCap: .round)
-        )
-        .frame(width: ringDiameter, height: ringDiameter)
-    }
-
-    // MARK: Solid gold core
-
-    /// The "on-device core" — a solid gold dot at the exact centre, completing the
-    /// open-ring + core-dot lock-up.
-    private var coreDot: some View {
-        Circle()
-            .fill(Color.white)
-            .frame(width: coreDiameter, height: coreDiameter)
     }
 }
 
