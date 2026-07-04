@@ -211,7 +211,7 @@ private fun ForecastCard(f: RecoveryForecast) {
                 ) {
                     Text(
                         "You'll likely wake around $charge ± $band Charge if you sleep about " +
-                            "${sleepHoursLabel(f.plannedSchlafHours)} tonight.",
+                            "${sleepHoursLabel(f.plannedSleepHours)} tonight.",
                         style = NoopType.subhead,
                         color = Palette.textSecondary,
                     )

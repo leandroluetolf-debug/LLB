@@ -314,7 +314,7 @@ private fun CurrentFitCard(profile: ProfileStore, matchedDays: Int) {
                     StatLine("Fitted from", "$days day${if (days == 1) "" else "s"} your phone also counted")
                     StatLine(
                         "Confidence",
-                        "${SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} · " +
+                        "${StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} · " +
                             "${(profile.stepsCalibrationConfidence * 100).roundToInt()}%",
                     )
                 }

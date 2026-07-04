@@ -48,7 +48,7 @@ object AppChangelog {
                 "**Löschen a sleep and it stays gone.** Deleting a detected sleep now keeps it from coming back on the next sync, with an undo if you change your mind. A hand-edited nap you delete just goes away quietly.",
                 "**The live heart-rate graph reads true.** A steady heart rate no longer draws a slow phantom ramp on the Gesundheit screen. Thanks ryanbr.",
                 "**Chart range chips make sense on new accounts.** W, M, 3M, 6M, 1Y and ALL unlock as your history grows instead of drawing identical charts in your first week, and they behave the same on iPhone, Mac and Android. Thanks ryanbr.",
-                "**Bearbeitening a sleep can no longer blank the screen.** A late-night edit that rolled the bed time across midnight could hide the whole sleep screen. The editor corrects the obvious case and degrades gracefully instead. Your data was never lost. Thanks sudden-break.",
+                "**Editing a sleep can no longer blank the screen.** A late-night edit that rolled the bed time across midnight could hide the whole sleep screen. The editor corrects the obvious case and degrades gracefully instead. Your data was never lost. Thanks sudden-break.",
                 "**And more.** Week in Review is honest about short weeks and respects your Effort scale everywhere (thanks pikapik487), Android can add a device without dropping a live strap, Laborbuch imports markers from a CSV including European decimals, and the Apple Watch and design system are localised in step with the phone.",
             ),
         ),
@@ -131,7 +131,7 @@ object AppChangelog {
                 "**Your steps keep counting.** Schritte could freeze and stop updating partway through the day. They now keep ticking over as they should. (#843, #813)",
                 "**Schlaf export keeps every night.** Exportierening your sleep to CSV could quietly drop nights when a day had more than one session (a nap plus the main night). Every session is kept now, each as its own row. (#715)",
                 "**A flaky strap no longer drains your battery.** When a WHOOP kept dropping the connection, the app could loop (bond, drop, rescan, bond) forever and drain the battery. It now spots that loop, pauses the automatic reconnect, and shows the re-pair guide instead. (#844)",
-                "**Smaller fixes.** Bearbeitening and deleting hydration entries behaves correctly (#842), the date picker no longer clips on iPad (#840), and a steady-state tidy stops the app re-scoring when nothing has changed (#836).",
+                "**Smaller fixes.** Editing and deleting hydration entries behaves correctly (#842), the date picker no longer clips on iPad (#840), and a steady-state tidy stops the app re-scoring when nothing has changed (#836).",
             ),
         ),
         Release(
@@ -781,7 +781,7 @@ object AppChangelog {
             date = "June 2026",
             items = listOf(
                 "Heute's Effort now updates live through the day. The Effort ring recomputes over today's heart rate as it happens (midnight → now), instead of showing yesterday's completed-day value - or a stale 0.0 early in the morning - until the next full re-score. Thanks @rad182 (#402).",
-                "Bearbeitening a sleep time can't scramble the night any more. The wake picker now keeps the night on its own day, so correcting a bed/wake time re-derives that night's stages cleanly instead of splitting the corrected block and its totals across two days. Resting-HR + HRV day-bucketing was also aligned across Mac, iPhone and Android. Thanks @ujix (#406).",
+                "Editing a sleep time can't scramble the night any more. The wake picker now keeps the night on its own day, so correcting a bed/wake time re-derives that night's stages cleanly instead of splitting the corrected block and its totals across two days. Resting-HR + HRV day-bucketing was also aligned across Mac, iPhone and Android. Thanks @ujix (#406).",
                 "Late nights and long lie-ins are captured - the sleep-detection window was widened so a wake after noon isn't cut short. Thanks @ujix (#425).",
                 "Smart alarm is now honestly flagged experimental. The strap acknowledges the alarm, but a strap-driven wake hasn't been verified firing yet - on WHOOP 4.0 or 5/MG - so the app asks you to keep a backup alarm while we confirm the exact firmware buzz pattern. Thanks Kaliarti (#428).",
                 "Android: rename your WHOOP's Bluetooth name - brings Android up to the iPhone/Mac feature. Thanks @cbarrado (#422).",

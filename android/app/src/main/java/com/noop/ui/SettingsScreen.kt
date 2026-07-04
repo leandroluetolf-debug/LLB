@@ -737,7 +737,7 @@ fun SettingsScreen(vm: AppViewModel, onOpenTestCentre: () -> Unit = {}) {
                 val stepsSummary = when {
                     profile.stepsManualCoefficient > 0 -> "Manual"
                     profile.stepsCalibrationCoefficient > 0 ->
-                        "Auto · ${SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} confidence"
+                        "Auto · ${StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} confidence"
                     else -> "Not calibrated"
                 }
                 val stepsRowInteraction = remember { MutableInteractionSource() }
@@ -2349,17 +2349,17 @@ internal object SettingsDisclosurePrefs {
     fun write(prefs: SharedPreferences, open: Boolean) { prefs.edit().putBoolean(KEY, open).apply() }
 }
 
-// MARK: - Erweitert disclosure (S3, ports EinstellungenView's EinstellungenDisclosureGroup)
+// MARK: - Erweitert disclosure (S3, ports EinstellungenView's SettingsDisclosureGroup)
 
 /**
  * A collapsible group that tucks the lower-frequency settings sections behind one tap. It is NOT a
- * section card itself (the cards it wraps keep their own [EinstellungenSection] chrome). It's a header row
+ * section card itself (the cards it wraps keep their own [SettingsSection] chrome). It's a header row
  * plus a default-collapsed reveal, modelled on the Testcenter "Advanced" group. Nothing is removed:
  * collapsed simply means the wrapped sections aren't composed until the row is tapped open. A custom
  * header (not Material's ExposedDropdown / accordion) keeps it on LLB's near-black instrument look.
  */
 @Composable
-private fun EinstellungenDisclosure(
+private fun SettingsDisclosure(
     title: String,
     subtitle: String,
     expanded: Boolean,
@@ -2406,14 +2406,14 @@ private fun EinstellungenDisclosure(
     }
 }
 
-// MARK: - Section card (ports EinstellungenView's private EinstellungenSection)
+// MARK: - Section card (ports EinstellungenView's private SettingsSection)
 
 /**
  * A grouped settings card: a "Settings" overline + icon + title header, an explanatory blurb, then
  * content. A faint brand-green wash anchors the card to LLB's neutral chrome (mirrors macOS).
  */
 @Composable
-private fun EinstellungenSection(
+private fun SettingsSection(
     icon: ImageVector,
     title: String,
     blurb: String,

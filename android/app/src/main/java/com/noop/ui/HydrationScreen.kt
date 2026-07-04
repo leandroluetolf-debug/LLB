@@ -295,7 +295,7 @@ fun HydrationScreen(viewModel: AppViewModel) {
         }
         item {
             Text(
-                "Sip ${FlüssigkeitGoal.SIP_ML} ml · Cup ${FlüssigkeitGoal.CUP_ML} ml · Bottle ${FlüssigkeitGoal.BOTTLE_ML} ml",
+                "Sip ${HydrationGoal.SIP_ML} ml · Cup ${HydrationGoal.CUP_ML} ml · Bottle ${HydrationGoal.BOTTLE_ML} ml",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
             )

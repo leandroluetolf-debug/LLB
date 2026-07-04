@@ -521,7 +521,7 @@ private fun HealthContributorsSection(day: DailyMetric?) {
                     modifier = Modifier.staggeredAppear(3),
                 )
                 Text(
-                    "Basiss learned on-device over 14 days. Bars read each signal against a " +
+                    "Baselines learned on-device over 14 days. Bars read each signal against a " +
                         "typical adult range (approximate, not medical advice).",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,

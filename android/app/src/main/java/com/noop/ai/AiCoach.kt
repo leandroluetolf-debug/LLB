@@ -248,7 +248,7 @@ class AiCoach(private val repo: WhoopRepository) {
         sb.append("\n30-day averages (over ${last30.size} days):\n")
         sb.append("  charge ${avgInt(last30) { it.recovery }}%, ")
         sb.append("effort ${avg1(last30) { it.strain }}, ")
-        sb.append("rest ${avg1(last30) { d -> d.totalSchlafMin?.div(60.0) }}h, ")
+        sb.append("rest ${avg1(last30) { d -> d.totalSleepMin?.div(60.0) }}h, ")
         sb.append("HRV ${avgInt(last30) { it.avgHrv }}ms, ")
         sb.append("RHR ${avgInt(last30) { d -> d.restingHr?.toDouble() }}bpm\n")
         // Additional vitals when present (#124, the coach used to see only recovery/strain/sleep/HRV/RHR).

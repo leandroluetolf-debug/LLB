@@ -261,9 +261,9 @@ fun BodyClockCard(
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Overline("Plan · ${plan.estimatedDays}-day shift")
                     Text(
-                        "Day 1: bright light ${clockString(firstDay.brightHellStartHour)} - " +
-                            "${clockString(firstDay.brightHellEndHour)}, lights-out around " +
-                            "${clockString(firstDay.targetSchlafHour)}.",
+                        "Day 1: bright light ${clockString(firstDay.brightLightStartHour)} - " +
+                            "${clockString(firstDay.brightLightEndHour)}, lights-out around " +
+                            "${clockString(firstDay.targetSleepHour)}.",
                         style = NoopType.subhead,
                         color = Palette.textSecondary,
                     )

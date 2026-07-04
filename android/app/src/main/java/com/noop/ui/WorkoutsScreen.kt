@@ -682,7 +682,7 @@ private fun EffortHero(
                     HeroStat("Active", oneDecimal(totalTimeH) + "h", Palette.textPrimary, Modifier.weight(1f))
                 }
                 Text(
-                    if (modal != null) "Mostly ${WorkoutBearbeitening.displaySport(modal.sport)} (${effectiveRange.caption})."
+                    if (modal != null) "Mostly ${WorkoutEditing.displaySport(modal.sport)} (${effectiveRange.caption})."
                     else "Logged sessions across ${effectiveRange.caption}.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
@@ -1133,7 +1133,7 @@ private fun SessionRow(
 ) {
     // #64: only MANUAL / DETECTED rows are selectable — imported history is read-only.
     val selectable = WorkoutMerge.isMergeable(row)
-    val rowLabel = "${WorkoutBearbeitening.displaySport(row.sport)}, ${dateLabel(row.startTs)}" +
+    val rowLabel = "${WorkoutEditing.displaySport(row.sport)}, ${dateLabel(row.startTs)}" +
         if (selectionMode) {
             when {
                 !selectable -> ". Importiereniert, can't be merged."

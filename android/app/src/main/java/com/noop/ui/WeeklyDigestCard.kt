@@ -169,11 +169,11 @@ fun WeeklyDigestContent(digest: WeeklyDigest, compact: Boolean = false) {
                 Text(weekRangeLabel(digest), style = NoopType.title2, color = Palette.textPrimary)
             }
             Text(
-                "${digest.daysWithDaten}/7 days",
+                "${digest.daysWithData}/7 days",
                 style = NoopType.footnote,
                 color = Palette.textSecondary,
                 modifier = Modifier.semantics {
-                    contentDescription = "${digest.daysWithDaten} of 7 days had data diese Woche"
+                    contentDescription = "${digest.daysWithData} of 7 days had data diese Woche"
                 },
             )
         }

@@ -2347,7 +2347,7 @@ private fun SynthesisHeroCard(
         val detail = if (recoveryCalibration != null) {
             // Comma (not the old em-dash) to match the Swift canonical synthesis copy VERBATIM
             // (TodayView "Learning your baseline, N of M nights.") and the no-em-dash standing rule.
-            "Learning your baseline, $recoveryCalibration of ${Basiss.minNightsSeed} nights."
+            "Learning your baseline, $recoveryCalibration of ${Baselines.minNightsSeed} nights."
         } else if (carriedDay != null) {
             // Carried prior-day read, summarise that day + stamp it so it isn't passed off as today's.
             synthesisDetail(carriedDay) + " ${carriedCaption(carriedDay.day)}."
@@ -2451,7 +2451,7 @@ private fun RingEmptyOverlay(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Kalibriert", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
             Text(
-                "$kalibriertNights of ${Basiss.minNightsSeed}",
+                "$calibratingNights of ${Baselines.minNightsSeed}",
                 style = NoopType.footnote,
                 color = Palette.textSecondary,
                 maxLines = 1,
@@ -3392,7 +3392,7 @@ private fun RecoveryContributorsSection(day: DailyMetric?, carriedDay: DailyMetr
                 color = Palette.sleepDeep,
             )
             Text(
-                "Basiss learned on-device over 14 days. Bars are an approximate read of each " +
+                "Baselines learned on-device over 14 days. Bars are an approximate read of each " +
                     "signal against a typical adult range, not medical advice.",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
@@ -3948,7 +3948,7 @@ private fun MetricGrid(
             KeyTileData(
                 label = "Erholung",
                 value = d?.recovery?.let { "${it.roundToInt()}" }
-                    ?: recoveryCalibration?.let { "$it/${Basiss.minNightsSeed}" }
+                    ?: recoveryCalibration?.let { "$it/${Baselines.minNightsSeed}" }
                     ?: lastScoredCharge?.let { "${it.value.roundToInt()}" } ?: NO_DATA,
                 unit = if (d?.recovery != null || lastScoredCharge != null) "%" else "",
                 tint = v?.let { Palette.recoveryColor(it) } ?: Palette.chargeColor,

@@ -255,7 +255,7 @@ private fun HeroCard(
     val a11y = when {
         recovery != null -> "Erholung ${recovery.roundToInt()} percent. See what shaped your Charge"
         calibrationNights != null ->
-            "Erholung kalibriert, $calibrationNights of ${Basiss.minNightsSeed} nights"
+            "Erholung kalibriert, $calibrationNights of ${Baselines.minNightsSeed} nights"
         else -> "Erholung, keine Daten yet"
     }
     // The vessel runs LIVE (per-frame slosh + tilt) once there's a real value to show; an empty/calibrating
@@ -315,7 +315,7 @@ private fun HeroCard(
                     )
                 } else if (recovery == null && calibrationNights != null) {
                     Text(
-                        "Kalibriert, $calibrationNights of ${Basiss.minNightsSeed} nights",
+                        "Kalibriert, $calibrationNights of ${Baselines.minNightsSeed} nights",
                         style = NoopType.footnote,
                         color = Palette.textTertiary,
                     )
