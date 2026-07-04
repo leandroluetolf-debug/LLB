@@ -1285,10 +1285,9 @@ fun TodayScreen(
             }
         }
         }
-        // Key Metrics grid, HR trend and Workouts each stagger in as the lower main sections (indices 4–6),
-        // mirroring iOS's `.staggeredAppear` on metricsSection / heartRateTrendSection / workoutsSection.
+        // No staggeredAppear here: it translated workout tiles over the "Aktivität" section tag
+        // and made the header unreadable whenever workouts were present.
         item {
-        Box(modifier = Modifier.fillMaxWidth().staggeredAppear(4)) {
             MetricGrid(
                 d = displayMetric,
                 w = window,
@@ -1312,11 +1311,8 @@ fun TodayScreen(
                 onToggleMetrics = { metricsExpanded = !metricsExpanded },
             )
         }
-        }
         item {
-        Box(modifier = Modifier.fillMaxWidth().staggeredAppear(6)) {
             TodayWorkoutsSection(footer.recentWorkouts)
-        }
         }
         // Auto-detect workouts (MVP, opt-in, default OFF), a NON-DESTRUCTIVE "looks like a workout?"
         // card that suggests logging a detected sustained-elevated-HR bout. Renders nothing when the
@@ -4830,8 +4826,13 @@ data class TodayFooterState(
 private fun TodayWorkoutsSection(workouts: List<WorkoutRow>) {
     if (workouts.isEmpty()) return
 
-    SectionHeader("Last Workouts", overline = "Aktivität", trailing = "14 days")
-    Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = Metrics.space14),
+        verticalArrangement = Arrangement.spacedBy(Metrics.gap),
+    ) {
+        SectionHeader("Letzte Workouts", overline = "Aktivität", trailing = "14 Tage")
         workouts.take(4).chunked(2).forEach { rowWorkouts ->
             Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
                 rowWorkouts.forEach { workout ->
