@@ -150,7 +150,7 @@ val LightTokens = PaletteTokens(
 
 enum class ChartStyle(val storageValue: String, val label: String) {
     TITANIUM("titanium", "Titanium"),
-    CLASSIC("classic", "Classic");
+    CLASSIC("classic", "Klassisch");
 
     companion object {
         fun fromStorage(raw: String?): ChartStyle = entries.firstOrNull { it.storageValue == raw } ?: TITANIUM
@@ -225,7 +225,7 @@ val ClassicLight = ClassicRamp(
 // MARK: - Appearance preference (System / Light / Dark)
 
 enum class AppearanceMode(val storageValue: String, val label: String) {
-    SYSTEM("system", "System"),
+    SYSTEM("system", "Automatisch"),
     LIGHT("light", "Hell"),
     DARK("dark", "Dunkel");
 

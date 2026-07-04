@@ -64,9 +64,9 @@ object StepsCalibrationFormat {
     /** A 0–1 confidence as Low / Medium / High. Thirds: < 0.34 Low, < 0.67 Medium, else High. A manual
      *  coefficient is confidence 1.0 → "High". */
     fun confidenceLabel(confidence: Double): String = when {
-        confidence < 0.34 -> "Low"
-        confidence < 0.67 -> "Medium"
-        else -> "High"
+        confidence < 0.34 -> "Niedrig"
+        confidence < 0.67 -> "Mittel"
+        else -> "Hoch"
     }
 }
 

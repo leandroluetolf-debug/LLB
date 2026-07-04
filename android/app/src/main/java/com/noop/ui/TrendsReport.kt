@@ -54,11 +54,11 @@ import kotlin.math.roundToInt
 
 /** The export window choices: trailing N days, or all history. */
 enum class ReportRange(val days: Int?, val label: String, val longName: String) {
-    Days30(30, "30d", "Last 30 days"),
-    Days90(90, "90d", "Last 90 days"),
-    Days180(180, "6M", "Last 6 months"),
-    Days365(365, "1Y", "Last year"),
-    All(null, "All", "All history"),
+    Days30(30, "30T", "Letzte 30 Tage"),
+    Days90(90, "90T", "Letzte 90 Tage"),
+    Days180(180, "6M", "Letzte 6 Monate"),
+    Days365(365, "1J", "Letztes Jahr"),
+    All(null, "Alle", "Gesamter Verlauf"),
 }
 
 // MARK: - Data builder (pure glue over the engine)
@@ -618,16 +618,16 @@ fun TrendsReportExportSection(vm: AppViewModel, modifier: Modifier = Modifier) {
 
     NoopCard(modifier = modifier, tint = Palette.accent) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Overline("Exportieren")
-            Text("Trends report (PDF)", style = NoopType.title2, color = Palette.textPrimary)
+            Overline("Export")
+            Text("Trends-Bericht (PDF)", style = NoopType.title2, color = Palette.textPrimary)
             Text(
-                "A clean, shareable one-page PDF of your recovery, sleep, HRV, resting heart rate " +
-                    "and strain over a date range. Built and saved on your phone - nothing leaves the device.",
+                "Eine übersichtliche, teilbare Ein-Seiten-PDF mit Erholung, Schlaf, HRV, Ruhepuls " +
+                    "und Belastung über einen Zeitraum. Wird auf dem Telefon erstellt — nichts verlässt das Gerät.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
 
-            Overline("Range", color = Palette.textTertiary)
+            Overline("Zeitraum", color = Palette.textTertiary)
             SegmentedPillControl(
                 items = ReportRange.entries.toList(),
                 selection = range,
@@ -647,7 +647,7 @@ fun TrendsReportExportSection(vm: AppViewModel, modifier: Modifier = Modifier) {
             )
 
             Text(
-                "The share sheet can save the PDF to Files, or send it on.",
+                "Über die Teilen-Funktion kannst du die PDF in Dateien speichern oder weiterleiten.",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
             )
