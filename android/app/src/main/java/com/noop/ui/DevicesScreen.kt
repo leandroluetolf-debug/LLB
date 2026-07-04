@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Watch
 import androidx.compose.material3.AlertDialog
@@ -123,6 +124,9 @@ fun DevicesScreen(
     val currentActiveName =
         all.firstOrNull { it.status == DeviceStatus.active.name }?.let { displayName(it) }
             ?: "Dein aktuelles Band"
+    // Manual reconnect — same permission gate as Settings / Live (issue #1). Clears a user Disconnect
+    // and starts a fresh scan/reconnect to the active strap.
+    val requestReconnect = rememberRequestScan { viewModel.connect() }
 
     // PERF (#707): lazy scaffold — each device card is virtualized via `items(...)` (each was a direct
     // child of the eager `spacedBy(20.dp)` column, so the LazyColumn's matching spacing is identical) and
@@ -163,6 +167,15 @@ fun DevicesScreen(
                 onMakeActive = { switchTarget = device },
                 onRename = { renameTarget = device },
                 onRemove = { removeTarget = device },
+            )
+        }
+
+        // Manual reconnect: safer/explicit when auto-reconnect stalls (WHOOP app bond, bond-loop pause).
+        item {
+            ReconnectDeviceButton(
+                connected = live.connected,
+                scanning = live.scanning,
+                onReconnect = requestReconnect,
             )
         }
 
@@ -526,6 +539,36 @@ private fun MenuItem(
         leadingIcon = { Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(18.dp)) },
         onClick = onClick,
     )
+}
+
+@Composable
+private fun ReconnectDeviceButton(
+    connected: Boolean,
+    scanning: Boolean,
+    onReconnect: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        NoopButton(
+            text = if (scanning) "Suche…" else "Erneut verbinden",
+            leadingIcon = Icons.Filled.Refresh,
+            kind = if (connected) NoopButtonKind.Secondary else NoopButtonKind.Primary,
+            fullWidth = true,
+            enabled = !scanning,
+            modifier = Modifier.semantics {
+                contentDescription = if (scanning) "Suche nach Band" else "Band erneut verbinden"
+            },
+            onClick = onReconnect,
+        )
+        Text(
+            when {
+                scanning -> "Suche nach deinem WHOOP…"
+                connected -> "Verbunden. Tippen, um die Verbindung neu aufzubauen."
+                else -> "Tippen, wenn das Band nicht gefunden wird. Offizielle WHOOP-App vorher beenden."
+            },
+            style = NoopType.footnote,
+            color = Palette.textTertiary,
+        )
+    }
 }
 
 @Composable
