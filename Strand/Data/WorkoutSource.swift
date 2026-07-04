@@ -42,12 +42,12 @@ enum WorkoutSource: Equatable {
     }
 
     /// Sport-cell text. The detector stores the machine token "detected"; show it as a neutral
-    /// "Activity" (we don't claim a sport we didn't actually classify). WHOOP sport names arrive as
+    /// "Aktivität" (we don't claim a sport we didn't actually classify). WHOOP sport names arrive as
     /// concatenated camelCase (e.g. "TraditionalStrengthTraining"), which reads as one long
     /// unbreakable word and truncates badly — split it into words on the lower→Upper boundary so it
-    /// renders "Traditional Strength Training". Already-spaced labels (manual/edited) pass through. (#175)
+    /// renders "Traditional Krafttraining". Already-spaced labels (manual/edited) pass through. (#175)
     static func displaySport(_ sport: String) -> String {
-        if sport == "detected" { return String(localized: "Activity") }
+        if sport == "detected" { return String(localized: "Aktivität") }
         return splitCamelCase(sport)
     }
 
@@ -66,9 +66,9 @@ enum WorkoutSource: Equatable {
     }
 
     /// The locale-stable editable form: what an edit field should SEED so a save round-trips a stable
-    /// token ("Activity", never a translated word that would split cross-source dedup per language).
+    /// token ("Aktivität", never a translated word that would split cross-source dedup per language).
     static func editableSport(_ sport: String) -> String {
-        sport == "detected" ? "Activity" : splitCamelCase(sport)
+        sport == "detected" ? "Aktivität" : splitCamelCase(sport)
     }
 
     // MARK: - Dismissed detected bouts (durable across re-detection)
@@ -117,8 +117,8 @@ enum WorkoutSource: Equatable {
 
     /// Normalised sport key for cross-source matching. Folds the WHOOP camelCase token and a
     /// human-readable import label to the same key ("TraditionalStrengthTraining" and
-    /// "Traditional Strength Training" → "traditionalstrengthtraining"), case- and space-insensitive,
-    /// so the same activity matches across sources. "detected"/"Activity" both fold to "activity".
+    /// "Traditional Krafttraining" → "traditionalstrengthtraining"), case- and space-insensitive,
+    /// so the same activity matches across sources. "detected"/"Aktivität" both fold to "activity".
     /// LOCALE-STABLE by construction: computed from the raw token, never the localized display (a
     /// localized word here would vary the dedup key and the trace allowlist per user language).
     static func sportKey(_ sport: String) -> String {
@@ -135,7 +135,7 @@ enum WorkoutSource: Equatable {
     /// otherwise surface as `sport=johnsbirthday5k` in the export, which `redactPii` cannot catch. Here we
     /// emit the key ONLY when it matches the known named catalogue; any off-catalogue / free-text sport
     /// folds to the generic "custom" so genuine user text can never enter a shared bundle. The user-facing
-    /// `displaySport` is unchanged - this is purely the diagnostic-line token. "detected"/"Activity" fold to
+    /// `displaySport` is unchanged - this is purely the diagnostic-line token. "detected"/"Aktivität" fold to
     /// "activity" via `sportKey` and that IS a catalogue-independent known token, so it is allowed through.
     static func traceSportKey(_ sport: String) -> String {
         let key = sportKey(sport)
@@ -360,7 +360,7 @@ struct WorkoutFilter: Equatable {
     }
 
     /// Does one row pass every active facet? Sport matches on the DISPLAYED name (so "detected" folds to
-    /// "Activity", camelCase splits) exactly as the picker lists it; source matches on `classify`; search
+    /// "Aktivität", camelCase splits) exactly as the picker lists it; source matches on `classify`; search
     /// is a case-insensitive substring of the displayed sport.
     func matches(_ row: WorkoutRow) -> Bool {
         if let sport, WorkoutSource.displaySport(row.sport) != sport { return false }
@@ -406,7 +406,7 @@ enum WorkoutMerge {
 
     /// The sport the merge should carry: the most-frequent non-"detected" sport across the inputs (ties
     /// broken by first appearance), or nil when every input is a bare detected bout — then the caller
-    /// asks the user to pick one. "detected"/"Activity" never wins so a merge with any real label keeps it.
+    /// asks the user to pick one. "detected"/"Aktivität" never wins so a merge with any real label keeps it.
     static func resolvedSport(_ rows: [WorkoutRow]) -> String? {
         var counts: [String: Int] = [:]
         var order: [String] = []
@@ -423,7 +423,7 @@ enum WorkoutMerge {
 
     /// Merge the given rows into one manual row. `sport` overrides the resolved sport (used when the
     /// inputs are all detected and the user picked one); when nil the resolved sport is used, falling back
-    /// to "Activity" only if there is genuinely no label. Returns nil for fewer than two rows.
+    /// to "Aktivität" only if there is genuinely no label. Returns nil for fewer than two rows.
     ///
     /// Math (per the #64 brief): startTs = min, endTs = max (the honest span); durationS = SUM of the
     /// per-session durations (honest active time, NOT the span); energyKcal = SUM; avgHr = duration-
@@ -461,7 +461,7 @@ enum WorkoutMerge {
             .filter { !$0.isEmpty }
         let mergedNotes = notes.isEmpty ? nil : notes.joined(separator: " · ")
 
-        let mergedSport = sport ?? resolvedSport(rows) ?? "Activity"
+        let mergedSport = sport ?? resolvedSport(rows) ?? "Aktivität"
 
         return WorkoutRow(startTs: start, endTs: end, sport: mergedSport, source: "manual",
                           durationS: durationS, energyKcal: energyKcal, avgHr: avgHr, maxHr: maxHr,

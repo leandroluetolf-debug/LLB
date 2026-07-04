@@ -52,8 +52,8 @@ struct MarkMomentIntent: AppIntent {
 
 /// Send a confirming haptic buzz to the strap. Opens the app so the live BLE link can deliver it.
 struct BuzzStrapIntent: AppIntent {
-    static var title: LocalizedStringResource = "Buzz Strap"
-    static var description = IntentDescription("Send a haptic buzz to your WHOOP strap.")
+    static var title: LocalizedStringResource = "Buzz Band"
+    static var description = IntentDescription("Senden a haptic buzz to your WHOOP strap.")
     static var openAppWhenRun = true
 
     func perform() async throws -> some IntentResult {
@@ -71,7 +71,7 @@ struct NOOPShortcuts: AppShortcutsProvider {
                     systemImageName: "mappin.and.ellipse")
         AppShortcut(intent: BuzzStrapIntent(),
                     phrases: ["Buzz my \(.applicationName) strap"],
-                    shortTitle: "Buzz Strap",
+                    shortTitle: "Buzz Band",
                     systemImageName: "waveform.path")
     }
 }

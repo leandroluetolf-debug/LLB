@@ -2,7 +2,7 @@ import SwiftUI
 import StrandDesign
 
 /// Root — the sidebar shell, with the first-run onboarding/pairing wizard overlaid until complete,
-/// and a "What's New" changelog sheet shown automatically after an update.
+/// and a "Neuigkeiten" changelog sheet shown automatically after an update.
 struct ContentView: View {
     @AppStorage("noop.onboarded") private var onboarded = false
     @AppStorage("noop.lastSeenChangelogVersion") private var lastSeenChangelog = ""

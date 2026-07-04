@@ -53,7 +53,7 @@ struct BodyVitalReading: Identifiable {
     }
 
     var accessibilityText: String {
-        guard let v = formattedValue else { return String(localized: "\(label): no data") }
+        guard let v = formattedValue else { return String(localized: "\(label): keine Daten") }
         return String(localized: "\(label): \(v), \(stateCaption)")
     }
 
@@ -61,7 +61,7 @@ struct BodyVitalReading: Identifiable {
     /// — StatTile's caption is a plain String rendered via Text(String), which never consults the catalog.
     private var stateText: String {
         switch (banding.band, banding.basis) {
-        case (.noData, _):               return String(localized: "No data")
+        case (.noData, _):               return String(localized: "Keine Daten")
         case (.inRange, .personal):      return String(localized: "In your range")
         case (.outOfRange, .personal):   return String(localized: "Off baseline")
         case (.inRange, .population):    return String(localized: "Typical range")
@@ -80,14 +80,14 @@ struct BodyVitalReading: Identifiable {
             if key == "skin" { return String(localized: "Overnight computed") }
             return String(localized: "LLB computed")
         case .appleHealth:
-            return String(localized: "Apple Health")
+            return String(localized: "Apple Gesundheit")
         case .localCache:
             return nil
         }
     }
 
     static func dayLabel(_ day: String) -> String {
-        if day == BodyVitalSigns.logicalDayKey(Date()) { return String(localized: "Today") }
+        if day == BodyVitalSigns.logicalDayKey(Date()) { return String(localized: "Heute") }
         guard let date = BodyVitalSigns.dayParser.date(from: day) else { return day }
         return BodyVitalSigns.dayFormatter.string(from: date)
     }
@@ -221,12 +221,12 @@ enum BodyVitalSigns {
                 metricColor: StrandPalette.metricCyan,
                 day: spo2Row?.day,
                 source: spo2Row?.source,
-                missingCaption: String(localized: "No SpO₂ import or Health value"),
+                missingCaption: String(localized: "No SpO₂ import or Gesundheit value"),
                 sparkline: trail(spo2Points)
             ),
             BodyVitalReading(
                 key: "rhr",
-                label: String(localized: "Resting HR"),
+                label: String(localized: "Ruhe-HF"),
                 unit: "bpm",
                 value: rhrRow?.value,
                 format: { String(Int($0.rounded())) },

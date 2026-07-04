@@ -102,10 +102,10 @@ struct IOSDiagnostics {
     func summaryLines() -> [String] {
         #if os(iOS)
         var lines: [String] = []
-        lines.append("Device: \(deviceModel ?? "unknown")")
+        lines.append("Device: \(deviceModell ?? "unknown")")
         if let os = osVersionString { lines.append("iOS: \(os)") }
         if let p = isProtectedDataAvailable {
-            lines.append("Data Protection: \(p ? "unlocked (files readable)" : "LOCKED — unlock once after reboot so history can sync")")
+            lines.append("Daten Protection: \(p ? "unlocked (files readable)" : "LOCKED — unlock once after reboot so history can sync")")
         }
         if let bg = backgroundRefresh { lines.append("Background refresh: \(bg)") }
         if let lpm = isLowPowerMode { lines.append("Low Power Mode: \(lpm ? "ON (throttles background BLE)" : "off")") }
@@ -154,9 +154,9 @@ struct IOSDiagnostics {
     private static func backgroundRefreshText(_ status: UIBackgroundRefreshStatus) -> String {
         switch status {
         case .available:  return "Available"
-        case .denied:     return "Denied (off in Settings)"
+        case .denied:     return "Denied (off in Einstellungen)"
         case .restricted: return "Restricted (parental/MDM)"
-        @unknown default: return "Unknown"
+        @unknown default: return "Unbekannt"
         }
     }
 

@@ -467,7 +467,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     var todayFooterCache: TodayFooterState? = null
 
     /**
-     * #849: the same re-mount guard for Today's pinned "Your cards" reads (Stress / Fitness age / Vitality),
+     * #849: the same re-mount guard for Today's pinned "Deine Karten" reads (Stress / Fitness age / Vitality),
      * which scan the whole metric history. Signature + last-computed values are cached on the ViewModel so a
      * re-mount restores them and skips the redundant reload, exactly like the footer above. `null` = not yet
      * loaded this process; the cached triple is restored into the screen's local state on first composition.
@@ -750,7 +750,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                             profileStore.stepsCalibrationConfidence = cal.confidence
                             profileStore.stepsCalibrationManual = cal.manual
                         },
-                        // Manual "Recalibrate baseline" anchor (Settings → Charge advanced). The analytics
+                        // Manual "Basis neu kalibrieren" anchor (Settings → Charge advanced). The analytics
                         // layer is Context-free, so read the epoch (whole seconds, written as a Long by the
                         // button) here and thread it down — foldHistory drops every HRV night before it.
                         baselineEpoch = NoopPrefs.of(appContext)
@@ -832,7 +832,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
 
-        // Apply the persisted "Continuous HRV capture" intent so the BLE client holds the dense realtime
+        // Apply the persisted "Durchgehende HRV-Erfassung" intent so the BLE client holds the dense realtime
         // stream armed once bonded (the reconciler arms it post-bond). Only effective with background
         // connection on — without it there's nothing keeping the link up to stream over, so a continuous
         // want would be meaningless. Pushed BEFORE autoReconnectOnLaunch so a launch reconnect arms it.
@@ -843,8 +843,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         autoReconnectOnLaunch()
     }
 
-    /** The effective continuous-HRV want: the user's "Continuous HRV capture" preference AND
-     *  "Keep connected in the background" — the latter is what holds the link up for the stream to ride,
+    /** The effective continuous-HRV want: the user's "Durchgehende HRV-Erfassung" preference AND
+     *  "Im Hintergrund verbunden halten" — the latter is what holds the link up for the stream to ride,
      *  so continuous capture is meaningless without it. */
     private fun continuousHrvEffective(): Boolean =
         NoopPrefs.continuousHrv(appContext) && NoopPrefs.backgroundConnection(appContext)
@@ -918,7 +918,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val _lastWorkout = MutableStateFlow<WorkoutRow?>(null)
     val lastWorkout: StateFlow<WorkoutRow?> = _lastWorkout.asStateFlow()
 
-    /** One-shot: the Today "workout in progress" indicator card raises this (via [openActiveWorkout]) so the
+    /** One-shot: the Today "Workout läuft" indicator card raises this (via [openActiveWorkout]) so the
      *  Live screen presents the in-exercise overlay for an ALREADY-RUNNING workout. The overlay normally only
      *  opens at workout start (StartWorkoutSheet), so this is the single path that re-opens it for a session
      *  already in flight, the Android analogue of iOS NavRouter.presentActiveWorkout. LiveScreen consumes it
@@ -1071,7 +1071,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val distanceM = if (w.gpsEnabled) RouteMath.totalMeters(track) else w.distanceM
         // If we promoted the foreground service ONLY to keep GPS tracking alive (the user hasn't opted
         // into the background connection), drop it now the route is finished — otherwise a lingering
-        // "Connected" notification would outlive the workout. With background-connection on, leave it
+        // "Verbunden" notification would outlive the workout. With background-connection on, leave it
         // up. Done here (before the discard early-return) so an empty GPS session tears down too. (#215)
         if (w.gpsEnabled && !NoopPrefs.backgroundConnection(appContext)) {
             WhoopConnectionService.stop(appContext)
@@ -1347,7 +1347,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 add(ScheduledReportPolicy.durationLabel(durMin))
                 row.avgHr?.let { add("avg $it bpm") }
             }
-            "Workout logged: ${WorkoutEditing.displaySport(row.sport)}" to
+            "Workout logged: ${WorkoutBearbeitening.displaySport(row.sport)}" to
                 (pieces.joinToString(" · ") + ". Summarised after your strap synced.")
         }
         ScheduledReportNotifier.onWorkout(appContext, row.startTs, title, body)
@@ -1514,7 +1514,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Flip "Continuous HRV capture" (driven by Settings → Strap). Persists the preference and pushes the
+     * Flip "Durchgehende HRV-Erfassung" (driven by Settings → Strap). Persists the preference and pushes the
      * effective want to the BLE client so it takes effect immediately: turning it on while bonded +
      * backgrounded arms the dense realtime stream now; turning it off disarms it unless a Live screen
      * still wants it (the reconciler only sends the toggle on the false↔true edge). Gated on background
@@ -1526,7 +1526,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Flip "Overnight only" for Continuous HRV capture (#927, driven by Settings → Strap). Persists the
+     * Flip "Nur über Nacht" for Continuous HRV capture (#927, driven by Settings → Strap). Persists the
      * preference and re-pushes the UNCHANGED keep-stream want, purely so the BLE reconciler re-derives
      * the window gate immediately: flipping it on outside the window disarms the stream now, flipping it
      * off re-arms it. The BLE client re-reads this preference at every arm site, so no stale value can
@@ -1538,9 +1538,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Flip "Debug logging" (driven by Settings → Strap). Persists the preference and pushes it to the
+     * Flip "Debug-Protokoll" (driven by Settings → Strap). Persists the preference and pushes it to the
      * live BLE client so it takes effect immediately. Default OFF: the strap log stays in the in-app
-     * ring buffer (and the "Share strap log" export) but is not mirrored to logcat unless the user opts
+     * ring buffer (and the "Band-Log teilen" export) but is not mirrored to logcat unless the user opts
      * in — so a normal user never writes the connection log to the system log. With it on, developers
      * can watch the connection live over `adb logcat -s WhoopBleClient`.
      */
@@ -1559,7 +1559,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val broadcaster = HrBroadcaster(appContext, log = { ble.externalLog(it) })
 
     private val _hrBroadcast = MutableStateFlow(NoopPrefs.hrBroadcast(appContext))
-    /** Whether the "Broadcast heart rate" toggle is on. Default OFF. */
+    /** Whether the "Herzfrequenz senden" toggle is on. Default OFF. */
     val hrBroadcast: StateFlow<Boolean> = _hrBroadcast.asStateFlow()
     /** True while LLB is actually advertising as an HR peripheral (radio on + permission granted). */
     val hrBroadcastAdvertising: StateFlow<Boolean> = broadcaster.advertising
@@ -1581,7 +1581,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Flip "Broadcast heart rate" (driven by Data Sources). Persists the preference and starts/stops the
+     * Flip "Herzfrequenz senden" (driven by Data Sources). Persists the preference and starts/stops the
      * HR peripheral immediately. The Compose layer requests BLUETOOTH_ADVERTISE + BLUETOOTH_CONNECT before
      * calling this with `enabled = true` (Android 12+); if those aren't held, [HrBroadcaster.start]
      * surfaces a status note instead of broadcasting. Default OFF.
@@ -1710,7 +1710,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun getBattery() = ble.refreshBattery()
 
     /**
-     * User-initiated "Sync now": kick a historical offload on demand (#93). A thin pass-through to the
+     * User-initiated "Jetzt synchronisieren": kick a historical offload on demand (#93). A thin pass-through to the
      * BLE client's gated [WhoopBleClient.syncNow], which forwards to the same connected+bonded+
      * not-already-backfilling guard the auto-kick and 900s periodic timer use — so it's a safe no-op
      * when the strap isn't ready or a session is already running. Progress is unknowable from the
@@ -1875,14 +1875,14 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Re-evaluate the strap's single firmware-alarm slot from BOTH features that want it (#5).
      *
-     *  The "Strap wake-alarm" (_smartAlarmEnabled) and the "Buzz WHOOP 4/5" companion (_buzzWhoop4Enabled)
+     *  The "Band wake-alarm" (_smartAlarmEnabled) and the "Buzz WHOOP 4/5" companion (_buzzWhoop4Enabled)
      *  both target the ONE firmware slot. Previously each armed/disarmed it independently, so turning one
      *  off disarmed a slot the other still wanted, and whichever ran last won the time. This is now the
      *  SOLE caller of ble.armStrapAlarm / ble.disableStrapAlarm: it computes each feature's requested wake
      *  epoch (null when that feature is off or has no valid firing day) and arms the slot to the EARLIEST
      *  of the two, or disarms when neither wants it.
      *
-     *  Needs the strap connected (if it isn't, send() logs "ignored, not connected" and the reconcile
+     *  Needs the strap connected (if it isn't, send() logs "ignored, nicht verbunden" and the reconcile
      *  takes effect next time you connect + change a setting; the bond-edge re-arm also calls this). */
     private fun reconcileStrapAlarm() {
         // Smart wake-alarm's requested time (honours weekdays + per-day overrides), or null when off /
@@ -2130,7 +2130,7 @@ internal fun nextSmartAlarmEpochSec(
     dayOverrides: Map<Int, Int> = emptyMap(),
 ): Long? {
     val valid = weekdays.filter { it in 1..7 }.toSet()
-    // An EMPTY input means "every day" (backward compatible). A non-empty selection that filters to
+    // An EMPTY input means "jeden Tag" (backward compatible). A non-empty selection that filters to
     // nothing (only out-of-range numbers) has no valid day to fire on, so it's null, not a daily alarm.
     if (weekdays.isNotEmpty() && valid.isEmpty()) return null
     // Per-weekday OVERRIDES (#554): only valid (day 1…7, minute in-range) entries count; a day without an
@@ -2199,7 +2199,7 @@ internal fun earliestStrapAlarmEpochSec(smartEpoch: Long?, buzzEpoch: Long?): Lo
 /**
  * Elapsed-workout clock from a whole-second count: M:SS up to an hour, H:MM:SS once an hour has passed (so a
  * 90-minute session reads "1:30:00", not "90:00"). Negative inputs clamp to zero ("0:00"). Pure so the
- * Today "workout in progress" indicator and the Live card share ONE format, and the iOS-parity H:MM:SS
+ * Today "Workout läuft" indicator and the Live card share ONE format, and the iOS-parity H:MM:SS
  * roll-over is unit-testable without composing any UI. Mirrors iOS ActiveWorkoutIndicatorModel.elapsed.
  */
 internal fun elapsedClock(elapsedS: Long): String {

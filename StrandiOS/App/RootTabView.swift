@@ -4,10 +4,10 @@ import StrandDesign
 
 /// iOS navigation shell. macOS uses a `NavigationSplitView` sidebar (`RootView`); on iPhone the
 /// natural analogue is a `TabView` with the most-used screens as tabs and everything else under a
-/// "More" list. Every screen is the same `StrandDesign`-built view the macOS app uses.
+/// "Mehr" list. Every screen is the same `StrandDesign`-built view the macOS app uses.
 struct RootTabView: View {
     @EnvironmentObject private var repo: Repository
-    /// Cross-screen navigation requests (e.g. Live → "Manage devices"). Devices isn't a tab — it lives
+    /// Cross-screen navigation requests (e.g. Live → "Geräte verwalten"). Devices isn't a tab — it lives
     /// behind the More list — so a request presents it as a sheet, matching the quick-action screens.
     @EnvironmentObject private var router: NavRouter
 
@@ -61,9 +61,9 @@ struct RootTabView: View {
             // cleanly in the gap between them — replaces the native tab bar: no overlap, no glow. The
             // native TabView still drives content + per-tab nav state; only its bar is hidden.
             TabView(selection: $selectedTab) {
-                tab(todayTabRoot, "Today", "square.grid.2x2").tag(0)
+                tab(todayTabRoot, "Heute", "square.grid.2x2").tag(0)
                 tab(TrendsView(), "Trends", "chart.line.uptrend.xyaxis").tag(1)
-                tab(SleepView(), "Sleep", "bed.double").tag(2)
+                tab(SleepView(), "Schlaf", "bed.double").tag(2)
                 moreTab.tag(3)
             }
             .tint(StrandPalette.accent)
@@ -107,7 +107,7 @@ struct RootTabView: View {
         .sheet(item: $quickAction) { action in
             quickActionDestination(action)
         }
-        // Live's "Manage devices" affordance (and any future cross-screen link to Devices) routes here:
+        // Live's "Geräte verwalten" affordance (and any future cross-screen link to Devices) routes here:
         // present the Devices manager in its own nav stack, the same way the quick-action screens do.
         .sheet(isPresented: $showDevices) {
             devicesScreen
@@ -175,7 +175,7 @@ struct RootTabView: View {
             .toolbarBackground(StrandPalette.surfaceBase, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { routedPillar = nil }
+                    Button("Fertig") { routedPillar = nil }
                         .foregroundStyle(StrandPalette.accent)
                 }
             }
@@ -223,7 +223,7 @@ struct RootTabView: View {
                 .toolbarBackground(StrandPalette.surfaceBase, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") { quickAction = nil }
+                        Button("Fertig") { quickAction = nil }
                             .foregroundStyle(StrandPalette.accent)
                     }
                 }
@@ -240,7 +240,7 @@ struct RootTabView: View {
                 .toolbarBackground(StrandPalette.surfaceBase, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Done") { showDevices = false }
+                        Button("Fertig") { showDevices = false }
                             .foregroundStyle(StrandPalette.accent)
                     }
                 }
@@ -263,48 +263,48 @@ struct RootTabView: View {
         .tabItem { Label(title, systemImage: icon) }
     }
 
-    // The "More" tab is the app's catch-all index. It was a plain SwiftUI `List` with system large-title
+    // The "Mehr" tab is the app's catch-all index. It was a plain SwiftUI `List` with system large-title
     // + system title-case section headers, so it didn't match any other page (which all use ScreenScaffold
     // + SectionHeader's UPPERCASE overline + the 28pt section rhythm). Rebuilt on the shared page chrome:
-    // ScreenScaffold for the title1 "More" + subtitle, a `SectionHeader` overline per group, and the group's
+    // ScreenScaffold for the title1 "Mehr" + subtitle, a `SectionHeader` overline per group, and the group's
     // rows in a single grouped NoopCard with hairline dividers — the same row idiom Settings/Health use.
     private var moreTab: some View {
         NavigationStack {
-            ScreenScaffold(title: "More", subtitle: "Everything else, one tap away",
+            ScreenScaffold(title: "Mehr", subtitle: "Everything else, one tap away",
                            onRefresh: { await repo.refresh() },
                            topBackground: liquidScaffoldSky()) {
-                moreSection("Insights") {
-                    MoreRow("What Moves You", "wand.and.sparkles") { InsightsHubView() }
-                    MoreRow("Intelligence", "brain.head.profile") { IntelligenceView() }
+                moreSection("Einblicke") {
+                    MoreRow("Was dich bewegt", "wand.and.sparkles") { InsightsHubView() }
+                    MoreRow("Intelligenz", "brain.head.profile") { IntelligenceView() }
                     MoreRow("Coach", "sparkles") { CoachView() }
-                    MoreRow("Insights", "lightbulb.fill") { InsightsView() }
-                    MoreRow("Explore", "square.grid.2x2.fill") { MetricExplorerView() }
-                    MoreRow("Compare", "rectangle.split.2x1.fill") { CompareView() }
+                    MoreRow("Einblicke", "lightbulb.fill") { InsightsView() }
+                    MoreRow("Entdecken", "square.grid.2x2.fill") { MetricExplorerView() }
+                    MoreRow("Vergleichen", "rectangle.split.2x1.fill") { CompareView() }
                 }
-                moreSection("Body") {
+                moreSection("Körper") {
                     MoreRow("Live", "waveform.path.ecg") { LiveView() }
                     MoreRow("Workouts", "figure.run") { WorkoutsView() }
-                    MoreRow("Health", "heart.text.square.fill") { HealthView() }
-                    MoreRow("Lab Book", "books.vertical.fill") { LabBookView() }
+                    MoreRow("Gesundheit", "heart.text.square.fill") { HealthView() }
+                    MoreRow("Laborbuch", "books.vertical.fill") { LabBookView() }
                     MoreRow("Stress", "bolt.heart.fill") { StressView() }
-                    MoreRow("Breathe", "wind") { BreathingView() }
-                    MoreRow("Intervals", "timer") { IntervalTimerView() }
+                    MoreRow("Atmen", "wind") { BreathingView() }
+                    MoreRow("Intervalle", "timer") { IntervalTimerView() }
                     // Experimental beat-to-beat regularity visualization — self-gates on its own consent.
-                    MoreRow("Rhythm", "waveform.path") { RhythmHost() }
+                    MoreRow("Rhythmus", "waveform.path") { RhythmHost() }
                 }
-                moreSection("Data") {
-                    MoreRow("Your Data, Fused", "square.stack.3d.up.fill") { FusedRecordHost() }
-                    MoreRow("Apple Health", "heart.fill") { AppleHealthView() }
+                moreSection("Daten") {
+                    MoreRow("Deine Daten, vereint", "square.stack.3d.up.fill") { FusedRecordHost() }
+                    MoreRow("Apple Gesundheit", "heart.fill") { AppleHealthView() }
                     MoreRow("Mi Band", "figure.walk.motion") { XiaomiBandView() }
-                    MoreRow("Data Sources", "externaldrive.fill") { DataSourcesView() }
+                    MoreRow("Datenquellen", "externaldrive.fill") { DataSourcesView() }
                     MoreRow("Backup & Sync", "externaldrive.fill.badge.icloud") { BackupSyncView() }
                     // #155: HealthKit-free Apple Health path for sideloaded installs (Siri Shortcut
                     // reads the opt-in Documents/noop_sync.txt drop file).
-                    MoreRow("Shortcuts Export", "square.and.arrow.up.fill") { ShortcutExportSettingsView() }
+                    MoreRow("Shortcuts Exportieren", "square.and.arrow.up.fill") { ShortcutExportSettingsView() }
                 }
                 moreSection("App") {
                     // #805/#811: the v7.3.1 #766 alarm consolidation moved Smart Alarm under a single
-                    // "Alarms" sidebar entry (RootView .smartAlarm) but the regression dropped the row
+                    // "Wecker" sidebar entry (RootView .smartAlarm) but the regression dropped the row
                     // from the iPhone More list, leaving Alarms unreachable on iPhone. Restore it here
                     // (route to SmartAlarmView, the cross-platform iOS/macOS surface).
                     //
@@ -313,18 +313,18 @@ struct RootTabView: View {
                     // and project.yml excludes Screens/NotificationSettingsView.swift from the iOS target),
                     // so it can't compile or apply on iPhone. iPhone's wrist-alert controls live on the
                     // Automations screen instead. Its absence from the iPhone More list is correct.
-                    MoreRow("Alarms", "alarm.fill") { SmartAlarmView() }
-                    MoreRow("Automations", "wand.and.stars") { AutomationsView() }
+                    MoreRow("Wecker", "alarm.fill") { SmartAlarmView() }
+                    MoreRow("Automationen", "wand.and.stars") { AutomationsView() }
                     // The Test Centre (the diagnostics + bug-report hub) gets a first-class home here, not
                     // just buried in Settings, so the feedback loop is one tap from the More tab.
-                    MoreRow("Test Centre", "stethoscope") { TestCentreView() }
+                    MoreRow("Testcenter", "stethoscope") { TestCentreView() }
                     MoreRow("Siri & Shortcuts", "mic.fill") { SiriShortcutsSettingsView() }
-                    MoreRow("Settings", "gearshape.fill") { SettingsView() }
+                    MoreRow("Einstellungen", "gearshape.fill") { SettingsView() }
                 }
             }
             .toolbar(.hidden, for: .tabBar)   // we draw our own FloatingTabBar
         }
-        .tabItem { Label("More", systemImage: "ellipsis.circle.fill") }
+        .tabItem { Label("Mehr", systemImage: "ellipsis.circle.fill") }
     }
 
     /// One titled, COLLAPSIBLE group in the More index (S2): the app's overline (UPPERCASE) becomes a
@@ -470,10 +470,10 @@ private struct QuickActionSheet: View {
                 .padding(.bottom, 10)
 
             VStack(spacing: 8) {
-                row("Live HR", icon: "waveform.path.ecg", tint: StrandPalette.metricRose) { onPick(.live) }
-                row("Start workout", icon: "figure.run", tint: StrandPalette.effortColor) { onPick(.workout) }
+                row("Live-HF", icon: "waveform.path.ecg", tint: StrandPalette.metricRose) { onPick(.live) }
+                row("Workout starten", icon: "figure.run", tint: StrandPalette.effortColor) { onPick(.workout) }
                 row("Log journal", icon: "square.and.pencil", tint: StrandPalette.accent) { onPick(.journal) }
-                row("Breathe", icon: "wind", tint: StrandPalette.restColor) { onPick(.breathe) }
+                row("Atmen", icon: "wind", tint: StrandPalette.restColor) { onPick(.breathe) }
             }
             .padding(.horizontal, 16)
 
@@ -530,10 +530,10 @@ private struct FloatingTabBar: View {
     var onReselect: (Int) -> Void = { _ in }
 
     private struct Item: Identifiable { let title: LocalizedStringKey; let icon: String; let tag: Int; var id: Int { tag } }
-    private let nav = [Item(title: "Today", icon: "square.grid.2x2", tag: 0),
+    private let nav = [Item(title: "Heute", icon: "square.grid.2x2", tag: 0),
                        Item(title: "Trends", icon: "chart.line.uptrend.xyaxis", tag: 1),
-                       Item(title: "Sleep", icon: "bed.double", tag: 2),
-                       Item(title: "More", icon: "ellipsis", tag: 3)]
+                       Item(title: "Schlaf", icon: "bed.double", tag: 2),
+                       Item(title: "Mehr", icon: "ellipsis", tag: 3)]
 
     var body: some View {
         // One frosted glass bar, four evenly-spaced tabs. The quick-action "+" now lives in the

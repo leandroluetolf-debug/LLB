@@ -57,7 +57,7 @@ struct HRVSnapshotView: View {
     /// The completed analysis (nil until `.done`).
     @State private var result: HRVAnalyzer.HRVResult? = nil
 
-    /// Whether the just-finished snapshot has been saved (drives the Save button → "Saved").
+    /// Whether the just-finished snapshot has been saved (drives the Save button → "Speichernd").
     @State private var saved = false
 
     private let secondTimer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -102,9 +102,9 @@ struct HRVSnapshotView: View {
             }
 
             if bonded {
-                StatePill("Strap live", tone: .positive, showsDot: true)
+                StatePill("Band live", tone: .positive, showsDot: true)
             } else {
-                StatePill("Not connected", tone: .warning, showsDot: true)
+                StatePill("Nicht verbunden", tone: .warning, showsDot: true)
             }
 
             Spacer()
@@ -118,7 +118,7 @@ struct HRVSnapshotView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Close HRV reading")
+                .accessibilityLabel("Schließen HRV reading")
             }
         }
     }
@@ -227,7 +227,7 @@ struct HRVSnapshotView: View {
             if let r = result, r.rmssd == nil {
                 return String(localized: "Not enough clean beats. Sit still and try again.")
             }
-            return String(localized: "Done. Save this reading to keep it in your trends.")
+            return String(localized: "Fertig. Speichern this reading to keep it in your trends.")
         }
     }
 
@@ -263,7 +263,7 @@ struct HRVSnapshotView: View {
                 Button {
                     save(r)
                 } label: {
-                    Label(saved ? "Saved" : "Save", systemImage: saved ? "checkmark.circle.fill" : "square.and.arrow.down")
+                    Label(saved ? "Speichernd" : "Speichern", systemImage: saved ? "checkmark.circle.fill" : "square.and.arrow.down")
                         .font(StrandFont.body)
                         .padding(.vertical, 12)
                         .padding(.horizontal, 8)
@@ -278,7 +278,7 @@ struct HRVSnapshotView: View {
     private var primaryLabel: String {
         switch phase {
         case .idle:      return String(localized: "Take an HRV reading")
-        case .capturing: return String(localized: "Cancel")
+        case .capturing: return String(localized: "Abbrechen")
         case .done:      return String(localized: "Take another reading")
         }
     }

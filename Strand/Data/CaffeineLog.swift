@@ -1,9 +1,9 @@
 import Foundation
 
-// MARK: - Caffeine window (#526) — log an intake + a rough on-device "still active" estimate
+// MARK: - Caffeine window (#526) — log an intake + a rough on-device "noch aktiv" estimate
 //
 // OPT-IN, MANUAL-FIRST: the user logs a caffeine intake (a time, and OPTIONALLY an amount in mg). LLB
-// then shows a plain "caffeine still active" hint on Today / Insights, computed entirely on-device from a
+// then shows a plain "caffeine noch aktiv" hint on Today / Insights, computed entirely on-device from a
 // simple exponential half-life decay. This is a ROUGH GUIDE from what the user logged, NOT a measurement
 // and NOT a health claim — caffeine pharmacokinetics vary a lot between people (the ~5–6 h half-life is a
 // population average). The honest framing lives in the copy; the math here just decays what was logged.
@@ -41,7 +41,7 @@ public enum CaffeineDecay {
 
     /// Total estimated mg still active across several intakes (each `(mg, hoursElapsed)`), at one moment.
     /// Intakes with an unknown dose are excluded from the mg total (we won't invent an amount) — the
-    /// "still active" *flag* below covers the dose-unknown case instead.
+    /// "noch aktiv" *flag* below covers the dose-unknown case instead.
     public static func totalRemainingMg(_ intakes: [(doseMg: Double, hoursElapsed: Double)],
                                         halfLifeHours: Double = defaultHalfLifeHours) -> Double {
         intakes.reduce(0) { $0 + remainingMg(doseMg: $1.doseMg, hoursElapsed: $1.hoursElapsed,
@@ -71,10 +71,10 @@ public enum CaffeineDecay {
     // Reframes `hoursUntilFraction` as a clock-friendly "stop drinking after" cutoff: given a bedtime and
     // an acceptable residual fraction at bedtime, the cutoff is `bedtime − hoursUntilFraction(target)`. A
     // dose at the cutoff decays to exactly `targetResidualFraction` by bedtime; anything later still has
-    // more than that on board. Same decay model as the "still active" hint — only the framing changes.
+    // more than that on board. Same decay model as the "noch aktiv" hint — only the framing changes.
 
     /// Default acceptable residual at bedtime: a quarter of the dose (two half-lives), matching the
-    /// `isStillActive` threshold so "still active" and "past cutoff" agree.
+    /// `isStillActive` threshold so "noch aktiv" and "past cutoff" agree.
     public static let defaultBedtimeResidual = 0.25
 
     /// Hours BEFORE bedtime the cutoff falls — the lead time over which a dose decays to
@@ -220,7 +220,7 @@ public final class CaffeineLogStore: ObservableObject {
         intakes = []
     }
 
-    /// The current "still active" estimate, computed from the logged intakes at `now()`.
+    /// The current "noch aktiv" estimate, computed from the logged intakes at `now()`.
     public func estimate(halfLifeHours: Double = CaffeineDecay.defaultHalfLifeHours)
         -> CaffeineActiveEstimate {
         CaffeineActiveEstimate.compute(intakes: intakes, now: now(), halfLifeHours: halfLifeHours)

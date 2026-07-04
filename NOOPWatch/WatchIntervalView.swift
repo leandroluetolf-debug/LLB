@@ -221,7 +221,7 @@ struct WatchIntervalView: View {
                     .frame(maxWidth: .infinity)
             }
             .tint(StrandPalette.surfaceRaised)
-            .accessibilityLabel("Reset")
+            .accessibilityLabel("Zurücksetzen")
             .disabled(isCleanStart)
         }
         .buttonStyle(.borderedProminent)

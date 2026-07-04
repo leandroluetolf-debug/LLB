@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  * [LogExport.writeScheduledExport]) — plus the raw 5/MG capture alongside — to the app-private export dir
  * under a `YYYYMMDD-HHMMSS` filename, once per day, with no UI. It exists so a reporter chasing an
  * intermittent fault (maddognik's use case: a strap that misbehaves overnight) gets a dated log waiting
- * each morning instead of having to remember to hit "Share strap log" at the right moment.
+ * each morning instead of having to remember to hit "Band-Log teilen" at the right moment.
  *
  * SCHEDULING — WorkManager, not AlarmManager. The smart ALARM (#207) uses `AlarmManager.setAlarmClock`
  * because waking the user is safety-critical and must beat Doze to the exact second. A debug export is
@@ -120,8 +120,8 @@ class DebugExportSettings(private val prefs: SharedPreferences) {
 
     companion object {
         private const val PREFS = "noop_debug_export"
-        private const val KEY_ENABLED = "debugExport.enabled"
-        private const val KEY_TIME = "debugExport.timeMinutes"
+        private const val KEY_ENABLED = "debugExportieren.enabled"
+        private const val KEY_TIME = "debugExportieren.timeMinutes"
 
         const val MINUTES_PER_DAY = 24 * 60
         const val DEFAULT_TIME = 7 * 60   // 07:00 — a log waiting when you wake.

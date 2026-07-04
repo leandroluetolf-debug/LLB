@@ -99,9 +99,9 @@ public struct Hypnogram: View {
     /// per-band accessibility layer (which emitted one element PER interval — O(intervals), a heavy
     /// semantics subtree the Compose/AppKit accessibility walk re-copied on every scroll, a contributor
     /// to the #707 OOM). Collapsing to one node keeps a clear screen-reader read-out at O(1) node cost.
-    /// e.g. "Sleep stages, 2 hours deep, 1 hour 30 minutes REM, 3 hours light, 20 minutes awake".
+    /// e.g. "Schlaf stages, 2 hours deep, 1 hour 30 minutes REM, 3 hours light, 20 minutes awake".
     private var axSummary: String {
-        guard !intervals.isEmpty else { return String(localized: "Sleep stages, no data", bundle: .module) }
+        guard !intervals.isEmpty else { return String(localized: "Schlaf stages, keine Daten", bundle: .module) }
         // Sum duration per stage in the natural read order (deep · REM · light · awake), naming only the
         // stages that actually occur so a night with no awake time doesn't read "0 minutes awake".
         var parts: [String] = []
@@ -109,8 +109,8 @@ public struct Hypnogram: View {
             let total = intervals.filter { $0.stage == stage }.reduce(0.0) { $0 + $1.duration }
             if total > 0 { parts.append("\(Hypnogram.durationPhrase(total)) \(stage.label.lowercased())") }
         }
-        return parts.isEmpty ? String(localized: "Sleep stages, no data", bundle: .module)
-                             : String(localized: "Sleep stages, \(parts.joined(separator: ", "))", bundle: .module)
+        return parts.isEmpty ? String(localized: "Schlaf stages, keine Daten", bundle: .module)
+                             : String(localized: "Schlaf stages, \(parts.joined(separator: ", "))", bundle: .module)
     }
 
     /// A spoken duration phrase ("2 hours 5 minutes", "45 minutes", "1 hour") for a seconds interval.
@@ -347,7 +347,7 @@ private func sampleNight() -> [SleepInterval] {
 #Preview("Hypnogram") {
     let start = Calendar.current.date(bySettingHour: 23, minute: 18, second: 0, of: Date())
     return VStack(alignment: .leading, spacing: 12) {
-        Text("Last night").strandOverline()
+        Text("Letzte Nacht").strandOverline()
         Text("Hover a band: stage name, clock start–end and duration.")
             .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
         Hypnogram(intervals: sampleNight(), height: 200, nightStart: start)

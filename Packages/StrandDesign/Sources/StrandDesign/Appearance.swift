@@ -57,8 +57,8 @@ public enum AppearanceMode: String, CaseIterable, Identifiable, Sendable {
     public var label: String {
         switch self {
         case .system: return String(localized: "System", bundle: .module)
-        case .light:  return String(localized: "Light", bundle: .module)
-        case .dark:   return String(localized: "Dark", bundle: .module)
+        case .light:  return String(localized: "Hell", bundle: .module)
+        case .dark:   return String(localized: "Dunkel", bundle: .module)
         }
     }
 

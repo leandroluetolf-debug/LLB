@@ -19,10 +19,10 @@ import Foundation
 // 0–21 axis / sleep performance), the optimal-strain band is a liquid tube, the cards are the frosted liquid
 // surface with UPPERCASE section overlines, and the day-of-sky backdrop carries behind — all routed through
 // StrandPalette so the Classic / Titanium appearance toggle carries automatically. The word "WHOOP" appears
-// in NO shipped UI string here (legal posture); the screen is called "Coupled view".
+// in NO shipped UI string here (legal posture); the screen is called "Gekoppelte Ansicht".
 //
 // Tap-throughs, matching the sibling screens' deep-link/back behaviour: the hero ring opens the Charge
-// breakdown ("What shaped it", the same shared ChargeBreakdownSection content the Today ring opens, hosted
+// breakdown ("Was es geprägt hat", the same shared ChargeBreakdownSection content the Today ring opens, hosted
 // here because TodayView's own sheet is view-private); the sleep row pushes the Sleep screen.
 
 struct CoupledView: View {
@@ -60,7 +60,7 @@ struct CoupledView: View {
     private var recovery: Double? { day?.recovery ?? carriedRecoveryDay?.recovery }
 
     /// True when the hero is showing the CARRIED prior score rather than today's own, which drives the
-    /// dimmed ring + the "Last night · <date>" stamp so an old number is never passed off as new (#543/#779).
+    /// dimmed ring + the "Letzte Nacht · <date>" stamp so an old number is never passed off as new (#543/#779).
     private var isCarryingRecovery: Bool { day?.recovery == nil && carriedRecoveryDay?.recovery != nil }
 
     /// Effort strain on LLB's 0–100 axis for the day (stored row; no live recompute here, this is a
@@ -136,7 +136,7 @@ struct CoupledView: View {
         let f = DateFormatter()
         f.locale = Locale.current
         f.setLocalizedDateFormatFromTemplate("d MMM")
-        return LocalizedStringKey("Today, \(f.string(from: Date()))")
+        return LocalizedStringKey("Heute, \(f.string(from: Date()))")
     }
 
     // MARK: 1. HERO, the recovery vessel, coupled read (tap = the Charge breakdown)
@@ -151,7 +151,7 @@ struct CoupledView: View {
         } label: {
             card {
                 VStack(spacing: 14) {
-                    SectionHeader("Recovery", overline: "Coupled read")
+                    SectionHeader("Erholung", overline: "Coupled read")
                         .frame(maxWidth: .infinity, alignment: .leading)
                     ZStack {
                         LiquidVessel(value: recovery.map { max(0, min(1, $0 / 100)) },
@@ -211,7 +211,7 @@ struct CoupledView: View {
         .padding(.horizontal, 24)
     }
 
-    /// The honest state line under the ring: the "Last night · <date>" stamp when carrying a prior score
+    /// The honest state line under the ring: the "Letzte Nacht · <date>" stamp when carrying a prior score
     /// (#543/#779, via the SAME pure caption Today uses), or the calibrating progress while the baseline
     /// seeds. Nothing when today's own score is showing.
     @ViewBuilder
@@ -228,11 +228,11 @@ struct CoupledView: View {
     }
 
     private var heroAccessibilityLabel: String {
-        if let r = recovery { return String(localized: "Recovery \(Int(r.rounded())) percent") }
+        if let r = recovery { return String(localized: "Erholung \(Int(r.rounded())) percent") }
         if let banked = calibrationNights {
-            return String(localized: "Recovery calibrating, \(banked) of \(Baselines.minNightsSeed) nights")
+            return String(localized: "Erholung kalibriert, \(banked) of \(Basiss.minNightsSeed) nights")
         }
-        return String(localized: "Recovery, no data yet")
+        return String(localized: "Erholung, keine Daten yet")
     }
 
     /// The one-word readiness pill (Push / Maintain / Rest), tinted by the readiness level, matching the
@@ -246,7 +246,7 @@ struct CoupledView: View {
             .padding(.horizontal, 12).padding(.vertical, 5)
             .background(Capsule(style: .continuous).fill(tint.opacity(0.12)))
             .overlay(Capsule(style: .continuous).stroke(tint.opacity(0.32), lineWidth: 1))
-            .accessibilityLabel("Readiness: \(word)")
+            .accessibilityLabel("Bereitschaft: \(word)")
     }
 
     /// The readiness level's tint, the SAME mapping TodayView.readinessColor uses.
@@ -292,7 +292,7 @@ struct CoupledView: View {
                     // Right: the coupled stat stack, OPTIMAL range (with a liquid tube band), calories, workouts.
                     VStack(alignment: .leading, spacing: 14) {
                         optimalStat
-                        heroStat("Calories",
+                        heroStat("Kalorien",
                                  caloriesText,
                                  tint: StrandPalette.metricAmber)
                         heroStat("Workouts",
@@ -311,7 +311,7 @@ struct CoupledView: View {
     private var strainBandWord: String? {
         guard let s = dayStrain21 else { return nil }
         switch s {
-        case ..<6:   return String(localized: "Light")
+        case ..<6:   return String(localized: "Hell")
         case ..<10:  return String(localized: "Moderate")
         case ..<14:  return String(localized: "Strenuous")
         default:     return String(localized: "High")
@@ -369,7 +369,7 @@ struct CoupledView: View {
         } label: {
             card {
                 VStack(alignment: .leading, spacing: 14) {
-                    SectionHeader("Sleep performance", overline: "Last night", trailing: String(localized: "Rest"))
+                    SectionHeader("Schlaf performance", overline: "Letzte Nacht", trailing: String(localized: "Rest"))
                     HStack(alignment: .center, spacing: 16) {
                         // Left: the SLEEP PERFORMANCE % as the liquid vessel (Rest world), with the score
                         // counting up over the fluid. Empty vessel when there's no scored performance.
@@ -421,15 +421,15 @@ struct CoupledView: View {
         .buttonStyle(LiquidPressStyle())
         .accessibilityElement(children: .combine)
         .accessibilityLabel(sleepAccessibilityLabel)
-        .accessibilityHint("Open Sleep")
+        .accessibilityHint("Open Schlaf")
     }
 
     private var sleepAccessibilityLabel: String {
-        guard let p = sleepPerformance else { return String(localized: "Sleep performance not available") }
+        guard let p = sleepPerformance else { return String(localized: "Schlaf performance not available") }
         if let asleep = day?.totalSleepMin, asleep > 0 {
-            return String(localized: "Sleep performance \(Int(p.rounded())) percent. \(Self.hoursMinutes(asleep)) slept, \(Self.hoursMinutes(sleepNeedForDay)) needed")
+            return String(localized: "Schlaf performance \(Int(p.rounded())) percent. \(Self.hoursMinutes(asleep)) slept, \(Self.hoursMinutes(sleepNeedForDay)) needed")
         }
-        return String(localized: "Sleep performance \(Int(p.rounded())) percent")
+        return String(localized: "Schlaf performance \(Int(p.rounded())) percent")
     }
 
     /// The night's need (minutes) for the slept-vs-needed read: the imported per-day figure when the
@@ -474,9 +474,9 @@ struct CoupledView: View {
 
     // MARK: Charge breakdown sheet (the hero tap target)
     //
-    // The same "What shaped it" content the Today Charge ring opens: the shared ChargeBreakdownSection over
+    // The same "Was es geprägt hat" content the Today Charge ring opens: the shared ChargeBreakdownSection over
     // drivers DERIVED from the displayed row (never a second store scan), the honest calibrating countdown
-    // while the baseline seeds, and the "How Charge is calculated" method link. TodayView's own sheet is
+    // while the baseline seeds, and the "So wird Charge berechnet" method link. TodayView's own sheet is
     // view-private, so this hosts the SAME shared components with the same derivations, no engine work.
 
     /// The row the breakdown reads, mirroring the hero: today's own when scored, else the carried
@@ -549,7 +549,7 @@ struct CoupledView: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(StrandPalette.chargeColor)
                             VStack(alignment: .leading, spacing: 1) {
-                                Text("How Charge is calculated")
+                                Text("So wird Charge berechnet")
                                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                                 Text("The method behind the score, not today's values.")
                                     .font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
@@ -564,7 +564,7 @@ struct CoupledView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("How Charge is calculated. The method behind the score.")
+                    .accessibilityLabel("So wird Charge berechnet. The method behind the score.")
                 }
                 .padding(NoopMetrics.screenPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -577,12 +577,12 @@ struct CoupledView: View {
             .toolbar {
                 #if os(iOS)
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { showChargeBreakdown = false }
+                    Button("Fertig") { showChargeBreakdown = false }
                         .foregroundStyle(StrandPalette.accent)
                 }
                 #else
                 ToolbarItem {
-                    Button("Done") { showChargeBreakdown = false }
+                    Button("Fertig") { showChargeBreakdown = false }
                         .foregroundStyle(StrandPalette.accent)
                 }
                 #endif
@@ -622,7 +622,7 @@ struct CoupledView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Charge baseline calibrating. \(countdown), \(unlock). \(progress).")
+        .accessibilityLabel("Charge baseline kalibriert. \(countdown), \(unlock). \(progress).")
     }
 
     // MARK: Shared helpers
@@ -690,7 +690,7 @@ struct CoupledView: View {
 }
 
 #if DEBUG
-#Preview("Coupled view") {
+#Preview("Gekoppelte Ansicht") {
     let repo = Repository(deviceId: "preview")
     repo.days = [
         DailyMetric(

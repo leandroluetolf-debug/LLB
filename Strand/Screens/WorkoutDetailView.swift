@@ -77,7 +77,7 @@ struct WorkoutDetailView: View {
         .toolbar {
             // A Done affordance for the sheet on both platforms (iOS gets the grabber too).
             ToolbarItem(placement: .cancellationAction) {
-                Button("Done") { dismiss() }
+                Button("Fertig") { dismiss() }
             }
         }
         .task { await load() }
@@ -165,11 +165,11 @@ struct WorkoutDetailView: View {
                      value: row.avgHr.map { "\($0)" } ?? "–",
                      caption: row.avgHr != nil ? "bpm" : nil,
                      accent: row.avgHr != nil ? StrandPalette.metricRose : StrandPalette.textTertiary)
-            StatTile(label: "Max HR",
+            StatTile(label: "Max. HF",
                      value: row.maxHr.map { "\($0)" } ?? "–",
                      caption: row.maxHr != nil ? "bpm" : nil,
                      accent: row.maxHr != nil ? StrandPalette.metricRose : StrandPalette.textTertiary)
-            StatTile(label: "Calories",
+            StatTile(label: "Kalorien",
                      value: row.energyKcal.map { grouped($0) } ?? "–",
                      caption: row.energyKcal != nil ? "kcal" : nil,
                      accent: row.energyKcal != nil ? StrandPalette.metricAmber : StrandPalette.textTertiary)
@@ -257,7 +257,7 @@ struct WorkoutDetailView: View {
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
                 ChartCard(
                     title: "HEART RATE",
-                    subtitle: String(localized: "Beats per minute across the session"),
+                    subtitle: String(localized: "Schläge pro Minute across the session"),
                     trailing: row.avgHr.map { String(localized: "avg \($0)") },
                     tint: StrandPalette.effortColor
                 ) {
@@ -268,7 +268,7 @@ struct WorkoutDetailView: View {
                         showsArea: true,
                         valueFormat: { String(localized: "\(Int($0.rounded())) bpm") },
                         dateFormat: { Self.tooltipTime.string(from: $0) },
-                        accessibilityLabel: String(localized: "Heart rate during \(WorkoutSource.displaySport(row.sport))")
+                        accessibilityLabel: String(localized: "Herzfrequenz during \(WorkoutSource.displaySport(row.sport))")
                     )
                 } footer: {
                     ChartFooter([
@@ -334,7 +334,7 @@ struct WorkoutDetailView: View {
                         .frame(height: 34)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(String(localized: "Heart-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z[$0 - 1] / total * 100).rounded())) percent") }.joined(separator: ", "))"))
+                        .accessibilityLabel(String(localized: "Herz-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z[$0 - 1] / total * 100).rounded())) percent") }.joined(separator: ", "))"))
                         Divider().overlay(StrandPalette.hairline)
                         HStack(spacing: 0) {
                             ForEach(0..<5, id: \.self) { i in
@@ -591,7 +591,7 @@ struct WorkoutRouteMap: View {
         WorkoutDetailView(row: WorkoutRow(
             startTs: Int(Date().timeIntervalSince1970) - 3600,
             endTs: Int(Date().timeIntervalSince1970),
-            sport: "Running", source: "whoop", durationS: 3600, energyKcal: 712,
+            sport: "Laufen", source: "whoop", durationS: 3600, energyKcal: 712,
             avgHr: 152, maxHr: 178, strain: 14.2, distanceM: 10_400,
             zonesJSON: #"{"z1":12.5,"z2":28.0,"z3":33.5,"z4":18.0,"z5":6.0}"#, notes: nil))
             .environmentObject(Repository(deviceId: "preview"))

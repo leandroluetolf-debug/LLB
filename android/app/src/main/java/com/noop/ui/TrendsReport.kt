@@ -395,10 +395,10 @@ object TrendsReportRenderer {
         // Provenance legend (#457): make clear which numbers are measured vs. LLB's own derived scores,
         // so a clinician reading the PDF isn't misled into treating Recovery/Strain as clinical measures.
         // Sits above the hairline; wraps to the page width (~4 lines at this size).
-        val legend = "How to read this: HRV, Resting HR, Sleep duration, Respiratory rate and Skin " +
+        val legend = "How to read this: HRV, Ruhe-HF, Schlaf duration, Atemfrequenz and Skin " +
             "temperature are measured from the strap (skin temp is shown as the deviation from your own " +
-            "baseline). Workouts is the count of activities you logged or that were detected. Recovery, " +
-            "Strain and Stress are LLB's own on-device scores, not clinical measures - Recovery is a daily " +
+            "baseline). Workouts is the count of activities you logged or that were detected. Erholung, " +
+            "Strain and Stress are LLB's own on-device scores, not clinical measures - Erholung is a daily " +
             "readiness composite (HRV, resting HR, sleep and skin-temp trend), Strain is cardiovascular load " +
             "derived from heart rate, and Stress is a 0-3 autonomic-load index from resting HR and HRV."
         drawWrapped(canvas, legend, MARGIN, y - 52f, PAGE_W - 2 * MARGIN, 11f, 9f, sans, TEXT_TERTIARY)
@@ -597,7 +597,7 @@ object TrendsReportShare {
 
 /**
  * The trends-report export entry: a short blurb, a range SegmentedPillControl, the resolved
- * range's day-count, and a gold "Export PDF" CTA. Built only from the locked component system.
+ * range's day-count, and a gold "Exportieren PDF" CTA. Built only from the locked component system.
  * Drop it into Settings (or Trends). Reads the merged history off [vm].
  */
 @Composable
@@ -618,7 +618,7 @@ fun TrendsReportExportSection(vm: AppViewModel, modifier: Modifier = Modifier) {
 
     NoopCard(modifier = modifier, tint = Palette.accent) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Overline("Export")
+            Overline("Exportieren")
             Text("Trends report (PDF)", style = NoopType.title2, color = Palette.textPrimary)
             Text(
                 "A clean, shareable one-page PDF of your recovery, sleep, HRV, resting heart rate " +
@@ -639,7 +639,7 @@ fun TrendsReportExportSection(vm: AppViewModel, modifier: Modifier = Modifier) {
             // Routed through the unified NoopButton (crisp filled accent, no gold) — the same button
             // system every other CTA uses, mirroring the iOS exportReportRow.
             NoopButton(
-                text = "Export PDF",
+                text = "Exportieren PDF",
                 leadingIcon = Icons.Filled.IosShare,
                 kind = NoopButtonKind.Primary,
                 fullWidth = true,

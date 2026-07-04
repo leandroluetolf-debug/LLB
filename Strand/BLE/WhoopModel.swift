@@ -33,11 +33,11 @@ public enum WhoopModel: String, CaseIterable, Identifiable, Hashable {
     }
 
     /// The model the user last chose, read from the same key the pickers write
-    /// (`@AppStorage("selectedWhoopModel")`). Used as the default for scans the user
+    /// (`@AppStorage("selectedWhoopModell")`). Used as the default for scans the user
     /// didn't directly trigger — BLE state restoration, power-on reconnect — so those
     /// look for the right strap after a relaunch instead of falling back to WHOOP 4.0.
     public static var persisted: WhoopModel {
-        UserDefaults.standard.string(forKey: "selectedWhoopModel").flatMap(WhoopModel.init(rawValue:)) ?? .whoop4
+        UserDefaults.standard.string(forKey: "selectedWhoopModell").flatMap(WhoopModel.init(rawValue:)) ?? .whoop4
     }
 
     /// The BLE service to scan for, and to discover after connecting, for this model.

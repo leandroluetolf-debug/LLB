@@ -152,7 +152,7 @@ struct StressView: View {
 
             // 2. Today's numbers — uniform tiles in one grid.
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-                SectionHeader("Today", overline: "Markers", trailing: String(localized: "vs 30-day baseline"))
+                SectionHeader("Heute", overline: "Markers", trailing: String(localized: "vs 30-day baseline"))
                 tileGrid(model)
             }
             .staggeredAppear(index: 1)
@@ -179,7 +179,7 @@ struct StressView: View {
                 BreathingView()
                     .toolbar {
                         ToolbarItem {
-                            Button("Done") { showBreathe = false }
+                            Button("Fertig") { showBreathe = false }
                         }
                     }
             }
@@ -194,7 +194,7 @@ struct StressView: View {
     @ViewBuilder
     private func daytimeSection(_ day: DaytimeStress.Result) -> some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Today's Timeline", overline: "Intraday",
+            SectionHeader("Heute's Timeline", overline: "Intraday",
                           trailing: timelineTrailing(day))
 
             NoopCard(tint: StressRamp.calm) {
@@ -268,7 +268,7 @@ struct StressView: View {
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                NoopButton("Start a Breathe session", systemImage: "wind",
+                NoopButton("Start a Atmen session", systemImage: "wind",
                            kind: .primary, fullWidth: true) {
                     showBreathe = true
                 }
@@ -343,7 +343,7 @@ struct StressView: View {
         NoopCard(tint: StressRamp.calm) {
             VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                 HStack {
-                    Text("Advanced HRV").strandOverline()
+                    Text("Erweitert HRV").strandOverline()
                     Spacer()
                     Text("on demand · today's R-R")
                         .font(StrandFont.footnote)
@@ -413,7 +413,7 @@ struct StressView: View {
             )
             // Resting HR — an INCREASE is the stressful direction.
             markerTile(
-                label: "Resting HR",
+                label: "Ruhe-HF",
                 value: model.rhrToday.map { String(localized: "\($0) bpm") } ?? "—",
                 delta: model.rhrDelta,
                 accent: StrandPalette.metricRose,
@@ -448,7 +448,7 @@ struct StressView: View {
             deltaText = String(localized: "\(up ? "+" : "−")\(Int(abs(delta).rounded())) vs base")
             deltaColor = isStressful ? StrandPalette.statusWarning : StrandPalette.statusPositive
         } else {
-            deltaText = String(localized: "at baseline")
+            deltaText = String(localized: "auf Basisniveau")
             deltaColor = StrandPalette.textTertiary
         }
         return StatTile(
@@ -494,7 +494,7 @@ struct StressView: View {
                     )
                 } footer: {
                     ChartFooter([
-                        ("Today", String(format: "%.1f", model.score)),
+                        ("Heute", String(format: "%.1f", model.score)),
                         ("Average", String(format: "%.1f", avg)),
                         ("Days", "\(points.count)"),
                     ])
@@ -506,7 +506,7 @@ struct StressView: View {
                 }
             } else {
                 NoopCard(tint: StressRamp.calm) {
-                    Text("Not enough recent days to chart a trend yet. Import a history or keep wearing your strap.")
+                    Text("Not enough recent days to chart a trend yet. Importieren a history or keep wearing your strap.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .frame(maxWidth: .infinity, minHeight: 120, alignment: .center)
@@ -533,7 +533,7 @@ struct StressView: View {
             VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                 Text("How this is computed").strandOverline()
                 Text(model.usingStored
-                     ? "Today's value is your recorded daily stress score (0-3)."
+                     ? "Heute's value is your recorded daily stress score (0-3)."
                      : "Stress is derived from two autonomic signals.")
                     .font(StrandFont.body)
                     .foregroundStyle(StrandPalette.textPrimary)
@@ -565,7 +565,7 @@ struct StressView: View {
     // MARK: Empty state
 
     private var emptyState: some View {
-        ComingSoon(what: "No stress history yet. Import your WHOOP export in Data Sources to see it.")
+        ComingSoon(what: "No stress history yet. Importieren your WHOOP export in Datenquellen to see it.")
     }
 }
 
@@ -848,11 +848,11 @@ enum StressMath {
         switch band {
         case .high:
             if rhrUp && hrvDn {
-                return String(localized: "Resting HR is elevated and HRV is below your baseline, both classic signs of high activation. Prioritise rest, hydration and an easy day.")
+                return String(localized: "Ruhe-HF is elevated and HRV is below your baseline, both classic signs of high activation. Prioritise rest, hydration and an easy day.")
             } else if hrvDn {
                 return String(localized: "HRV has dropped well below your baseline, pointing to elevated stress or fatigue. Ease off and give your body time to recover.")
             } else if rhrUp {
-                return String(localized: "Resting heart rate is running high versus your norm. Your body is under load today. Keep effort light.")
+                return String(localized: "Ruhepuls is running high versus your norm. Your body is under load today. Keep effort light.")
             }
             return String(localized: "Your autonomic markers are skewed toward stress today. Treat it as a recovery-focused day.")
         case .medium:
@@ -864,11 +864,11 @@ enum StressMath {
             return String(localized: "You're sitting around your typical autonomic baseline: moderate stress, a normal, balanced day.")
         case .low:
             if rhrDn && hrvUp {
-                return String(localized: "Resting heart rate is low and HRV is up. Your nervous system looks well-recovered and calm. A great day to push if you want to.")
+                return String(localized: "Ruhepuls is low and HRV is up. Your nervous system looks well-recovered and calm. A great day to push if you want to.")
             } else if hrvUp {
                 return String(localized: "HRV is above baseline, a sign of a relaxed, well-recovered nervous system. Stress is low.")
             }
-            return String(localized: "Resting heart rate and HRV are sitting at or below baseline: low physiological stress. You're in a calm, recovered state.")
+            return String(localized: "Ruhepuls and HRV are sitting at or below baseline: low physiological stress. You're in a calm, recovered state.")
         }
     }
 }
@@ -1070,7 +1070,7 @@ struct StressTotalsBar: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            String(localized: "Today's stress split: calm \(durationLabel(totals.calmHours)), moderate \(durationLabel(totals.moderateHours)), high \(durationLabel(totals.highHours)).")
+            String(localized: "Heute's stress split: calm \(durationLabel(totals.calmHours)), moderate \(durationLabel(totals.moderateHours)), high \(durationLabel(totals.highHours)).")
         )
     }
 
@@ -1154,7 +1154,7 @@ private struct StressPreviewHarness: View {
                           alignment: .leading, spacing: NoopMetrics.gap) {
                     StatTile(label: "Stress", value: String(format: "%.1f", score),
                              caption: "of 3 · \(band.title)", accent: StressRamp.color(score))
-                    StatTile(label: "Resting HR", value: "54 bpm", accent: StrandPalette.metricRose,
+                    StatTile(label: "Ruhe-HF", value: "54 bpm", accent: StrandPalette.metricRose,
                              delta: "+3 vs base", deltaColor: StrandPalette.statusWarning)
                     StatTile(label: "HRV", value: "48 ms", accent: StrandPalette.metricPurple,
                              delta: "−8 vs base", deltaColor: StrandPalette.statusWarning)
@@ -1167,7 +1167,7 @@ private struct StressPreviewHarness: View {
                                valueRange: 0...3, showsArea: true, height: NoopMetrics.chartHeight,
                                valueFormat: { String(format: "%.1f", $0) })
                 } footer: {
-                    ChartFooter([("Today", String(format: "%.1f", score)), ("Average", "1.5"), ("Days", "30")])
+                    ChartFooter([("Heute", String(format: "%.1f", score)), ("Average", "1.5"), ("Days", "30")])
                 }
                 HStack { Spacer(); SegmentedPillControl(ExploreRange.allCases, selection: $range) { $0.label } }
             }

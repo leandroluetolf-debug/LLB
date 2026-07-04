@@ -114,7 +114,7 @@ class CoachViewModel(app: Application) : AndroidViewModel(app) {
     private val _hasCustomPrompt = MutableStateFlow(
         NoopPrefs.coachSystemPrompt(app.applicationContext).isNotBlank()
     )
-    /** True when an edited prompt differs from the default, gates the "Reset to default" control. */
+    /** True when an edited prompt differs from the default, gates the "Standard wiederherstellen" control. */
     val hasCustomPrompt: StateFlow<Boolean> = _hasCustomPrompt.asStateFlow()
 
     /** Persist the edited [prompt] (blank clears it back to default) and reflect it in the editor. */

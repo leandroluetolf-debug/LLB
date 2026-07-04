@@ -54,7 +54,7 @@ private struct BreathingContent: View {
         case breathe, resonance, calm
         var label: String {
             switch self {
-            case .breathe:   return String(localized: "Breathe")
+            case .breathe:   return String(localized: "Atmen")
             case .resonance: return String(localized: "Resonance")
             case .calm:      return String(localized: "Calm me")
             }
@@ -160,7 +160,7 @@ private struct BreathingContent: View {
     private var lockedBpm: Double? { BiofeedbackPrefs.lockedPace }
 
     var body: some View {
-        ScreenScaffold(title: "Breathe",
+        ScreenScaffold(title: "Atmen",
                        subtitle: "Haptic-paced breathing · find your pace · calm down",
                        // Liquid finish: the same full-bleed day-of-sky backdrop Today + the other liquid
                        // tabs carry, so Breathe sits in one atmosphere.
@@ -211,7 +211,7 @@ private struct BreathingContent: View {
     private var modeSwitch: some View {
         SegmentedPillControl(Mode.allCases, selection: $mode) { $0.label }
             .frame(maxWidth: .infinity, alignment: .center)
-            .accessibilityLabel("Breathe mode")
+            .accessibilityLabel("Atmen mode")
     }
 
     // MARK: - Breathe mode (the shipped fixed-pace trainer)
@@ -227,7 +227,7 @@ private struct BreathingContent: View {
     }
 
     /// Start a one-minute haptic breathing cue at the user's locked resonance pace (or 5.5 fallback) —
-    /// the L3 card's "Breathe now" action. Switches to Resonance/Breathe context and runs the controller.
+    /// the L3 card's "Atmen now" action. Switches to Resonance/Breathe context and runs the controller.
     private func startOneMinuteCue() {
         if running { stop() }
         let bpm = lockedBpm ?? ResonanceEngine.fallbackBpm
@@ -338,8 +338,8 @@ private struct BreathingContent: View {
 
     private var phaseWord: String {
         switch phase {
-        case .inhale: return String(localized: "Breathe in…")
-        case .exhale: return String(localized: "Breathe out…")
+        case .inhale: return String(localized: "Atmen in…")
+        case .exhale: return String(localized: "Atmen out…")
         }
     }
 
@@ -454,11 +454,11 @@ private struct BreathingContent: View {
 
     private var readoutRow: some View {
         HStack(spacing: NoopMetrics.gap) {
-            readoutTile(label: String(localized: "Heart rate"),
+            readoutTile(label: String(localized: "Herzfrequenz"),
                         value: model.bpm.map { "\($0)" } ?? "—",
                         unit: "bpm",
                         accent: StrandPalette.metricRose,
-                        caption: live.worn ? String(localized: "Live") : String(localized: "Strap not worn"))
+                        caption: live.worn ? String(localized: "Live") : String(localized: "Band not worn"))
 
             readoutTile(label: "HRV (RMSSD)",
                         value: rmssd.map { String(format: "%.0f", $0) } ?? "—",
@@ -534,7 +534,7 @@ private struct BreathingContent: View {
     }
 
     private var coherenceLabel: String {
-        guard let r = rmssd else { return String(localized: "No data") }
+        guard let r = rmssd else { return String(localized: "Keine Daten") }
         switch r {
         case ..<20:  return String(localized: "Building")
         case ..<45:  return String(localized: "Settling")
@@ -981,7 +981,7 @@ private struct ResonanceModeView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
                 if let date = BiofeedbackPrefs.lockedPaceDate {
-                    Text("Locked \(date.formatted(date: .abbreviated, time: .omitted)). Switch to Breathe to use it, or re-measure above.")
+                    Text("Locked \(date.formatted(date: .abbreviated, time: .omitted)). Switch to Atmen to use it, or re-measure above.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1071,7 +1071,7 @@ private struct CalmModeView: View {
                 HStack {
                     Text("Calm me").strandOverline()
                     Spacer()
-                    StatePill(canRun ? "Ready" : "Strap needed",
+                    StatePill(canRun ? "Ready" : "Band needed",
                               tone: canRun ? .neutral : .warning, showsDot: true)
                 }
                 Text("The strap buzzes a gentle rhythm just below your current heart rate, a felt metronome to relax toward. It trails your heart down rather than yanking it, and stops on its own.")

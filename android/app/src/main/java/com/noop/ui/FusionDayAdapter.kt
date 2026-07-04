@@ -25,13 +25,13 @@ object FusionDayAdapter {
     private data class MetricSpec(val key: String, val label: String)
 
     private val METRICS: List<MetricSpec> = listOf(
-        MetricSpec("rhr", "Resting HR"),
+        MetricSpec("rhr", "Ruhe-HF"),
         MetricSpec("hrv", "HRV"),
-        MetricSpec("skin_temp", "Skin temperature"),
+        MetricSpec("skin_temp", "Hauttemperatur"),
         MetricSpec("spo2", "Blood O₂"),
-        MetricSpec("steps", "Steps"),
-        MetricSpec("active_kcal", "Active energy"),
-        MetricSpec("sleep_total_min", "Asleep time"),
+        MetricSpec("steps", "Schritte"),
+        MetricSpec("active_kcal", "Aktive Energie"),
+        MetricSpec("sleep_total_min", "Schlafend time"),
         MetricSpec("sleep_deep_min", "Deep sleep"),
         MetricSpec("sleep_rem_min", "REM sleep"),
     )
@@ -77,7 +77,7 @@ object FusionDayAdapter {
         // #799: a source contributes ONLY the day it ACTUALLY covers. `firstOrNull { it.day == day }`
         // matches the source's OWN row keyed to this exact day (each daily row is keyed by its own local
         // day at write time), so a single imported sleep row can never supply a value for a day it doesn't
-        // cover (the "fused 8h57m every day" symptom). `repo.days(id)` is bounded per source and a missing
+        // cover (the "fused 8h57m jeden Tag" symptom). `repo.days(id)` is bounded per source and a missing
         // day is a clean null, dropping that source out of every metric for the day rather than carrying a
         // stale value forward. (firstOrNull over lastOrNull: day keys are unique per (deviceId, day) PK, so
         // either is the same single row; firstOrNull is the cheaper short-circuit.)

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - More-tab section expansion persistence (#860 item 2)
 //
-// The iPhone "More" tab's collapsible groups (Insights / Body / Data / App) must REMEMBER whether each
+// The iPhone "Mehr" tab's collapsible groups (Insights / Body / Data / App) must REMEMBER whether each
 // group is expanded or collapsed - leaving and re-entering the tab (or relaunching) should not reset the
 // user's choice back to the seed every time. The expanded state is persisted as the set of EXPANDED group
 // titles, encoded as one sorted comma-joined string under a single `@AppStorage` key in `RootTabView`.
@@ -21,7 +21,7 @@ enum MoreSectionPrefs {
 
     /// Groups open by default at first run; Data + App collapse to just their header so the list reads
     /// shorter at rest without dropping a single row. Mirrors the Android `defaultExpanded` flags.
-    static let defaultExpanded: Set<String> = ["Insights", "Body"]
+    static let defaultExpanded: Set<String> = ["Einblicke", "Körper"]
 
     /// The default expressed as the stored CSV (sorted, so the seed string is deterministic and testable).
     static var defaultCSV: String { encode(defaultExpanded) }

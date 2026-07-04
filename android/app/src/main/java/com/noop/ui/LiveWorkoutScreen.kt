@@ -234,7 +234,7 @@ private fun HeroHeartRate(bpm: Int?, zone: Int) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Overline("Heart rate")
+            Overline("Herzfrequenz")
             Box(contentAlignment = Alignment.Center) {
                 // Soft zone-tinted halo behind the numeral — the Bevel glow.
                 Box(
@@ -300,7 +300,7 @@ private fun ZoneRail(zone: Int, zoneSet: com.noop.analytics.HrZoneSet) {
 }
 
 private fun zoneName(zone: Int): String = when (zone) {
-    1 -> "Recovery"
+    1 -> "Erholung"
     2 -> "Fat burn"
     3 -> "Aerobic"
     4 -> "Threshold"

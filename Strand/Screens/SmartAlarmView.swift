@@ -30,9 +30,9 @@ struct SmartAlarmView: View {
     private static let weekdayOrder = [2, 3, 4, 5, 6, 7, 1]
 
     var body: some View {
-        // #766: retitled to "Alarms" because it now holds BOTH the strap's silent wake-alarm and the
+        // #766: retitled to "Wecker" because it now holds BOTH the strap's silent wake-alarm and the
         // evening wind-down reminder, so naming it "Wind-Down" undersold it. One surface, clearly labelled.
-        ScreenScaffold(title: "Alarms",
+        ScreenScaffold(title: "Wecker",
                        subtitle: "Your strap wake-alarm and the evening wind-down reminder, in one place.") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                 windowHero
@@ -99,7 +99,7 @@ struct SmartAlarmView: View {
                     Text("The strap alarm is a silent buzz, not a sound")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
-                    Text("The wake-alarm above buzzes your wrist from the strap's own firmware. It can't sound a loud alarm. We also schedule a backup notification at your wake time, but a sideloaded app can't sound a guaranteed wake on this device (that needs a critical-alert permission this build doesn't have), so Focus or silent mode can still mute it. Keep your phone's built-in Clock alarm as your real backup. LLB's phone-based smart wake (light-sleep detection) is available on the Android app.")
+                    Text("The wake-alarm above buzzes your wrist from the strap's own firmware. It can't sound a loud alarm. We also schedule a backup notification at your wake time, but a sideloaded app can't sound a guaranteed wake on this device (that needs a critical-alert permission this build doesn't have), so Focus or silent mode can still mute it. Keep your phone's built-in Clock alarm as your real backup. LLB's phone-based smart wake (light-sleep detection) ist verfügbar on the Android app.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -122,7 +122,7 @@ struct SmartAlarmView: View {
                         Image(systemName: "alarm.fill")
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
-                        Text("Strap wake-alarm")
+                        Text("Band wake-alarm")
                             .font(StrandFont.title2)
                             .foregroundStyle(StrandPalette.textPrimary)
                     }
@@ -133,7 +133,7 @@ struct SmartAlarmView: View {
                         Text("Wake me with a strap buzz")
                             .font(StrandFont.body)
                             .foregroundStyle(StrandPalette.textPrimary)
-                        Text("Arms the strap to buzz at your wake time, even if LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
+                        Text("Arms the strap to buzz at your wake time, even if LLB is closed. Sendens the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -166,7 +166,7 @@ struct SmartAlarmView: View {
                     // capture + on-device buzz by the capture author); 5/MG remains unconfirmed, so this
                     // gated branch keeps its honesty wording.
                     if model.whoop5Detected && !PuffinExperiment.isEnabled {
-                        Text("Your WHOOP 5/MG won't arm this until Experimental mode is on (Settings, Experimental). Right now your wake time is saved but the strap is NOT armed. Even with Experimental on, a 5/MG strap-driven wake is still unconfirmed on our side, so keep a backup alarm.")
+                        Text("Your WHOOP 5/MG won't arm this until Experimentell mode is on (Einstellungen, Experimentell). Right now your wake time is saved but the strap is NOT armed. Even with Experimentell on, a 5/MG strap-driven wake is still unconfirmed on our side, so keep a backup alarm.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.statusWarning)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -179,7 +179,7 @@ struct SmartAlarmView: View {
                             .foregroundStyle(StrandPalette.textTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
-                        Text("Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
+                        Text("Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or LLB is closed. Sendens the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -423,7 +423,7 @@ struct SmartAlarmView: View {
         days.isEmpty || days.contains(dow)
     }
 
-    /// Toggle one weekday, normalising "every day" at both ends so the empty set always means every day.
+    /// Toggle one weekday, normalising "jeden Tag" at both ends so the empty set always means every day.
     nonisolated static func alarmToggledWeekday(_ dow: Int, in days: Set<Int>) -> Set<Int> {
         var next: Set<Int>
         if days.isEmpty {

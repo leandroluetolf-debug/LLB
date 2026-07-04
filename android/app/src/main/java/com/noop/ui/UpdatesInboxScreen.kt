@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.dp
 // The sheet behind the Today header's bell. A calm, newest-first log of what's new — release notes,
 // "new data arrived" readings, strap heads-ups, and the Today info-cards the user swiped away (which
 // can be restored from here). Tapping an actionable row routes via the app's nav; a dismissed-card
-// row offers "Restore to Today". Everything is on-device and non-clinical — informational, never a
+// row offers "Auf Heute wiederherstellen". Everything is on-device and non-clinical — informational, never a
 // verdict.
 //
 // Kotlin port of Strand/Screens/UpdatesInboxView.swift, presented as the content of a ModalBottomSheet
@@ -165,7 +165,7 @@ fun UpdatesInboxScreen(
 }
 
 private fun subtitle(store: UpdateStore): String {
-    if (store.items.isEmpty()) return "What's new in the app and your data"
+    if (store.items.isEmpty()) return "Neuigkeiten in the app and your data"
     val n = store.unreadCount
     return if (n == 0) "All caught up" else "$n unread"
 }
@@ -354,7 +354,7 @@ private fun UpdateRow(
                             modifier = Modifier.size(Metrics.iconSmall),
                         )
                         Spacer(Modifier.width(6.dp))
-                        Text("Restore to Today", style = NoopType.subhead, color = Palette.accent)
+                        Text("Auf Heute wiederherstellen", style = NoopType.subhead, color = Palette.accent)
                     }
                 }
             }

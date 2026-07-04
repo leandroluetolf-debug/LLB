@@ -49,7 +49,7 @@ enum TestReportLink {
         let tail = lines.suffix(tailLines).joined(separator: "\n")
         guard !tail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
         // A fenced code block inside <details> keeps the strap log monospaced and unparsed by Markdown.
-        return "<details><summary>Strap log (last \(min(tailLines, lines.count)) lines, redacted)</summary>\n\n"
+        return "<details><summary>Band log (last \(min(tailLines, lines.count)) lines, redacted)</summary>\n\n"
             + "```\n" + tail + "\n```\n</details>"
     }
 

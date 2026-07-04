@@ -26,7 +26,7 @@ object BiofeedbackPrefs {
     private const val KEY_USE_RESONANCE = "biofeedback.stressUseResonancePace"
     private const val KEY_QUIET_START = "biofeedback.stressQuietStartMin"
     private const val KEY_QUIET_END = "biofeedback.stressQuietEndMin"
-    private const val KEY_ST_BASELINE = "biofeedback.stOnsetBaseline"
+    private const val KEY_ST_BASELINE = "biofeedback.stOnsetBasis"
     private const val KEY_ST_WAS_BELOW = "biofeedback.stOnsetWasBelow"
     private const val KEY_ST_LAST_FIRE = "biofeedback.stOnsetLastFire"
 

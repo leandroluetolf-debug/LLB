@@ -6,8 +6,8 @@ import StrandDesign
 struct AutomationsView: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var behavior: BehaviorStore
-    // PERF: this screen does NOT observe `LiveState`. Its only live-dependent pixel is the "Strap
-    // bonded / not connected" pill inside the double-tap card, which is now the `BondStatePill` leaf
+    // PERF: this screen does NOT observe `LiveState`. Its only live-dependent pixel is the "Band
+    // bonded / nicht verbunden" pill inside the double-tap card, which is now the `BondStatePill` leaf
     // that owns its own `@EnvironmentObject live`. Observing `live` at this level would re-render the
     // whole 8-9 card automations column on every ~1 Hz strap tick (bond state changes only rarely);
     // scoping it means a tick re-renders just the one pill.
@@ -36,7 +36,7 @@ struct AutomationsView: View {
     #endif
 
     var body: some View {
-        ScreenScaffold(title: "Automations",
+        ScreenScaffold(title: "Automationen",
                        subtitle: "Make the strap do things: tap to act, walk away to lock, train by feel.",
                        // PERF: the cards are direct children of the scaffold column, so the LazyVStack
                        // path (byte-identical layout) genuinely builds the off-screen cards on demand
@@ -175,7 +175,7 @@ struct AutomationsView: View {
                  active: behavior.zoneCoaching || behavior.stressNudge || behavior.stressCheckIn) {
             VStack(spacing: 0) {
                 ToggleRow(label: String(localized: "HR-zone coaching"),
-                          help: String(localized: "Buzz when you hit your top zone (ease off) and again when you recover. Uses your max HR from Settings."),
+                          help: String(localized: "Buzz when you hit your top zone (ease off) and again when you recover. Uses your max HR from Einstellungen."),
                           isOn: $behavior.zoneCoaching)
                 rowDivider
                 ToggleRow(label: String(localized: "Resting stress nudge (experimental)"),
@@ -185,12 +185,12 @@ struct AutomationsView: View {
                 // v5 L3 closed-loop check-in (master + sub toggles). Default OFF, manual-first. The keys
                 // mirror BiofeedbackPrefs, which the central detector (AppModel.evaluateStress) reads.
                 ToggleRow(label: String(localized: "Stress check-ins (haptic)"),
-                          help: String(localized: "When a fresh, non-exercise HRV dip is detected while you're still, LLB offers a one-minute guided breath: a single confirming buzz and a dismissible card. Never an alarm, never a diagnosis."),
+                          help: String(localized: "When a fresh, non-exercise HRV dip is detected while you're still, LLB offers a one-minute guided breath: a single confirming buzz and a dismissible card. Nie an alarm, never a diagnosis."),
                           isOn: $behavior.stressCheckIn)
                 if behavior.stressCheckIn {
                     rowDivider
                     ToggleRow(label: String(localized: "Auto-nudge"),
-                              help: String(localized: "Let the check-in fire on its own. Off keeps it manual: you start a breath from Breathe yourself."),
+                              help: String(localized: "Let the check-in fire on its own. Off keeps it manual: you start a breath from Atmen yourself."),
                               isOn: $behavior.stressAutoNudge)
                     rowDivider
                     ToggleRow(label: String(localized: "Respect quiet hours"),
@@ -198,7 +198,7 @@ struct AutomationsView: View {
                               isOn: $behavior.stressQuietHours)
                     rowDivider
                     ToggleRow(label: String(localized: "Use my resonance pace"),
-                              help: String(localized: "Breathe at the pace your last \u{201C}find my pace\u{201D} sweep locked in, if you have one. Otherwise a calm 5.5 breaths/min."),
+                              help: String(localized: "Atmen at the pace your last \u{201C}find my pace\u{201D} sweep locked in, if you have one. Sonstigeswise a calm 5.5 breaths/min."),
                               isOn: $behavior.stressUseResonancePace)
                 }
             }
@@ -217,7 +217,7 @@ struct AutomationsView: View {
                           isOn: $inactivity.enabled)
                 if inactivity.enabled {
                     if !notifMasterOn {
-                        Text("Notifications are off, so this can't buzz yet. Turn on the master switch in Notifications to let it through.")
+                        Text("Mitteilungen are off, so this can't buzz yet. Turn on the master switch in Mitteilungen to let it through.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.statusWarning)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -303,7 +303,7 @@ struct AutomationsView: View {
 
     private var illnessCard: some View {
         Section2(icon: "waveform.path.ecg", title: String(localized: "Illness early-warning"),
-                 blurb: String(localized: "Watches your resting HR, HRV, skin temperature and respiration against your own 28-day baseline. On-device and approximate: informational only, not a diagnosis."),
+                 blurb: String(localized: "Watches your resting HR, HRV, skin temperature and respiration against your own 28-day baseline. Auf dem Gerät and approximate: informational only, not a diagnosis."),
                  active: behavior.illnessWatch) {
             ToggleRow(label: String(localized: "Watch for early-illness signs"),
                       help: String(localized: "Needs at least 14 days of history. When two or more signals drift together you get a banner on the dashboard and a notification, at most once a day."),
@@ -318,7 +318,7 @@ struct AutomationsView: View {
     // MARK: - Health insights (v5: cycle awareness opt-in · experimental Rhythm)
 
     private var healthInsightsCard: some View {
-        Section2(icon: "thermometer.medium", title: String(localized: "Health insights"),
+        Section2(icon: "thermometer.medium", title: String(localized: "Gesundheit insights"),
                  blurb: String(localized: "Optional, on-device reads from your nightly signals. Each is off by default: for awareness only, never a diagnosis."),
                  active: cycleAwareness || rhythmEnabled) {
             VStack(spacing: 0) {
@@ -328,7 +328,7 @@ struct AutomationsView: View {
                 // see the Health card can't enable the feature from here either.
                 if cycleOptInApplies {
                     ToggleRow(label: String(localized: "Cycle awareness"),
-                              help: String(localized: "Reads a coarse menstrual-cycle phase from your nightly skin temperature, entirely on \(Platform.deviceNounPhrase). Awareness only: not contraception, not a fertility predictor, not a medical service. The card appears in Health."),
+                              help: String(localized: "Reads a coarse menstrual-cycle phase from your nightly skin temperature, entirely on \(Platform.deviceNounPhrase). Awareness only: not contraception, not a fertility predictor, not a medical service. The card appears in Gesundheit."),
                               isOn: $cycleAwareness)
                         .onChangeCompat(of: cycleAwareness) { on in
                             model.cycleAwarenessEnabled = on
@@ -336,13 +336,13 @@ struct AutomationsView: View {
                         }
                     rowDivider
                 }
-                ToggleRow(label: String(localized: "Rhythm visualization (experimental)"),
+                ToggleRow(label: String(localized: "Rhythmus visualization (experimental)"),
                           help: String(localized: "An experimental picture of your beat-to-beat heart timing. Not an ECG and not a diagnosis. You'll read and accept an experimental note before it shows anything."),
                           isOn: $rhythmEnabled)
                 if rhythmEnabled {
                     rowDivider
                     HStack {
-                        Text("Open Rhythm").font(StrandFont.body).foregroundStyle(StrandPalette.textPrimary)
+                        Text("Open Rhythmus").font(StrandFont.body).foregroundStyle(StrandPalette.textPrimary)
                         Spacer()
                         Button {
                             router.openRhythm()
@@ -358,7 +358,7 @@ struct AutomationsView: View {
     // MARK: - Strap battery alerts
 
     private var batteryCard: some View {
-        Section2(icon: "battery.25", title: String(localized: "Battery alerts"),
+        Section2(icon: "battery.25", title: String(localized: "Akku alerts"),
                  blurb: String(localized: "Get a notification when the strap battery runs low (15%) so you can top it up before tonight, and when it finishes charging."),
                  active: behavior.batteryAlerts) {
             ToggleRow(label: String(localized: "Notify on low and full battery"),
@@ -440,14 +440,14 @@ struct AutomationsView: View {
 
 // MARK: - Live-observing leaf (scroll-stutter isolation)
 
-/// The strap bond-status pill in the double-tap card ("Strap bonded" / "Strap not connected"). It owns
+/// The strap bond-status pill in the double-tap card ("Band bonded" / "Band nicht verbunden"). It owns
 /// its OWN `@EnvironmentObject live` so a ~1 Hz strap publish re-renders only this pill, not the whole
 /// automations column (the parent `AutomationsView` no longer observes `LiveState`). Renders
 /// byte-for-byte the previous inline `StatePill(live.bonded ? …)`.
 private struct BondStatePill: View {
     @EnvironmentObject private var live: LiveState
     var body: some View {
-        StatePill(live.bonded ? "Strap bonded" : "Strap not connected",
+        StatePill(live.bonded ? "Band bonded" : "Band nicht verbunden",
                   tone: live.bonded ? .positive : .warning, showsDot: true)
     }
 }

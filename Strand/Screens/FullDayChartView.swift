@@ -12,7 +12,7 @@ import WhoopStore
 // Reuses the existing `OverviewHRChart` (its `.chartXScale(domain:)` already pins the axis); the chart's
 // zoom binding drives the visible window, and re-reads at the new resolution as the window changes. macOS
 // adds scroll-to-zoom (no pinch); both platforms drag-to-pan. Serves #574 (owned-source filter / honest
-// "Other sources" disclosure) and is the detail surface behind #582.
+// "Sonstiges sources" disclosure) and is the detail surface behind #582.
 
 struct FullDayChartView: View {
     @EnvironmentObject var repo: Repository
@@ -149,8 +149,8 @@ struct FullDayChartView: View {
 
     private var dayLabel: String {
         let today = Repository.logicalDayStart(Date())
-        if Calendar.current.isDate(dayStart, inSameDayAs: today) { return String(localized: "Today") }
-        if Calendar.current.isDate(dayStart, inSameDayAs: today.addingTimeInterval(-86_400)) { return String(localized: "Yesterday") }
+        if Calendar.current.isDate(dayStart, inSameDayAs: today) { return String(localized: "Heute") }
+        if Calendar.current.isDate(dayStart, inSameDayAs: today.addingTimeInterval(-86_400)) { return String(localized: "Gestern") }
         return Self.dayFmt.string(from: dayStart)
     }
 
@@ -227,7 +227,7 @@ struct FullDayChartView: View {
                 .foregroundStyle(StrandPalette.textSecondary)
             Text(ownedOnly
                  ? "Nothing offloaded for this window yet."
-                 : "Other sources don’t offload raw per-second data on-device.")
+                 : "Sonstiges sources don’t offload raw per-second data on-device.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .multilineTextAlignment(.center)
@@ -247,7 +247,7 @@ struct FullDayChartView: View {
             #endif
             Spacer()
             if zoomDomain != nil {
-                Button("Reset") { withAnimation(StrandMotion.interactive) { zoomDomain = nil } }
+                Button("Zurücksetzen") { withAnimation(StrandMotion.interactive) { zoomDomain = nil } }
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.accent)
                     .buttonStyle(.plain)

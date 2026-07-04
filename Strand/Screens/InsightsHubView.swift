@@ -38,7 +38,7 @@ struct InsightsHubView: View {
     @State private var outcome: InsightsHubViewModel.Outcome = .recovery
 
     var body: some View {
-        ScreenScaffold(title: "Insights",
+        ScreenScaffold(title: "Einblicke",
                        subtitle: "Patterns in your own data: association, not cause.",
                        // PERF (scroll): lazy column — byte-identical layout (LazyVStack == eager VStack
                        // alignment/spacing/header). The content is one inner eager VStack, so the staggered
@@ -236,9 +236,9 @@ private extension ScoreState {
     /// VoiceOver-only certainty phrase for a mover row.
     var accessibilityWord: String {
         switch self {
-        case .solid:       return String(localized: "Solid signal.")
+        case .solid:       return String(localized: "Stabil signal.")
         case .building:    return String(localized: "Building. Keep logging.")
-        case .calibrating: return String(localized: "Calibrating. Too thin to read yet.")
+        case .calibrating: return String(localized: "Kalibriert. Too thin to read yet.")
         case .live:        return ""
         }
     }
@@ -517,7 +517,7 @@ final class InsightsHubViewModel: ObservableObject {
             case .recovery: return String(localized: "Charge")
             case .hrv:      return "HRV"
             case .sleep:    return String(localized: "Rest")
-            case .rhr:      return String(localized: "Resting HR")
+            case .rhr:      return String(localized: "Ruhe-HF")
             }
         }
         var higherIsBetter: Bool { self != .rhr }
@@ -645,7 +645,7 @@ final class InsightsHubViewModel: ObservableObject {
         case "Charge": return "recovery"
         case "HRV":    return "hrv"
         case "Rest":   return "sleep_performance"
-        case "Resting HR": return "rhr"
+        case "Ruhe-HF": return "rhr"
         default:       return "recovery"
         }
     }
@@ -752,7 +752,7 @@ private func hubPreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Insights Hub") {
+#Preview("Einblicke Hub") {
     InsightsHubView()
         .environmentObject(hubPreviewRepo())
         .frame(width: 920, height: 980)

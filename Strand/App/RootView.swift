@@ -2,34 +2,34 @@ import SwiftUI
 import StrandDesign
 
 enum NavItem: String, CaseIterable, Identifiable, Hashable {
-    case today = "Today"
-    case intelligence = "Intelligence"
-    case insightsHub = "What Moves You"
+    case today = "Heute"
+    case intelligence = "Intelligenz"
+    case insightsHub = "Was dich bewegt"
     case coach = "Coach"
     case live = "Live"
-    case breathe = "Breathe"
-    case intervals = "Intervals"
-    case explore = "Explore"
-    case compare = "Compare"
-    case insights = "Insights"
-    case sleep = "Sleep"
+    case breathe = "Atmen"
+    case intervals = "Intervalle"
+    case explore = "Entdecken"
+    case compare = "Vergleichen"
+    case insights = "Einblicke"
+    case sleep = "Schlaf"
     case trends = "Trends"
     case workouts = "Workouts"
-    case health = "Health"
+    case health = "Gesundheit"
     case stress = "Stress"
-    case labBook = "Lab Book"
-    case rhythm = "Rhythm"
-    case appleHealth = "Apple Health"
+    case labBook = "Laborbuch"
+    case rhythm = "Rhythmus"
+    case appleHealth = "Apple Gesundheit"
     case xiaomi = "Mi Band"
-    case dataSources = "Data Sources"
+    case dataSources = "Datenquellen"
     case backupSync = "Backup & Sync"
-    case fusedRecord = "Your Data, Fused"
-    case devices = "Devices"
-    case notifications = "Notifications"
-    case automation = "Automations"
+    case fusedRecord = "Deine Daten, vereint"
+    case devices = "Geräte"
+    case notifications = "Mitteilungen"
+    case automation = "Automationen"
     case smartAlarm = "Smart Alarm"
-    case settings = "Settings"
-    case testCentre = "Test Centre"
+    case settings = "Einstellungen"
+    case testCentre = "Testcenter"
 
     var id: String { rawValue }
 
@@ -37,37 +37,37 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
     /// it into the String Catalog as an English (US) base entry.
     var titleKey: LocalizedStringKey {
         switch self {
-        case .today: return "Today"
-        case .intelligence: return "Intelligence"
-        case .insightsHub: return "What Moves You"
+        case .today: return "Heute"
+        case .intelligence: return "Intelligenz"
+        case .insightsHub: return "Was dich bewegt"
         case .coach: return "Coach"
         case .live: return "Live"
-        case .breathe: return "Breathe"
-        case .intervals: return "Intervals"
-        case .explore: return "Explore"
-        case .compare: return "Compare"
-        case .insights: return "Insights"
-        case .sleep: return "Sleep"
+        case .breathe: return "Atmen"
+        case .intervals: return "Intervalle"
+        case .explore: return "Entdecken"
+        case .compare: return "Vergleichen"
+        case .insights: return "Einblicke"
+        case .sleep: return "Schlaf"
         case .trends: return "Trends"
         case .workouts: return "Workouts"
-        case .health: return "Health"
+        case .health: return "Gesundheit"
         case .stress: return "Stress"
-        case .labBook: return "Lab Book"
-        case .rhythm: return "Rhythm"
-        case .appleHealth: return "Apple Health"
+        case .labBook: return "Laborbuch"
+        case .rhythm: return "Rhythmus"
+        case .appleHealth: return "Apple Gesundheit"
         case .xiaomi: return "Mi Band"
-        case .dataSources: return "Data Sources"
+        case .dataSources: return "Datenquellen"
         case .backupSync: return "Backup & Sync"
-        case .fusedRecord: return "Your Data, Fused"
-        case .devices: return "Devices"
-        case .notifications: return "Notifications"
-        case .automation: return "Automations"
-        // "Alarms" is the ONE alarm surface (#766): the strap's silent wake-alarm (moved in from
+        case .fusedRecord: return "Deine Daten, vereint"
+        case .devices: return "Geräte"
+        case .notifications: return "Mitteilungen"
+        case .automation: return "Automationen"
+        // "Wecker" is the ONE alarm surface (#766): the strap's silent wake-alarm (moved in from
         // Automations) and the evening wind-down reminder, in one place. Previously "Wind-Down" (#730).
         // The case name and rawValue stay `smartAlarm`/"Smart Alarm" as the in-memory nav identifier only.
-        case .smartAlarm: return "Alarms"
-        case .settings: return "Settings"
-        case .testCentre: return "Test Centre"
+        case .smartAlarm: return "Wecker"
+        case .settings: return "Einstellungen"
+        case .testCentre: return "Testcenter"
         }
     }
 
@@ -79,35 +79,35 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
     /// a string edit must be mirrored by hand, or search stops finding that row).
     var localizedTitle: String {
         switch self {
-        case .today: return String(localized: "Today")
-        case .intelligence: return String(localized: "Intelligence")
-        case .insightsHub: return String(localized: "What Moves You")
+        case .today: return String(localized: "Heute")
+        case .intelligence: return String(localized: "Intelligenz")
+        case .insightsHub: return String(localized: "Was dich bewegt")
         case .coach: return String(localized: "Coach")
         case .live: return String(localized: "Live")
-        case .breathe: return String(localized: "Breathe")
-        case .intervals: return String(localized: "Intervals")
-        case .explore: return String(localized: "Explore")
-        case .compare: return String(localized: "Compare")
-        case .insights: return String(localized: "Insights")
-        case .sleep: return String(localized: "Sleep")
+        case .breathe: return String(localized: "Atmen")
+        case .intervals: return String(localized: "Intervalle")
+        case .explore: return String(localized: "Entdecken")
+        case .compare: return String(localized: "Vergleichen")
+        case .insights: return String(localized: "Einblicke")
+        case .sleep: return String(localized: "Schlaf")
         case .trends: return String(localized: "Trends")
         case .workouts: return String(localized: "Workouts")
-        case .health: return String(localized: "Health")
+        case .health: return String(localized: "Gesundheit")
         case .stress: return String(localized: "Stress")
-        case .labBook: return String(localized: "Lab Book")
-        case .rhythm: return String(localized: "Rhythm")
-        case .appleHealth: return String(localized: "Apple Health")
+        case .labBook: return String(localized: "Laborbuch")
+        case .rhythm: return String(localized: "Rhythmus")
+        case .appleHealth: return String(localized: "Apple Gesundheit")
         case .xiaomi: return String(localized: "Mi Band")
-        case .dataSources: return String(localized: "Data Sources")
+        case .dataSources: return String(localized: "Datenquellen")
         case .backupSync: return String(localized: "Backup & Sync")
-        case .fusedRecord: return String(localized: "Your Data, Fused")
-        case .devices: return String(localized: "Devices")
-        case .notifications: return String(localized: "Notifications")
-        case .automation: return String(localized: "Automations")
-        // Mirrors the `titleKey` remap above (#766): the row reads "Alarms", not the raw "Smart Alarm".
-        case .smartAlarm: return String(localized: "Alarms")
-        case .settings: return String(localized: "Settings")
-        case .testCentre: return String(localized: "Test Centre")
+        case .fusedRecord: return String(localized: "Deine Daten, vereint")
+        case .devices: return String(localized: "Geräte")
+        case .notifications: return String(localized: "Mitteilungen")
+        case .automation: return String(localized: "Automationen")
+        // Mirrors the `titleKey` remap above (#766): the row reads "Wecker", not the raw "Smart Alarm".
+        case .smartAlarm: return String(localized: "Wecker")
+        case .settings: return String(localized: "Einstellungen")
+        case .testCentre: return String(localized: "Testcenter")
         }
     }
 
@@ -161,18 +161,18 @@ struct NavGroup: Identifiable {
     /// Data & App group so the first thing a new user reaches for stays near the surface. Every one of the
     /// 28 `NavItem` cases appears exactly once across these groups (asserted by the M5 routability test).
     static let all: [NavGroup] = [
-        NavGroup(title: "Today", id: "today", items: [.today]),
-        NavGroup(title: "Sleep", id: "sleep", items: [.sleep]),
-        NavGroup(title: "Body", id: "body", items: [
+        NavGroup(title: "Heute", id: "today", items: [.today]),
+        NavGroup(title: "Schlaf", id: "sleep", items: [.sleep]),
+        NavGroup(title: "Körper", id: "body", items: [
             .workouts, .live, .health, .stress, .intervals, .breathe,
         ]),
         // S6: the overlapping insight surfaces (Intelligence / What Moves You / Insights / Insights Hub)
         // all collapse under this single Insights group rather than scattering across the flat list.
-        NavGroup(title: "Insights", id: "insights", items: [
+        NavGroup(title: "Einblicke", id: "insights", items: [
             .intelligence, .insightsHub, .coach, .explore, .compare, .insights,
             .labBook, .rhythm, .trends,
         ]),
-        NavGroup(title: "Data & App", id: "data_app", items: [
+        NavGroup(title: "Daten & App", id: "data_app", items: [
             .devices, .dataSources, .appleHealth, .xiaomi, .backupSync, .fusedRecord,
             .notifications, .automation, .smartAlarm, .settings, .testCentre,
         ]),
@@ -189,7 +189,7 @@ struct RootView: View {
     // status pill is isolated into SidebarStatus so HR/frame ticks don't re-render the whole
     // NavigationSplitView shell + sidebar list.
     @EnvironmentObject var repo: Repository
-    /// Cross-screen navigation requests (e.g. Live → "Manage devices"). Observed here so a screen can
+    /// Cross-screen navigation requests (e.g. Live → "Geräte verwalten"). Observed here so a screen can
     /// switch the sidebar selection without owning it — see `NavRouter`.
     @EnvironmentObject var router: NavRouter
     /// The liquid Today (default) vs the classic Today, same flag the iOS shell + Settings toggle read.
@@ -222,7 +222,7 @@ struct RootView: View {
             VStack(spacing: 0) {
                 // Fixed brand header — a real row above the list, NOT a `.safeAreaInset`: a macOS
                 // `List(.sidebar)` doesn't inset its scroll content for a top safe-area inset, so the
-                // (transparent) lockup floated over the scrolling rows and overlapped "Intelligence".
+                // (transparent) lockup floated over the scrolling rows and overlapped "Intelligenz".
                 brand
                 // S1 (#805): collapsible sections instead of 28 flat rows. Each multi-item group is a
                 // DisclosureGroup bound to `expandedGroups`; single-item groups (Today / Sleep) render
@@ -302,7 +302,7 @@ struct RootView: View {
                 await FolderBackup.catchUpIfDue(checkpoint: { await backupRepo.checkpointForBackup() })
             }
         }
-        // Honour a cross-screen request to open a top-level destination (e.g. Live's "Manage devices"),
+        // Honour a cross-screen request to open a top-level destination (e.g. Live's "Geräte verwalten"),
         // then clear it so the same tap can fire again later. Devices maps to the `.devices` sidebar item.
         .onChangeCompat(of: router.requestedDestination) { dest in
             switch dest {
@@ -440,7 +440,7 @@ struct RootView: View {
     // Today's "Your Cards" rows push Stress/Health/Hydration detail pages via NavigationLink. On macOS
     // the detail column has no enclosing NavigationStack of its own, so those pushes had no Back chrome
     // and switching sidebar items hung (#753 Bug 2). Give the Today pane its own NavigationStack the
-    // same way MetricExplorerView wraps itself because "Explore is a standalone detail pane, so it owns
+    // same way MetricExplorerView wraps itself because "Entdecken is a standalone detail pane, so it owns
     // its NavigationStack". iOS already wraps each tab in a NavigationStack via RootTabView, so this is
     // macOS-only and leaves iOS untouched (TodayView's `.toolbar` stays on its own view body either way).
     @ViewBuilder private var todayDetail: some View {
@@ -522,7 +522,7 @@ private struct SidebarStatus: View {
                 Text(statusText)
                     .font(StrandFont.rounded(12, weight: .medium))
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text(live.batteryPct.map { String(localized: "Battery \(Int($0))%") } ?? String(localized: "Strap not connected"))
+                Text(live.batteryPct.map { String(localized: "Akku \(Int($0))%") } ?? String(localized: "Band nicht verbunden"))
                     .font(StrandFont.rounded(11))
                     .foregroundStyle(StrandPalette.textTertiary)
             }
@@ -533,7 +533,7 @@ private struct SidebarStatus: View {
     }
 
     // Shares LiveState.connectionStatus* with the Settings strap card so the two never disagree (#266):
-    // a connected-but-unbonded 5/MG now reads "Connected" here too, not a misleading "Connecting…".
+    // a connected-but-unbonded 5/MG now reads "Verbunden" here too, not a misleading "Verbinde…".
     private var statusColor: Color {
         live.connectionStatusIsActive ? StrandPalette.statusPositive
             : live.connectionStatusIsIdle ? StrandPalette.statusWarning

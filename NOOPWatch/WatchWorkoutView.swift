@@ -18,7 +18,7 @@ import HealthKit
 // time, and the building Effort idea expressed honestly here as the live calorie burn from the wrist.
 //
 // Everything is GUARDED. If HealthKit is unavailable or workout authorization is denied, we show a calm
-// "Grant Health access" state instead of a dead Start button. StrandHaptic (real WatchKit path now) marks
+// "Grant Gesundheit access" state instead of a dead Start button. StrandHaptic (real WatchKit path now) marks
 // the start / pause / resume / end landings so the wrist confirms each state change without looking.
 struct WatchWorkoutView: View {
     @StateObject private var workout = WatchWorkoutSession()
@@ -58,7 +58,7 @@ struct WatchWorkoutView: View {
             Image(systemName: "heart.text.square")
                 .font(.system(size: 24))
                 .foregroundStyle(StrandPalette.textTertiary)
-            Text("Grant Health access")
+            Text("Grant Gesundheit access")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textPrimary)
             // Condensed so the whole panel clears the fold on a 41mm.
@@ -281,7 +281,7 @@ struct WatchWorkoutView: View {
                  ?? Self.clock(workout.elapsed))
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textSecondary)
-            Button("Done") { workout.reset() }
+            Button("Fertig") { workout.reset() }
                 .font(StrandFont.subhead)
                 .tint(StrandPalette.effortColor)
         }

@@ -75,7 +75,7 @@ fun BackupSyncScreen() {
             busy = false
             val msg = when (r) {
                 is DataBackup.ImportResult.NeedsRestart ->
-                    "Restored. Fully close and reopen LLB to load it."
+                    "Wiederherstellend. Fully close and reopen LLB to load it."
                 is DataBackup.ImportResult.Failed -> r.message
             }
             Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
@@ -110,7 +110,7 @@ fun BackupSyncScreen() {
 
     LazyScreenScaffold(
         title = "Backup & Sync",
-        subtitle = "Save a full backup to a folder you choose - point it at Google Drive / Dropbox for off-device sync.",
+        subtitle = "Speichern a full backup to a folder you choose - point it at Google Drive / Dropbox for off-device sync.",
     ) {
         // 1 · Destination folder
         item {
@@ -211,14 +211,14 @@ fun BackupSyncScreen() {
         item {
             NoopCard(padding = 20.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Restore", style = NoopType.headline, color = Palette.textPrimary)
+                    Text("Wiederherstellen", style = NoopType.headline, color = Palette.textPrimary)
                     Text(
                         "Replace this device's data with one of your backups. This overwrites current data, " +
                             "so back up first if unsure.",
                         style = NoopType.footnote, color = Palette.textTertiary,
                     )
                     NoopButton(
-                        text = "Restore from a backup…",
+                        text = "Wiederherstellen from a backup…",
                         leadingIcon = Icons.Filled.Restore,
                         kind = NoopButtonKind.Secondary,
                         enabled = !busy,
@@ -294,7 +294,7 @@ fun BackupSyncScreen() {
             },
             confirmButton = {
                 TextButton(onClick = { showSnapshotPicker = false }) {
-                    Text("Cancel", style = NoopType.body, color = Palette.textSecondary)
+                    Text("Abbrechen", style = NoopType.body, color = Palette.textSecondary)
                 }
             },
         )
@@ -324,7 +324,7 @@ fun BackupSyncScreen() {
             },
             dismissButton = {
                 TextButton(onClick = { pendingRestore = null }) {
-                    Text("Cancel", style = NoopType.body, color = Palette.textSecondary)
+                    Text("Abbrechen", style = NoopType.body, color = Palette.textSecondary)
                 }
             },
         )

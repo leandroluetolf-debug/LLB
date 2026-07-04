@@ -211,7 +211,7 @@ struct CycleAwarenessCard: View {
         switch result.confidence {
         case .learning: return "Learning"
         case .building: return "Building"
-        case .solid:    return "Solid"
+        case .solid:    return "Stabil"
         }
     }
 
@@ -226,8 +226,8 @@ struct CycleAwarenessCard: View {
     private var accessibilityHeadline: String {
         if let lo = result.cycleDayLow, let hi = result.cycleDayHigh {
             return lo == hi
-                ? String(localized: "Cycle phase: \(phaseTitle). About day \(lo).")
-                : String(localized: "Cycle phase: \(phaseTitle). About day \(lo) to \(hi).")
+                ? String(localized: "Cycle phase: \(phaseTitle). Über day \(lo).")
+                : String(localized: "Cycle phase: \(phaseTitle). Über day \(lo) to \(hi).")
         }
         return String(localized: "Cycle phase: \(phaseTitle).")
     }
@@ -327,8 +327,8 @@ struct BodyClockCard: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Body clock").strandOverline()
-                Text("Light + sleep timing only")
+                Text("Körper clock").strandOverline()
+                Text("Hell + sleep timing only")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
             }
@@ -350,7 +350,7 @@ struct BodyClockCard: View {
             Text("Plan · \(plan.estimatedDays)-day shift")
                 .strandOverline()
             // Day 1's concrete light + lights-out cue — light + sleep timing only.
-            Text("Day 1: bright light \(clockString(firstDay.brightLightStartHour))-\(clockString(firstDay.brightLightEndHour)), lights-out around \(clockString(firstDay.targetSleepHour)).")
+            Text("Day 1: bright light \(clockString(firstDay.brightHellStartHour))-\(clockString(firstDay.brightHellEndHour)), lights-out around \(clockString(firstDay.targetSchlafHour)).")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -364,25 +364,25 @@ struct BodyClockCard: View {
 
     // MARK: derived copy
 
-    /// "About 25 min later than your schedule" — a plain, skimmable headline.
+    /// "Über 25 min later than your schedule" — a plain, skimmable headline.
     private var offsetTitle: String {
         let mins = Int(abs(estimate.offsetVsScheduleMinutes).rounded())
         if estimate.confidence == .unreadable {
             return String(localized: "Hard to read right now")
         }
         if mins <= 20 {
-            return String(localized: "About in sync with your schedule")
+            return String(localized: "Über in sync with your schedule")
         }
         return estimate.offsetVsScheduleMinutes > 0
-            ? String(localized: "About \(mins) min later than your schedule")
-            : String(localized: "About \(mins) min earlier than your schedule")
+            ? String(localized: "Über \(mins) min later than your schedule")
+            : String(localized: "Über \(mins) min earlier than your schedule")
     }
 
     private var confidenceLabel: LocalizedStringKey {
         switch estimate.confidence {
-        case .unreadable: return "Calibrating"
+        case .unreadable: return "Kalibriert"
         case .wide:       return "Building"
-        case .solid:      return "Solid"
+        case .solid:      return "Stabil"
         }
     }
 
@@ -595,20 +595,20 @@ private func prettyDay(_ key: String) -> String {
                     days: [.init(dayIndex: 1, brightLightStartHour: 7, brightLightEndHour: 9,
                                  dimFromHour: 21, targetSleepHour: 22.75, targetWakeHour: 6.5,
                                  guidance: "")],
-                    note: "Shifting your clock 3.0 h earlier, about an hour a day. Light and sleep timing only."),
+                    note: "Shifting your clock 3.0 h earlier, about an hour a day. Hell and sleep timing only."),
                 onOpenPlanner: {})
 
             HeadsUpCard(result: IllnessSignalEngine.Result(
                 score: 64, level: .raised,
                 firedSignals: ["RHR +6", "HRV −22%", "skin temp +0.7 °C"],
                 suppressedBy: [], signalCount: 3,
-                copy: "Heads-up — your body looks strained. RHR +6, HRV −22%, skin temp +0.7 °C. With no alcohol or travel logged, consider taking it easy. On-device estimate — not a diagnosis."))
+                copy: "Heads-up — your body looks strained. RHR +6, HRV −22%, skin temp +0.7 °C. With no alcohol or travel logged, consider taking it easy. Auf dem Gerät estimate — not a diagnosis."))
 
             HeadsUpCard(result: IllnessSignalEngine.Result(
                 score: 28, level: .suppressed,
                 firedSignals: ["RHR +5", "skin temp +0.6 °C"],
                 suppressedBy: ["alcohol"], signalCount: 2,
-                copy: "Some signals are up (RHR +5, skin temp +0.6 °C), but you logged alcohol — likely that, not illness. On-device estimate — not a diagnosis."))
+                copy: "Some signals are up (RHR +5, skin temp +0.6 °C), but you logged alcohol — likely that, not illness. Auf dem Gerät estimate — not a diagnosis."))
         }
         .padding(NoopMetrics.screenPadding)
     }

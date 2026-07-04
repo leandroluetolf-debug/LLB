@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LLB</string>
-    <string name="widget_description">Today\'s Rest, Charge and Effort, with live heart rate and strap battery at a glance.</string>
-    <string name="widget_error">LLB widget couldn\'t draw — it will recover on the next update.</string>
+    <string name="widget_description">Erholung, Ladung und Belastung von heute, mit Live-Herzfrequenz und Band-Akku auf einen Blick.</string>
+    <string name="widget_error">Das LLB-Widget konnte nicht gezeichnet werden. Es erholt sich beim nächsten Update.</string>
 
-    <!-- Navigation: bottom-bar tabs, the More page rows, and the top-bar screen titles. These are the
-         localized display labels for the Destination enum; the underlying route ids stay English and
-         are never translated. -->
-    <string name="nav_today">Today</string>
-    <string name="nav_intelligence">Intelligence</string>
-    <string name="nav_coupled_view">Coupled view</string>
+    <string name="nav_today">Heute</string>
+    <string name="nav_intelligence">Intelligenz</string>
+    <string name="nav_coupled_view">Gekoppelte Ansicht</string>
     <string name="nav_live">Live</string>
-    <string name="nav_intervals">Intervals</string>
-    <string name="nav_sleep">Sleep</string>
-    <string name="nav_breathe">Breathe</string>
+    <string name="nav_intervals">Intervalle</string>
+    <string name="nav_sleep">Schlaf</string>
+    <string name="nav_breathe">Atmen</string>
     <string name="nav_stress">Stress</string>
     <string name="nav_workouts">Workouts</string>
     <string name="nav_trends">Trends</string>
     <string name="nav_coach">Coach</string>
-    <string name="nav_insights_hub">What Moves You</string>
-    <string name="nav_insights">Insights</string>
-    <string name="nav_explore">Explore</string>
-    <string name="nav_compare">Compare</string>
-    <string name="nav_health">Health</string>
-    <string name="nav_hydration">Hydration</string>
-    <string name="nav_vital_signs">Vital Signs</string>
-    <string name="nav_lab_book">Lab Book</string>
-    <string name="nav_rhythm">Rhythm</string>
+    <string name="nav_insights_hub">Was dich bewegt</string>
+    <string name="nav_insights">Einblicke</string>
+    <string name="nav_explore">Entdecken</string>
+    <string name="nav_compare">Vergleichen</string>
+    <string name="nav_health">Gesundheit</string>
+    <string name="nav_hydration">Flüssigkeit</string>
+    <string name="nav_vital_signs">Vitalwerte</string>
+    <string name="nav_lab_book">Laborbuch</string>
+    <string name="nav_rhythm">Rhythmus</string>
     <string name="nav_apple_health">Apple Health</string>
-    <string name="nav_automations">Automations</string>
-    <string name="nav_alarms">Alarms</string>
-    <string name="nav_devices">Devices</string>
-    <string name="nav_data_sources">Data Sources</string>
+    <string name="nav_automations">Automationen</string>
+    <string name="nav_alarms">Wecker</string>
+    <string name="nav_devices">Geräte</string>
+    <string name="nav_data_sources">Datenquellen</string>
     <string name="nav_backup_sync">Backup &amp; Sync</string>
-    <string name="nav_fused_record">Your Data, Fused</string>
-    <string name="nav_notifications">Notifications</string>
-    <string name="nav_support">Support</string>
-    <string name="nav_settings">Settings</string>
-    <string name="nav_test_centre">Test Centre</string>
-    <string name="nav_more">More</string>
+    <string name="nav_fused_record">Deine Daten, vereint</string>
+    <string name="nav_notifications">Mitteilungen</string>
+    <string name="nav_support">Hilfe</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_test_centre">Testcenter</string>
+    <string name="nav_more">Mehr</string>
 
-    <!-- More-page section headers (DISPLAY only; the stored expand/collapse key stays the English
-         literal in MoreSectionPrefs so persistence and iOS parity are unaffected). -->
-    <string name="more_group_insights">Insights</string>
-    <string name="more_group_body">Body</string>
-    <string name="more_group_data">Data</string>
+    <string name="more_group_insights">Einblicke</string>
+    <string name="more_group_body">Körper</string>
+    <string name="more_group_data">Daten</string>
     <string name="more_group_app">App</string>
 
-    <!-- Quick actions on the centre action button. -->
-    <string name="action_live_hr">Live HR</string>
-    <string name="action_start_workout">Start workout</string>
-    <string name="action_log_journal">Log journal</string>
-    <string name="action_breathe">Breathe</string>
+    <string name="action_live_hr">Live-HF</string>
+    <string name="action_start_workout">Workout starten</string>
+    <string name="action_log_journal">Journal notieren</string>
+    <string name="action_breathe">Atmen</string>
 </resources>

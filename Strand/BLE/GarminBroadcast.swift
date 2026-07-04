@@ -1,10 +1,10 @@
 import Foundation
 
-/// EXPERIMENTAL Garmin support — recognition + the in-app "enable Broadcast Heart Rate" hint.
+/// EXPERIMENTAL Garmin support — recognition + the in-app "enable Broadcast Herzfrequenz" hint.
 ///
 /// HONEST, NON-PROPRIETARY BY DESIGN. Garmin watches do NOT expose a LLB-readable proprietary live
 /// stream. They DO broadcast the STANDARD Bluetooth Heart Rate profile (0x180D / 0x2A37) when the user
-/// turns on "Broadcast Heart Rate" on the watch. So Garmin live HR is the EXISTING generic-HR path
+/// turns on "Broadcast Herzfrequenz" on the watch. So Garmin live HR is the EXISTING generic-HR path
 /// (`StandardHRSource`) — there is nothing Garmin-proprietary to implement, and we don't pretend there is.
 ///
 /// This type therefore carries only:
@@ -25,8 +25,8 @@ public enum GarminBroadcast {
     /// by model, so we keep it general and accurate.
     public static let broadcastHint: [String] = [
         "On your Garmin watch, press and hold the menu button (or open the controls menu).",
-        "Find Heart Rate or Sensors, then turn on Broadcast Heart Rate.",
+        "Find Herzfrequenz or Sensors, then turn on Broadcast Herzfrequenz.",
         "While it's broadcasting, your watch shows up here as a regular heart-rate strap.",
-        "Keep the watch awake and not connected to another app, then scan.",
+        "Keep the watch awake and nicht verbunden to another app, then scan.",
     ]
 }

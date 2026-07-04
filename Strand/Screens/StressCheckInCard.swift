@@ -73,7 +73,7 @@ struct StressCheckInCard: View {
                     }
 
                     HStack(spacing: NoopMetrics.rowSpacing) {
-                        NoopButton("Breathe now", systemImage: "wind", kind: .primary) {
+                        NoopButton("Atmen now", systemImage: "wind", kind: .primary) {
                             center.dismiss()
                             onBreatheNow()
                         }

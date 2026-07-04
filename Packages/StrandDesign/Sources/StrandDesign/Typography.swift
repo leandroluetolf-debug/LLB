@@ -139,7 +139,7 @@ public extension View {
             Text("Title 1 / Bold 28").font(StrandFont.title1).foregroundStyle(StrandPalette.textPrimary)
             Text("Title 2 / Semibold 22").font(StrandFont.title2).foregroundStyle(StrandPalette.textPrimary)
             Text("Headline / Semibold 17").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
-            Text("Body / Regular 15 — the thread of you, read in full.")
+            Text("Körper / Regular 15 — the thread of you, read in full.")
                 .font(StrandFont.body).foregroundStyle(StrandPalette.textPrimary)
             Text("Subhead 13").font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
             Text("Caption 12").font(StrandFont.caption).foregroundStyle(StrandPalette.textSecondary)

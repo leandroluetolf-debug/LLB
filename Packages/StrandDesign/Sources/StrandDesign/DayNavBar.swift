@@ -38,8 +38,8 @@ public struct DayNavBar: View {
 
     private var label: LocalizedStringKey {
         switch selectedOffset {
-        case 0:  return "Today"
-        case 1:  return "Yesterday"
+        case 0:  return "Heute"
+        case 1:  return "Gestern"
         default: return "\(Self.dayFmt.string(from: selectedDay))"
         }
     }
@@ -64,7 +64,7 @@ public struct DayNavBar: View {
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textPrimary)
                         .lineLimit(1)
-                    // On today the label already reads "Today"; the full date would just duplicate the
+                    // On today the label already reads "Heute"; the full date would just duplicate the
                     // header, so it's shown only once you've navigated to another day (for orientation).
                     if selectedOffset > 0 {
                         Text(Self.fullDateFmt.string(from: selectedDay))

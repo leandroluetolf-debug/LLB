@@ -119,10 +119,10 @@ public struct ConnectionDot: View {
 #Preview("StatePill / ConnectionDot") {
     VStack(alignment: .leading, spacing: 18) {
         HStack(spacing: 10) {
-            StatePill("Connected", tone: .positive)
+            StatePill("Verbunden", tone: .positive)
             StatePill("Syncing", tone: .accent, pulsing: true)
-            StatePill("Battery 14%", tone: .warning)
-            StatePill("Disconnected", tone: .critical)
+            StatePill("Akku 14%", tone: .warning)
+            StatePill("Getrennt", tone: .critical)
             StatePill("Idle", tone: .neutral, showsDot: false)
         }
         HStack(spacing: 16) {

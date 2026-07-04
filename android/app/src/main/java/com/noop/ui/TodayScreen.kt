@@ -148,22 +148,22 @@ import kotlin.math.roundToInt
  *
  * Sparkline series are built off the view model's `recentDays` (oldest → newest,
  * all from the my-whoop source). Missing current-day values render as explicit
- * "No Data" states instead of raw dashes, so old imports do not look like today.
+ * "Keine Daten" states instead of raw dashes, so old imports do not look like today.
  */
 
 /** Stable Today info-card ids (the dismissed-flag suffix + the inbox `restorePayload`). Match the
  *  iOS card ids so an export/import round-trips. */
 private const val CARD_SCORES_BUILDING = "scoresBuilding"
 private const val CARD_NEW_HERE = "newHere"
-// #827: the "Building your baseline, N more nights" calibrating note is dismissible-into-the-inbox like
+// #827: the "Basiswerte werden aufgebaut, N more nights" calibrating note is dismissible-into-the-inbox like
 // the other Today info-cards, so a returning user who has read it once isn't nagged with it every day
 // through the multi-night calibration window. Same id on both platforms so it round-trips an export/import.
-private const val CARD_CALIBRATING = "calibratingBaseline"
-// The "Latest sleep · <date>" / "Last night · <date>" carry-over note (ScoreState.CarriedLastNight). iOS
+private const val CARD_CALIBRATING = "kalibriertBasis"
+// The "Latest sleep · <date>" / "Letzte Nacht · <date>" carry-over note (ScoreState.CarriedLastNight). iOS
 // has nothing in this slot, so on Android it's dismissible-into-the-inbox like the other Today info-cards:
 // a small × tucks it into Updates (restorable), so it never sits permanently between the header and the
 // hero throwing off the compact liquid look. Local-only id (iOS has no twin), matching the dismiss plumbing.
-private const val CARD_CARRIED_SLEEP = "carriedSleep"
+private const val CARD_CARRIED_SLEEP = "carriedSchlaf"
 
 /** #860 item 1: process-lifetime guard for the launch snap-to-today. `selectedDayOffset` is rememberSaveable
  *  so a tab-away keeps the user's chosen day (#614/#739). The same persistence, however, rides the
@@ -186,7 +186,7 @@ private val LIQUID_HERO_RADIUS: Dp = 26.dp
 
 // The Vitality vessel purple (#9b7bff) — no exact Palette token in this theme, so a fixed brand literal
 // matching the iOS liquid Today's `liquidPurple` (Color(.sRGB, red:0x9b, green:0x7b, blue:0xff)). Used by
-// the mini "Your cards" vessel so Vitality reads the same purple as iOS.
+// the mini "Deine Karten" vessel so Vitality reads the same purple as iOS.
 private val LIQUID_PURPLE: Color = Color(red = 0x9b / 255f, green = 0x7b / 255f, blue = 0xff / 255f, alpha = 1f)
 
 /**
@@ -221,7 +221,7 @@ fun TodayScreen(
     onOpenUpdates: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
     onOpenHydration: () -> Unit = {},
-    // #706/#684: the "Your cards" dashboard rows are tappable on iOS but only Hydration navigated on Android.
+    // #706/#684: the "Deine Karten" dashboard rows are tappable on iOS but only Hydration navigated on Android.
     // These push each card's detail (Stress card -> Stress; Sleep -> Sleep), matching the iOS pinnedCardRow
     // destinations. Defaulted to no-ops so the call site stays compiling; AppRoot binds them to nav.navigate(...)
     // like onOpenHydration.
@@ -236,7 +236,7 @@ fun TodayScreen(
     // Optional Coupled view card (task #43): a tap-through to the WHOOP-style day screen. Defaulted to a
     // no-op so the call site stays compiling; AppRoot binds it to nav.navigate(CoupledView).
     onOpenCoupled: () -> Unit = {},
-    // The "workout in progress" indicator card routes to Live and re-opens the in-exercise overlay. Defaulted
+    // The "Workout läuft" indicator card routes to Live and re-opens the in-exercise overlay. Defaulted
     // to a no-op so the call site stays compiling; AppRoot binds it to openActiveWorkout() + nav.navigate(Live).
     onOpenActiveWorkout: () -> Unit = {},
     // The liquid header battery ring taps through to Devices (iOS parity: the battery ring → router.openDevices()).
@@ -303,7 +303,7 @@ fun TodayScreen(
         )
         if (selectedDayOffset != landed) selectedDayOffset = landed
     }
-    // Anchor offset-0 to the LOGICAL day (rolls at 04:00 local), so between midnight and 4am "Today"
+    // Anchor offset-0 to the LOGICAL day (rolls at 04:00 local), so between midnight and 4am "Heute"
     // still resolves to the prior calendar day's banked row instead of an empty new-calendar-day row
     // that blanks the dashboard (#144). Past offsets count back from this anchor. Presentation-only.
     val todayDate = logicalDayNow()
@@ -326,19 +326,19 @@ fun TodayScreen(
         if (selectedDayOffset == 0) today ?: historicalMetric else historicalMetric
     }
     // Keep the explicit calendar date visible alongside Today/Yesterday so the logical-day remap stays
-    // honest, between midnight and 04:00 "Today" still points at the prior calendar date, and showing
+    // honest, between midnight and 04:00 "Heute" still points at the prior calendar date, and showing
     // that date makes it obvious which day's row is on screen (#144).
     val dayLabel = remember(selectedDayOffset, selectedDay, selectedDayKey) {
         // Date the label by the row ACTUALLY on screen, not the raw logical date. `selectedDayKey` already
         // follows the resolver's `today?.day` at offset 0, so when the resolver surfaces yesterday's
         // complete row (today not scored yet) the date now reads that row's day, instead of stamping
-        // "Today · <today>" over yesterday's values, which disagreed with the Intelligence History row for
+        // "Heute · <today>" over yesterday's values, which disagreed with the Intelligence History row for
         // the same data (#434). iOS/Mac already label by the shown row's day; this brings Android to parity.
         val keyDate = runCatching { LocalDate.parse(selectedDayKey) }.getOrNull() ?: selectedDay
         val date = keyDate.format(DateTimeFormatter.ofPattern("EEE, d MMM", Locale.US))
         when (selectedDayOffset) {
-            0 -> "Today · $date"
-            1 -> "Yesterday · $date"
+            0 -> "Heute · $date"
+            1 -> "Gestern · $date"
             else -> date
         }
     }
@@ -358,7 +358,7 @@ fun TodayScreen(
     var showMetricsEditor by remember { mutableStateOf(false) }
     var enabledKeyMetrics by remember { mutableStateOf(KeyMetricPrefs.enabled(context)) }
 
-    // "Your cards" customisable dashboard (WHOOP "My Dashboard"), a persisted, reorderable selection of
+    // "Deine Karten" customisable dashboard (WHOOP "Mein Dashboard"), a persisted, reorderable selection of
     // metric cards. Empty/unset shows the sensible default set (Stress / Fitness age / Vitality + HRV +
     // Resting HR). The "ANPASSEN" link on the section header opens a local sheet (no new nav destination).
     // Persistence is display-only, these cards read the SAME values the rest of Today already loads.
@@ -366,7 +366,7 @@ fun TodayScreen(
     var showDashboardEditor by remember { mutableStateOf(false) }
     var enabledDashboardCards by remember { mutableStateOf(DashboardCardPrefs.enabled(context)) }
 
-    // The pinned "Your cards" values (Stress / Fitness age / Vitality), surfaced on Today so the buried
+    // The pinned "Deine Karten" values (Stress / Fitness age / Vitality), surfaced on Today so the buried
     // Explore features sit on the home screen (#582). The same merged resolvedSeries reads their detail
     // screens use; null simply renders a dash on that card. Mirror the iOS Today lane's stressToday /
     // fitnessAgeToday / vitalityToday loads (last resolved value over all history). Loaded off the main
@@ -396,7 +396,7 @@ fun TodayScreen(
         // yesterday's number (e.g. "2") while the detail page moved on. Reading the stored series the same way
         // StressScreen does (day → value, clamped 0–3) and feeding the same `days` ties the two together; both
         // recompute off `days`, so the pinned card stays in sync. null (no usable signal) keeps the honest
-        // "Calibrating" placeholder, matching StressScreen's empty state.
+        // "Kalibriert" placeholder, matching StressScreen's empty state.
         stressToday = runCatching {
             val stored = viewModel.repo.metricSeries("my-whoop", "stress", "0000-01-01", "9999-12-31")
                 .associate { it.day to it.value.coerceIn(0.0, 3.0) }
@@ -475,7 +475,7 @@ fun TodayScreen(
         }.getOrNull()
     }
 
-    // HYDRATION (opt-in, default OFF), the Today "Hydration" card + its detail are hidden unless the user
+    // HYDRATION (opt-in, default OFF), the Today "Flüssigkeit" card + its detail are hidden unless the user
     // turns Hydration tracking on in Settings. When on, the card reads today's logged total (ml, from the
     // local-only HydrationStore series) against the pure HydrationGoal (sex baseline + today's Effort bump).
     // Both are loaded off the main thread and re-read as the day's data grows; SharedPreferences isn't
@@ -498,7 +498,7 @@ fun TodayScreen(
         if (!hydrationEnabled) 0 else HydrationGoal.dailyGoalMl(profileStore.sex, displayMetric?.strain)
     }
 
-    // "How your scores work" guide, opened from the per-score ⓘ affordances and the one-time
+    // "So funktionieren deine Werte" guide, opened from the per-score ⓘ affordances and the one-time
     // first-run card. `guideSection` carries which score to deep-link to (null = open at the top);
     // `showGuide` gates the presenting Dialog. The first-run card's seen-state lives in
     // ScoringGuidePrefs and is read once (SharedPreferences isn't reactive), then driven locally.
@@ -526,7 +526,7 @@ fun TodayScreen(
     }
 
     // Per-card "dismissed into the inbox" flags for the two Today info-cards. A small × on each card
-    // sets these (and posts a `.dismissedCard` update); "Restore to Today" in the inbox flips them back
+    // sets these (and posts a `.dismissedCard` update); "Auf Heute wiederherstellen" in the inbox flips them back
     // via the shared TodayCardDismissal key. Read once (SharedPreferences isn't reactive), driven locally.
     var scoresBuildingDismissed by remember {
         mutableStateOf(TodayCardDismissal.isDismissed(context, CARD_SCORES_BUILDING))
@@ -562,7 +562,7 @@ fun TodayScreen(
             ),
         )
     }
-    // Honour a "Restore to Today" tap from the inbox: flip the matching dismissed flag back so the card
+    // Honour a "Auf Heute wiederherstellen" tap from the inbox: flip the matching dismissed flag back so the card
     // reappears (the inbox also cleared the shared pref directly, but this re-reads it into local state
     // for an already-mounted Today). Cleared once handled. Mirrors the iOS restoreRequest observer.
     val restoreSignal = updateStore?.restoreRequest
@@ -619,7 +619,7 @@ fun TodayScreen(
     // Steps for the selected day from imported Apple Health / Health Connect data, the Today Steps
     // tile's fallback when the strap itself didn't bank an on-device count. A WHOOP 4.0 DOES count
     // steps (in the official WHOOP app), but LLB can't yet read them off the strap over Bluetooth, so
-    // on a 4.0 the tile shows your imported steps instead of "No Data". Reloads as the day selector
+    // on a 4.0 the tile shows your imported steps instead of "Keine Daten". Reloads as the day selector
     // moves. On-device WHOOP 5/MG steps still take precedence. (#150)
     var importedStepsForDay by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(days, selectedDayKey) {
@@ -771,8 +771,8 @@ fun TodayScreen(
     }
 
     // Recovery cold-start: recovery is null until the HRV baseline crosses the seed gate
-    // (Baselines.minNightsSeed valid nights). Show honest "calibrating, N of 4 nights" progress
-    // instead of a bare "No Data" so a new BLE-only user knows scores are coming, not broken. (PR #85)
+    // (Baselines.minNightsSeed valid nights). Show honest "kalibriert, N of 4 nights" progress
+    // instead of a bare "Keine Daten" so a new BLE-only user knows scores are coming, not broken. (PR #85)
     val recoveryCalibration: Int? = if (selectedDayOffset == 0) {
         recoveryCalibrationNights(days, displayMetric?.recovery != null)
     } else {
@@ -782,12 +782,12 @@ fun TodayScreen(
     // The most recent fully-SCORED recovery day to carry over on TODAY while tonight's recovery hasn't
     // been scored yet (#543). Right after the logical-day rollover the new day has no recovery (the new
     // night isn't scored until you wear it tonight), so a baseline-established user, past calibration, so
-    // recoveryCalibration is null, saw the WHOLE recovery side blank ("No Data" Charge AND blank HRV /
+    // recoveryCalibration is null, saw the WHOLE recovery side blank ("Keine Daten" Charge AND blank HRV /
     // resting-HR / respiratory / SpO₂ tiles + Synthesis + Contributors) while live HR kept ticking, which
     // reads as broken. This is the ONE prior row every recovery-derived read-out carries over from, the
     // way WHOOP keeps showing last recovery until the new one lands, it NEVER fabricates a number for the
     // new day, each carried read shows the REAL prior value labelled as prior, and any metric the prior
-    // row genuinely lacks still falls through to "No Data". Non-null only when: it's today, today has no
+    // row genuinely lacks still falls through to "Keine Daten". Non-null only when: it's today, today has no
     // recovery, and we're not mid-calibration (calibration owns its own copy). days is oldest→newest;
     // exclude the (still-null) today key so we never echo "today". Mirrors iOS lastScoredRecoveryDay.
     // #547 carry-over upper bound: the LATER of the logical "today" (rolls at 04:00) and the local
@@ -819,7 +819,7 @@ fun TodayScreen(
     val lastVitalsDay: DailyMetric? = remember(days, carryOverTodayKey, selectedDayOffset, displayMetric) {
         if (selectedDayOffset == 0) lastVitalsRow(days, maxOf(displayMetric?.day ?: "", carryOverTodayKey)) else null
     }
-    // Carry-over Charge for TODAY, the prior scored row's recovery + its "Last night · <date>" caption.
+    // Carry-over Charge for TODAY, the prior scored row's recovery + its "Letzte Nacht · <date>" caption.
     // Derived from lastScoredRecoveryDay so Charge and every other recovery tile carry the SAME prior day.
     val lastScoredCharge: LastCharge? = remember(lastScoredRecoveryDay) {
         lastScoredRecoveryDay?.let { prior ->
@@ -844,7 +844,7 @@ fun TodayScreen(
     }
 
     // Explainability (COMPONENT 4): the displayed day's REAL PER-METRIC merge winners, mapped to their
-    // provenance labels ("On-device" / "Whoop" / "Apple Health" / …). Each ring badges the source that
+    // provenance labels ("Auf dem Gerät" / "Whoop" / "Apple Gesundheit" / …). Each ring badges the source that
     // actually supplied THAT metric's number (recovery → Charge, sleep_performance → Rest), not a blanket
     // day-level deviceId, so an imported metric on an otherwise-computed day reads honestly. Gated on the
     // ring having a value (a calibrating / empty ring shows no badge). Null → no badge. Mirrors the Swift
@@ -879,7 +879,7 @@ fun TodayScreen(
             .toEpochSecond()
         val whoopWorkouts = viewModel.repo.workouts("my-whoop", 0L, now)
         // Apple Health and Health Connect are separate sources (since #34), keep them separate in the
-        // provenance footer too, so Health Connect data isn't mislabelled under the "Apple Health" pill
+        // provenance footer too, so Health Connect data isn't mislabelled under the "Apple Gesundheit" pill
         // (issue #53). The recent-workouts list below still unions all sources for a combined feed.
         val appleWorkouts = viewModel.repo.workouts("apple-health", 0L, now)
         val hcWorkouts = viewModel.repo.workouts("health-connect", 0L, now)
@@ -941,14 +941,14 @@ fun TodayScreen(
         // the classic day-cycle SceneScreenBackground with the liquid day-of-sky (LiquidSkyStatic — no
         // per-frame cost on this scroll-heavy screen). The other liquid screens drop in the SAME
         // LiquidScreenSky() slot verbatim.
-        // #698, gated on the "Day-cycle background" setting (default ON). Off passes null, so the scaffold
+        // #698, gated on the "Tageszeiten-Hintergrund" setting (default ON). Off passes null, so the scaffold
         // paints the plain dark surface canvas instead, mirroring iOS's `showDayCycleBackground ? ... : nil`.
         topBackground = if (showDayCycleBackground) { { LiquidScreenSky() } } else null,
     ) {
         item {
         // LIQUID Today header (iOS LiquidTodayView.scene parity), a full structural rebuild to mirror the
         // iOS liquid Today element-for-element (NOT the old numeric-date + recording-light + bell header):
-        //   LEFT  — a tappable title block: the big rounded-bold day title ("Today" / "Yesterday" / the
+        //   LEFT  — a tappable title block: the big rounded-bold day title ("Heute" / "Gestern" / the
         //           weekday) over a human date line ("Friday, 3 July"). Tap opens the day picker.
         //   RIGHT — exactly the iOS four controls, in order: a filled HEART (→ Support), the PROFILE
         //           AVATAR (→ Settings), a "+" ADD button (→ quick actions), and the strap BATTERY RING.
@@ -956,8 +956,8 @@ fun TodayScreen(
         // the Updates inbox is relocated into the "+" quick-actions sheet (AppRoot), so the feature stays one
         // tap away without sitting in the Today header. Staggered in as the first section (index 0).
         val dayTitle = when (selectedDayOffset) {
-            0 -> "Today"
-            1 -> "Yesterday"
+            0 -> "Heute"
+            1 -> "Gestern"
             else -> {
                 val keyDate = runCatching { LocalDate.parse(selectedDayKey) }.getOrNull() ?: selectedDay
                 keyDate.format(DateTimeFormatter.ofPattern("EEEE", Locale.GERMAN))
@@ -993,7 +993,7 @@ fun TodayScreen(
             }
         }
 
-        // A "workout in progress" indicator whenever a manual workout is active (iOS parity: the Today
+        // A "Workout läuft" indicator whenever a manual workout is active (iOS parity: the Today
         // ActiveWorkoutIndicator). A tap routes to Live and re-opens the in-exercise overlay. Gated purely on
         // `activeWorkout`, so it auto-appears/clears with no extra lifecycle wiring. Its per-second clock
         // ticks inside the card's own LaunchedEffect, never recomposing the Today body.
@@ -1003,7 +1003,7 @@ fun TodayScreen(
             }
         }
 
-        // Design Reset (iOS parity): the "New here?" first-run card is off the Today dashboard for the
+        // Design Reset (iOS parity): the "Neu hier?" first-run card is off the Today dashboard for the
         // clean look, the scoring guide stays reachable from the i on each score and in Settings.
 
         // When there is no daily score yet (today's recovery is null / no history),
@@ -1015,16 +1015,16 @@ fun TodayScreen(
             // While the strap is mid-offload, say so, empty tiles read as final otherwise (#77).
             if (liveSnap.backfilling) SyncingHistoryNote(chunks = liveSnap.syncChunksThisSession)
             // Explained score state (COMPONENT 2): when there's no own number to show, say WHY and WHAT to
-            // do. "Calibrating" (N more nights, no fake number), "Last night · <date>" (#802 carry-over)
+            // do. "Kalibriert" (N more nights, no fake number), "Letzte Nacht · <date>" (#802 carry-over)
             // or "Needs the strap" (no data overnight). The carried Charge now draws a dimmed filled ring on
-            // the hero with NO in-ring caption, so its "Last night ..." note renders BELOW the rings here,
+            // the hero with NO in-ring caption, so its "Letzte Nacht ..." note renders BELOW the rings here,
             // matching iOS explainedScoreNote. Today only; never a fabricated value.
             //
             // #827: NeedsStrap ALWAYS shows (a today-blocking state, not a recurring nag).
             if (selectedDayOffset == 0 && scoreState is ScoreState.NeedsStrap) {
                 ScoreStateNote(scoreState)
             }
-            // The carried "Latest sleep · <date>" / "Last night · <date>" note. iOS has NOTHING in this slot,
+            // The carried "Latest sleep · <date>" / "Letzte Nacht · <date>" note. iOS has NOTHING in this slot,
             // and the maintainer flagged it as breaking the compact liquid look sitting permanently above the
             // hero. So on Android it's dismissible-into-the-inbox (restorable) like the calibrating note: a
             // small × tucks it into Updates so it isn't a fixed fixture between the header and the hero.
@@ -1045,8 +1045,8 @@ fun TodayScreen(
                     }
                 }
             }
-            // #827: the dismissible calibrating note. Hidden once dismissed into the inbox; a "Restore to
-            // Today" tap there flips calibratingDismissed back via the shared restore path above.
+            // #827: the dismissible calibrating note. Hidden once dismissed into the inbox; a "Wiederherstellen to
+            // Heute" tap there flips calibratingDismissed back via the shared restore path above.
             if (selectedDayOffset == 0 && scoreState is ScoreState.Calibrating && !calibratingDismissed) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     ScoreStateNote(scoreState)
@@ -1056,7 +1056,7 @@ fun TodayScreen(
                             onClick = {
                                 dismissTodayCard(
                                     CARD_CALIBRATING,
-                                    "Building your baseline",
+                                    "Basiswerte werden aufgebaut",
                                     "Charge, Effort and Rest become personal after a few nights of wear.",
                                 )
                             },
@@ -1067,11 +1067,11 @@ fun TodayScreen(
             if (selectedDayOffset != 0 || !scoresBuildingDismissed) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     DataPendingNote(
-                        title = "Live now. Your scores are building.",
+                        title = "Live läuft. Deine Werte bauen sich auf.",
                         body = "Your live heart rate is working from the strap, and recovery, strain " +
                             "and sleep build from it over your next few nights of wear, sharpening as it " +
-                            "learns your baseline. Want your full history instantly? Import your WHOOP " +
-                            "export in Data Sources and it backfills in about a minute.",
+                            "learns your baseline. Want your full history instantly? Importieren your WHOOP " +
+                            "export in Datenquellen and it backfills in about a minute.",
                     )
                     // The × is only meaningful for today's card (a past day's note isn't dismissed).
                     if (selectedDayOffset == 0 && updateStore != null) {
@@ -1080,7 +1080,7 @@ fun TodayScreen(
                             onClick = {
                                 dismissTodayCard(
                                     CARD_SCORES_BUILDING,
-                                    "Live now. Your scores are building.",
+                                    "Live läuft. Deine Werte bauen sich auf.",
                                     "Charge, Effort and Rest build over your next few nights of wear.",
                                 )
                             },
@@ -1141,11 +1141,11 @@ fun TodayScreen(
             HeartRateTrendCard(viewModel, days, selectedDay, todayDate, displayMetric, effortScale)
         }
 
-        // YOUR CARDS, the user-customisable dashboard (WHOOP "My Dashboard"). Surfaces a persisted,
+        // YOUR CARDS, the user-customisable dashboard (WHOOP "Mein Dashboard"). Surfaces a persisted,
         // reorderable selection of metric cards as flat WHOOP metric rows (leading icon + UPPERCASE label +
         // sublabel on the left, big value + unit + chevron on the right). Default = Stress / Fitness age /
         // Vitality + HRV + Resting HR. TODAY only; a card with no value yet renders a dash rather than
-        // vanishing. The "CUSTOMISE" link opens a local toggle/reorder dialog. Mirrors iOS yourCardsSection.
+        // vanishing. The "ANPASSEN" link opens a local toggle/reorder dialog. Mirrors iOS yourCardsSection.
         // When Hydration tracking is OFF the card is hidden even if it sits in the saved selection (the
         // editor still offers it, so the choice persists), keeping the opt-in feature fully invisible until
         // enabled. Mirrors the iOS yourCardsSection hydration gate.
@@ -1159,7 +1159,7 @@ fun TodayScreen(
                 day = displayMetric,
                 // The SAME carried-over last-scored row the OLD hero vital rows + Key-Metrics tiles read
                 // (#543): right after the logical-day rollover today's row carries no vitals yet, so without
-                // this the HRV / Resting HR / Respiratory / SpO₂ / Sleep cards all blank to "No Data" while
+                // this the HRV / Resting HR / Respiratory / SpO₂ / Sleep cards all blank to "Keine Daten" while
                 // the rest of Today shows last night's carried values. Routing the cards through the same
                 // `carriedDay ?: day` source the HeroMetricRows + MetricGrid already use brings them to parity.
                 carriedDay = lastScoredRecoveryDay,
@@ -1188,7 +1188,7 @@ fun TodayScreen(
         // The plain-English read-out, the Charge-tinted Synthesis card with a WHITE headline, carries the
         // greeting + the SOLID/CALIBRATING data-confidence pill in its top-right. Mirrors the iOS Synthesis
         // InsightCard. Carries the last scored day's read at the rollover (#543) so it doesn't blank to
-        // "No Data". Staggered in as index 2.
+        // "Keine Daten". Staggered in as index 2.
         item {
         Box(modifier = Modifier.fillMaxWidth().staggeredAppear(2)) {
             SynthesisHeroCard(
@@ -1233,7 +1233,7 @@ fun TodayScreen(
                     modifier = Modifier.size(Metrics.iconSmall),
                 )
                 Text(
-                    "No cardio load yet. Effort builds once your heart rate climbs into your effort " +
+                    "Noch keine Cardio-Belastung. Effort builds once your heart rate climbs into your effort " +
                         "zone (around 50% of your heart-rate reserve). A calm day honestly reads near zero.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
@@ -1244,8 +1244,8 @@ fun TodayScreen(
 
         // The three hero vitals, HRV / Resting HR / Respiratory, re-homed below the ring hero now that
         // the big RecoveryRing card (which used to carry them) is gone. Mirrors the iOS metric rows.
-        // Carries the last scored day's vitals (with a "Last night · <date>" footnote) at the rollover so
-        // they don't blank to "No Data" while live HR ticks (#543). Staggered in as index 3.
+        // Carries the last scored day's vitals (with a "Letzte Nacht · <date>" footnote) at the rollover so
+        // they don't blank to "Keine Daten" while live HR ticks (#543). Staggered in as index 3.
         item {
         Box(modifier = Modifier.fillMaxWidth().staggeredAppear(3)) {
             HeroMetricRows(day = displayMetric, carriedDay = lastScoredRecoveryDay, vitalsDay = lastVitalsDay)
@@ -1269,7 +1269,7 @@ fun TodayScreen(
         item {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.weight(1f)) {
-                SectionHeader("Key Metrics", overline = dayLabel, trailing = "14-day trend")
+                SectionHeader("Kennzahlen", overline = dayLabel, trailing = "14-day trend")
             }
             TextButton(
                 onClick = { showMetricsEditor = true },
@@ -1277,11 +1277,11 @@ fun TodayScreen(
             ) {
                 Icon(
                     Icons.Filled.Tune,
-                    contentDescription = "Edit Key Metrics",
+                    contentDescription = "Bearbeiten Kennzahlen",
                     modifier = Modifier.size(Metrics.iconSmall),
                 )
                 Spacer(Modifier.width(4.dp))
-                Text("Edit", style = NoopType.footnote)
+                Text("Bearbeiten", style = NoopType.footnote)
             }
         }
         }
@@ -1368,7 +1368,7 @@ fun TodayScreen(
                 carriedDay = lastScoredRecoveryDay,
                 showReadiness = selectedDayOffset == 0,
                 onClose = { showChargeBreakdown = false },
-                // "How Charge is calculated" → close the breakdown and open the scoring guide at the Charge
+                // "So wird Charge berechnet" → close the breakdown and open the scoring guide at the Charge
                 // section, the same target the per-ring ⓘ buttons use. Mirrors the iOS NavigationLink to
                 // ScoringGuideView(initialSection: .charge) whose onClose dismisses the breakdown.
                 onHowCalculated = {
@@ -1393,7 +1393,7 @@ fun TodayScreen(
         )
     }
 
-    // "Your cards" dashboard editor (WHOOP "My Dashboard" ✎), a Today-local dialog (no new nav
+    // "Deine Karten" dashboard editor (WHOOP "Mein Dashboard" ✎), a Today-local dialog (no new nav
     // destination): toggle which cards show + reorder them with up/down arrows. Saves the selection and
     // re-reads it into local state so the dashboard updates immediately and survives relaunch. Mirrors the
     // iOS DashboardCardsEditorSheet. (No reorder lib is added, simple arrow buttons, like KeyMetricsEditor.)
@@ -1417,7 +1417,7 @@ fun TodayScreen(
  * Circle().fill(StrandPalette.accent)).
  */
 /**
- * Today "workout in progress" indicator (iOS parity: ActiveWorkoutIndicatorCard). A metricRose-tinted card
+ * Today "Workout läuft" indicator (iOS parity: ActiveWorkoutIndicatorCard). A metricRose-tinted card
  * with a decorative live dot + "WORKOUT IN PROGRESS" overline, a live H:MM:SS clock, the sport label, and a
  * "Return to workout" button. The whole card is tappable; [onReturn] routes to Live and re-opens the
  * in-exercise overlay. The clock ticks in this card's OWN LaunchedEffect (reading [ActiveWorkout.startMs]),
@@ -1508,7 +1508,7 @@ private fun WorkoutInProgressCard(
 
 /**
  * A small top-trailing × for a Today info-card that has no built-in dismiss control (the shared
- * [DataPendingNote]). Matches the "New here?" card's × styling. Dismisses the card into the inbox.
+ * [DataPendingNote]). Matches the "Neu hier?" card's × styling. Dismisses the card into the inbox.
  */
 @Composable
 private fun TodayCardDismissButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -1585,7 +1585,7 @@ private fun ScoreInfoButton(
 }
 
 /**
- * One-time "New here?" card pointing first-run users at the scoring guide. A NoopCard in the Today
+ * One-time "Neu hier?" card pointing first-run users at the scoring guide. A NoopCard in the Today
  * flow, never a dialog, with a primary "See how it works" action and a ✕ dismiss; both set the
  * seen-flag at the call site so the card never returns. Copy verbatim from the approved source.
  */
@@ -1601,7 +1601,7 @@ private fun ScoringGuideIntroCard(onOpen: () -> Unit, onDismiss: () -> Unit) {
                     modifier = Modifier.size(18.dp),
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("New here?", style = NoopType.headline, color = Palette.textPrimary)
+                Text("Neu hier?", style = NoopType.headline, color = Palette.textPrimary)
                 Spacer(Modifier.weight(1f))
                 IconButton(
                     onClick = onDismiss,
@@ -1795,7 +1795,7 @@ private fun LiquidTodayHeader(
                         indication = null,
                         onClick = onOpenSettings,
                     )
-                    .semantics { contentDescription = "Profile and settings" },
+                    .semantics { contentDescription = "Profil and settings" },
                 contentAlignment = Alignment.Center,
             ) {
                 ProfileAvatar(size = 34.dp)
@@ -1815,7 +1815,7 @@ private fun LiquidTodayHeader(
 @Composable
 private fun LiquidBatteryRing(batteryPct: Double?, onClick: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
-    val label = batteryPct?.let { "Strap battery ${it.roundToInt()} percent" } ?: "Strap battery"
+    val label = batteryPct?.let { "Band battery ${it.roundToInt()} percent" } ?: "Band battery"
     Box(
         modifier = Modifier
             .size(34.dp)
@@ -1978,7 +1978,7 @@ private fun ScoreHeroRow(
     val recovery = day?.recovery
     // Prefer the live in-progress Effort for today, but never BELOW the day's already-earned strain
     // (#489/#506: a live under-read replaced today's real Effort with 0). The effective value drives the
-    // gauge number AND the has-data / "No Data" branch, so the ring only reads "No Data" when neither
+    // gauge number AND the has-data / "Keine Daten" branch, so the ring only reads "Keine Daten" when neither
     // exists. Mirrors the iOS live-Effort gauge. (#402)
     val strain = run {
         val live = liveTodayStrain; val stored = day?.strain
@@ -2100,10 +2100,10 @@ private fun ScoreHeroRow(
                         )
                         // #898: an aggregate-import user (a daily HRV/RHR import, no in-bed session) gets a
                         // Charge from WatchRecovery but NO sleep_performance, so Rest used to read a bare
-                        // "No Data" next to a lit Charge , reading as broken. When a Charge IS present for the
+                        // "Keine Daten" next to a lit Charge , reading as broken. When a Charge IS present for the
                         // day but Rest is absent, say WHY honestly ("Needs a tracked night") instead. We do
                         // NOT fabricate a Rest number , an aggregate genuinely has no scored night. A day with
-                        // no Charge either (truly empty) keeps the plain "No Data". Mirrors iOS restRing.
+                        // no Charge either (truly empty) keeps the plain "Keine Daten". Mirrors iOS restRing.
                         if (restScore == null) {
                             if (recovery != null) RingNeedsTrackedNight() else RingNoData()
                         }
@@ -2117,8 +2117,8 @@ private fun ScoreHeroRow(
 /**
  * One hero ring column: the ring, with a tappable UPPERCASE domain label + chevron beneath it (the
  * WHOOP affordance) that opens the matching scoring-guide section, and an OPTIONAL per-metric provenance
- * badge (COMPONENT 4) under that, the real merge winner for this ring's score ("On-device" / "Whoop" /
- * "Apple Health"). The badge is shown only when [provenance] is non-null (the caller gates it on the
+ * badge (COMPONENT 4) under that, the real merge winner for this ring's score ("Auf dem Gerät" / "Whoop" /
+ * "Apple Gesundheit"). The badge is shown only when [provenance] is non-null (the caller gates it on the
  * ring having a value AND a resolved winner). Mirrors the iOS heroRingColumn, the ring floats on the
  * scenic field with no per-ring card, the SourceBadge sits beneath the label.
  */
@@ -2129,7 +2129,7 @@ private fun HeroRingColumn(
     provenance: String? = null,
     // iOS parity: a static source pill under the ring (iOS `HeroScoreCell(pill: "WHOOP")` on Charge + Rest,
     // nil on Effort). Shown ONLY when [provenance] didn't resolve a real per-metric winner, so a real
-    // multi-source badge ("Apple Health" / "On-device") still wins when present; otherwise the same "WHOOP"
+    // multi-source badge ("Apple Gesundheit" / "Auf dem Gerät") still wins when present; otherwise the same "WHOOP"
     // pill iOS always shows appears (the maintainer's "android doesn't show the pill" gap). null = no pill.
     sourcePill: String? = null,
     // A1: when non-null (Charge), the ring is tappable and opens the breakdown sheet. The chevron cue is
@@ -2296,8 +2296,8 @@ private fun SynthesisHeroCard(
     onOpenReadiness: () -> Unit = {},
 ) {
     // The row the synthesis reads from: today's own when it carries recovery, else the carried-over last
-    // scored day (#543) so the card mirrors the carried Charge ring instead of blanking to "No Data". When
-    // carrying, the detail line gets a "Last night · <date>" provenance so the prior read isn't passed off
+    // scored day (#543) so the card mirrors the carried Charge ring instead of blanking to "Keine Daten". When
+    // carrying, the detail line gets a "Letzte Nacht · <date>" provenance so the prior read isn't passed off
     // as today's. today's own read wins the instant tonight is scored.
     val readDay = carriedDay ?: day
     val recovery = readDay?.recovery
@@ -2305,7 +2305,7 @@ private fun SynthesisHeroCard(
         // The greeting + SOLID/CALIBRATING data-confidence pill ride in their OWN header row ABOVE the
         // card, not as a top-end overlay over it (#527). The old overlay sat over the card's "SYNTHESIS"
         // overline + big status word and, on a narrow phone, collided with them, and squeezing the
-        // status into the leftover width force-broke a single word ("Calibrating" → "Calibrati/ng").
+        // status into the leftover width force-broke a single word ("Kalibriert" → "Calibrati/ng").
         // A separate row CAN'T overlap, and the card keeps its FULL width so the status stays one line.
         // Mirrors the iOS Synthesis header-row layout (TodayView heroSection).
         Row(
@@ -2343,11 +2343,11 @@ private fun SynthesisHeroCard(
         }
         // S4: the Synthesis card collapses to a one-liner that expands on tap. The headline (the status) is
         // the SAME in both states, only the detail body and chrome fold, never the read (#506).
-        val status = if (recoveryCalibration != null) "Calibrating" else synthesisWord(recovery)
+        val status = if (recoveryCalibration != null) "Kalibriert" else synthesisWord(recovery)
         val detail = if (recoveryCalibration != null) {
             // Comma (not the old em-dash) to match the Swift canonical synthesis copy VERBATIM
             // (TodayView "Learning your baseline, N of M nights.") and the no-em-dash standing rule.
-            "Learning your baseline, $recoveryCalibration of ${Baselines.minNightsSeed} nights."
+            "Learning your baseline, $recoveryCalibration of ${Basiss.minNightsSeed} nights."
         } else if (carriedDay != null) {
             // Carried prior-day read, summarise that day + stamp it so it isn't passed off as today's.
             synthesisDetail(carriedDay) + " ${carriedCaption(carriedDay.day)}."
@@ -2431,7 +2431,7 @@ private fun ReadinessHeroPill(word: String, level: ReadinessEngine.Level, onTap:
             .border(1.dp, tone.copy(alpha = 0.32f), RoundedCornerShape(50))
             .clickable(onClickLabel = "See your full readiness", onClick = onTap)
             .padding(horizontal = 10.dp, vertical = 5.dp)
-            .semantics { contentDescription = "Readiness: $word" },
+            .semantics { contentDescription = "Bereitschaft: $word" },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(word.uppercase(), style = NoopType.overline, color = tone)
@@ -2449,9 +2449,9 @@ private fun RingEmptyOverlay(
 ) {
     if (calibratingNights != null) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Calibrating", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
+            Text("Kalibriert", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
             Text(
-                "$calibratingNights of ${Baselines.minNightsSeed}",
+                "$kalibriertNights of ${Basiss.minNightsSeed}",
                 style = NoopType.footnote,
                 color = Palette.textSecondary,
                 maxLines = 1,
@@ -2469,11 +2469,11 @@ private fun RingNoData() {
 
 /** #898: the Rest ring's overlay when a Charge exists for the day but there's no scored sleep (the
  *  aggregate-import case , a daily HRV/RHR import carries no in-bed session). Says WHY Rest is blank
- *  instead of a bare "No Data", without fabricating a number. Mirrors iOS restRing's needs-a-night branch. */
+ *  instead of a bare "Keine Daten", without fabricating a number. Mirrors iOS restRing's needs-a-night branch. */
 @Composable
 private fun RingNeedsTrackedNight() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Calibrating", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
+        Text("Kalibriert", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
         Text(
             "needs a tracked night",
             style = NoopType.footnote,
@@ -2492,8 +2492,8 @@ private fun RingNeedsTrackedNight() {
 /** The three hero vitals as README metric rows, HRV (teal) · Resting HR (rose) · Respiratory (blue).
  *  Reads PER-FIELD today-first with a recovery-INDEPENDENT vitals carry ([vitalsDay]) as the fallback
  *  (#543 follow-up), so a night whose recovery was nulled post-update still shows its OWN preserved HRV /
- *  RHR / respiratory rather than an older recovery-scored day's numbers (or "No Data"). This aligns the
- *  card to the Key-Metrics tiles, which already read per-field. Each row still falls through to "No Data"
+ *  RHR / respiratory rather than an older recovery-scored day's numbers (or "Keine Daten"). This aligns the
+ *  card to the Key-Metrics tiles, which already read per-field. Each row still falls through to "Keine Daten"
  *  for a vital neither today nor the carry supplies. */
 @Composable
 private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, vitalsDay: DailyMetric? = null) {
@@ -2502,7 +2502,7 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
     val rhr = day?.restingHr ?: vitalsDay?.restingHr
     val resp = day?.respRateBpm ?: vitalsDay?.respRateBpm
     // The caption reflects the row the shown vitals actually came from: if today supplied ANY of them the
-    // values are today's own, so don't stamp them as a prior "Last night · <date>"; only when EVERY shown
+    // values are today's own, so don't stamp them as a prior "Letzte Nacht · <date>"; only when EVERY shown
     // vital is carried do we stamp the carry's date (relabelled "Latest sleep · <date>" when weeks-old).
     val carriedFromVitals = day?.avgHrv == null && day?.restingHr == null && day?.respRateBpm == null &&
         (hrv != null || rhr != null || resp != null) && vitalsDay != null
@@ -2515,8 +2515,8 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
             verticalArrangement = Arrangement.spacedBy(Metrics.space12),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Overline("Recovery vitals", modifier = Modifier.weight(1f))
-                // iOS `lastNightLine` — today's own "Last night · <date>" unless the shown vitals are a carry.
+                Overline("Erholung vitals", modifier = Modifier.weight(1f))
+                // iOS `lastNightLine` — today's own "Letzte Nacht · <date>" unless the shown vitals are a carry.
                 Text(
                     if (carriedFromVitals) carriedCaption(vitalsDay!!.day) else heroVitalsLastNightLine(),
                     style = NoopType.caption,
@@ -2524,13 +2524,13 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
                 )
             }
             HeroVitalRow(
-                label = "Heart-rate variability",
+                label = "Herzfrequenzvariabilität",
                 value = hrv?.let { "${it.roundToInt()} ms" } ?: NO_DATA,
                 tint = Palette.metricCyan,
                 fraction = hrv?.let { (it / 120.0).coerceIn(0.0, 1.0) },
             )
             HeroVitalRow(
-                label = "Resting heart rate",
+                label = "Ruhepuls",
                 value = rhr?.let { "$it bpm" } ?: NO_DATA,
                 tint = Palette.metricRose,
                 fraction = rhr?.let { (it / 100.0).coerceIn(0.0, 1.0) },
@@ -2545,10 +2545,10 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
     }
 }
 
-/** iOS `lastNightLine` — "Last night · <date>" where <date> is yesterday in "d MMM" form. */
+/** iOS `lastNightLine` — "Letzte Nacht · <date>" where <date> is yesterday in "d MMM" form. */
 private fun heroVitalsLastNightLine(): String {
     val d = LocalDate.now().minusDays(1)
-    return "Last night · ${d.format(DateTimeFormatter.ofPattern("d MMM", Locale.US))}"
+    return "Letzte Nacht · ${d.format(DateTimeFormatter.ofPattern("d MMM", Locale.US))}"
 }
 
 /** One iOS `vitalRow`: a 26dp mini liquid VESSEL filled to [fraction] in [tint], the label (subhead,
@@ -2578,10 +2578,10 @@ private fun HeroVitalRow(label: String, value: String, tint: Color, fraction: Do
     }
 }
 
-// MARK: - "Your cards" dashboard (WHOOP "My Dashboard"), iOS yourCardsSection parity
+// MARK: - "Deine Karten" dashboard (WHOOP "Mein Dashboard"), iOS yourCardsSection parity
 //
 // A persisted, reorderable selection of metric cards surfaced on Today as flat WHOOP metric ROWS. The
-// section header carries the "Your cards" overline + a right-aligned BLUE "CUSTOMISE" text action; each row
+// section header carries the "Deine Karten" overline + a right-aligned BLUE "ANPASSEN" text action; each row
 // is a leading tinted icon tile + UPPERCASE tracked label over a grey baseline caption on the left, and the
 // big white value + small unit + chevron on the right. A card with no value yet renders a dash rather than
 // vanishing. Mirrors iOS TodayView.yourCardsSection / pinnedCardRow / dashboardValue / dashboardTint.
@@ -2628,7 +2628,7 @@ private fun YourCardsSection(
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        "CUSTOMISE",
+                        "ANPASSEN",
                         style = NoopType.overline.copy(letterSpacing = 0.4.sp),
                         color = Palette.accent,
                     )
@@ -2869,7 +2869,7 @@ private fun dashboardCardValue(
 }
 
 /**
- * One WHOOP "My Dashboard" metric row: a thin-line tinted icon tile, an UPPERCASE tracked label over a grey
+ * One WHOOP "Mein Dashboard" metric row: a thin-line tinted icon tile, an UPPERCASE tracked label over a grey
  * baseline caption, the big white value + small unit, and a chevron, on the flat frosted card surface (no
  * glow), tokens only. Mirrors iOS pinnedCardRow. The whole row is the tap target: when [onClick] is set it
  * pushes that card's detail (the chevron is the hint), matching iOS (#706/#684).
@@ -2983,7 +2983,7 @@ private fun intStringGrouped(v: Double): String {
     return if (kotlin.math.abs(n) >= 1000) String.format(Locale.US, "%,d", n) else "$n"
 }
 
-// MARK: - "Your cards" dashboard editor (WHOOP "My Dashboard" ✎)
+// MARK: - "Deine Karten" dashboard editor (WHOOP "Mein Dashboard" ✎)
 //
 // A Today-local dialog for choosing WHICH dashboard cards show and in what order. Display-only: it edits the
 // persisted selection, never any stored metric. Enabled cards first (saved order), then the disabled
@@ -3023,9 +3023,9 @@ private fun DashboardCardsEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("My Dashboard", style = NoopType.title2, color = Palette.textPrimary)
+                    Text("Mein Dashboard", style = NoopType.title2, color = Palette.textPrimary)
                     Text(
-                        "Choose which cards show on Today and reorder them with the arrows. " +
+                        "Choose which cards show on Heute and reorder them with the arrows. " +
                             "Cards with no value yet show a dash.",
                         style = NoopType.subhead,
                         color = Palette.textSecondary,
@@ -3103,7 +3103,7 @@ private fun DashboardCardsEditorDialog(
                                 .forEach { items.add(EditableDashboardCard(it, false)) }
                         },
                         colors = ButtonDefaults.textButtonColors(contentColor = Palette.textSecondary),
-                    ) { Text("Reset", style = NoopType.body) }
+                    ) { Text("Zurücksetzen", style = NoopType.body) }
                     Spacer(Modifier.weight(1f))
                     Button(
                         onClick = { onSave(items.filter { it.enabled }.map { it.card }) },
@@ -3113,7 +3113,7 @@ private fun DashboardCardsEditorDialog(
                             containerColor = Palette.accent,
                             contentColor = Palette.surfaceBase,
                         ),
-                    ) { Text("Done", style = NoopType.captionNumber) }
+                    ) { Text("Fertig", style = NoopType.captionNumber) }
                 }
             }
         }
@@ -3156,7 +3156,7 @@ internal fun ChargeBreakdownSheet(
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Filled.Close, contentDescription = "Close", tint = Palette.textSecondary)
+                    Icon(Icons.Filled.Close, contentDescription = "Schließen", tint = Palette.textSecondary)
                 }
             }
             Column(
@@ -3177,19 +3177,19 @@ internal fun ChargeBreakdownSheet(
                 // Everything above is what shaped YOUR Charge today; this opens the general METHOD behind the
                 // score, so the two are clearly separated, not conflated. Opens the scoring guide at the
                 // Charge section, the same target the per-ring ⓘ buttons use. Mirrors the iOS chargeBreakdown
-                // "How Charge is calculated" NavigationLink to ScoringGuideView(initialSection: .charge).
+                // "So wird Charge berechnet" NavigationLink to ScoringGuideView(initialSection: .charge).
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
                         .clickable(
-                            onClickLabel = "How Charge is calculated",
+                            onClickLabel = "So wird Charge berechnet",
                             onClick = onHowCalculated,
                         )
                         .background(Palette.surfaceInset)
                         .padding(14.dp)
                         .semantics {
-                            contentDescription = "How Charge is calculated. The method behind the score."
+                            contentDescription = "So wird Charge berechnet. The method behind the score."
                         },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -3205,7 +3205,7 @@ internal fun ChargeBreakdownSheet(
                         verticalArrangement = Arrangement.spacedBy(1.dp),
                     ) {
                         Text(
-                            "How Charge is calculated",
+                            "So wird Charge berechnet",
                             style = NoopType.subhead,
                             color = Palette.textPrimary,
                         )
@@ -3227,7 +3227,7 @@ internal fun ChargeBreakdownSheet(
     }
 }
 
-// MARK: - "What shaped it" the engine-computed Charge driver breakdown
+// MARK: - "Was es geprägt hat" the engine-computed Charge driver breakdown
 //
 // The SHARED-CONTRACT driver rows under the Charge ring: one row per REAL term the recovery scorer used,
 // each carrying its signed point contribution (deltaPoints), the night's value, the personal baseline it
@@ -3235,7 +3235,7 @@ internal fun ChargeBreakdownSheet(
 // the SAME inputs the Charge ring reads, so a row can never describe a term the score did not use; a
 // missing input yields NO row (never a faked zero). The confidence dot + tier tag SURFACE the existing
 // ScoreConfidence.forCharge: they are read, not recomputed. Hidden entirely when the day can't score
-// (cold-start / no drivers). Byte-aligned with the iOS "What shaped it" section. No em-dashes.
+// (cold-start / no drivers). Byte-aligned with the iOS "Was es geprägt hat" section. No em-dashes.
 
 @Composable
 private fun RecoveryDriversSection(
@@ -3256,7 +3256,7 @@ private fun RecoveryDriversSection(
         // Header row: section title + the SURFACED confidence pill (dot + tier tag) on the right.
         Row(verticalAlignment = Alignment.Top) {
             Box(modifier = Modifier.weight(1f)) {
-                SectionHeader("What shaped it", overline = overline, trailing = "vs your baseline")
+                SectionHeader("Was es geprägt hat", overline = overline, trailing = "vs your baseline")
             }
             ChargeConfidencePill(tier)
         }
@@ -3286,7 +3286,7 @@ private fun ChargeConfidencePill(tier: ScoreConfidence) {
     StatePill(title = label, tone = tone)
 }
 
-/** One "What shaped it" driver row: an up/down delta chip (signed points, green up / red down),
+/** One "Was es geprägt hat" driver row: an up/down delta chip (signed points, green up / red down),
  *  the label + verdict, and the value over its baseline. Mirrors the iOS driver row layout. */
 @Composable
 private fun DriverRow(driver: ChargeDriver) {
@@ -3349,8 +3349,8 @@ private fun DriverRow(driver: ChargeDriver) {
 @Composable
 private fun RecoveryContributorsSection(day: DailyMetric?, carriedDay: DailyMetric? = null) {
     // The row the contributors read from: today's own when it carries recovery, else the carried last
-    // scored day (#543) so the bars don't all read "No Data" at the rollover while live HR ticks. The
-    // overline stamps "Last night · <date>" when carrying so the prior read isn't passed off as today's.
+    // scored day (#543) so the bars don't all read "Keine Daten" at the rollover while live HR ticks. The
+    // overline stamps "Letzte Nacht · <date>" when carrying so the prior read isn't passed off as today's.
     val cd = carriedDay ?: day
     val hrv = cd?.avgHrv
     val rhr = cd?.restingHr?.toDouble()
@@ -3358,7 +3358,7 @@ private fun RecoveryContributorsSection(day: DailyMetric?, carriedDay: DailyMetr
     val resp = cd?.respRateBpm
     if (hrv == null && rhr == null && sleepMin == null && resp == null) return
 
-    val overline = carriedDay?.let { "Recovery · ${carriedCaption(it.day)}" } ?: "Recovery"
+    val overline = carriedDay?.let { "Erholung · ${carriedCaption(it.day)}" } ?: "Erholung"
     SectionHeader("Contributors", overline = overline, trailing = "What drove Charge")
     NoopCard {
         Column(verticalArrangement = Arrangement.spacedBy(Metrics.space16)) {
@@ -3372,27 +3372,27 @@ private fun RecoveryContributorsSection(day: DailyMetric?, carriedDay: DailyMetr
             // Resting HR, lower is better, so invert a typical 40–80 bpm span. Charge/recovery world (iOS
             // chargeColor, the recovery contributor reads on the WHOOP-green Charge world, not gold).
             ContributorBar(
-                label = "Resting HR",
+                label = "Ruhe-HF",
                 readout = rhr?.let { "${it.roundToInt()} bpm" } ?: NO_DATA,
                 fraction = rhr?.let { 1.0 - ((it - 40.0) / 40.0) },
                 color = Palette.chargeColor,
             )
             // Sleep, hours in bed against an 8h target. Blue (sleep world).
             ContributorBar(
-                label = "Sleep",
+                label = "Schlaf",
                 readout = sleepMin?.let { sleepValue(cd) } ?: NO_DATA,
                 fraction = sleepMin?.let { (it / 60.0) / 8.0 },
                 color = Palette.sleepLight,
             )
             // Respiratory, stability around a typical 12–20 rpm span. Deep blue (sleep world).
             ContributorBar(
-                label = "Respiratory",
+                label = "Atmung",
                 readout = resp?.let { String.format(Locale.US, "%.1f rpm", it) } ?: NO_DATA,
                 fraction = resp?.let { 1.0 - ((it - 12.0) / 8.0) },
                 color = Palette.sleepDeep,
             )
             Text(
-                "Baselines learned on-device over 14 days. Bars are an approximate read of each " +
+                "Basiss learned on-device over 14 days. Bars are an approximate read of each " +
                     "signal against a typical adult range, not medical advice.",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
@@ -3428,8 +3428,8 @@ private fun ContributorBar(label: String, readout: String, fraction: Double?, co
 
 /**
  * Recent nights carrying a usable nightly HRV, the signal that seeds the recovery baseline. While
- * recovery is still null and this count is in [1, seed), it is the honest "calibrating N of <seed>"
- * progress shown in place of "No Data"; null once recovery exists or no night has data yet. Pure +
+ * recovery is still null and this count is in [1, seed), it is the honest "kalibriert N of <seed>"
+ * progress shown in place of "Keine Daten"; null once recovery exists or no night has data yet. Pure +
  * unit-tested (RecoveryCalibrationTest). Mirrors Baselines.minNightsSeed as the seed gate. (PR #85)
  */
 internal fun recoveryCalibrationNights(
@@ -3442,14 +3442,14 @@ internal fun recoveryCalibrationNights(
     // recovery seed (nValid) for nights whose avgHrv is within the HRV config bounds, so an implausible
     // out-of-range night must NOT be counted here either, else the displayed N could over-state nValid.
     val cfg = Baselines.hrvCfg
-    // Include 0: a brand-new user (no banked nights) reads "Calibrating, 0 of N" on Charge, not a
-    // bare "No data" that looks broken (#335). Caller gates past days to null; >= seed → null.
+    // Include 0: a brand-new user (no banked nights) reads "Kalibriert, 0 of N" on Charge, not a
+    // bare "Keine Daten" that looks broken (#335). Caller gates past days to null; >= seed → null.
     return days.count { val v = it.avgHrv; v != null && v in cfg.minVal..cfg.maxVal }
         .takeIf { it in 0 until seed }
 }
 
 /**
- * The ordered "What shaped it" Charge driver rows for [displayDay], rebuilt PURELY from the visible
+ * The ordered "Was es geprägt hat" Charge driver rows for [displayDay], rebuilt PURELY from the visible
  * [days] history (the same in-memory rows the dashboard already shows, imports win field-by-field in
  * the merge), so no engine round-trip is needed and the bars match the Charge ring's own inputs. Folds
  * the whole history (oldest first) into the four-plus-one personal baselines with [Baselines.foldHistory]
@@ -3491,7 +3491,7 @@ internal fun recoveryChargeDrivers(
 
 /**
  * The Charge (recovery) [ScoreConfidence] tier for [displayDay] against the HRV baseline folded from
- * [days], surfaced as the confidence dot + tier tag under the "What shaped it" rows. SURFACED, never
+ * [days], surfaced as the confidence dot + tier tag under the "Was es geprägt hat" rows. SURFACED, never
  * recomputed differently: it calls [ScoreConfidence.forCharge] with the SAME folded HRV baseline the
  * drivers scored against. Mirrors the iOS surfacing of the existing ScoreConfidence on the recovery screen.
  */
@@ -3531,7 +3531,7 @@ internal fun lastScoredRecoveryDay(
     return days.lastOrNull { it.recovery != null && it.day != selectedDayKey && it.day <= today }
 }
 
-/** A prior day's Charge carried over on TODAY (value + "Last night · <date>" caption) while tonight's
+/** A prior day's Charge carried over on TODAY (value + "Letzte Nacht · <date>" caption) while tonight's
  *  recovery hasn't been scored yet (#543). Mirrors the iOS lastScoredCharge tuple. */
 internal data class LastCharge(val value: Double, val caption: String)
 
@@ -3542,7 +3542,7 @@ internal fun lastChargeDateLabel(dayKey: String): String =
         LocalDate.parse(dayKey).format(DateTimeFormatter.ofPattern("d MMM", Locale.US))
     }.getOrDefault(dayKey)
 
-/** Carry-over recency cap (#779): the "Last night" framing only holds when the carried scored day is
+/** Carry-over recency cap (#779): the "Letzte Nacht" framing only holds when the carried scored day is
  *  within this many days of today. Mirrors iOS TodayView.carryFreshnessDays. */
 internal const val CARRY_FRESHNESS_DAYS = 2L
 
@@ -3572,11 +3572,11 @@ internal fun freshRestScore(
 }
 
 /** The carried recovery caption stamp, keyed on that scored day's own date and its recency. Within the
- *  freshness cap it reads "Last night · <date>"; once the carried day is older than the cap (#779) it reads
- *  "Latest sleep · <date>" so a weeks-old import is never surfaced as "Last night". Shared by every carried
+ *  freshness cap it reads "Letzte Nacht · <date>"; once the carried day is older than the cap (#779) it reads
+ *  "Latest sleep · <date>" so a weeks-old import is never surfaced as "Letzte Nacht". Shared by every carried
  *  recovery read-out so the prior-day provenance reads identically. Mirrors iOS carriedCaption. */
 internal fun carriedCaption(priorDayKey: String, today: String = LocalDate.now().toString()): String {
-    val prefix = if (isCarryStale(priorDayKey, today)) "Latest sleep" else "Last night"
+    val prefix = if (isCarryStale(priorDayKey, today)) "Latest sleep" else "Letzte Nacht"
     return "$prefix · ${lastChargeDateLabel(priorDayKey)}"
 }
 
@@ -3610,7 +3610,7 @@ sealed class ScoreState {
     /** A prior scored day shown before tonight is scored (#543 carry-over), stamped with [dateLabel]
      *  ("d MMM") so the prior read is never passed off as today's. [stale] is true when that day is older
      *  than the freshness cap (#779): the carry is still shown so the recovery side isn't a bare blank, but
-     *  it's relabelled "Latest sleep" so a weeks-old import is never passed off as "Last night". */
+     *  it's relabelled "Latest sleep" so a weeks-old import is never passed off as "Letzte Nacht". */
     data class CarriedLastNight(val dateLabel: String, val stale: Boolean = false) : ScoreState()
 
     /** No data for today at all, strap not worn / not connected / not synced. Shows NO number. */
@@ -3620,8 +3620,8 @@ sealed class ScoreState {
     val title: String
         get() = when (this) {
             is Scored -> ""
-            is Calibrating -> "Calibrating"
-            is CarriedLastNight -> if (stale) "Latest sleep · $dateLabel" else "Last night · $dateLabel"
+            is Calibrating -> "Kalibriert"
+            is CarriedLastNight -> if (stale) "Latest sleep · $dateLabel" else "Letzte Nacht · $dateLabel"
             NeedsStrap -> "Needs the strap"
         }
 
@@ -3632,14 +3632,14 @@ sealed class ScoreState {
             is Scored -> ""
             is Calibrating -> {
                 val nights = if (nightsRemaining == 1) "night" else "nights"
-                "Building your baseline. About $nightsRemaining more $nights until your scores are personal."
+                "Basiswerte werden aufgebaut. Über $nightsRemaining more $nights until your scores are personal."
             }
             is CarriedLastNight ->
                 // A fresh post-rollover carry tells you tonight's score is on its way; a stale carry (an
                 // older import, #779) instead explains the number is from that earlier session, not today.
                 if (stale) "This is your last scored session. Wear the strap overnight for a fresh score."
                 else "Tonight's lands after you sleep with the strap on."
-            NeedsStrap -> "No data for today. Was your strap worn and connected overnight?"
+            NeedsStrap -> "Keine Daten for today. Was your strap worn and connected overnight?"
         }
 }
 
@@ -3661,11 +3661,11 @@ internal fun scoreStateForToday(
     today: String = LocalDate.now().toString(),
 ): ScoreState = when {
     todayRecovery != null -> ScoreState.Scored(todayRecovery)
-    // "About N more nights" = the seed gate minus the nights banked so far, floored at 1 (zero would read
+    // "Über N more nights" = the seed gate minus the nights banked so far, floored at 1 (zero would read
     // as "ready" when it isn't). Calibrating never fakes a value.
     calibratingNights != null -> ScoreState.Calibrating((seed - calibratingNights).coerceAtLeast(1))
     // #779: a carry older than the freshness cap is still shown (not a bare blank) but relabelled to
-    // "Latest sleep" so a weeks-old import is never passed off as "Last night".
+    // "Latest sleep" so a weeks-old import is never passed off as "Letzte Nacht".
     carriedDay != null -> ScoreState.CarriedLastNight(lastChargeDateLabel(carriedDay.day), isCarryStale(carriedDay.day, today))
     else -> ScoreState.NeedsStrap
 }
@@ -3739,7 +3739,7 @@ sealed class RecordingState {
             Recording -> "Recording"
             is LastSynced -> "Last synced ${minutesAgo}m ago"
             NotRecording -> "Not recording"
-            HistoryExperimental -> "Connected"
+            HistoryExperimental -> "Verbunden"
         }
 
     /** The chip's one-line detail. VERBATIM, mirror Swift exactly. */
@@ -3747,7 +3747,7 @@ sealed class RecordingState {
         get() = when (this) {
             Recording -> "Your strap is connected and saving data."
             is LastSynced -> "Reconnect to pull the latest."
-            NotRecording -> "Strap not connected. Tap to connect."
+            NotRecording -> "Band nicht verbunden. Tap to connect."
             HistoryExperimental -> "History sync is experimental on 5.0."
         }
 
@@ -3835,9 +3835,9 @@ private fun RecordingStatusChip(state: RecordingState, onConnect: () -> Unit) {
 
 /**
  * The Today provenance label for the day's REAL merge winner, extends the existing By-Day badge
- * vocabulary consistently. LLB-computed reads "On-device" (the spec's wording for the By-Day badge,
+ * vocabulary consistently. LLB-computed reads "Auf dem Gerät" (the spec's wording for the By-Day badge,
  * versus the FusedRecord screen's terser "LLB"), an imported strap day reads "Whoop", and a phone
- * aggregate reads "Apple Health" / "Health Connect". Null when no source owns the day (nothing to
+ * aggregate reads "Apple Gesundheit" / "Gesundheit Connect". Null when no source owns the day (nothing to
  * stamp). Mirrors the Swift `provenanceBadgeLabel`. */
 internal fun dayOwnerSource(deviceId: String?): com.noop.analytics.FusionSource? = when {
     deviceId == null -> null
@@ -3850,12 +3850,12 @@ internal fun dayOwnerSource(deviceId: String?): com.noop.analytics.FusionSource?
 }
 
 internal fun provenanceBadgeLabel(owner: com.noop.analytics.FusionSource?): String? = when (owner) {
-    com.noop.analytics.FusionSource.NOOP_COMPUTED -> "On-device"
+    com.noop.analytics.FusionSource.NOOP_COMPUTED -> "Auf dem Gerät"
     com.noop.analytics.FusionSource.WHOOP_IMPORT -> "Whoop"
-    com.noop.analytics.FusionSource.APPLE_HEALTH -> "Apple Health"
-    com.noop.analytics.FusionSource.HEALTH_CONNECT -> "Health Connect"
+    com.noop.analytics.FusionSource.APPLE_HEALTH -> "Apple Gesundheit"
+    com.noop.analytics.FusionSource.HEALTH_CONNECT -> "Gesundheit Connect"
     com.noop.analytics.FusionSource.XIAOMI_BAND -> "Mi Band"
-    com.noop.analytics.FusionSource.NUTRITION_CSV -> "Nutrition"
+    com.noop.analytics.FusionSource.NUTRITION_CSV -> "Ernährung"
     com.noop.analytics.FusionSource.LOCAL_CACHE -> "Cached"
     null -> null
 }
@@ -3863,9 +3863,9 @@ internal fun provenanceBadgeLabel(owner: com.noop.analytics.FusionSource?): Stri
 /**
  * PURE mapper (unit-tested), a RAW resolver source id (as returned by [WhoopRepository.resolvedSeries]'s
  * winning point, e.g. "my-whoop", "my-whoop-noop", "apple-health") onto the spec's provenance labels,
- * given the strap's real [deviceId]. The LLB-computed strap sibling ("$deviceId-noop") reads "On-device"
+ * given the strap's real [deviceId]. The LLB-computed strap sibling ("$deviceId-noop") reads "Auf dem Gerät"
  * (scored on THIS device from the raw strap stream); the imported strap source ([deviceId], normally
- * "my-whoop") reads "Whoop"; the Apple-Health source reads "Apple Health". Any other real source (Health
+ * "my-whoop") reads "Whoop"; the Apple-Health source reads "Apple Gesundheit". Any other real source (Health
  * Connect, Mi Band, nutrition) keeps its [com.noop.analytics.FusionSource.displayName], still the genuine
  * merge winner, never a blanket claim. Mirrors the Swift `provenanceDisplayLabel` EXACTLY. This is the
  * PER-METRIC mapper the Today rings use; the day-level [dayOwnerSource]/[provenanceBadgeLabel] pair stays
@@ -3875,9 +3875,9 @@ internal fun provenanceDisplayLabel(
     rawSource: String,
     deviceId: String = WhoopRepository.WHOOP_SOURCE,
 ): String {
-    if (rawSource == "$deviceId-noop") return "On-device"
+    if (rawSource == "$deviceId-noop") return "Auf dem Gerät"
     if (rawSource == deviceId || rawSource == WhoopRepository.WHOOP_SOURCE) return "Whoop"
-    if (rawSource == WhoopRepository.APPLE_HEALTH_SOURCE) return "Apple Health"
+    if (rawSource == WhoopRepository.APPLE_HEALTH_SOURCE) return "Apple Gesundheit"
     // Fall back to the FusionSource display name for any other known source; else the raw id verbatim.
     return com.noop.analytics.FusionSource.entries.firstOrNull { it.id == rawSource }?.displayName ?: rawSource
 }
@@ -3887,8 +3887,8 @@ internal fun provenanceDisplayLabel(
  *  footer + the Swift `provenanceTint` so the same source reads the same colour on Today. */
 internal fun provenanceLabelTint(label: String): Color = when (label) {
     "Whoop" -> Palette.accent
-    "Apple Health" -> Palette.metricCyan
-    "Health Connect" -> Palette.metricPurple
+    "Apple Gesundheit" -> Palette.metricCyan
+    "Gesundheit Connect" -> Palette.metricPurple
     else -> Palette.statusPositive
 }
 
@@ -3946,9 +3946,9 @@ private fun MetricGrid(
         KeyMetric.CHARGE to run {
             val v = d?.recovery ?: lastScoredCharge?.value
             KeyTileData(
-                label = "Recovery",
+                label = "Erholung",
                 value = d?.recovery?.let { "${it.roundToInt()}" }
-                    ?: recoveryCalibration?.let { "$it/${Baselines.minNightsSeed}" }
+                    ?: recoveryCalibration?.let { "$it/${Basiss.minNightsSeed}" }
                     ?: lastScoredCharge?.let { "${it.value.roundToInt()}" } ?: NO_DATA,
                 unit = if (d?.recovery != null || lastScoredCharge != null) "%" else "",
                 tint = v?.let { Palette.recoveryColor(it) } ?: Palette.chargeColor,
@@ -3992,7 +3992,7 @@ private fun MetricGrid(
         KeyMetric.BLOOD_OXYGEN to run {
             val v = d?.spo2Pct ?: carriedDay?.spo2Pct
             KeyTileData(
-                label = "Blood Oxygen",
+                label = "Sauerstoffsättigung",
                 value = v?.let { String.format(Locale.US, "%.0f", it) } ?: NO_DATA,
                 unit = if (v != null) "%" else "",
                 tint = Palette.metricCyan,
@@ -4002,7 +4002,7 @@ private fun MetricGrid(
         KeyMetric.RESPIRATORY to run {
             val v = d?.respRateBpm ?: carriedDay?.respRateBpm
             KeyTileData(
-                label = "Respiratory",
+                label = "Atmung",
                 value = v?.let { String.format(Locale.US, "%.1f", it) } ?: NO_DATA,
                 unit = if (v != null) "rpm" else "",
                 tint = Palette.accent,
@@ -4014,7 +4014,7 @@ private fun MetricGrid(
             val realSteps = d?.steps ?: importedStepsForDay
             val steps = realSteps ?: estimatedStepsForDay
             KeyTileData(
-                label = "Steps",
+                label = "Schritte",
                 value = steps?.let { intString(it.toDouble()) } ?: NO_DATA,
                 unit = "",
                 tint = Palette.metricCyan,
@@ -4024,7 +4024,7 @@ private fun MetricGrid(
         KeyMetric.WEIGHT to run {
             val weight = weightTile(latestWeightKg, profileWeightKg, unitSystem)
             KeyTileData(
-                label = "Weight",
+                label = "Gewicht",
                 value = weight.value,
                 unit = "",
                 tint = Palette.accent,
@@ -4032,7 +4032,7 @@ private fun MetricGrid(
             )
         },
         KeyMetric.CALORIES to KeyTileData(
-            label = "Calories",
+            label = "Kalorien",
             value = d?.activeKcalEst?.let { intString(it) } ?: NO_DATA,
             unit = if (d?.activeKcalEst != null) "kcal" else "",
             tint = Palette.metricAmber,
@@ -4165,9 +4165,9 @@ private fun HeartRateTrendCard(
     displayMetric: DailyMetric? = null,
     effortScale: EffortScale = EffortScale.HUNDRED,
 ) {
-    // "Today" here is the LOGICAL day (rolls at 04:00 local), so in the small hours after midnight the
+    // "Heute" here is the LOGICAL day (rolls at 04:00 local), so in the small hours after midnight the
     // trend keeps the evening's curve, window start at the logical day's own midnight, "since midnight"
-    // subtitle, "Today" label, rather than blanking to an empty new-calendar-day axis (#144).
+    // subtitle, "Heute" label, rather than blanking to an empty new-calendar-day axis (#144).
     var buckets by remember { mutableStateOf<List<HrBucket>>(emptyList()) }
     // The night's sleep session overlapping the HR window + the day's workouts, the Overview-HR
     // marker layers (sleep band, Charge at wake, sport glyphs at HR peaks). Loaded off the main
@@ -4391,12 +4391,12 @@ private fun HeartRateTrendCard(
                 )
                 if (hrZoom != null) {
                     Text(
-                        "Reset",
+                        "Zurücksetzen",
                         style = NoopType.footnote,
                         color = Palette.accent,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .clickable(onClickLabel = "Reset the heart rate zoom") { hrZoom = null }
+                            .clickable(onClickLabel = "Zurücksetzen the heart rate zoom") { hrZoom = null }
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }
@@ -4830,7 +4830,7 @@ data class TodayFooterState(
 private fun TodayWorkoutsSection(workouts: List<WorkoutRow>) {
     if (workouts.isEmpty()) return
 
-    SectionHeader("Last Workouts", overline = "Activity", trailing = "14 days")
+    SectionHeader("Last Workouts", overline = "Aktivität", trailing = "14 days")
     Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
         workouts.take(4).chunked(2).forEach { rowWorkouts ->
             Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
@@ -4864,7 +4864,7 @@ private fun TodaySourcesSection(
     expanded: Boolean = true,
     onToggle: () -> Unit = {},
 ) {
-    SectionHeader("Data Sources", overline = "Provenance")
+    SectionHeader("Datenquellen", overline = "Provenance")
     val whoopPresent = (footer.whoopDays ?: 0) > 0 || strapBatteryPct != null
     val applePresent = (footer.appleDays ?: 0) > 0 || (footer.appleWorkouts ?: 0) > 0
     val hcPresent = (footer.hcDays ?: 0) > 0 || (footer.hcWorkouts ?: 0) > 0
@@ -4925,7 +4925,7 @@ private fun TodaySourcesSection(
                 badge = "Whoop",
                 tint = Palette.accent,
                 // A live battery reading means the strap IS connected, even before the first banked
-                // night, don't contradict it with "Not connected" (#159).
+                // night, don't contradict it with "Nicht verbunden" (#159).
                 present = whoopPresent,
                 detail = countDetail(footer.whoopDays, footer.whoopWorkouts, "workouts"),
                 batteryPct = strapBatteryPct,
@@ -4938,7 +4938,7 @@ private fun TodaySourcesSection(
                     .background(Palette.hairline),
             )
             SourceRow(
-                badge = "Apple Health",
+                badge = "Apple Gesundheit",
                 tint = Palette.metricCyan,
                 present = applePresent,
                 detail = countDetail(footer.appleDays, footer.appleWorkouts, "workouts"),
@@ -4950,7 +4950,7 @@ private fun TodaySourcesSection(
                     .background(Palette.hairline),
             )
             SourceRow(
-                badge = "Health Connect",
+                badge = "Gesundheit Connect",
                 tint = Palette.metricPurple,
                 present = hcPresent,
                 detail = countDetail(footer.hcDays, footer.hcWorkouts, "workouts"),
@@ -4988,7 +4988,7 @@ private fun SourceRow(
         }
         Spacer(Modifier.weight(1f))
         Text(
-            text = if (present) detail else "Not connected",
+            text = if (present) detail else "Nicht verbunden",
             style = NoopType.captionNumber,
             color = if (present) Palette.textSecondary else Palette.textTertiary,
             maxLines = 1,
@@ -5013,14 +5013,14 @@ private fun ReadinessSection(days: List<DailyMetric>, carriedDay: DailyMetric? =
     // Carry-over (#543): Readiness anchors on the day whose row carries today's vitals. Right after the
     // rollover today has no scored row, so `evaluate` would read INSUFFICIENT and the whole card would
     // VANISH while live HR ticks, the same blank the carried Charge/Synthesis avoid. So when carrying,
-    // anchor on the last scored day's key instead, and stamp the overline "Last night · <date>". Honest:
+    // anchor on the last scored day's key instead, and stamp the overline "Letzte Nacht · <date>". Honest:
     // it's the real prior read; today's own readiness wins the instant tonight is scored.
     val anchorKey = carriedDay?.day ?: logicalDayKeyNow()
     val readiness = remember(days, anchorKey) { ReadinessEngine.evaluate(days, today = anchorKey) }
     if (readiness.level == ReadinessEngine.Level.INSUFFICIENT) return
 
     val overline = carriedDay?.let { carriedCaption(it.day) } ?: "Should you push today?"
-    SectionHeader("Readiness", overline = overline)
+    SectionHeader("Bereitschaft", overline = overline)
     NoopCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             // Headline row: level dot + headline, then the ACWR load read-out.
@@ -5159,8 +5159,8 @@ private fun flagColor(flag: ReadinessEngine.Flag): Color = when (flag) {
  */
 private fun stepActivityIconFor(activityClass: Int): Pair<ImageVector?, String> = when (activityClass) {
     0 -> Icons.Filled.Accessibility to "Still"
-    1 -> Icons.AutoMirrored.Filled.DirectionsWalk to "Walking"
-    2 -> Icons.AutoMirrored.Filled.DirectionsRun to "Running"
+    1 -> Icons.AutoMirrored.Filled.DirectionsWalk to "Gehen"
+    2 -> Icons.AutoMirrored.Filled.DirectionsRun to "Laufen"
     else -> null to ""
 }
 
@@ -5332,14 +5332,14 @@ private fun remember14(days: List<com.noop.data.DailyMetric>, anchorDay: LocalDa
 private fun greetingWord(): String {
     val h = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
     return when {
-        h < 12 -> "Good morning"
+        h < 12 -> "Guten Morgen"
         h < 17 -> "Good afternoon"
         else -> "Good evening"
     }
 }
 
 private fun synthesisWord(score: Double?): String {
-    if (score == null) return "No Data"
+    if (score == null) return "Keine Daten"
     return when {
         score < 25 -> "Depleted"
         score < 50 -> "Low"
@@ -5351,7 +5351,7 @@ private fun synthesisWord(score: Double?): String {
 
 private fun synthesisDetail(d: DailyMetric?): String {
     val rec = d?.recovery
-        ?: return "No metrics yet. Import your WHOOP export or wear the strap to begin."
+        ?: return "No metrics yet. Importieren your WHOOP export or wear the strap to begin."
     val recPart = when {
         rec < 50 -> "Charge is low"
         rec < 70 -> "Charge is steady"
@@ -5426,7 +5426,7 @@ internal fun buildingHint(metric: KeyMetric, isToday: Boolean): String? {
         KeyMetric.REST -> "Building, wear it tonight"
         KeyMetric.EFFORT -> "Building, moves as you do"
         // H10: an unscored Charge today that ISN'T mid-calibration and has nothing to carry, say what's
-        // needed rather than a bare "No Data". (The "Calibrating N of 4" copy still owns the calibrating
+        // needed rather than a bare "Keine Daten". (The "Kalibriert N of 4" copy still owns the calibrating
         // case at the call site; this only shows once there's genuinely nothing.)
         KeyMetric.CHARGE -> "Building, wear it tonight"
         // H10: the overnight blood-oxygen reading builds from sleep, like the other in-sleep vitals.
@@ -5462,7 +5462,7 @@ internal fun latestWeightKg(apple: List<AppleDaily>, healthConnect: List<AppleDa
  * neither source carries a step total for that day. Backs the Today Steps-tile fallback for straps
  * LLB can't read steps off over Bluetooth, notably the WHOOP 4.0, which DOES count steps (in the
  * official WHOOP app) but doesn't expose them to LLB, so on a 4.0 the tile shows imported steps
- * rather than "No Data". On-device WHOOP 5/MG steps (DailyMetric.steps) still take precedence at the
+ * rather than "Keine Daten". On-device WHOOP 5/MG steps (DailyMetric.steps) still take precedence at the
  * call site. When both sources report the same day, the larger (most-complete) total wins so we never
  * sum and double-count. Mirrors the macOS TodayView, which already falls back to imported steps. (#150)
  */
@@ -5490,10 +5490,10 @@ private fun intString(v: Double): String {
     return if (kotlin.math.abs(n) >= 1000) String.format(Locale.US, "%,d", n) else "$n"
 }
 
-private const val NO_DATA = "No Data"
+private const val NO_DATA = "Keine Daten"
 
 /** The dashboard-card placeholder for a baseline-relative metric (Stress) that is still seeding its window,  *  an honest "building your baseline" state rather than a bare dash (#706/#684). Rendered dimmed like NO_DATA. */
-private const val STRESS_CALIBRATING = "Calibrating"
+private const val STRESS_CALIBRATING = "Kalibriert"
 
 private val workoutDateFmt: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM", Locale.US).withZone(ZoneId.systemDefault())
@@ -5583,7 +5583,7 @@ private fun KeyMetricsEditorDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("Edit Key Metrics", style = NoopType.title2, color = Palette.textPrimary)
+                    Text("Bearbeiten Kennzahlen", style = NoopType.title2, color = Palette.textPrimary)
                     Text(
                         "Choose which tiles show on your Control Center and reorder them with the arrows.",
                         style = NoopType.subhead,
@@ -5659,7 +5659,7 @@ private fun KeyMetricsEditorDialog(
                             KeyMetric.defaultOrder.forEach { items.add(EditableMetric(it, true)) }
                         },
                         colors = ButtonDefaults.textButtonColors(contentColor = Palette.textSecondary),
-                    ) { Text("Reset", style = NoopType.body) }
+                    ) { Text("Zurücksetzen", style = NoopType.body) }
                     Spacer(Modifier.weight(1f))
                     Button(
                         onClick = { onSave(items.filter { it.enabled }.map { it.metric }) },
@@ -5669,7 +5669,7 @@ private fun KeyMetricsEditorDialog(
                             containerColor = Palette.accent,
                             contentColor = Palette.surfaceBase,
                         ),
-                    ) { Text("Done", style = NoopType.captionNumber) }
+                    ) { Text("Fertig", style = NoopType.captionNumber) }
                 }
             }
         }

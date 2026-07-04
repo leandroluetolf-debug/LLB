@@ -102,7 +102,7 @@ fun TestCentreScreen(vm: AppViewModel) {
     }
 
     ScreenScaffold(
-        title = "Test Centre",
+        title = "Testcenter",
         subtitle = "Turn on a test for the thing that's wrong, wear the strap, then tap Report. Everything stays on this phone.",
     ) {
         // --- Section 1: Domain test modes ---
@@ -275,7 +275,7 @@ private fun DiagnosticToolsCard(vm: AppViewModel) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             // Strap log, the same exportLogText share the Settings Diagnostics button uses.
             NoopButton(
-                text = "Share strap log (for bug reports)",
+                text = "Band-Log teilen (for bug reports)",
                 leadingIcon = Icons.Filled.Upload,
                 kind = NoopButtonKind.Secondary,
                 fullWidth = true,
@@ -283,7 +283,7 @@ private fun DiagnosticToolsCard(vm: AppViewModel) {
             )
             // Recalibrate Charge baseline, the same Baselines.recalibrateRecoveryBaselines call.
             NoopButton(
-                text = "Recalibrate Charge baseline",
+                text = "Charge-Basis neu kalibrieren",
                 leadingIcon = Icons.Filled.Autorenew,
                 kind = NoopButtonKind.Secondary,
                 fullWidth = true,
@@ -322,7 +322,7 @@ private fun DiagnosticToolsCard(vm: AppViewModel) {
             },
             dismissButton = {
                 TextButton(onClick = { showRecalibrate = false }) {
-                    Text("Cancel", style = NoopType.body, color = Palette.textSecondary)
+                    Text("Abbrechen", style = NoopType.body, color = Palette.textSecondary)
                 }
             },
         )
@@ -337,7 +337,7 @@ private fun ExportCard(vm: AppViewModel, onReport: () -> Unit) {
     var minutes by remember { mutableStateOf(settings.timeMinutes) }
     SettingsSectionTC(
         icon = Icons.Filled.Upload,
-        title = "Export",
+        title = "Exportieren",
         blurb = "Report a bug with your log, or have LLB drop a daily copy into its export folder.",
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -370,7 +370,7 @@ private fun ExportCard(vm: AppViewModel, onReport: () -> Unit) {
             if (enabled) {
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text("Export time", style = NoopType.subhead, color = Palette.textPrimary)
+                        Text("Exportieren time", style = NoopType.subhead, color = Palette.textPrimary)
                     }
                     TimeChip(
                         minutes = minutes,
@@ -401,16 +401,16 @@ private fun AdvancedCard(vm: AppViewModel, is5MG: Boolean) {
     var capture by remember { mutableStateOf(puffin.isCaptureEnabled) }
     SettingsSectionTC(
         icon = Icons.Filled.Info,
-        title = "Advanced",
-        blurb = "Experimental probes, off by default. The fuller WHOOP 5/MG controls and the raw-sensor CSV export still live in Settings under Diagnostics.",
+        title = "Erweitert",
+        blurb = "Experimentell probes, off by default. The fuller WHOOP 5/MG controls and the raw-sensor CSV export still live in Einstellungen under Diagnostics.",
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            ToggleRowTC("Experimental sleep staging (V2)", v2) {
+            ToggleRowTC("Experimentelle Schlafstadien (V2)", v2) {
                 v2 = it; puffin.experimentalSleepV2 = it
             }
             // Same write path as Settings: vm.setContinuousHrv persists noop.continuousHrv and re-applies
             // keep-stream-for-data, so the live capture follows the toggle from either screen.
-            ToggleRowTC("Continuous HRV capture", continuousHrv) {
+            ToggleRowTC("Durchgehende HRV-Erfassung", continuousHrv) {
                 continuousHrv = it; vm.setContinuousHrv(it)
             }
             if (is5MG) {
@@ -420,7 +420,7 @@ private fun AdvancedCard(vm: AppViewModel, is5MG: Boolean) {
                 ToggleRowTC("Unlock WHOOP 5/MG deep data (R22)", deepData) {
                     deepData = it; puffin.isDeepDataEnabled = it
                 }
-                ToggleRowTC("Broadcast heart rate (Garmin/ANT)", broadcast) {
+                ToggleRowTC("Herzfrequenz senden (Garmin/ANT)", broadcast) {
                     broadcast = it; puffin.broadcastHr = it; vm.ble.setBroadcastHr(it)
                 }
                 ToggleRowTC("Record puffin frames to a file", capture) {
@@ -458,7 +458,7 @@ private fun ReportReviewDialog(previewText: String, onCancel: () -> Unit, onShar
             TextButton(onClick = onShare) { Text("Share", style = NoopType.body, color = Palette.accent) }
         },
         dismissButton = {
-            TextButton(onClick = onCancel) { Text("Cancel", style = NoopType.body, color = Palette.textSecondary) }
+            TextButton(onClick = onCancel) { Text("Abbrechen", style = NoopType.body, color = Palette.textSecondary) }
         },
     )
 }
@@ -476,7 +476,7 @@ private fun SettingsSectionTC(
     NoopCard(padding = 20.dp, tint = Palette.accent) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Overline("Test Centre")
+                Overline("Testcenter")
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),

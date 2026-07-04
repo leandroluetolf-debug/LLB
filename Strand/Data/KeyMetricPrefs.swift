@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - Editable Key-Metrics layout (#251)
 //
-// The Today screen's "Key Metrics" grid was a fixed list of ten tiles in one order. This lets the user
+// The Today screen's "Kennzahlen" grid was a fixed list of ten tiles in one order. This lets the user
 // choose WHICH tiles show and in WHAT order, with the default being the original order so nothing changes
 // for anyone who never opens the editor. Persistence is display-only — no metric is computed or stored
 // differently; this just decides which of the already-computed tiles render and in what sequence.
@@ -36,12 +36,12 @@ enum KeyMetric: String, CaseIterable, Identifiable {
         case .effort:      return String(localized: "Effort")
         case .rest:        return String(localized: "Rest")
         case .hrv:         return "HRV"
-        case .restingHr:   return String(localized: "Resting HR")
-        case .bloodOxygen: return String(localized: "Blood Oxygen")
-        case .respiratory: return String(localized: "Respiratory")
-        case .steps:       return String(localized: "Steps")
-        case .weight:      return String(localized: "Weight")
-        case .calories:    return String(localized: "Calories")
+        case .restingHr:   return String(localized: "Ruhe-HF")
+        case .bloodOxygen: return String(localized: "Sauerstoffsättigung")
+        case .respiratory: return String(localized: "Atmung")
+        case .steps:       return String(localized: "Schritte")
+        case .weight:      return String(localized: "Gewicht")
+        case .calories:    return String(localized: "Kalorien")
         }
     }
 

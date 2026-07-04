@@ -17,9 +17,9 @@ import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.json.JSONArray
 
-// MARK: - "Your cards" customisable dashboard (WHOOP "My Dashboard") — Kotlin twin of DashboardCards.swift
+// MARK: - "Deine Karten" customisable dashboard (WHOOP "Mein Dashboard") — Kotlin twin of DashboardCards.swift
 //
-// The Today screen's "Your cards" section is a user-customisable dashboard faithful to WHOOP's "My
+// The Today screen's "Deine Karten" section is a user-customisable dashboard faithful to WHOOP's "My
 // Dashboard": the user chooses WHICH metric cards show and in WHAT order from a registry of the values
 // Today already loads. Persistence is DISPLAY-ONLY — no metric is computed or stored differently; this just
 // decides which already-loaded values render as WHOOP metric rows and in what sequence.
@@ -31,7 +31,7 @@ import org.json.JSONArray
 // list so the two sections stay independent (Key Metrics grid vs. the Your-cards dashboard).
 
 /**
- * One available card in the "Your cards" dashboard. The [raw] is the stable persisted identifier — keep it
+ * One available card in the "Deine Karten" dashboard. The [raw] is the stable persisted identifier — keep it
  * BYTE-IDENTICAL to the iOS `DashboardCard` rawValue so a backup/restore reads the same dashboard on either
  * OS. [title] / [subtitle] / [unit] mirror the Swift registry verbatim; [icon] is the Material twin of the
  * SF Symbol (closest match in the bundled icon set).
@@ -43,24 +43,24 @@ enum class DashboardCard(
     val unit: String,
     val icon: ImageVector,
 ) {
-    HRV("hrv", "HRV", "Heart-rate variability", "ms", Icons.Filled.MonitorHeart),
-    RESTING_HR("restingHr", "Resting HR", "Resting heart rate", "bpm", Icons.Filled.Favorite),
-    RESPIRATORY("respiratory", "Respiratory", "Breaths per minute", "rpm", Icons.Filled.Air),
-    STEPS("steps", "Steps", "Today", "", Icons.Filled.DirectionsWalk),
+    HRV("hrv", "HRV", "Herzfrequenzvariabilität", "ms", Icons.Filled.MonitorHeart),
+    RESTING_HR("restingHr", "Ruhe-HF", "Ruhepuls", "bpm", Icons.Filled.Favorite),
+    RESPIRATORY("respiratory", "Atmung", "Breaths per minute", "rpm", Icons.Filled.Air),
+    STEPS("steps", "Schritte", "Heute", "", Icons.Filled.DirectionsWalk),
     STRESS("stress", "Stress", "Autonomic load", "", Icons.Filled.Bolt),
-    FITNESS_AGE("fitnessAge", "Fitness Age", "Updated weekly", "yrs", Icons.Filled.DirectionsRun),
-    VITALITY("vitality", "Vitality", "Wellness score", "", Icons.Filled.AutoAwesome),
-    BLOOD_OXYGEN("bloodOxygen", "Blood Oxygen", "Blood oxygen", "", Icons.Filled.WaterDrop),
-    SKIN_TEMP("skinTemp", "Skin Temp", "Skin temperature", "", Icons.Filled.Thermostat),
-    SLEEP("sleep", "Sleep", "Last night", "", Icons.Filled.Bedtime),
-    CALORIES("calories", "Calories", "Active energy", "kcal", Icons.Filled.LocalFireDepartment),
-    HYDRATION("hydration", "Hydration", "Today's fluid", "", Icons.Filled.WaterDrop),
+    FITNESS_AGE("fitnessAge", "Fitnessalter", "Updated weekly", "yrs", Icons.Filled.DirectionsRun),
+    VITALITY("vitality", "Vitalität", "Wellness score", "", Icons.Filled.AutoAwesome),
+    BLOOD_OXYGEN("bloodOxygen", "Sauerstoffsättigung", "Sauerstoffsättigung", "", Icons.Filled.WaterDrop),
+    SKIN_TEMP("skinTemp", "Skin Temp", "Hauttemperatur", "", Icons.Filled.Thermostat),
+    SLEEP("sleep", "Schlaf", "Letzte Nacht", "", Icons.Filled.Bedtime),
+    CALORIES("calories", "Kalorien", "Aktive Energie", "kcal", Icons.Filled.LocalFireDepartment),
+    HYDRATION("hydration", "Flüssigkeit", "Heute's fluid", "", Icons.Filled.WaterDrop),
 
     // Optional, default-OFF (task #43): a tap-through to the Coupled view (the WHOOP-style day read). Unlike
     // every other card it carries NO metric value of its own, it is a navigation row that opens the full
     // CoupledScreen. It is NOT in [defaultSelection], so a fresh install never shows it until the user adds
     // it via CUSTOMISE. Mirrors iOS DashboardCard.coupled (raw "coupled", byte-identical across OS).
-    COUPLED("coupled", "Coupled view", "Recovery, strain and sleep in one glance", "", Icons.Filled.Hexagon);
+    COUPLED("coupled", "Gekoppelte Ansicht", "Erholung, strain and sleep in one glance", "", Icons.Filled.Hexagon);
 
     companion object {
         fun fromRaw(raw: String?): DashboardCard? = entries.firstOrNull { it.raw == raw }
@@ -80,7 +80,7 @@ enum class DashboardCard(
 }
 
 /**
- * Display-only persistence for the "Your cards" dashboard selection. Holds an ORDERED list of the enabled
+ * Display-only persistence for the "Deine Karten" dashboard selection. Holds an ORDERED list of the enabled
  * cards as a JSON-encoded array of ids; a card not in the list is hidden. Stored in SharedPreferences under
  * "today.dashboardCards", the same mechanism every other Android preference uses ([NoopPrefs]).
  * SharedPreferences isn't reactive, so the Today screen reads this once into remembered state (like the

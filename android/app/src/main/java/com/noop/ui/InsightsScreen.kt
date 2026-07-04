@@ -112,7 +112,7 @@ private enum class Outcome(
         pick = { it.efficiency }, format = { "${it.roundToInt()}%" },
     ),
     Rhr(
-        label = "RHR", outcomeName = "Resting HR", higherIsBetter = false, domain = DomainTheme.Stress,
+        label = "RHR", outcomeName = "Ruhe-HF", higherIsBetter = false, domain = DomainTheme.Stress,
         pick = { it.restingHr?.toDouble() }, format = { "${it.roundToInt()} bpm" },
     ),
 }
@@ -200,11 +200,11 @@ fun InsightsScreen(vm: AppViewModel, onOpenInsightsHub: () -> Unit = {}) {
     // arrays on first run. Held in state so edits (rename/regroup/convert/add/remove) recompose.
     var catalogItems by remember { mutableStateOf(loadJournalCatalogItems(ctx)) }
 
-    // #860 item 4: today's local calendar-day key. The journal day chips ("Today"/"Yesterday"/"Tomorrow")
+    // #860 item 4: today's local calendar-day key. The journal day chips ("Heute"/"Gestern"/"Tomorrow")
     // are relative to the CURRENT date, but the answers (`dayAnswers`) and the resolved key are derived from
     // `LocalDate.now()` only inside the load effect below, which re-keys on `journalSeq`/`dayOffset`. A day
     // can pass with the screen alive and no save (the app simply backgrounded overnight), leaving the
-    // previous day's answers pinned under "Today" instead of the new day starting blank. We re-stamp this on
+    // previous day's answers pinned under "Heute" instead of the new day starting blank. We re-stamp this on
     // every lifecycle RESUME, and fold it into the load effect's keys, so the moment the date rolls over the
     // journal reloads for the new day and prior answers move to their real date. iOS parity in InsightsView.
     var currentDayKey by remember { mutableStateOf(LocalDate.now().toString()) }
@@ -312,7 +312,7 @@ fun InsightsScreen(vm: AppViewModel, onOpenInsightsHub: () -> Unit = {}) {
     // `ScreenScaffold(topBackground: liquidScaffoldSky())`; reuses the shared LiquidScreenSky() slot verbatim.
     // Insights has no day-cycle gate of its own, so the sky is always drawn (matching the liquid explorer).
     LazyScreenScaffold(
-        title = "Insights",
+        title = "Einblicke",
         subtitle = "Interrogate what affects what.",
         topBackground = { LiquidScreenSky() },
     ) {
@@ -390,7 +390,7 @@ fun InsightsScreen(vm: AppViewModel, onOpenInsightsHub: () -> Unit = {}) {
 
         item { Spacer(Modifier.height(Metrics.sectionGap - 20.dp)) }
 
-        // --- Caffeine window (#526), log an intake + a rough on-device "still active"
+        // --- Caffeine window (#526), log an intake + a rough on-device "noch aktiv"
         //     hint. Self-contained (owns its own SharedPreferences state). Opt-in: shows
         //     nothing until the user logs one. Twin of macOS CaffeineLogCard. ---
         item { CaffeineLogCard() }
@@ -486,9 +486,9 @@ fun InsightsScreen(vm: AppViewModel, onOpenInsightsHub: () -> Unit = {}) {
         } else if (behaviours.isEmpty()) {
             // No journal yet, explain, without dead-ending on a paid export.
             DataPendingNote(
-                title = "Insights read your journal and outcomes",
+                title = "Einblicke read your journal and outcomes",
                 body = "Log behaviours above. After a few days of answers, LLB ranks how each " +
-                    "one moves your recovery, HRV and sleep. Importing a WHOOP export (which " +
+                    "one moves your recovery, HRV and sleep. Importierening a WHOOP export (which " +
                     "includes its journal) backfills history instantly.",
             )
         } else {
@@ -585,7 +585,7 @@ private fun WhatMovesYouLink(onOpen: () -> Unit) {
 
 /**
  * Shape the [ActivityCostEngine] inputs from the loaded sessions + cached daily metrics, then rank.
- * [workouts] → [sport: Set<localDayKey>] (displaySport collapses detected/"Activity" into one bucket
+ * [workouts] → [sport: Set<localDayKey>] (displaySport collapses detected/"Aktivität" into one bucket
  * and de-camelCases WHOOP names; manual/imported labels pass through), keyed by the LOCAL calendar
  * day the session STARTED via the SAME AnalyticsEngine.dayString path [DailyMetric.day] uses, so the
  * engine's D+1 next-morning alignment is honest. [days] → [localDayKey: Charge] off DailyMetric.recovery.
@@ -619,7 +619,7 @@ internal fun computeActivityCosts(
 @Composable
 private fun ActivityCostSection(costs: List<com.noop.analytics.ActivityCost>) {
     Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
-        SectionHeader("Activity Cost", overline = "What each activity costs your recovery")
+        SectionHeader("Aktivität Cost", overline = "What each activity costs your recovery")
         if (costs.isEmpty()) {
             NoopCard {
                 Text(
@@ -704,7 +704,7 @@ private fun ActivityCostCard(cost: com.noop.analytics.ActivityCost) {
                 )
                 StatTile(
                     modifier = Modifier.weight(1f),
-                    label = "Sessions",
+                    label = "Einheiten",
                     value = "${cost.n}",
                     caption = if (solid) "solid" else "building",
                     accent = Palette.textPrimary,
@@ -729,7 +729,7 @@ private fun BehaviourSection(
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 SectionHeader(
-                    "Behaviour Effects",
+                    "Verhalten Effects",
                     overline = "What moves your ${outcome.outcomeName.lowercase(Locale.US)}",
                 )
             }
@@ -867,7 +867,7 @@ private fun EffectCard(e: BehaviorEffect, outcome: Outcome) {
 // pick ONE behaviour you actually log, one outcome, and a short window, then compare
 // the outcome on days you logged the behaviour (the intervention) against your
 // behaviour-ABSENT days before the start (the baseline). The absent-day baseline
-// matches the with/without model used by Behaviour Effects above, so "Baseline" vs
+// matches the with/without model used by Behaviour Effects above, so "Basis" vs
 // "Intervention" is an honest present-vs-absent contrast, not a raw pre/post window.
 // Nothing leaves the device: state is SharedPreferences and "Mark done" writes a
 // normal journal answer.
@@ -992,7 +992,7 @@ private fun ExperimentSetupCard(
                 color = Palette.textTertiary,
             )
         } else {
-            ExperimentField("Behaviour") {
+            ExperimentField("Verhalten") {
                 ExperimentBehaviourPicker(
                     candidates = candidates,
                     selection = resolvedBehaviour ?: candidates.first(),
@@ -1016,15 +1016,15 @@ private fun ExperimentSetupCard(
                 )
             }
 
-            // Unified button system (mirrors iOS NoopButton("Start experiment", flask, .primary, fullWidth)).
+            // Unified button system (mirrors iOS NoopButton("Experiment starten", flask, .primary, fullWidth)).
             NoopButton(
-                text = "Start experiment",
+                text = "Experiment starten",
                 leadingIcon = Icons.Filled.Science,
                 kind = NoopButtonKind.Primary,
                 fullWidth = true,
                 enabled = resolvedBehaviour != null,
                 onClick = onStart,
-                modifier = Modifier.semantics { contentDescription = "Start experiment" },
+                modifier = Modifier.semantics { contentDescription = "Experiment starten" },
             )
         }
     }
@@ -1074,7 +1074,7 @@ private fun ActiveExperimentCard(
         Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
             ExperimentMeasure(
                 modifier = Modifier.weight(1f),
-                label = "Baseline",
+                label = "Basis",
                 value = snapshot.baselineMean?.let { snapshot.outcome.format(it) } ?: "—",
                 caption = "${snapshot.baselineCount} days without it",
                 tint = Palette.textSecondary,
@@ -1321,7 +1321,7 @@ private fun buildExperimentSnapshot(
     val loggedDays = behaviours[behaviour] ?: emptySet()
 
     // Baseline = behaviour-ABSENT days BEFORE the start (with/without model, matching
-    // Behaviour Effects). Restricting to absent days is triage fix (c): "Baseline" vs
+    // Behaviour Effects). Restricting to absent days is triage fix (c): "Basis" vs
     // "Intervention" is an honest present-vs-absent contrast, not a raw pre/post window.
     val baselineKeys = outcomeDays.keys
         .filter { it < startedDay && it !in loggedDays }
@@ -1373,7 +1373,7 @@ private fun experimentConfidence(
 private fun experimentReading(s: ExperimentSnapshot): String {
     val delta = s.delta
         ?: return "Collect a few logged intervention days before reading the effect. " +
-            "Baseline and imported metrics stay in place."
+            "Basis and imported metrics stay in place."
     val absStr = formatExperimentDelta(abs(delta), s.outcome, includeSign = false)
     if (abs(delta) < 0.05) {
         return "${s.outcome.outcomeName} is flat against baseline on logged intervention days."
@@ -1618,7 +1618,7 @@ private fun computeRelationships(model: InsightModel): List<Relationship> {
         out.add(
             Relationship(
                 "hrv-rec", "HRV ↔ Charge",
-                "Heart-rate variability as the engine behind your charge score.", r, n,
+                "Herzfrequenzvariabilität as the engine behind your charge score.", r, n,
             ),
         )
     }
@@ -1633,7 +1633,7 @@ private fun computeRelationships(model: InsightModel): List<Relationship> {
     pearsonAligned(series(Outcome.Rhr), series(Outcome.Recovery))?.let { (r, n) ->
         out.add(
             Relationship(
-                "rhr-rec", "Resting HR ↔ Charge",
+                "rhr-rec", "Ruhe-HF ↔ Charge",
                 "A lower resting heart rate usually means a higher charge.", r, n,
             ),
         )

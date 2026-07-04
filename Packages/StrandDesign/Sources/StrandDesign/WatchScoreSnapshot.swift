@@ -46,7 +46,7 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
     /// The anchor day these scores describe, as a "YYYY-MM-DD" local day key (nil when unknown). This is
     /// the day the numbers are ABOUT, which is not the same as `asOf` (when the phone built the snapshot):
     /// you can build a snapshot at 9am that still describes yesterday's scores until today's are computed.
-    /// The watch prefers this for its recency label so it reads honestly ("Yesterday") even when the build
+    /// The watch prefers this for its recency label so it reads honestly ("Gestern") even when the build
     /// is recent. Optional + decodes as nil when absent so older payloads on the wire stay compatible.
     public var scoreDay: String?
 
@@ -110,7 +110,7 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
     /// The semantic freshness buckets behind `freshnessText`. Display code that needs to REASON about
     /// recency (e.g. "the label adds nothing while the scores are current, hide it") goes through
     /// `isFreshToday`, which switches on this classification. It must never compare the localized
-    /// display string ("Today" / "just now") instead: that reads fine in English and silently breaks
+    /// display string ("Heute" / "just now") instead: that reads fine in English and silently breaks
     /// in every translated language.
     private enum FreshnessKind {
         case today
@@ -124,7 +124,7 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
     }
 
     /// Classify this snapshot's recency. Prefers `scoreDay` (the day the scores are ABOUT) when the
-    /// phone supplied it, so the label can read "Today" / "Yesterday" / a weekday rather than implying
+    /// phone supplied it, so the label can read "Heute" / "Gestern" / a weekday rather than implying
     /// live numbers. Falls back to the `asOf` build age for older payloads that predate `scoreDay`.
     private func freshnessKind(now: Date) -> FreshnessKind {
         let cal = Calendar.current
@@ -149,12 +149,12 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
         return .builtDaysAgo(Int(age / 86_400))
     }
 
-    /// A short, honest recency label for the glance + complication ("Today" / "Yesterday" / "2h ago").
+    /// A short, honest recency label for the glance + complication ("Heute" / "Gestern" / "2h ago").
     /// Rendered off `freshnessKind` so the words and the semantics (`isFreshToday`) can never drift.
     public func freshnessText(now: Date = Date()) -> String {
         switch freshnessKind(now: now) {
-        case .today:                  return String(localized: "Today", bundle: .module)
-        case .yesterday:              return String(localized: "Yesterday", bundle: .module)
+        case .today:                  return String(localized: "Heute", bundle: .module)
+        case .yesterday:              return String(localized: "Gestern", bundle: .module)
         case .weekday(let scored):
             let f = DateFormatter()
             f.dateFormat = "EEE"
@@ -169,9 +169,9 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
 
     /// True when the scores read as CURRENT: they describe today's local day, or (for older payloads
     /// without `scoreDay`) the snapshot was built under a minute ago. This is the semantic twin of
-    /// `freshnessText` returning "Today" / "just now", and it is what display code must key off when it
+    /// `freshnessText` returning "Heute" / "just now", and it is what display code must key off when it
     /// appends the freshness label only where it adds information. Never compare the localized display
-    /// text for that decision: it breaks the moment a string catalog translates "Today". Derived at
+    /// text for that decision: it breaks the moment a string catalog translates "Heute". Derived at
     /// read time from fields already on the wire (`scoreDay` + `asOf`), so the encoded payload is
     /// unchanged and a snapshot from an older phone build classifies exactly as before.
     public func isFreshToday(now: Date = Date()) -> Bool {

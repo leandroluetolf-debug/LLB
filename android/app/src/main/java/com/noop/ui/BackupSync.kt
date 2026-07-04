@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
  * ever writes a local file; the user's own sync client does any upload.
  *
  * DESIGN
- * - Snapshots are timestamped and immutable. "Restore" REPLACES the live DB (whole-DB snapshot,
+ * - Snapshots are timestamped and immutable. "Wiederherstellen" REPLACES the live DB (whole-DB snapshot,
  *   newest-wins), exactly as [DataBackup.importFrom] already does - we add nothing to the restore
  *   safety path (magic-byte + Room/GRDB-origin validation, sidecar snapshot, rollback-on-failure).
  * - The pure filename/selection helpers are unit-tested byte-for-byte against the Apple twin so a

@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 //
 // A plain-English comparison of the WHOOP 4.0 and the WHOOP 5.0/MG, reached from Settings → Strap by
 // EITHER model owner. The point (issue #490): a 4.0 user wrongly believed broadcast-out was 5.0-only.
-// In truth LLB's OWN heart-rate re-broadcast (Data Sources → "Broadcast heart rate") works on ANY
+// In truth LLB's OWN heart-rate re-broadcast (Data Sources → "Herzfrequenz senden") works on ANY
 // strap — it re-advertises whatever live HR LLB is reading. What's genuinely 5/MG-only is the strap
 // FIRMWARE broadcast flag (whoop_live_hr_in_adv_ind_pkt), because the 4.0 firmware has no such config.
 // This screen draws that line honestly, and reassures a 4.0 owner their strap is fully supported.
@@ -61,7 +61,7 @@ private val CAPABILITIES: List<CapabilityRow> = listOf(
         "Both stream live HR to LLB over Bluetooth.",
     ),
     CapabilityRow(
-        "Sleep, recovery & strain history",
+        "Schlaf, recovery & strain history",
         Support.YES, Support.PARTIAL,
         "The 4.0's history is fully decoded. On a 5/MG, history decoding is experimental: live HR works, " +
             "deeper history is still being mapped.",
@@ -69,21 +69,21 @@ private val CAPABILITIES: List<CapabilityRow> = listOf(
     CapabilityRow(
         "LLB re-broadcasts your HR (gym / Zwift / Garmin)",
         Support.YES, Support.YES,
-        "Data Sources → \"Broadcast heart rate\" turns your PHONE into a standard BLE HR sensor using " +
+        "Datenquellen → \"Herzfrequenz senden\" turns your PHONE into a standard BLE HR sensor using " +
             "whatever HR LLB is reading, so this works on a 4.0 too. It's local Bluetooth; nothing leaves " +
             "your phone.",
     ),
     CapabilityRow(
-        "Strap broadcasts its own HR (firmware flag)",
+        "Band broadcasts its own HR (firmware flag)",
         Support.NO, Support.YES,
         "Making the STRAP itself advertise HR (the whoop_live_hr_in_adv_ind_pkt config) only exists on " +
             "5/MG firmware. A 4.0 can't do this, but the phone re-broadcast above covers the same use.",
     ),
     CapabilityRow(
-        "Steps",
+        "Schritte",
         Support.PARTIAL, Support.YES,
         "A 4.0 sends no step count, so LLB ESTIMATES steps from motion, calibrated to your phone " +
-            "(Settings → Profile → Steps estimate). A 5/MG reports a motion counter LLB reads directly.",
+            "(Einstellungen → Profil → Schritt-Schätzung). A 5/MG reports a motion counter LLB reads directly.",
     ),
     CapabilityRow(
         "Rename the strap's Bluetooth name",
@@ -194,7 +194,7 @@ private fun ReassuranceCard() {
             Text("On a WHOOP 4.0?", style = NoopType.headline, color = Palette.textPrimary)
             Text(
                 "You're not missing the broadcast feature. To share your heart rate with a gym machine, " +
-                    "Zwift, Peloton or a Garmin, open Data Sources and turn on \"Broadcast heart rate\": " +
+                    "Zwift, Peloton or a Garmin, open Datenquellen and turn on \"Herzfrequenz senden\": " +
                     "your phone becomes a standard Bluetooth HR sensor using your strap's live reading. The " +
                     "firmware-only flag a 5/MG has just does the same job from the strap instead of the phone.",
                 style = NoopType.subhead,
@@ -219,7 +219,7 @@ private fun Header(onClose: () -> Unit) {
             Text("What each can read, and why", style = NoopType.caption, color = Palette.textSecondary)
         }
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
-            Icon(Icons.Filled.Close, contentDescription = "Close", tint = Palette.textTertiary, modifier = Modifier.size(22.dp))
+            Icon(Icons.Filled.Close, contentDescription = "Schließen", tint = Palette.textTertiary, modifier = Modifier.size(22.dp))
         }
     }
 }
@@ -231,7 +231,7 @@ private fun Footer(onClose: () -> Unit) {
             onClick = onClose,
             colors = ButtonDefaults.buttonColors(containerColor = Palette.accent, contentColor = Palette.surfaceBase),
         ) {
-            Text("Done", modifier = Modifier.padding(horizontal = 24.dp))
+            Text("Fertig", modifier = Modifier.padding(horizontal = 24.dp))
         }
     }
 }

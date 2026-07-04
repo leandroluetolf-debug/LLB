@@ -23,9 +23,9 @@ enum AppleDemoSeeder {
     private static let STRAIN_SCALE = 100.0 / 21.0
 
     private static let SPORTS = [
-        "Running", "Cycling", "Strength", "HIIT", "Swimming", "Yoga", "Walking", "Rowing",
+        "Laufen", "Radfahren", "Strength", "HIIT", "Schwimmen", "Yoga", "Gehen", "Rudern",
     ]
-    private static let DISTANCE_SPORTS: Set<String> = ["Running", "Cycling", "Walking", "Swimming", "Rowing"]
+    private static let DISTANCE_SPORTS: Set<String> = ["Laufen", "Radfahren", "Gehen", "Schwimmen", "Rudern"]
 
     /// True when the process was launched asking for the demo seed (Xcode scheme arg or `simctl
     /// launch … --demo-seed`).

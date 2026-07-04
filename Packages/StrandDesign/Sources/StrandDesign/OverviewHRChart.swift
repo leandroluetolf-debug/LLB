@@ -243,8 +243,8 @@ public struct OverviewHRChart: View {
         // Sleep band — shaded region behind the curve (drawn first so the HR line/area sit on top).
         if let sleep, sleep.end > xDomain.lowerBound {
             RectangleMark(
-                xStart: .value("Sleep start", clampX(sleep.start)),
-                xEnd: .value("Sleep end", clampX(sleep.end))
+                xStart: .value("Schlaf start", clampX(sleep.start)),
+                xEnd: .value("Schlaf end", clampX(sleep.end))
             )
             .foregroundStyle(StrandPalette.sleepDeep.opacity(0.32))
         }
@@ -277,7 +277,7 @@ public struct OverviewHRChart: View {
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
         }
         if let recovery {
-            RuleMark(x: .value("Recovery", clampX(recovery.date)))
+            RuleMark(x: .value("Erholung", clampX(recovery.date)))
                 .foregroundStyle(recovery.color.opacity(0.85))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
         }
@@ -433,7 +433,7 @@ public struct OverviewHRChart: View {
         // (matches the sibling TrendChart). The only datum affordance otherwise is hover, which is
         // dead on touch — so on iPhone this chart spoke no heart rate at all.
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("Heart rate, 24 hours"))
+        .accessibilityLabel(Text("Herzfrequenz, 24 hours"))
         .accessibilityValue(Text(accessibilitySummary))
     }
 
@@ -487,7 +487,7 @@ private struct WorkoutBadge: View {
     }
 }
 
-/// Small caps read-out for the recovery / strain edge markers (e.g. "67% Recovery").
+/// Small caps read-out for the recovery / strain edge markers (e.g. "67% Erholung").
 private struct MarkerLabel: View {
     let text: String
     let color: Color
@@ -616,7 +616,7 @@ private struct ZoomPanModifier: ViewModifier {
             points: pts,
             sleep: .init(start: pts.first!.date, end: pts.first!.date.addingTimeInterval(6 * 3600 + 6 * 60), label: "6:06"),
             workouts: [.init(start: pts[200].date, end: pts[215].date, symbol: "figure.run")],
-            recovery: .init(date: pts.first!.date.addingTimeInterval(6 * 3600), label: "67% Recovery", color: StrandPalette.recoveryColor(67)),
+            recovery: .init(date: pts.first!.date.addingTimeInterval(6 * 3600), label: "67% Erholung", color: StrandPalette.recoveryColor(67)),
             effort: .init(date: pts.last!.date, label: "12.5 Effort", color: StrandPalette.strainColor(12.5), alignment: .trailing),
             valueRange: 45...140
         )

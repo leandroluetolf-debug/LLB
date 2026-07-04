@@ -75,7 +75,7 @@ final class SourceCoordinator: ObservableObject {
     /// references `BLEManager`/`WhoopBleClient`, so the WHOOP path cannot regress.
     @Published private(set) var ouraSource: OuraLiveSource?
     /// The deviceId for which the user has granted explicit adopt consent (the wizard's irreversible gate +
-    /// "Take over this ring?" confirm). The NEXT `startOuraSource` for THIS id builds its live source with
+    /// "Übernehmen this ring?" confirm). The NEXT `startOuraSource` for THIS id builds its live source with
     /// `adoptIntent == true`, so the dangerous `0x24` key install can run for exactly that adopt session and
     /// nothing else. Cleared as soon as it is consumed (or when adopt is cancelled), so a later reconnect of
     /// the same ring is a normal read-only session that never re-installs a key.
@@ -375,7 +375,7 @@ final class SourceCoordinator: ObservableObject {
 
     /// Grant explicit adopt consent for `deviceId` so the NEXT live Oura session for it (started when it
     /// becomes the active device) may run the dangerous key install (s3.2). Called by the wizard AFTER its
-    /// irreversible-consent gate + "Take over this ring?" confirm, immediately before the ring is registered
+    /// irreversible-consent gate + "Übernehmen this ring?" confirm, immediately before the ring is registered
     /// active. Per OURA_PROTOCOL.md s3.2 the install is a one-time, consent-gated provisioning write.
     func requestOuraAdopt(deviceId: String) {
         pendingAdoptDeviceId = deviceId

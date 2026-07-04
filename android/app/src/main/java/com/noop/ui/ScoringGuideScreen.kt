@@ -49,10 +49,10 @@ import kotlin.math.roundToInt
 
 // MARK: - ScoringGuideScreen (ported from Strand/Screens/ScoringGuideView.swift)
 //
-// "How your scores work" — the one honest explainer for LLB's three daily scores
+// "So funktionieren deine Werte" — the one honest explainer for LLB's three daily scores
 // (Charge, Effort, Rest) and the confidence labels. Presented as a sheet, mirroring
 // WhatsNewSheet's presentation + dismiss + layout idiom: a fixed header with a close
-// button, a scrollable column of cards, and a "Got it" footer. Reachable from
+// button, a scrollable column of cards, and a "Verstanden" footer. Reachable from
 // Settings → About, the ⓘ on each Today score, and the one-time first-run card.
 //
 // All copy here is the single approved source of truth, shared verbatim across
@@ -111,7 +111,7 @@ enum class ScoreSection {
 }
 
 /**
- * One-time first-run flag for the Today "New here?" scoring-guide card. Plain-prefs persistence
+ * One-time first-run flag for the Today "Neu hier?" scoring-guide card. Plain-prefs persistence
  * mirroring [DonationNudgePrefs] — a tiny self-contained store, so the card's seen-state lives next
  * to the screen that owns it and never touches the unrelated onboarding/changelog prefs.
  */
@@ -191,8 +191,8 @@ fun ScoringGuideScreen(
                         "personal baseline, plus resting heart rate, last night's Rest, breathing " +
                         "rate, and a skin-temperature signal (an early illness or overreach flag). " +
                         "Higher HRV versus your baseline means more Charge. LLB needs a few nights " +
-                        "to learn your baseline first. Until then you'll see “Calibrating”.",
-                    vsWhoop = "Same core idea as WHOOP's Recovery % (HRV-led recovery), but our " +
+                        "to learn your baseline first. Until then you'll see “Kalibriert”.",
+                    vsWhoop = "Same core idea as WHOOP's Erholung % (HRV-led recovery), but our " +
                         "weighting and baseline maths are our own, and openly documented.",
                     highlighted = highlighted == ScoreSection.CHARGE,
                     onPositioned = { if (ScoreSection.CHARGE !in anchors) anchors[ScoreSection.CHARGE] = it },
@@ -218,7 +218,7 @@ fun ScoringGuideScreen(
                     body = "A blend of how long you slept versus your personal need (the biggest " +
                         "factor), how efficiently (asleep versus in bed), how much was restorative " +
                         "(deep + REM sleep), and how consistent your sleep and wake timing is.",
-                    vsWhoop = "Similar in spirit to WHOOP's Sleep Performance %; our composite is our own.",
+                    vsWhoop = "Similar in spirit to WHOOP's Schlaf Performance %; our composite is our own.",
                     highlighted = highlighted == ScoreSection.REST,
                     onPositioned = { if (ScoreSection.REST !in anchors) anchors[ScoreSection.REST] = it },
                 )
@@ -232,7 +232,7 @@ fun ScoringGuideScreen(
     }
 }
 
-// MARK: - Header ("How your scores work" + "Charge · Effort · Rest" + close X)
+// MARK: - Header ("So funktionieren deine Werte" + "Charge · Effort · Rest" + close X)
 
 @Composable
 private fun Header(onClose: () -> Unit) {
@@ -248,7 +248,7 @@ private fun Header(onClose: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Overline("Your daily scores", color = Palette.textTertiary)
-            Text("How your scores work", style = NoopType.display(26f), color = Palette.textPrimary)
+            Text("So funktionieren deine Werte", style = NoopType.display(26f), color = Palette.textPrimary)
             Text(
                 "Charge · Effort · Rest",
                 style = NoopType.caption,
@@ -258,7 +258,7 @@ private fun Header(onClose: () -> Unit) {
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Close",
+                contentDescription = "Schließen",
                 tint = Palette.textTertiary,
                 modifier = Modifier.size(22.dp),
             )
@@ -423,19 +423,19 @@ private fun ConfidenceCard() {
     NoopCard(padding = 20.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                "How sure is LLB?  ·  Solid · Building · Calibrating",
+                "How sure is LLB?  ·  Stabil · Building · Kalibriert",
                 style = NoopType.headline,
                 color = Palette.textPrimary,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatePill("Solid", tone = StrandTone.Positive, showsDot = true)
+                StatePill("Stabil", tone = StrandTone.Positive, showsDot = true)
                 StatePill("Building", tone = StrandTone.Warning, showsDot = true)
-                StatePill("Calibrating", tone = StrandTone.Neutral, showsDot = true)
+                StatePill("Kalibriert", tone = StrandTone.Neutral, showsDot = true)
             }
             Text(
-                "Every score carries a small honesty label. Calibrating means LLB is still " +
+                "Every score carries a small honesty label. Kalibriert means LLB is still " +
                     "learning your baseline, or doesn't have enough data yet. Building means there's " +
-                    "enough to show, but it's thin. Solid means full inputs are present. When LLB " +
+                    "enough to show, but it's thin. Stabil means full inputs are present. When LLB " +
                     "can't compute a score honestly, it shows nothing rather than a fake number.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
@@ -444,7 +444,7 @@ private fun ConfidenceCard() {
     }
 }
 
-// MARK: - Footer note (muted disclaimer) + footer bar ("Got it")
+// MARK: - Footer note (muted disclaimer) + footer bar ("Verstanden")
 
 @Composable
 private fun FooterNote() {
@@ -474,7 +474,7 @@ private fun Footer(onClose: () -> Unit) {
                 contentColor = Palette.surfaceBase,
             ),
         ) {
-            Text("Got it", style = NoopType.captionNumber)
+            Text("Verstanden", style = NoopType.captionNumber)
         }
     }
 }

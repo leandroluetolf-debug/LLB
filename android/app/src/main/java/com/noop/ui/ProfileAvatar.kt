@@ -71,7 +71,7 @@ object ProfileAvatarStore {
     var bitmap by mutableStateOf<ImageBitmap?>(null)
         private set
 
-    /** True when a photo is set — drives the "Remove photo" affordance in Settings. */
+    /** True when a photo is set — drives the "Entfernen photo" affordance in Settings. */
     val hasAvatar: Boolean get() = bitmap != null
 
     /** Decode the persisted avatar (if any) into [bitmap]. Safe to call before first composition. */

@@ -166,16 +166,16 @@ object NoopPrefs {
      *  material terms change bumps [Terms.CURRENT_VERSION] and re-prompts. Mirrors macOS @AppStorage. */
     const val KEY_ACCEPTED_TERMS_VERSION = "noop.acceptedTermsVersion"
 
-    /** "Keep connected in the background", drives [com.noop.ble.WhoopConnectionService]. Default on. */
+    /** "Im Hintergrund verbunden halten", drives [com.noop.ble.WhoopConnectionService]. Default on. */
     const val KEY_BACKGROUND_CONNECTION = "noop.backgroundConnection"
 
-    /** "Continuous HRV capture", when on (AND background connection is on), LLB holds the dense
+    /** "Durchgehende HRV-Erfassung", when on (AND background connection is on), LLB holds the dense
      *  realtime HR stream armed even with no Live screen open, so the strap banks beat-to-beat R-R 24/7
      *  for far better overnight HRV/recovery/sleep. Uses more battery (continuous HR streaming). Default
      *  OFF. Drives [com.noop.ble.WhoopBleClient.setKeepStreamForData] via [AppViewModel]. */
     const val KEY_CONTINUOUS_HRV = "noop.continuousHrv"
 
-    /** "Overnight only" refinement of Continuous HRV capture (#927): when on (with [KEY_CONTINUOUS_HRV]),
+    /** "Nur über Nacht" refinement of Continuous HRV capture (#927): when on (with [KEY_CONTINUOUS_HRV]),
      *  the dense realtime stream is armed only inside the nightly quiet-hours window (22:00 to 07:00 by
      *  default, wrap-aware, local wall time) instead of 24/7, roughly halving the battery cost. Default
      *  OFF, so existing Continuous HRV users keep the always-on behaviour with no migration. Read by
@@ -183,15 +183,15 @@ object NoopPrefs {
     const val KEY_CONTINUOUS_HRV_OVERNIGHT = "noop.continuousHrvOvernight"
 
     /** The calendar day (yyyy-MM-dd) on which the morning-journal nudge was last shown, keeps the
-     *  Sleep screen's "Good morning" sheet to at most once per day. */
+     *  Sleep screen's "Guten Morgen" sheet to at most once per day. */
     const val KEY_LAST_JOURNAL_PROMPT = "noop.lastJournalPromptDay"
 
-    /** "Debug logging", when on, the strap log is also written to logcat (`adb`). Default OFF so a
+    /** "Debug-Protokoll", when on, the strap log is also written to logcat (`adb`). Default OFF so a
      *  normal user never emits the connection log to the system log; the in-app ring buffer (and the
-     *  "Share strap log" export) work regardless. See [com.noop.ble.WhoopBleClient.debugLogcat]. */
+     *  "Band-Log teilen" export) work regardless. See [com.noop.ble.WhoopBleClient.debugLogcat]. */
     const val KEY_DEBUG_LOGGING = "noop.debugLogging"
 
-    /** "Broadcast heart rate", when on, LLB acts as a standard BLE Heart Rate peripheral (0x180D /
+    /** "Herzfrequenz senden", when on, LLB acts as a standard BLE Heart Rate peripheral (0x180D /
      *  0x2A37) and re-broadcasts the live strap HR so a gym treadmill / Zwift / Peloton can read it.
      *  LOCAL Bluetooth only, nothing leaves the device. Default OFF. Drives [com.noop.ble.HrBroadcaster]
      *  via [AppViewModel]. Distinct from the WHOOP strap's own "broadcast HR" firmware config. */
@@ -278,7 +278,7 @@ object NoopPrefs {
     }
 
     /** Imperial/Metric display preference (D#103). Display-only, stored data stays SI. The length/mass
-     *  system is read by [UnitPrefs.system]; the temperature override (empty = "match the system") by
+     *  system is read by [UnitPrefs.system]; the temperature override (empty = "System folgen") by
      *  [UnitPrefs.temperature]. Mirrors macOS @AppStorage("units.system" / "units.temperature"). */
     const val KEY_UNIT_SYSTEM = "units.system"
     const val KEY_TEMPERATURE_UNIT = "units.temperature"
@@ -287,7 +287,7 @@ object NoopPrefs {
         of(context).edit().putString(KEY_UNIT_SYSTEM, system.raw).apply()
     }
 
-    /** Persist the temperature override, or pass null to clear it back to "match the system". */
+    /** Persist the temperature override, or pass null to clear it back to "System folgen". */
     fun setTemperatureUnit(context: Context, unit: TemperatureUnit?) {
         of(context).edit().apply {
             if (unit == null) remove(KEY_TEMPERATURE_UNIT) else putString(KEY_TEMPERATURE_UNIT, unit.raw)
@@ -447,7 +447,7 @@ object NoopPrefs {
     }
 
     /** Hydration tracking (MVP): an opt-in, on-device-only fluid log with a daily goal + quick-add
-     *  buttons. OPT-IN, default OFF (manual-first ethos), the Today "Hydration" card and the detail
+     *  buttons. OPT-IN, default OFF (manual-first ethos), the Today "Flüssigkeit" card and the detail
      *  feature only appear once this is on. Nothing is synced; the day total lives in the local
      *  metric-series store. */
     const val KEY_HYDRATION_TRACKING = "noop.hydrationTracking"
@@ -459,7 +459,7 @@ object NoopPrefs {
         of(context).edit().putBoolean(KEY_HYDRATION_TRACKING, enabled).apply()
     }
 
-    /** "Day-cycle background" (#698): the time-of-day scene (sunrise / day / dusk / night) behind the
+    /** "Tageszeiten-Hintergrund" (#698): the time-of-day scene (sunrise / day / dusk / night) behind the
      *  Today screen. Default ON, it's the v7 atmosphere. Some people find the moving scene distracting
      *  and want a plain dark canvas, so turning this off makes TodayScreen drop the SceneScreenBackground
      *  and fall back to the flat surface; the cards already sit on an opaque canvas, so they stay just as
@@ -687,7 +687,7 @@ object NoopPrefs {
 
     /** Wall-clock (unix seconds) of the last history offload that ran to HISTORY_COMPLETE. Persisted
      *  (reimpl of @tavelli's PR #556) so the Live screen's "Last synced N ago" SURVIVES a BLE-client
-     *  recreation / process restart and stops reverting to "Never". 0 = never synced on this install. */
+     *  recreation / process restart and stops reverting to "Nie". 0 = never synced on this install. */
     const val KEY_LAST_SYNC_AT = "noop.lastSyncAtSec"
 
     fun lastSyncAt(context: Context): Long = of(context).getLong(KEY_LAST_SYNC_AT, 0L)
@@ -753,7 +753,7 @@ fun NoopRoot() {
     }
 
     // Existing, onboarded user: render the app, and if they've updated since last launch
-    // (stored version behind current), show "What's New" once over the top.
+    // (stored version behind current), show "Neuigkeiten" once over the top.
     AppRoot(viewModel = appViewModel)
 
     if (lastSeenChangelog != AppChangelog.CURRENT_VERSION) {

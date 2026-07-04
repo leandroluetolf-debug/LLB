@@ -226,8 +226,8 @@ val ClassicLight = ClassicRamp(
 
 enum class AppearanceMode(val storageValue: String, val label: String) {
     SYSTEM("system", "System"),
-    LIGHT("light", "Light"),
-    DARK("dark", "Dark");
+    LIGHT("light", "Hell"),
+    DARK("dark", "Dunkel");
 
     companion object {
         fun fromStorage(raw: String?): AppearanceMode =

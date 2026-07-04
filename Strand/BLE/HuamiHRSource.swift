@@ -319,7 +319,7 @@ extension HuamiHRSource: @preconcurrency CBPeripheralDelegate {
                 peripheral.setNotifyValue(true, for: ch)
                 subscribed = true
                 enabledAnyHR = true
-                log("Huami: enabling notifications on \(ch.uuid == Self.stdHeartRateMeasurement ? "standard" : "Huami") HR characteristic")
+                log("Huami: enabling notifications on \(ch.uuid == Self.stdHerzRateMeasurement ? "standard" : "Huami") HR characteristic")
             }
         }
         // The HR service was found but its characteristic isn't notifiable (auth-gated) → be honest.

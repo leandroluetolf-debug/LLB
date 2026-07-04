@@ -53,12 +53,12 @@ final class IntelligenceEngine: ObservableObject {
         case appleHealth
 
         /// The badge shown on the By-Day card. Brand wording matches the rest of the app
-        /// (SleepView "On-device"/"Whoop", Today "Apple Health"). NO em-dashes.
+        /// (SleepView "Auf dem Gerät"/"Whoop", Today "Apple Gesundheit"). NO em-dashes.
         var badge: String {
             switch self {
-            case .computed:    return String(localized: "On-device")
+            case .computed:    return String(localized: "Auf dem Gerät")
             case .whoopImport: return "Whoop"
-            case .appleHealth: return "Apple Health"
+            case .appleHealth: return "Apple Gesundheit"
             }
         }
 
@@ -126,7 +126,7 @@ final class IntelligenceEngine: ObservableObject {
         var source: DaySource = .computed
         /// Charge (recovery) confidence for the day. Defaults `.solid` for a strap-scored night (the gauge
         /// already gates on the HRV baseline being usable); the Apple-Watch fold below sets this to the
-        /// `WatchRecovery` confidence so a watch-only recovery reads "calibrating" until it has enough nights.
+        /// `WatchRecovery` confidence so a watch-only recovery reads "kalibriert" until it has enough nights.
         var confidence: ScoreConfidence = .solid
         /// SHARED CONTRACT (engine <-> UI): the ordered "what shaped it" Charge driver list, biggest mover
         /// first. One row per term that actually fed the score (`RecoveryScorer.chargeDrivers`); empty when
@@ -143,7 +143,7 @@ final class IntelligenceEngine: ObservableObject {
     /// Optional sink for the per-day scoring diagnostic, fed line-by-line into the SAME shareable strap
     /// log the user already exports (PII-scrubbed by `LiveState.append(log:)`). Defaults to nil so the
     /// engine stays testable with no UI. Each line is a concise, counts-only summary ("sleep day=…
-    /// totalSleepMin=… matched=… source=…") so the next bug report ships proof of what was computed per
+    /// totalSchlafMin=… matched=… source=…") so the next bug report ships proof of what was computed per
     /// day, addressing the project's log-failures-not-successes blind spot and the data needed to settle
     /// "Rest repeats across days". (Sleep overhaul §2.5.)
     /// `AppModel` wires it to `live.append(log:domain:)`. Each line is a concise, counts-only summary,
@@ -259,11 +259,11 @@ final class IntelligenceEngine: ObservableObject {
         do {
             result = try await store.healImplausibleTimestamps()
         } catch {
-            NSLog("IntelligenceEngine: timestamp heal (#547) FAILED , \(error); will retry next launch")
+            NSLog("IntelligenzEngine: timestamp heal (#547) FAILED , \(error); will retry next launch")
             return   // leave the flag unset so a transient failure retries
         }
         if result.didChange {
-            diagnosticSink?("Heal(#547): purged \(result.rawRowsDeleted) raw + \(result.computedRowsDeleted) computed row(s) with implausible (bad-clock) timestamps; rescoring the real days.", nil)
+            diagnosticSink?("Heal(#547): purged \(result.rawRowsLöschend) raw + \(result.computedRowsLöschend) computed row(s) with implausible (bad-clock) timestamps; rescoring the real days.", nil)
             // Recompute the affected real days from the surviving raw rows so the polluted (e.g. 721)
             // blocks regenerate cleanly. The dashboard refresh happens inside analyzeRecent on persist.
             await analyzeRecent(maxDays: historyDays)
@@ -350,7 +350,7 @@ final class IntelligenceEngine: ObservableObject {
         // refresh last ran (4000 vs 120 days). This mirrors the Android port's `days(importedDeviceId)`.
         let hist = ((try? await store.dailyMetrics(deviceId: deviceId, from: "0000-01-01", to: "9999-12-31")) ?? [])
             .sorted { $0.day < $1.day }
-        // HRV baseline honours the manual "Recalibrate baseline" epoch (noop.hrvBaselineEpoch); the
+        // HRV baseline honours the manual "Basis neu kalibrieren" epoch (noop.hrvBaselineEpoch); the
         // resting-HR baseline honours the Charge-wide sibling (noop.recoveryBaselineEpoch). Pass the
         // per-value "yyyy-MM-dd" day keys (parallel to the values) so foldHistory can drop every night
         // before the epoch. A 0 / absent epoch makes this byte-identical to the plain fold, so scoring is
@@ -758,8 +758,8 @@ final class IntelligenceEngine: ObservableObject {
             // day (the project's log-failures-not-successes blind spot) and lets us settle the "Rest repeats
             // across days" question with data rather than a guess. Gated by the existing strap-log export.
             let tsmLog = daily.totalSleepMin.map { String(Int($0.rounded())) } ?? "nil"
-            diagnosticSink?("sleep day=\(daily.day) totalSleepMin=\(tsmLog) "
-                            + "matched=\(night.cachedSleep.count) source=\(source.logToken)", nil)
+            diagnosticSink?("sleep day=\(daily.day) totalSchlafMin=\(tsmLog) "
+                            + "matched=\(night.cachedSchlaf.count) source=\(source.logToken)", nil)
             // ── CAPTURE-B: universal dayOwner self-diagnostic (#814/#799) ────────────────────────────────
             // ONE line per scored day, tagged `.universal` so it rides EVERY Test Centre export regardless
             // of which mode is on. It pins down the read/write split #814 is about: `readId` is the owner
@@ -1357,7 +1357,7 @@ final class IntelligenceEngine: ObservableObject {
     private func recoveryTraceLines(_ daily: DailyMetric, _ baselines: AnalyticsEngine.ProfileBaselines) -> [String] {
         guard let hrvVal = daily.avgHrv, let rhrVal = daily.restingHr, let hrvBase = baselines.hrv else {
             return ["charge day=\(daily.day) nilScore reason=missingInput "
-                + "(hrv/rhr/hrvBaseline required)"]
+                + "(hrv/rhr/hrvBasis required)"]
         }
         let restQuality = AnalyticsEngine.Rest.composite(daily: daily).map { $0 / 100.0 } ?? daily.efficiency
         let (_, trace) = RecoveryScorer.recoveryTrace(

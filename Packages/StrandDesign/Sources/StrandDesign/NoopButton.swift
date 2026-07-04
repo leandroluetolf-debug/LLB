@@ -7,8 +7,8 @@ import SwiftUI
 // Every colour is a token from `StrandPalette`; every dimension reads off `NoopMetrics`.
 //
 // Two front doors:
-//   • `NoopButton("Save", kind: .primary) { … }`     — the convenience view.
-//   • `Button("Save") { … }.buttonStyle(NoopButtonStyle(.primary))`  — adopt on an
+//   • `NoopButton("Speichern", kind: .primary) { … }`     — the convenience view.
+//   • `Button("Speichern") { … }.buttonStyle(NoopButtonStyle(.primary))`  — adopt on an
 //     existing Button (e.g. a Menu/role button) without rewriting it.
 //
 // Labels are sentence-case (never ALL CAPS), single line, optical-centred with the
@@ -151,7 +151,7 @@ public struct NoopButtonStyle: ButtonStyle {
 /// glow-free; subtle press; 44pt hit floor; Reduce-Motion aware.
 ///
 /// ```swift
-/// NoopButton("Save changes", systemImage: "checkmark", kind: .primary, fullWidth: true) {
+/// NoopButton("Speichern changes", systemImage: "checkmark", kind: .primary, fullWidth: true) {
 ///     save()
 /// }
 /// ```
@@ -200,7 +200,7 @@ public struct NoopButton: View {
             NoopButton("Primary action", systemImage: "checkmark", kind: .primary) {}
             NoopButton("Secondary action", systemImage: "square.and.arrow.up", kind: .secondary) {}
             NoopButton("Tertiary action", kind: .tertiary) {}
-            NoopButton("Delete recording", systemImage: "trash", kind: .destructive) {}
+            NoopButton("Löschen recording", systemImage: "trash", kind: .destructive) {}
 
             Divider().overlay(StrandPalette.hairline)
 

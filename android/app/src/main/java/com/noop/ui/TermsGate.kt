@@ -40,7 +40,7 @@ object Terms {
             "LLB is an unofficial project: not affiliated with, endorsed by, or sponsored by WHOOP, Inc. \"WHOOP\" is their trademark, used only to name the hardware LLB works with.",
         "Using LLB may breach WHOOP's Terms of Service" to
             "Use it only with a device you own, to read your own data. Whether to use it (and any effect on your WHOOP account, subscription, device, or warranty) is your decision, and your risk alone.",
-        "Experimental: at your own risk" to
+        "Experimentell: at your own risk" to
             "LLB talks to your strap's firmware over an unofficial, independently-mapped protocol. There is a residual risk to the device, its data, and its connection to official services. You assume that risk.",
         "Not a medical device, not medical advice" to
             "Every metric is an unvalidated approximation. Don't use LLB to diagnose, treat, or make any health decision. Always consult a qualified professional.",
@@ -106,7 +106,7 @@ fun TermsGateScreen(onAccept: () -> Unit) {
                 modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Palette.accent),
             ) {
-                Text("Accept & Continue", style = NoopType.headline)
+                Text("Accept & Weiter", style = NoopType.headline)
             }
         }
     }

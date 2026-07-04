@@ -5,7 +5,7 @@ import UserNotifications
 /// the threshold so the user can top up before tonight's sleep, and a CHARGED note when it reaches
 /// 100%. Mirrors `IllnessNotifier`: requestAuthorization() up front when the toggle is enabled,
 /// status-only check at fire time, and the persisted gate advances even when delivery is deferred.
-/// On-device only; gated behind the user's "Battery alerts" setting (default ON) by the caller (#368).
+/// On-device only; gated behind the user's "Akku alerts" setting (default ON) by the caller (#368).
 enum BatteryNotifier {
     private static let lowAlertedKey = "behavior.batteryLowAlerted"
     private static let fullAlertedKey = "behavior.batteryFullAlerted"
@@ -77,7 +77,7 @@ enum BatteryNotifier {
         }
         if result.fireFull {
             post(identifier: "battery-full",
-                 title: String(localized: "Strap fully charged"),
+                 title: String(localized: "Band fully charged"),
                  body: String(localized: "Your WHOOP is at 100%."))
         }
         // #514: the strap has dropped below 100% — pull the stale "fully charged" note (delivered

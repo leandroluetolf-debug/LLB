@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.dp
 //  - macOS rendered a fixed 560×640 panel with a header / scroll / footer split and a
 //    hairline divider between each region. On phone the panel is presented full-screen
 //    (the integration step wraps this in a Dialog/overlay), so we fill the surface and let
-//    the body scroll. The header → divider → scroll → divider → "Got it" footer order is
+//    the body scroll. The header → divider → scroll → divider → "Verstanden" footer order is
 //    preserved exactly, as is the "WHAT TO EXPECT" card then one card per release.
 //  - The xmark.circle.fill close glyph maps to Icons.Filled.Close; the borderedProminent
-//    "Got it" maps to a Palette.accent Material Button.
+//    "Verstanden" maps to a Palette.accent Material Button.
 
 @Composable
 fun WhatsNewSheet(onClose: () -> Unit) {
@@ -79,7 +79,7 @@ fun WhatsNewSheet(onClose: () -> Unit) {
     }
 }
 
-// MARK: - Header ("What's new" + "LLB <version>" + close X)
+// MARK: - Header ("Neuigkeiten" + "LLB <version>" + close X)
 
 @Composable
 private fun Header(onClose: () -> Unit) {
@@ -94,14 +94,14 @@ private fun Header(onClose: () -> Unit) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Overline("What's new", color = Palette.textTertiary)
+            Overline("Neuigkeiten", color = Palette.textTertiary)
             Text("LLB ${AppChangelog.CURRENT_VERSION}", style = NoopType.display(26f), color = Palette.textPrimary)
             Text("Release notes", style = NoopType.caption, color = Palette.textSecondary)
         }
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Close",
+                contentDescription = "Schließen",
                 tint = Palette.textTertiary,
                 modifier = Modifier.size(22.dp),
             )
@@ -188,7 +188,7 @@ private fun ReleaseCard(release: AppChangelog.Release, isLatest: Boolean = false
     }
 }
 
-// MARK: - Footer (primary "Got it" → onClose)
+// MARK: - Footer (primary "Verstanden" → onClose)
 
 @Composable
 private fun Footer(onClose: () -> Unit) {
@@ -205,7 +205,7 @@ private fun Footer(onClose: () -> Unit) {
                 contentColor = Palette.surfaceBase,
             ),
         ) {
-            Text("Got it", style = NoopType.captionNumber)
+            Text("Verstanden", style = NoopType.captionNumber)
         }
     }
 }

@@ -256,17 +256,17 @@ fun MarkerEditorScreen(
             }
 
             Text(
-                "Lab Book keeps your own numbers - it doesn't test, read, or judge them, and it's not medical " +
+                "Laborbuch keeps your own numbers - it doesn't test, read, or judge them, and it's not medical " +
                     "advice. Everything stays on this phone.",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
             )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                LinkText("Cancel", color = Palette.textSecondary) { onDismiss() }
+                LinkText("Abbrechen", color = Palette.textSecondary) { onDismiss() }
                 Spacer(Modifier.weight(1f))
                 Box(modifier = Modifier.width(160.dp)) {
-                    PrimaryActionButton("Save", Icons.Filled.Add, enabled = drafts.isNotEmpty()) {
+                    PrimaryActionButton("Speichern", Icons.Filled.Add, enabled = drafts.isNotEmpty()) {
                         if (drafts.isNotEmpty()) onSave(drafts)
                     }
                 }

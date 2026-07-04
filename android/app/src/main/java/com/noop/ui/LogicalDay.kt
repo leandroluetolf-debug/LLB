@@ -16,7 +16,7 @@ import java.time.ZonedDateTime
  * The logical day rolls at [rolloverHour] (04:00 LOCAL) instead: it is the calendar date of
  * `now - rolloverHour hours`, so the small hours after midnight still resolve to the PRIOR calendar
  * date's row. This is a PRESENTATION-layer remap only — used purely to pick which stored row is
- * "Today" and to anchor the Today HR-trend window. Stored row keys are never rewritten (they stay
+ * "Heute" and to anchor the Today HR-trend window. Stored row keys are never rewritten (they stay
  * keyed on their own true calendar date), so the blast radius is deliberately tiny. An explicit
  * date label stays visible under the header so the remap is always honest.
  *
@@ -97,7 +97,7 @@ internal fun widgetAnchorRow(days: List<DailyMetric>, logicalKey: String, localK
  *
  * HRV / resting-HR / respiratory exist independently of a recovery score: a post-update re-analysis can
  * null last night's recovery while PRESERVING its real avgHrv/restingHr. A recovery-gated whole-row carry
- * then skips that night and surfaces an OLDER scored day's numbers (or "No Data" if the older row lacks
+ * then skips that night and surfaces an OLDER scored day's numbers (or "Keine Daten" if the older row lacks
  * the vital), which is wrong. Selecting the last row with ANY of the three vitals, bounded strictly before
  * [todayKey], keeps last night's OWN vitals in view. Pure + testable; days is oldest→newest. The
  * `it.day < todayKey` bound mirrors [widgetAnchorRow]'s future-day guard, so a stray future-dated row (a

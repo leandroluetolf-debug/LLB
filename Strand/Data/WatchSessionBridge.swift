@@ -176,7 +176,7 @@ final class WatchSessionBridge: NSObject, ObservableObject {
             sleepSummary: sleepSummary(for: day),
             asOf: Date(),
             // The day the scores are ABOUT (not when we built this), so the watch can label recency
-            // honestly ("Yesterday") even when the build is fresh. nil when there's no anchor day at all.
+            // honestly ("Gestern") even when the build is fresh. nil when there's no anchor day at all.
             scoreDay: day?.day
         )
         return snap

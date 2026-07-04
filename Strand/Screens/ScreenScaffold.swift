@@ -176,7 +176,7 @@ struct SyncingHistoryNote: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            StatePill("Syncing strap history…", tone: .accent, pulsing: true)
+            StatePill("Band-Verlauf wird synchronisiert…", tone: .accent, pulsing: true)
             if chunks > 0 {
                 Text("\(chunks) chunks pulled")
                     .font(StrandFont.footnote)

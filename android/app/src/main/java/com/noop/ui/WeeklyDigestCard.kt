@@ -124,12 +124,12 @@ fun WeeklyDigestCard(vm: AppViewModel, modifier: Modifier = Modifier) {
 fun WeeklyDigestScreen(vm: AppViewModel) {
     val days by vm.recentDays.collectAsStateWithLifecycle()
     val factor = effortDisplayFactor(UnitPrefs.effortScale(LocalContext.current))
-    ScreenScaffold(title = "Week in review", subtitle = "Your Monday-to-Sunday, read in one glance.") {
+    ScreenScaffold(title = "Woche im Rückblick", subtitle = "Your Monday-to-Sunday, read in one glance.") {
         val digest = buildWeeklyDigest(days, effortDisplayFactor = factor)
         if (digest.isEmpty) {
             DataPendingNote(
-                title = "No readings this week yet",
-                body = "Wear your strap or import your WHOOP export in Data Sources. Once this week has a " +
+                title = "No readings diese Woche yet",
+                body = "Wear your strap or import your WHOOP export in Datenquellen. Once diese Woche has a " +
                     "day or two of data, your week-in-review appears here.",
             )
         } else {
@@ -165,15 +165,15 @@ fun WeeklyDigestContent(digest: WeeklyDigest, compact: Boolean = false) {
             verticalAlignment = Alignment.Top,
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Overline("Week in review")
+                Overline("Woche im Rückblick")
                 Text(weekRangeLabel(digest), style = NoopType.title2, color = Palette.textPrimary)
             }
             Text(
-                "${digest.daysWithData}/7 days",
+                "${digest.daysWithDaten}/7 days",
                 style = NoopType.footnote,
                 color = Palette.textSecondary,
                 modifier = Modifier.semantics {
-                    contentDescription = "${digest.daysWithData} of 7 days had data this week"
+                    contentDescription = "${digest.daysWithDaten} of 7 days had data diese Woche"
                 },
             )
         }
@@ -199,7 +199,7 @@ fun WeeklyDigestContent(digest: WeeklyDigest, compact: Boolean = false) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 digest.sleepConsistencySD?.let { sd ->
                     Text(
-                        "Sleep steadiness: Rest varied ±${fmt1(sd)} pts night to night.",
+                        "Schlaf steadiness: Rest varied ±${fmt1(sd)} pts night to night.",
                         style = NoopType.footnote,
                         color = Palette.textTertiary,
                     )
@@ -328,7 +328,7 @@ private fun chipTone(s: WeeklyMetricSummary): Color = when {
 private fun rowAccessibility(s: WeeklyMetricSummary, effortScale: EffortScale): String {
     val mean = meanText(s, effortScale)
     if (s.weekOverWeek.current.n == 0 || s.weekOverWeek.previous.n == 0) {
-        return "${s.metric.label}: $mean this week, no comparison."
+        return "${s.metric.label}: $mean diese Woche, no comparison."
     }
     val dir = if (s.wowDelta > 0) "up" else if (s.wowDelta < 0) "down" else "unchanged"
     // A rough comparison drops the verdict framing too, so VoiceOver/TalkBack matches the neutral chip.
@@ -338,7 +338,7 @@ private fun rowAccessibility(s: WeeklyMetricSummary, effortScale: EffortScale): 
         s.wowGoodness == -1 -> ", worth a look"
         else -> ""
     }
-    return "${s.metric.label}: $mean this week, $dir ${deltaText(s)} week over week$frame."
+    return "${s.metric.label}: $mean diese Woche, $dir ${deltaText(s)} week over week$frame."
 }
 
 private fun fmt1(x: Double): String = ((x * 10).roundToInt() / 10.0).toString()

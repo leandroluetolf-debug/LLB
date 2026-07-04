@@ -92,7 +92,7 @@ enum AvatarImage {
 }
 
 #if DEBUG
-#Preview("ProfileAvatar") {
+#Preview("ProfilAvatar") {
     VStack(spacing: 24) {
         // Fallback (no photo) at header + Settings sizes.
         HStack(spacing: 24) {

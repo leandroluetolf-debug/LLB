@@ -7,7 +7,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * User-initiated "Check for updates": a single call to the project's PUBLIC releases API (GitHub) that reads the
+ * User-initiated "Nach Updates suchen": a single call to the project's PUBLIC releases API (GitHub) that reads the
  * latest version and compares it to the installed one. It runs ONLY when the user taps the button —
  * there is no background polling and no auto-update. Nothing about the user is sent; it just reads a
  * version number. (Android already holds INTERNET for the opt-in AI Coach, so this adds no new
@@ -15,7 +15,7 @@ import java.net.URL
  */
 object UpdateCheck {
 
-    private const val ENDPOINT = "https://api.github.com/repos/NoopApp/noop/releases/latest"
+    private const val ENDPOINT = "https://api.github.com/repos/leandroluetolf-debug/LLB/releases/latest"
 
     sealed interface Result {
         data class UpToDate(val version: String) : Result
@@ -71,9 +71,9 @@ object UpdateCheck {
             .mapNotNull { it.toIntOrNull() }
 
     /** Turn a GitHub release body into a short, readable "what's new" for an inline preview: drop the
-     *  "Downloads"/footer boilerplate, strip the heaviest markdown markers, and cap the length. */
+     *  "Herunterladens"/footer boilerplate, strip the heaviest markdown markers, and cap the length. */
     fun cleanNotes(body: String): String {
-        var s = body.substringBefore("Downloads")
+        var s = body.substringBefore("Herunterladens")
         for (marker in listOf("**", "## ", "# ")) s = s.replace(marker, "")
         s = s.trim()
         return if (s.length > 700) s.take(700).trim() + "…" else s

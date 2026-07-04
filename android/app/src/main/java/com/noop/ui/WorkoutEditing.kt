@@ -38,13 +38,13 @@ object WorkoutEditing {
     }
 
     /**
-     * Sport-cell text. "detected" reads as a neutral "Activity". WHOOP sport names arrive as
+     * Sport-cell text. "detected" reads as a neutral "Aktivität". WHOOP sport names arrive as
      * concatenated camelCase (e.g. "TraditionalStrengthTraining"), which reads as one long
      * unbreakable word and truncates badly — split it into words on the lower→Upper boundary so it
-     * renders "Traditional Strength Training". Already-spaced labels (manual/edited) pass through. (#175)
+     * renders "Traditional Krafttraining". Already-spaced labels (manual/edited) pass through. (#175)
      */
     fun displaySport(sport: String): String {
-        if (sport == "detected") return "Activity"
+        if (sport == "detected") return "Aktivität"
         if (sport.isEmpty() || sport.contains(" ")) return sport
         val out = StringBuilder()
         var prev: Char? = null
@@ -95,7 +95,7 @@ object WorkoutEditing {
     /**
      * Normalised sport key for cross-source matching. Folds the WHOOP camelCase token and a
      * human-readable import label to the same key ("TraditionalStrengthTraining" and
-     * "Traditional Strength Training" -> "traditionalstrengthtraining"), case- and space-insensitive.
+     * "Traditional Krafttraining" -> "traditionalstrengthtraining"), case- and space-insensitive.
      */
     fun sportKey(sport: String): String =
         displaySport(sport).lowercase().filter { !it.isWhitespace() }
@@ -111,7 +111,7 @@ object WorkoutEditing {
      * otherwise surface as `sport=johnsbirthday5k` in the export, which redactStrapLogPii cannot catch. Here
      * we emit the key ONLY when it matches the named catalogue; any off-catalogue / free-text sport folds to
      * the generic "custom" so genuine user text can never enter a shared bundle. The user-facing
-     * [displaySport] is unchanged. "detected"/"Activity" fold to "activity" (a catalogue-independent known
+     * [displaySport] is unchanged. "detected"/"Aktivität" fold to "activity" (a catalogue-independent known
      * token) and are allowed through. Mirrors Swift WorkoutSource.traceSportKey.
      */
     fun traceSportKey(sport: String): String {
@@ -366,8 +366,8 @@ object WorkoutEditing {
 
     /** Common sports offered when re-labelling a detected bout (the user can fine-tune via Edit). */
     val relabelSports: List<String> = listOf(
-        "Running", "Walking", "Cycling", "Strength Training", "Swimming", "Rowing", "Yoga", "HIIT",
-        "CrossFit", "Hiking", "Tennis",
+        "Laufen", "Gehen", "Radfahren", "Krafttraining", "Schwimmen", "Rudern", "Yoga", "HIIT",
+        "CrossFit", "Wandern", "Tennis",
     )
 }
 
@@ -394,7 +394,7 @@ data class WorkoutFilter(
 
     /**
      * Does one row pass every active facet? Sport matches on the DISPLAYED name (so "detected" folds to
-     * "Activity", camelCase splits); source matches on classify; search is a case-insensitive substring
+     * "Aktivität", camelCase splits); source matches on classify; search is a case-insensitive substring
      * of the displayed sport.
      */
     fun matches(row: WorkoutRow): Boolean {
@@ -432,7 +432,7 @@ object WorkoutMerge {
     /**
      * The sport the merge should carry: the most-frequent non-"detected" sport across the inputs (ties
      * broken by first appearance), or null when every input is a bare detected bout — then the caller asks
-     * the user to pick. "detected"/"Activity" never wins so a merge with any real label keeps it.
+     * the user to pick. "detected"/"Aktivität" never wins so a merge with any real label keeps it.
      */
     fun resolvedSport(rows: List<WorkoutRow>): String? {
         val counts = LinkedHashMap<String, Int>()
@@ -445,7 +445,7 @@ object WorkoutMerge {
     /**
      * Merge the given rows into one manual row under [strapDeviceId]. [sport] overrides the resolved sport
      * (used when the inputs are all detected and the user picked one); when null the resolved sport is used,
-     * falling back to "Activity" only if there is genuinely no label. Returns null for fewer than two rows.
+     * falling back to "Aktivität" only if there is genuinely no label. Returns null for fewer than two rows.
      *
      * Math (per the #64 brief): startTs = min, endTs = max (the honest span); durationS = SUM of the
      * per-session durations (honest active time, NOT the span); energyKcal = SUM; avgHr = duration-weighted
@@ -479,7 +479,7 @@ object WorkoutMerge {
         val notes = rows.mapNotNull { it.notes?.trim() }.filter { it.isNotEmpty() }
         val mergedNotes = if (notes.isEmpty()) null else notes.joinToString(" · ")
 
-        val mergedSport = sport ?: resolvedSport(rows) ?: "Activity"
+        val mergedSport = sport ?: resolvedSport(rows) ?: "Aktivität"
 
         return WorkoutRow(
             deviceId = strapDeviceId,

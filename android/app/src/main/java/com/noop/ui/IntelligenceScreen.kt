@@ -100,7 +100,7 @@ fun IntelligenceScreen(vm: AppViewModel) {
     }
 
     LazyScreenScaffold(
-        title = "Intelligence",
+        title = "Intelligenz",
         subtitle = "Charge, effort and rest - scored with the model, explained in plain terms.",
     ) {
         item { forecast?.let { ForecastCard(it) } }
@@ -211,7 +211,7 @@ private fun ForecastCard(f: RecoveryForecast) {
                 ) {
                     Text(
                         "You'll likely wake around $charge ± $band Charge if you sleep about " +
-                            "${sleepHoursLabel(f.plannedSleepHours)} tonight.",
+                            "${sleepHoursLabel(f.plannedSchlafHours)} tonight.",
                         style = NoopType.subhead,
                         color = Palette.textSecondary,
                     )
@@ -286,10 +286,10 @@ private fun EmptyNote() {
             Text(
                 "No scored days yet. Sync your strap to collect raw streams. Effort and Rest are " +
                     "scored once a day's data is in. Charge needs about four nights of sleep to learn your " +
-                    "baseline (you'll see \"Calibrating\" until then), and keeps sharpening over your first " +
+                    "baseline (you'll see \"Kalibriert\" until then), and keeps sharpening over your first " +
                     "couple of weeks. On a WHOOP 5 or MG the strap banks little history, so that night count " +
                     "can climb slowly or sit at 0 of 4 until you have worn it across a few nights. That's " +
-                    "its sync limit, not a fault. Import your WHOOP export to skip the wait.",
+                    "its sync limit, not a fault. Importieren your WHOOP export to skip the wait.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
@@ -308,8 +308,8 @@ private fun ModelBreakdownCard(effortScale: EffortScale) {
     NoopCard(padding = 20.dp, tint = Palette.chargeColor) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Overline("Charge model")
-            WeightRow("Heart-rate variability", "~55%", 0.55f, Palette.metricPurple)
-            WeightRow("Resting heart rate", "~20%", 0.20f, Palette.metricRose)
+            WeightRow("Herzfrequenzvariabilität", "~55%", 0.55f, Palette.metricPurple)
+            WeightRow("Ruhepuls", "~20%", 0.20f, Palette.metricRose)
             WeightRow("Rest quality", "~15%", 0.15f, Palette.metricCyan)
             WeightRow("Respiration", "~5%", 0.05f, Palette.accent)
             WeightRow("Skin-temperature deviation", "~5%", 0.05f, Palette.metricAmber)
@@ -390,8 +390,8 @@ private fun DayCard(d: DailyMetric, effortScale: EffortScale) {
                 )
                 // The REAL source of this day's dashboard headline, not a hard-coded "LLB-computed".
                 // The merged DailyMetric carries the WINNING row's deviceId (mergeDaily: an import wins
-                // over the computed "-noop" row), so a strap-scored night reads "On-device" while a day an
-                // import covers reads "Whoop" / "Apple Health". Computed rows keep the charge tint; imports
+                // over the computed "-noop" row), so a strap-scored night reads "Auf dem Gerät" while a day an
+                // import covers reads "Whoop" / "Apple Gesundheit". Computed rows keep the charge tint; imports
                 // use the accent tint to stand out. Mirrors macOS IntelligenceEngine.DaySource. (Sleep §2.6.)
                 val src = daySourceBadge(d.deviceId)
                 SourceBadge(src.first, tint = src.second)
@@ -474,13 +474,13 @@ private fun sleepValue(totalMin: Double?): String {
  * The By-Day numbers are always LLB's on-device scores, but when an import covers the day it wins the
  * dashboard merge (mergeDaily), so the badge says so instead of the old hard-coded "LLB-computed".
  * A computed row's id ends in "-noop"; imports keep their source id ("my-whoop" export, "apple-health" /
- * "health-connect"). Brand wording matches the rest of the app (macOS DaySource: "On-device"/"Whoop"/
- * "Apple Health"); imports use the accent tint, computed rows the charge tint. (Sleep overhaul §2.6.)
+ * "health-connect"). Brand wording matches the rest of the app (macOS DaySource: "Auf dem Gerät"/"Whoop"/
+ * "Apple Gesundheit"); imports use the accent tint, computed rows the charge tint. (Sleep overhaul §2.6.)
  */
 internal fun daySourceBadge(deviceId: String): Pair<String, Color> = when {
-    deviceId.endsWith("-noop") -> "On-device" to Palette.chargeColor
+    deviceId.endsWith("-noop") -> "Auf dem Gerät" to Palette.chargeColor
     deviceId == com.noop.data.WhoopRepository.APPLE_HEALTH_SOURCE ||
-        deviceId == com.noop.data.WhoopRepository.HEALTH_CONNECT_SOURCE -> "Apple Health" to Palette.accent
+        deviceId == com.noop.data.WhoopRepository.HEALTH_CONNECT_SOURCE -> "Apple Gesundheit" to Palette.accent
     else -> "Whoop" to Palette.accent
 }
 

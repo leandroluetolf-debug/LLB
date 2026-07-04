@@ -50,7 +50,7 @@ import java.util.Locale
  * couple of days of strap HR through the pure detector, excludes any window that OVERLAPS a saved workout
  * (any source) or was previously dismissed, and surfaces ONE card — the most recent candidate:
  *
- *   "Looks like a workout around <start>–<end> (avg HR <avg>, <dur> min). Save it?"
+ *   "Looks like a workout around <start>–<end> (avg HR <avg>, <dur> min). Speichern it?"
  *
  * SAVE → builds a manual-style "Workout" row over the window (avg HR filled) via the existing
  * [WorkoutEditing.buildManualRow] + [com.noop.data.WhoopRepository.saveManualWorkout] path. DISMISS
@@ -96,10 +96,10 @@ private fun dayLabel(epochSec: Long): String {
     }
 }
 
-/** "Looks like a workout [yesterday ]around 14:05–14:32 (avg HR 148, 27 min). Save it?" Mirrors iOS. */
+/** "Looks like a workout [yesterday ]around 14:05–14:32 (avg HR 148, 27 min). Speichern it?" Mirrors iOS. */
 private fun promptText(w: AutoWorkoutDetector.DetectedWorkout): String =
     "Looks like a workout ${dayLabel(w.startSec)}around ${hhmm(w.startSec)} - ${hhmm(w.endSec)} " +
-        "(avg HR ${w.avgBpm}, ${w.durationMin} min). Save it?"
+        "(avg HR ${w.avgBpm}, ${w.durationMin} min). Speichern it?"
 
 @Composable
 fun AutoWorkoutNudgeCard(
@@ -199,7 +199,7 @@ fun AutoWorkoutNudgeCard(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Palette.accent, contentColor = Palette.surfaceBase,
                     ),
-                ) { Text(if (saving) "Saving…" else "Save it") }
+                ) { Text(if (saving) "Saving…" else "Speichern it") }
 
                 OutlinedButton(
                     enabled = !saving,

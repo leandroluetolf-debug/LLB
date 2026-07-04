@@ -152,7 +152,7 @@ struct IntervalTimerView: View {
             }
             Spacer()
             if running {
-                StatePill("Running", tone: .accent, pulsing: true)
+                StatePill("Laufen", tone: .accent, pulsing: true)
             } else if isFinished {
                 StatePill("Complete", tone: .positive)
             } else {
@@ -272,7 +272,7 @@ struct IntervalTimerView: View {
                 toggleRunning()
             }
 
-            NoopButton("Reset", systemImage: "arrow.counterclockwise",
+            NoopButton("Zurücksetzen", systemImage: "arrow.counterclockwise",
                        kind: .secondary, fullWidth: true) {
                 stopAndReset()
             }

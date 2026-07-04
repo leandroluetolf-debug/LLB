@@ -24,7 +24,7 @@ enum BiofeedbackPrefs {
         static let quietStart   = "biofeedback.stressQuietStartMin"
         static let quietEnd     = "biofeedback.stressQuietEndMin"
         // Replay-safe detector state (carried verbatim between evaluations).
-        static let stBaseline   = "biofeedback.stOnsetBaseline"
+        static let stBaseline   = "biofeedback.stOnsetBasis"
         static let stWasBelow   = "biofeedback.stOnsetWasBelow"
         static let stLastFire   = "biofeedback.stOnsetLastFire"
     }

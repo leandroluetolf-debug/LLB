@@ -11,7 +11,7 @@ import WhoopStore
 //
 //  1. CHECK-IN — a one-tap "How's your mood today?" card with five faces (1–5).
 //     Shown until answered for the local day, then collapses to the chosen face
-//     + an "Edit" affordance. Storage via MoodStore (dedicated `noop-mood`
+//     + an "Bearbeiten" affordance. Storage via MoodStore (dedicated `noop-mood`
 //     source id, one row per local day, edits overwrite).
 //
 //  2. INSIGHTS — once ≥ 7 mood days exist, up to three plain-English lines
@@ -112,26 +112,26 @@ struct MindSection: View {
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
-    /// The collapsed state: chosen face + label + "Edit".
+    /// The collapsed state: chosen face + label + "Bearbeiten".
     private func answeredRow(_ mood: Int) -> some View {
         HStack(spacing: NoopMetrics.gap) {
             Text(MoodStore.face(for: mood))
                 .font(StrandFont.number(24))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Today's mood").strandOverline()
+                Text("Heute's mood").strandOverline()
                 Text(MoodStore.label(for: mood))
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Today's mood: \(MoodStore.label(for: mood)), \(mood) of 5")
+            .accessibilityLabel("Heute's mood: \(MoodStore.label(for: mood)), \(mood) of 5")
             Spacer()
-            Button("Edit") { editing = true }
+            Button("Bearbeiten") { editing = true }
                 .buttonStyle(.plain)
                 .font(StrandFont.caption)
                 .foregroundStyle(StrandPalette.restBright)
-                .accessibilityLabel("Edit today's mood")
+                .accessibilityLabel("Bearbeiten today's mood")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

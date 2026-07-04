@@ -59,7 +59,7 @@ enum class EffortScale(val raw: String) {
 }
 
 /**
- * Reads the two unit preferences from [NoopPrefs] and resolves the "match the system" default for
+ * Reads the two unit preferences from [NoopPrefs] and resolves the "System folgen" default for
  * temperature. SharedPreferences isn't reactive, so Compose screens read these once into remembered
  * state (exactly like the other toggles) and re-read on a recomposition triggered by the Settings write.
  */

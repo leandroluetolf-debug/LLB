@@ -41,7 +41,7 @@ struct TestCentreView: View {
     @AppStorage(PuffinFrameRecorder.enabledKey) private var puffinCapture = false
 
     /// The strap model the user last picked, the same key SettingsView's showFiveMGControls gate reads.
-    @AppStorage("selectedWhoopModel") private var selectedWhoopModelRaw = WhoopModel.whoop4.rawValue
+    @AppStorage("selectedWhoopModell") private var selectedWhoopModelRaw = WhoopModel.whoop4.rawValue
 
     /// True when the connected strap is a 5/MG, so the 5/MG experimental block shows. Mirrors the
     /// SettingsView gate (#22): a confident 4.0 owner never sees controls that cannot touch their strap.
@@ -55,7 +55,7 @@ struct TestCentreView: View {
         capture: .toggle, includesScreenshot: false, requires5MG: false)
 
     var body: some View {
-        ScreenScaffold(title: "Test Centre",
+        ScreenScaffold(title: "Testcenter",
                        subtitle: "Turn on a test for the thing that's wrong, wear the strap, then tap Report. All on \(Platform.deviceNounPhrase).") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 domainModesCard.staggeredAppear(index: 0)
@@ -75,7 +75,7 @@ struct TestCentreView: View {
         .confirmationDialog("Recalibrate your Charge baseline?",
                             isPresented: $showRecalibrateConfirm, titleVisibility: .visible) {
             Button("Recalibrate") { recalibrateCharge() }
-            Button("Cancel", role: .cancel) { }
+            Button("Abbrechen", role: .cancel) { }
         } message: {
             Text("This restarts the roughly 4-night build-up for Charge and your HRV baseline. Your history stays.")
         }
@@ -122,7 +122,7 @@ struct TestCentreView: View {
                     Spacer()
                     Button("Copy") { PlatformPasteboard.copy(live.exportableLogText()) }
                         .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
-                    Button("Save…") {
+                    Button("Speichern…") {
                         FileExport.exportText(live.exportableLogText(),
                                               suggestedName: FileExport.timestampedName("llb-strap-log", ext: "txt"))
                     }
@@ -136,7 +136,7 @@ struct TestCentreView: View {
 
                 // Recalibrate Charge baseline: the same Baselines.recalibrateRecoveryBaselines call the
                 // Settings Recovery card uses.
-                NoopButton("Recalibrate Charge baseline", systemImage: "arrow.triangle.2.circlepath", kind: .secondary) {
+                NoopButton("Charge-Basis neu kalibrieren", systemImage: "arrow.triangle.2.circlepath", kind: .secondary) {
                     showRecalibrateConfirm = true
                 }
                 Text("Re-anchors every baseline that feeds Charge to your recent nights. No stored day is deleted.")
@@ -234,13 +234,13 @@ struct TestCentreView: View {
 
                 // Model-agnostic advanced toggles (shown on every strap), same @AppStorage keys as Settings.
                 Toggle(isOn: $experimentalSleepV2Enabled) {
-                    Text("Experimental sleep staging (V2)")
+                    Text("Experimentelle Schlafstadien (V2)")
                         .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                 }
                 .toggleStyle(.switch).tint(StrandPalette.accent)
 
                 Toggle(isOn: $continuousHrvEnabled) {
-                    Text("Continuous HRV capture")
+                    Text("Durchgehende HRV-Erfassung")
                         .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                 }
                 .toggleStyle(.switch).tint(StrandPalette.accent)
@@ -265,7 +265,7 @@ struct TestCentreView: View {
                     .toggleStyle(.switch).tint(StrandPalette.accent)
 
                     Toggle(isOn: $broadcastHrEnabled) {
-                        Text("Broadcast heart rate (Garmin/ANT)")
+                        Text("Herzfrequenz senden (Garmin/ANT)")
                             .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                     }
                     .toggleStyle(.switch).tint(StrandPalette.accent)
@@ -278,7 +278,7 @@ struct TestCentreView: View {
                     .toggleStyle(.switch).tint(StrandPalette.accent)
                 }
 
-                Text("These are experimental probes, off by default. The fuller WHOOP 5/MG controls and the raw-sensor CSV export still live in Settings under Diagnostics.")
+                Text("These are experimental probes, off by default. The fuller WHOOP 5/MG controls and the raw-sensor CSV export still live in Einstellungen under Diagnostics.")
                     .font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -295,7 +295,7 @@ struct TestCentreView: View {
             await model.intelligence.analyzeRecent()
             await model.repo.refresh()
         }
-        infoTitle = String(localized: "Charge baseline recalibrating")
+        infoTitle = String(localized: "Charge baseline rekalibriert")
         infoMessage = String(localized: "LLB will re-learn your baseline from tonight's data onward. Your history is kept, and it takes a few nights to settle.")
         showInfo = true
     }
@@ -321,14 +321,14 @@ struct TestCentreView: View {
         model.ble.flushPuffinCaptures()
         let url = ScheduledDebugExport.runNow(captureURL: live.puffinCaptureURL)
         if let url {
-            infoTitle = String(localized: "Strap log exported")
+            infoTitle = String(localized: "Band log exported")
             #if os(iOS)
-            infoMessage = String(localized: "Saved \(url.lastPathComponent) to LLB's folder in the Files app.")
+            infoMessage = String(localized: "Speichernd \(url.lastPathComponent) to LLB's folder in the Files app.")
             #else
-            infoMessage = String(localized: "Saved \(url.lastPathComponent) to your Documents folder.")
+            infoMessage = String(localized: "Speichernd \(url.lastPathComponent) to your Documents folder.")
             #endif
         } else {
-            infoTitle = String(localized: "Export failed")
+            infoTitle = String(localized: "Exportieren failed")
             infoMessage = String(localized: "Couldn't write the strap log right now.")
         }
         showInfo = true
@@ -511,7 +511,7 @@ private struct ConnectionReadoutPanel: View {
         // stale uptimeStart from the last connect).
         let uptime = live.connected
             ? ConnectionReadout.uptimeLabel(taggedTail: tail, nowUnix: now)
-            : String(localized: "not connected")
+            : String(localized: "nicht verbunden")
         let reconnects = ConnectionReadout.reconnectCount(taggedTail: tail)
         let lastOffload = ConnectionReadout.lastOffloadResult(taggedTail: tail)
         VStack(alignment: .leading, spacing: 4) {
@@ -569,7 +569,7 @@ private struct StepsReadoutPanel: View {
         let steps = StepsReadout.stepsToday(taggedTail: tail)
         let calState = StepsReadout.calibrationState(taggedTail: tail)
         VStack(alignment: .leading, spacing: 4) {
-            ReadoutRow(label: String(localized: "Steps today"), value: steps.map(String.init) ?? String(localized: "no estimate yet"))
+            ReadoutRow(label: String(localized: "Schritte today"), value: steps.map(String.init) ?? String(localized: "no estimate yet"))
             ReadoutRow(label: String(localized: "Calibration"), value: calState ?? String(localized: "no calibration yet"))
         }
         .padding(.top, 2)
@@ -667,7 +667,7 @@ private struct ReportReviewSheet: View {
                     .frame(maxHeight: 360)
                 }
                 HStack(spacing: NoopMetrics.space3) {
-                    NoopButton("Cancel", systemImage: "xmark", kind: .secondary) {
+                    NoopButton("Abbrechen", systemImage: "xmark", kind: .secondary) {
                         report.cancel(); dismiss()
                     }
                     NoopButton("Share", systemImage: "square.and.arrow.up", kind: .primary) {

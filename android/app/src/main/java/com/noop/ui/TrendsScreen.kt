@@ -67,7 +67,7 @@ import kotlin.math.roundToInt
 //
 // Difference from macOS: the macOS Trends footer carries a YearHeatStrip calendar
 // (a bespoke 53-week heat grid) that has no Android foundation equivalent. Rather than
-// fake it, the "Recovery history" card renders the real per-day recovery series as a
+// fake it, the "Erholung history" card renders the real per-day recovery series as a
 // bar strip over the same window, with a short note pointing at the macOS calendar view.
 
 // MARK: - Liquid hero tokens (the liquid Trends restyle)
@@ -258,7 +258,7 @@ fun TrendsScreen(vm: AppViewModel) {
             ) {
                 SectionHeader("Daily signals", overline = "Trends")
                 MetricTrendCard(
-                    title = "Heart rate variability", unit = "ms",
+                    title = "Herzfrequenzvariabilität", unit = "ms",
                     color = Palette.metricPurple,
                     tint = Palette.chargeColor,
                     higherIsBetter = true,
@@ -266,7 +266,7 @@ fun TrendsScreen(vm: AppViewModel) {
                     fmt = { "${it.roundToInt()}" },
                 )
                 MetricTrendCard(
-                    title = "Resting heart rate", unit = "bpm",
+                    title = "Ruhepuls", unit = "bpm",
                     color = Palette.metricRose,
                     tint = Palette.chargeColor,
                     higherIsBetter = false,
@@ -357,7 +357,7 @@ private fun WeeklyDigestNav(
         WeekNavBar(weekOffset = weekOffset, minWeekOffset = minWeekOffset, onStep = onStep)
         if (digest.isEmpty) {
             DataPendingNote(
-                title = "No readings this week",
+                title = "No readings diese Woche",
                 body = "Step to another week with the arrows above to see its review.",
             )
         } else {
@@ -405,7 +405,7 @@ private fun WeekNavBar(weekOffset: Int, minWeekOffset: Int, onStep: (Int) -> Uni
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(label, style = NoopType.headline, color = Palette.textPrimary)
-            Overline("Week in review", color = Palette.textSecondary)
+            Overline("Woche im Rückblick", color = Palette.textSecondary)
         }
         Spacer(Modifier.weight(1f))
         IconButton(
@@ -445,7 +445,7 @@ private fun WeekInReviewCard(
 
     NoopCard(modifier = modifier, tint = Palette.chargeColor) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader("Week in review", overline = "Charge · Effort · Rest")
+            SectionHeader("Woche im Rückblick", overline = "Charge · Effort · Rest")
             if (chargeAvg != null) {
                 PipScoreRow(
                     label = "Charge", value = chargeAvg, range = 0f..100f,
@@ -999,7 +999,7 @@ private fun SparsePlaceholder(height: Dp = Metrics.chartHeight) {
 private fun EmptyTrends() {
     DataPendingNote(
         title = "Trends need history to draw",
-        body = "Trends need history to draw. Import your WHOOP export in Data Sources " +
+        body = "Trends need history to draw. Importieren your WHOOP export in Datenquellen " +
             "to see weeks, months and years instantly.",
     )
 }

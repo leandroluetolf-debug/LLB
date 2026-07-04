@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 //
 // Faithful Kotlin twin of Strand/Screens/CaffeineLogCard.swift + the CaffeineLogStore persistence.
 // OPT-IN, manual-first: the user logs a caffeine intake (time + OPTIONAL mg) and LLB shows a rough,
-// on-device "still active" hint from a ~5–6 h half-life decay. Nothing leaves the device. The decay math
+// on-device "noch aktiv" hint from a ~5–6 h half-life decay. Nothing leaves the device. The decay math
 // + honesty rules live in com.noop.analytics.CaffeineDecay (cross-platform parity). Reuses the journal's
 // SharedPreferences + showToast (Toast) patterns.
 
@@ -130,7 +130,7 @@ internal fun isIntakePastCutoff(intake: CaffeineIntake, bedtimeMinutes: Int): Bo
 // MARK: - The logging card (hosted in Insights, in the "log today" block)
 
 /**
- * Log a caffeine intake (time + OPTIONAL mg) and see a plain on-device "still active" hint. OPT-IN:
+ * Log a caffeine intake (time + OPTIONAL mg) and see a plain on-device "noch aktiv" hint. OPT-IN:
  * shows the empty-state line until the user logs one. Self-contained — owns its own SharedPreferences
  * state, so the host needs no wiring. The estimate is clearly framed as a rough guide, never a health
  * claim. Twin of macOS CaffeineLogCard.
@@ -259,7 +259,7 @@ fun CaffeineLogCard() {
 
                 if (intakes.isNotEmpty()) {
                     CaffeineDivider()
-                    Text("Logged today", style = NoopType.caption, color = Palette.textTertiary)
+                    Text("Heute protokolliert", style = NoopType.caption, color = Palette.textTertiary)
                     intakes.forEach { intake ->
                         val late = cutoffEnabled && isIntakePastCutoff(intake, bedtimeMinutes)
                         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -293,7 +293,7 @@ private fun CaffeineActiveHint(estimate: CaffeineActiveEstimate, hasAnyLog: Bool
     if (estimate.hasActive) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                estimate.totalRemainingMg?.let { "About ${it.roundToInt()} mg may still be active" }
+                estimate.totalRemainingMg?.let { "Über ${it.roundToInt()} mg may still be active" }
                     ?: "Caffeine may still be active",
                 style = NoopType.headline,
                 color = Palette.textPrimary,
@@ -303,7 +303,7 @@ private fun CaffeineActiveHint(estimate: CaffeineActiveEstimate, hasAnyLog: Bool
     } else {
         Text(
             if (!hasAnyLog) "No caffeine logged. Log an intake to see an estimate."
-            else "Estimated mostly cleared. Nothing logged is likely still active.",
+            else "Estimated mostly cleared. Nothing logged is likely noch aktiv.",
             style = NoopType.footnote,
             color = Palette.textTertiary,
         )
@@ -373,7 +373,7 @@ private fun CaffeineChip(label: String, onClick: () -> Unit) {
 private fun CaffeineRemoveButton(onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
     Text(
-        "Remove",
+        "Entfernen",
         style = NoopType.caption,
         color = Palette.statusCritical,
         modifier = Modifier

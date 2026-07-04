@@ -63,7 +63,7 @@ public struct MenuBarLabel: View {
                 .font(StrandFont.rounded(12, weight: .semibold))
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(displayHR.map { "Heart rate \($0) beats per minute" } ?? "Strap not connected")
+        .accessibilityLabel(displayHR.map { "Herzfrequenz \($0) beats per minute" } ?? "Band nicht verbunden")
     }
 }
 
@@ -267,7 +267,7 @@ public struct MenuBarContent: View {
     private var syncLine: some View {
         ZStack(alignment: .leading) {
             if live.backfilling {
-                StatePill("Syncing strap history…", tone: .accent, pulsing: true)
+                StatePill("Band-Verlauf wird synchronisiert…", tone: .accent, pulsing: true)
             } else if let error = live.lastSyncError {
                 Text(error)
                     .font(StrandFont.footnote)
@@ -296,7 +296,7 @@ public struct MenuBarContent: View {
                 }
             } else {
                 menuButton(
-                    live.connected ? "Re-scan strap" : "Scan & connect",
+                    live.connected ? "Erneut scannen strap" : "Scan & connect",
                     systemImage: "antenna.radiowaves.left.and.right",
                     tone: .accent
                 ) {
@@ -309,7 +309,7 @@ public struct MenuBarContent: View {
                     model.getBattery()
                 }
                 if live.connected {
-                    menuButton("Disconnect", systemImage: "xmark.circle", tone: .critical, compact: true) {
+                    menuButton("Trennen", systemImage: "xmark.circle", tone: .critical, compact: true) {
                         model.disconnect()
                     }
                 }
@@ -410,7 +410,7 @@ private func previewEnv(
         .environmentObject(model)
 }
 
-#Preview("Popover — offline / no data") {
+#Preview("Popover — offline / keine Daten") {
     let (repo, live, model) = previewEnv(
         connected: false, bonded: false, hr: nil, battery: nil, metric: nil
     )

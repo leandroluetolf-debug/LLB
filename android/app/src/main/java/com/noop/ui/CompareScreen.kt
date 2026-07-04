@@ -73,7 +73,7 @@ import kotlin.math.sqrt
 // keeps the screen showing REAL on-device data rather than an empty state when only the
 // daily cache (not the generic importer) has populated. Apple-Health body metrics
 // (weight/body-fat/etc.) come from metricSeries only — when no importer has run they
-// auto-widen to ALL and then show the macOS "no data, widen the range" contract.
+// auto-widen to ALL and then show the macOS "keine Daten, widen the range" contract.
 
 // MARK: - Metric catalog (ported from Strand/Data/MetricCatalog.swift)
 
@@ -130,54 +130,54 @@ data class CompareMetric(
  * [DailyMetric] so a my-whoop metric can be derived from the daily cache as a fallback.
  */
 private object CompareCatalog {
-    val categories = listOf("Heart", "Charge", "Rest", "Effort", "Health", "Nutrition", "Mind")
+    val categories = listOf("Herz", "Charge", "Rest", "Effort", "Gesundheit", "Ernährung", "Mind")
 
     val all: List<CompareMetric> = listOf(
         // Heart
-        CompareMetric("avg_hr", "Average Heart Rate", "Heart", "bpm", "my-whoop", 0),
-        CompareMetric("max_hr", "Max Heart Rate", "Heart", "bpm", "my-whoop", 0),
-        CompareMetric("energy_kcal", "Calories", "Heart", "kcal", "my-whoop", 0),
-        CompareMetric("vo2max", "VO₂ Max", "Heart", "", "apple-health", 1),
-        CompareMetric("fitness_age", "Fitness Age", "Heart", "yrs", "my-whoop", 0),
-        CompareMetric("vo2max_est", "VO₂ Max (estimated)", "Heart", "", "my-whoop", 1),
-        CompareMetric("vitality", "Vitality", "Heart", "", "my-whoop", 0),
-        CompareMetric("body_age", "Body Age", "Heart", "yrs", "my-whoop", 0),
+        CompareMetric("avg_hr", "Average Herzfrequenz", "Herz", "bpm", "my-whoop", 0),
+        CompareMetric("max_hr", "Max Herzfrequenz", "Herz", "bpm", "my-whoop", 0),
+        CompareMetric("energy_kcal", "Kalorien", "Herz", "kcal", "my-whoop", 0),
+        CompareMetric("vo2max", "VO₂ Max", "Herz", "", "apple-health", 1),
+        CompareMetric("fitness_age", "Fitnessalter", "Herz", "yrs", "my-whoop", 0),
+        CompareMetric("vo2max_est", "VO₂ Max (estimated)", "Herz", "", "my-whoop", 1),
+        CompareMetric("vitality", "Vitalität", "Herz", "", "my-whoop", 0),
+        CompareMetric("body_age", "Körper Age", "Herz", "yrs", "my-whoop", 0),
         // Charge (was Recovery)
         CompareMetric("recovery", "Charge", "Charge", "%", "my-whoop", 0),
-        CompareMetric("hrv", "Heart Rate Variability", "Charge", "ms", "my-whoop", 0),
-        CompareMetric("rhr", "Resting Heart Rate", "Charge", "bpm", "my-whoop", 0),
-        CompareMetric("resp_rate", "Respiratory Rate", "Charge", "rpm", "my-whoop", 1),
-        CompareMetric("spo2", "Blood Oxygen", "Charge", "%", "my-whoop", 0),
-        CompareMetric("skin_temp", "Skin Temperature", "Charge", "°C", "my-whoop", 1),
+        CompareMetric("hrv", "Herzfrequenz Variability", "Charge", "ms", "my-whoop", 0),
+        CompareMetric("rhr", "Resting Herzfrequenz", "Charge", "bpm", "my-whoop", 0),
+        CompareMetric("resp_rate", "Atmung Rate", "Charge", "rpm", "my-whoop", 1),
+        CompareMetric("spo2", "Sauerstoffsättigung", "Charge", "%", "my-whoop", 0),
+        CompareMetric("skin_temp", "Hauttemperatur", "Charge", "°C", "my-whoop", 1),
         // Rest (was Sleep)
         CompareMetric("sleep_performance", "Rest", "Rest", "%", "my-whoop", 0),
-        CompareMetric("sleep_total_min", "Asleep Time", "Rest", "min", "my-whoop", 0),
-        CompareMetric("sleep_efficiency", "Sleep Efficiency", "Rest", "%", "my-whoop", 0),
-        CompareMetric("sleep_deep_min", "Deep (SWS) Sleep", "Rest", "min", "my-whoop", 0),
-        CompareMetric("sleep_rem_min", "REM Sleep", "Rest", "min", "my-whoop", 0),
-        CompareMetric("sleep_light_min", "Light Sleep", "Rest", "min", "my-whoop", 0),
+        CompareMetric("sleep_total_min", "Schlafend Time", "Rest", "min", "my-whoop", 0),
+        CompareMetric("sleep_efficiency", "Schlaf Efficiency", "Rest", "%", "my-whoop", 0),
+        CompareMetric("sleep_deep_min", "Deep (SWS) Schlaf", "Rest", "min", "my-whoop", 0),
+        CompareMetric("sleep_rem_min", "REM Schlaf", "Rest", "min", "my-whoop", 0),
+        CompareMetric("sleep_light_min", "Hell Schlaf", "Rest", "min", "my-whoop", 0),
         // Effort (was Strain)
         CompareMetric("strain", "Effort", "Effort", "/100", "my-whoop", 1),
-        CompareMetric("steps", "Steps", "Effort", "", "apple-health", 0),
+        CompareMetric("steps", "Schritte", "Effort", "", "apple-health", 0),
         // On-device steps ESTIMATE for a WHOOP 4.0 (no real step count over BLE): the strap's daily
         // motion volume scaled by a personal calibration, stored under the computed "-noop" source.
         // Distinct from the real "steps" above — labelled "(estimated)" so it never reads as measured.
-        CompareMetric("steps_est", "Steps (estimated)", "Effort", "steps", "my-whoop", 0),
+        CompareMetric("steps_est", "Schritte (estimated)", "Effort", "steps", "my-whoop", 0),
         CompareMetric("active_kcal", "Active Energy", "Effort", "kcal", "apple-health", 0),
         // Health / Body
-        CompareMetric("weight", "Weight", "Health", "kg", "apple-health", 1),
-        CompareMetric("body_fat", "Body Fat", "Health", "%", "apple-health", 1),
-        CompareMetric("lean_mass", "Lean Body Mass", "Health", "kg", "apple-health", 1),
+        CompareMetric("weight", "Gewicht", "Gesundheit", "kg", "apple-health", 1),
+        CompareMetric("body_fat", "Körper Fat", "Gesundheit", "%", "apple-health", 1),
+        CompareMetric("lean_mass", "Lean Körper Mass", "Gesundheit", "kg", "apple-health", 1),
         CompareMetric(
-            "bmi", "BMI", "Health", "", "apple-health", 1,
-            note = "From Health Connect this is derived from your weight and profile height.",
+            "bmi", "BMI", "Gesundheit", "", "apple-health", 1,
+            note = "From Gesundheit Connect this is derived from your weight and profile height.",
         ),
         // Nutrition (imported from a food-tracker CSV — calories-in next to calories-out).
         // Mirrors the macOS MetricCatalog entries exactly (same keys + sources, v2.2.0 parity).
-        CompareMetric("calories_in", "Calories In", "Nutrition", "kcal", NutritionCsvImporter.SOURCE_ID, 0),
-        CompareMetric("protein_g", "Protein", "Nutrition", "g", NutritionCsvImporter.SOURCE_ID, 0),
-        CompareMetric("carbs_g", "Carbs", "Nutrition", "g", NutritionCsvImporter.SOURCE_ID, 0),
-        CompareMetric("fat_g", "Fat", "Nutrition", "g", NutritionCsvImporter.SOURCE_ID, 0),
+        CompareMetric("calories_in", "Kalorien In", "Ernährung", "kcal", NutritionCsvImporter.SOURCE_ID, 0),
+        CompareMetric("protein_g", "Protein", "Ernährung", "g", NutritionCsvImporter.SOURCE_ID, 0),
+        CompareMetric("carbs_g", "Carbs", "Ernährung", "g", NutritionCsvImporter.SOURCE_ID, 0),
+        CompareMetric("fat_g", "Fat", "Ernährung", "g", NutritionCsvImporter.SOURCE_ID, 0),
         // Mind (daily mood check-in, 1–5; non-clinical self-tracking).
         CompareMetric("mood", "Mood", "Mind", "/5", MoodStore.MOOD_DEVICE_ID, 0),
     )
@@ -409,7 +409,7 @@ fun CompareScreen(vm: AppViewModel) {
     }
 
     LazyScreenScaffold(
-        title = "Compare",
+        title = "Vergleichen",
         subtitle = "Overlay signals, draw conclusions.",
         // Liquid sky backdrop (LiquidScreenSky.kt) in the scaffold's topBackground slot, gated on the
         // day-cycle preference — the same pilot plumbing the liquid Today uses.
@@ -484,9 +484,9 @@ fun CompareScreen(vm: AppViewModel) {
                 if (loadedOnce) {
                     item {
                         DataPendingNote(
-                            title = "Compare needs at least two metrics with history",
-                            body = "Compare needs at least two metrics with history. Import your " +
-                                "WHOOP export in Data Sources first.",
+                            title = "Vergleichen needs at least two metrics with history",
+                            body = "Vergleichen needs at least two metrics with history. Importieren your " +
+                                "WHOOP export in Datenquellen first.",
                         )
                     }
                 } else {
@@ -689,7 +689,7 @@ private fun MetricChip(
         )
         Icon(
             Icons.Filled.Close,
-            contentDescription = "Remove $title",
+            contentDescription = "Entfernen $title",
             tint = Palette.textTertiary,
             modifier = Modifier
                 .size(18.dp)

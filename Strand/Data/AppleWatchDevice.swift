@@ -9,7 +9,7 @@ import WhoopStore
 //
 // HONESTY is the whole point. The capability set is TRIMMED to the metrics that have actually
 // arrived from HealthKit, not the full theoretical set. So a Series 6 (no wrist temp) reads without
-// a "Skin temp" claim, and a newest US unit (SpO2 dropped) reads without "Blood oxygen". We never
+// a "Skin temp" claim, and a newest US unit (SpO2 dropped) reads without "Sauerstoffsättigung". We never
 // advertise a sensor the user's watch hasn't produced a single sample from.
 //
 // Apple-only by design (no Android twin). The file lives in shared `Strand/Data/` so the pure

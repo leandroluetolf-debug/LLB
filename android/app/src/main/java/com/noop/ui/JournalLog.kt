@@ -199,14 +199,14 @@ fun JournalLogCard(
                 )
             }
             if (editing) {
-                JournalChip("Done", selected = true) { editing = false }
+                JournalChip("Fertig", selected = true) { editing = false }
             } else {
-                JournalChip("Edit", selected = false) { editing = true }
+                JournalChip("Bearbeiten", selected = false) { editing = true }
                 Spacer(Modifier.width(6.dp))
                 // Chronological left→right: Yesterday · Today · Tomorrow (#443).
-                JournalChip("Yesterday", selected = dayOffset == 1L) { onDayOffset(1L) }
+                JournalChip("Gestern", selected = dayOffset == 1L) { onDayOffset(1L) }
                 Spacer(Modifier.width(6.dp))
-                JournalChip("Today", selected = dayOffset == 0L) { onDayOffset(0L) }
+                JournalChip("Heute", selected = dayOffset == 0L) { onDayOffset(0L) }
                 Spacer(Modifier.width(6.dp))
                 JournalChip("Tomorrow", selected = dayOffset == -1L) { onDayOffset(-1L) }
             }
@@ -310,7 +310,7 @@ private fun JournalGroupBlock(
                         modifier = Modifier.weight(1f),
                     )
                     when {
-                        item.hidden -> JournalChip("Restore", selected = false) { onRestoreQuestion(item.canonical) }
+                        item.hidden -> JournalChip("Wiederherstellen", selected = false) { onRestoreQuestion(item.canonical) }
                         editing -> JournalItemEditControls(
                             item = item,
                             onStartRename = { onStartRename(item) },
@@ -453,8 +453,8 @@ private fun JournalRenameDialog(
                 )
             }
         },
-        confirmButton = { Text("Save", color = Palette.accent, modifier = Modifier.clickable { onSave(draft) }.padding(8.dp)) },
-        dismissButton = { Text("Cancel", color = Palette.textSecondary, modifier = Modifier.clickable { onDismiss() }.padding(8.dp)) },
+        confirmButton = { Text("Speichern", color = Palette.accent, modifier = Modifier.clickable { onSave(draft) }.padding(8.dp)) },
+        dismissButton = { Text("Abbrechen", color = Palette.textSecondary, modifier = Modifier.clickable { onDismiss() }.padding(8.dp)) },
     )
 }
 
@@ -532,13 +532,13 @@ private fun JournalChip(label: String, selected: Boolean, onClick: () -> Unit) {
     )
 }
 
-/** Edit-mode remove control: "Delete" for a custom question, "Hide" for a built-in one. Red-tinted
+/** Edit-mode remove control: "Löschen" for a custom question, "Hide" for a built-in one. Red-tinted
  *  text chip so it reads as removal; the label is self-describing for accessibility. */
 @Composable
 private fun JournalRemoveButton(isCustom: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)
     Text(
-        if (isCustom) "Delete" else "Hide",
+        if (isCustom) "Löschen" else "Hide",
         style = NoopType.caption,
         color = Palette.statusCritical,
         modifier = Modifier

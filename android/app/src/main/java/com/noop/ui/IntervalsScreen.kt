@@ -216,7 +216,7 @@ fun IntervalsScreen(vm: AppViewModel) {
             }
             Spacer(Modifier.weight(1f))
             when {
-                running -> StatePill("Running", tone = StrandTone.Accent, pulsing = true)
+                running -> StatePill("Laufen", tone = StrandTone.Accent, pulsing = true)
                 isFinished -> StatePill("Complete", tone = StrandTone.Positive)
                 else -> StatePill("Paused", tone = StrandTone.Neutral, showsDot = false)
             }
@@ -304,7 +304,7 @@ fun IntervalsScreen(vm: AppViewModel) {
                                 contentDescription = null,
                                 modifier = Modifier.padding(end = 6.dp),
                             )
-                            Text("Reset", style = NoopType.headline)
+                            Text("Zurücksetzen", style = NoopType.headline)
                         }
                     }
 

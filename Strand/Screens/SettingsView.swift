@@ -37,22 +37,22 @@ struct SettingsView: View {
     /// persistent feature flag to the strap. See [PuffinExperiment.deepDataKey]. (#174)
     @AppStorage(PuffinExperiment.deepDataKey) private var deepDataEnabled = false
 
-    /// Opt-in "Broadcast heart rate" (off by default) — makes the strap advertise its HR as a standard
+    /// Opt-in "Herzfrequenz senden" (off by default) — makes the strap advertise its HR as a standard
     /// BLE sensor for Garmin/Zwift/gym kit. See [PuffinExperiment.broadcastHrKey]. (#181)
     @AppStorage(PuffinExperiment.broadcastHrKey) private var broadcastHrEnabled = false
 
-    /// Opt-in "Continuous HRV capture" (off by default) — holds the dense realtime stream armed 24/7 so
+    /// Opt-in "Durchgehende HRV-Erfassung" (off by default) — holds the dense realtime stream armed 24/7 so
     /// the strap banks beat-to-beat R-R for better overnight HRV/recovery/sleep, at a battery cost.
     /// See [PuffinExperiment.keepRealtimeForDataKey].
     @AppStorage(PuffinExperiment.keepRealtimeForDataKey) private var continuousHrvEnabled = false
 
-    /// #927 "Overnight only" refinement of Continuous HRV capture (off by default): arm the stream only
+    /// #927 "Nur über Nacht" refinement of Continuous HRV capture (off by default): arm the stream only
     /// inside the nightly quiet-hours window instead of 24/7. Composed with the base toggle (base on +
     /// this off = ALWAYS, the pre-#927 behaviour) so existing users see no change and need no migration.
     /// See [PuffinExperiment.continuousHrvOvernightOnlyKey].
     @AppStorage(PuffinExperiment.continuousHrvOvernightOnlyKey) private var continuousHrvOvernightOnly = false
 
-    /// Opt-in "Experimental sleep staging (V2)" (off by default). When on, detected nights are re-staged with
+    /// Opt-in "Experimentelle Schlafstadien (V2)" (off by default). When on, detected nights are re-staged with
     /// `SleepStagerV2` (the transparent cardiorespiratory recipe) instead of the default V1 stager. Read at
     /// the staging call site in `Repository`. See [PuffinExperiment.experimentalSleepV2Key].
     @AppStorage(PuffinExperiment.experimentalSleepV2Key) private var experimentalSleepV2Enabled = false
@@ -91,7 +91,7 @@ struct SettingsView: View {
 
     /// The strap model the user last picked (same key the scan pickers write). Gates the WHOOP 4.0-only
     /// rename control in the strap card — renaming uses the Harvard command set, which a 5/MG doesn't share.
-    @AppStorage("selectedWhoopModel") private var selectedWhoopModelRaw = WhoopModel.whoop4.rawValue
+    @AppStorage("selectedWhoopModell") private var selectedWhoopModelRaw = WhoopModel.whoop4.rawValue
     /// Draft text for the strap-rename field (strap card). Empty placeholder; never pre-seeded so the
     /// current name stays visible separately above it.
     @State private var strapNameDraft = ""
@@ -99,7 +99,7 @@ struct SettingsView: View {
     /// Whether to surface the WHOOP 5/MG-only probes (puffin/R22/broadcast-HR/frame-capture). Gated so a
     /// confident 4.0 owner never sees 5/MG controls that can't touch their strap (#22). The model
     /// preference DEFAULTS to whoop4, so we deliberately do NOT hide on the raw default alone — the same
-    /// `"selectedWhoopModel"` key is rewritten to the family that actually advertised when a strap
+    /// `"selectedWhoopModell"` key is rewritten to the family that actually advertised when a strap
     /// connects (BLEManager, PR#195), so a real 5/MG owner who never opened the model picker still flips
     /// this true the moment their strap is discovered. We hide the 5/MG block only when the user is
     /// confidently on a 4.0 (pref says whoop4 AND nothing 5/MG is connected). The always-on raw-CSV
@@ -123,16 +123,16 @@ struct SettingsView: View {
     @State private var debugExportOn = ScheduledDebugExport.isEnabled
     @State private var debugExportMinutes = ScheduledDebugExport.timeMinutes
 
-    /// Confirm gate for the "Recalibrate Charge baseline" action (it re-learns the HRV anchor from tonight).
+    /// Confirm gate for the "Charge-Basis neu kalibrieren" action (it re-learns the HRV anchor from tonight).
     @State private var showRecalibrateConfirm = false
 
-    /// "What's New" changelog sheet, reachable any time from About.
+    /// "Neuigkeiten" changelog sheet, reachable any time from About.
     @State private var showWhatsNew = false
 
-    /// "How your scores work" explainer sheet, reachable any time from About.
+    /// "So funktionieren deine Werte" explainer sheet, reachable any time from About.
     @State private var showScoringGuide = false
 
-    /// "How LLB works" primer sheet (the four-section explainability primer), reachable any
+    /// "So funktioniert LLB" primer sheet (the four-section explainability primer), reachable any
     /// time from About — covers how sleep is sorted, how scores + calibration work, what
     /// recording means, and where the provenance badges come from.
     @State private var showHowNoopWorks = false
@@ -142,7 +142,7 @@ struct SettingsView: View {
     /// action. iOS does the real HealthKit request; macOS reads as an iPhone-only step.
     @State private var showAppleWatchSetup = false
 
-    /// Steps-estimate calibration sheet (WHOOP 4.0). Reached from the Profile card's "Steps estimate"
+    /// Steps-estimate calibration sheet (WHOOP 4.0). Reached from the Profile card's "Schritt-Schätzung"
     /// tap-through; explains the estimate, shows the current fit + a recent estimated-vs-phone table,
     /// and offers a manual coefficient override. See [StepsCalibrationSheet].
     @State private var showStepsCalibration = false
@@ -151,11 +151,11 @@ struct SettingsView: View {
     /// low-power, sideload + cert expiry). iOS-only; the macOS strap log already carries OS + version.
     @State private var showDiagnostics = false
 
-    /// User-initiated GitHub release check behind the About "Check for updates" button.
+    /// User-initiated GitHub release check behind the About "Nach Updates suchen" button.
     @StateObject private var updateChecker = UpdateChecker()
     @Environment(\.openURL) private var openURL
 
-    /// Whether the "Advanced" disclosure (Recovery, Test Centre, experimental probes, Backup &
+    /// Whether the "Erweitert" disclosure (Recovery, Test Centre, experimental probes, Backup &
     /// restore) is expanded. Default FALSE so a first-run user lands on the handful of everyday
     /// sections (profile, units, appearance, strap, features) instead of the full wall of 11 cards
     /// (S3). Nothing is removed; every section below stays one tap away by expanding this group.
@@ -163,7 +163,7 @@ struct SettingsView: View {
     @AppStorage(SettingsDisclosureDefaults.advancedOpenKey) private var advancedOpen = SettingsDisclosureDefaults.advancedOpenDefault
 
     var body: some View {
-        ScreenScaffold(title: "Settings",
+        ScreenScaffold(title: "Einstellungen",
                        subtitle: "Your numbers, your strap, and how LLB works. All on \(Platform.deviceNounPhrase).",
                        // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends / Devices:
                        // a fixed, full-bleed time-of-day sky behind the scroll content (it does not scroll).
@@ -181,10 +181,10 @@ struct SettingsView: View {
                 // Lower-frequency sections collapse behind a single default-closed disclosure so the
                 // screen opens at ~6 sections instead of 11. Nothing is removed; every section here
                 // (Recovery / advanced scoring, Test Centre, the experimental probes + raw-capture, and
-                // Backup & restore) stays one tap away. Modelled on the Test Centre "Advanced" group.
+                // Backup & restore) stays one tap away. Modelled on the Test Centre "Erweitert" group.
                 SettingsDisclosureGroup(
-                    title: "Advanced",
-                    subtitle: "Recovery, Test Centre, experimental probes, and backup. Tucked away to keep the everyday screen tidy.",
+                    title: "Erweitert",
+                    subtitle: "Erholung, Testcenter, experimental probes, and backup. Tucked away to keep the everyday screen tidy.",
                     isExpanded: $advancedOpen
                 ) {
                     recoveryCard
@@ -206,7 +206,7 @@ struct SettingsView: View {
         .confirmationDialog("Recalibrate your Charge baseline?",
                             isPresented: $showRecalibrateConfirm, titleVisibility: .visible) {
             Button("Recalibrate") { recalibrateHrvBaseline() }
-            Button("Cancel", role: .cancel) { }
+            Button("Abbrechen", role: .cancel) { }
         } message: {
             Text("This restarts the roughly 4-night build-up for Charge and your HRV baseline. Your history stays. Use it if a bad first week, like wearing it while sick, set your baseline off.")
         }
@@ -241,7 +241,7 @@ struct SettingsView: View {
     private var profilePhotoCard: some View {
         SettingsSection(
             icon: "person.crop.circle",
-            title: "Profile photo",
+            title: "Profil photo",
             blurb: "Optional. Add a photo for the avatar in the top-left. Stored only on \(Platform.deviceNounPhrase). LLB is offline, so it's never uploaded."
         ) {
             HStack(spacing: 16) {
@@ -255,7 +255,7 @@ struct SettingsView: View {
                     .buttonStyle(NoopButtonStyle(.secondary, fullWidth: true))
 
                     if profile.hasAvatar {
-                        Button("Remove photo") { profile.clearAvatar() }
+                        Button("Entfernen photo") { profile.clearAvatar() }
                             .buttonStyle(NoopButtonStyle(.tertiary, fullWidth: true))
                             .accessibilityHint("Reverts to the default profile icon")
                     }
@@ -282,7 +282,7 @@ struct SettingsView: View {
     private var profileCard: some View {
         SettingsSection(
             icon: "person.fill",
-            title: "Profile",
+            title: "Profil",
             blurb: "These power your heart-rate zones, calorie estimates and recovery baselines. Keep them accurate."
         ) {
             VStack(spacing: 0) {
@@ -310,25 +310,25 @@ struct SettingsView: View {
                     .accessibilityLabel("Sex")
                 }
                 rowDivider
-                FormRow(label: "Weight") {
+                FormRow(label: "Gewicht") {
                     // Imperial mode steps in pounds and stores the kg equivalent; metric steps in kg.
                     if unitSystem == .imperial {
                         poundsField(weightKg: $profile.weightKg)
                     } else {
                         measureField(value: $profile.weightKg, unit: "kg",
                                      range: 30...250, step: 0.5, format: "%.1f",
-                                     accessibility: String(localized: "Weight in kilograms"))
+                                     accessibility: String(localized: "Gewicht in kilograms"))
                     }
                 }
                 rowDivider
-                FormRow(label: "Height") {
+                FormRow(label: "Größe") {
                     // Imperial mode steps in whole inches and stores the cm equivalent; metric steps in cm.
                     if unitSystem == .imperial {
                         feetInchesField(heightCm: $profile.heightCm)
                     } else {
                         measureField(value: $profile.heightCm, unit: "cm",
                                      range: 120...230, step: 1, format: "%.0f",
-                                     accessibility: String(localized: "Height in centimetres"))
+                                     accessibility: String(localized: "Größe in centimetres"))
                     }
                 }
                 rowDivider
@@ -344,7 +344,7 @@ struct SettingsView: View {
                         waistCentimetresField(waistCm: $profile.waistCm)
                     }
                 }
-                Text("Optional: adds your VO₂max estimate. The Fitness Age itself doesn't need it. Measure around your middle, at the navel.")
+                Text("Optional: adds your VO₂max estimate. The Fitnessalter itself doesn't need it. Measure around your middle, at the navel.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -398,7 +398,7 @@ struct SettingsView: View {
                 Button {
                     showStepsCalibration = true
                 } label: {
-                    FormRow(label: "Steps estimate") {
+                    FormRow(label: "Schritt-Schätzung") {
                         HStack(spacing: 8) {
                             Text(stepsCalibrationSummary)
                                 .font(StrandFont.footnote)
@@ -412,7 +412,7 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(LiquidPressStyle())
-                .accessibilityLabel("Steps estimate calibration. \(stepsCalibrationSummary). Opens the calibration screen.")
+                .accessibilityLabel("Schritt-Schätzung calibration. \(stepsCalibrationSummary). Opens the calibration screen.")
                 Text("For a WHOOP 4.0, which sends no step count: LLB estimates steps from motion, calibrated to your phone. Tap to see how close it is and adjust it.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
@@ -421,12 +421,12 @@ struct SettingsView: View {
         }
     }
 
-    /// One-line state for the "Steps estimate" tap-through row: manual, the auto-fit confidence, or a
+    /// One-line state for the "Schritt-Schätzung" tap-through row: manual, the auto-fit confidence, or a
     /// not-yet-calibrated prompt — so the row reflects the current calibration without opening the sheet.
     private var stepsCalibrationSummary: String {
         if profile.stepsManualCoefficient > 0 { return String(localized: "Manual") }
         if profile.stepsCalibrationCoefficient > 0 {
-            return String(localized: "Auto · \(StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) confidence")
+            return String(localized: "Auto · \(SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) confidence")
         }
         return String(localized: "Not calibrated")
     }
@@ -468,9 +468,9 @@ struct SettingsView: View {
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
             }
-            Stepper("Weight in pounds", value: lb, in: 66...551, step: 1)
+            Stepper("Gewicht in pounds", value: lb, in: 66...551, step: 1)
                 .labelsHidden()
-                .accessibilityLabel("Weight, \(Int(lb.wrappedValue.rounded())) pounds")
+                .accessibilityLabel("Gewicht, \(Int(lb.wrappedValue.rounded())) pounds")
         }
     }
 
@@ -487,9 +487,9 @@ struct SettingsView: View {
                 .font(StrandFont.bodyNumber)
                 .foregroundStyle(StrandPalette.textPrimary)
                 .frame(minWidth: 56, alignment: .trailing)
-            Stepper("Height in inches", value: inches, in: 47...91, step: 1)
+            Stepper("Größe in inches", value: inches, in: 47...91, step: 1)
                 .labelsHidden()
-                .accessibilityLabel("Height, \(parts.feet) feet \(parts.inches) inches")
+                .accessibilityLabel("Größe, \(parts.feet) feet \(parts.inches) inches")
         }
     }
 
@@ -629,12 +629,12 @@ struct SettingsView: View {
     private var appearanceCard: some View {
         SettingsSection(
             icon: "circle.lefthalf.filled",
-            title: "Appearance",
-            blurb: "Choose Light, Dark, or follow your system. Dark is the signature near-black; Light keeps the same clean look on a bright canvas."
+            title: "Darstellung",
+            blurb: "Choose Hell, Dunkel, or follow your system. Dunkel is the signature near-black; Hell keeps the same clean look on a bright canvas."
         ) {
             VStack(spacing: 0) {
-                FormRow(label: "Theme") {
-                    Picker("Theme", selection: $appearanceRaw) {
+                FormRow(label: "Design") {
+                    Picker("Design", selection: $appearanceRaw) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.label).tag(mode.rawValue)
                         }
@@ -642,7 +642,7 @@ struct SettingsView: View {
                     .labelsHidden()
                     .pickerStyle(.segmented)
                     .fixedSize()
-                    .accessibilityLabel("Theme")
+                    .accessibilityLabel("Design")
                 }
                 FormRow(label: "Chart colours") {
                     // Default = LLB's clean metric ramps; Classic = the throwback red→amber→green
@@ -661,13 +661,13 @@ struct SettingsView: View {
                 // MARK: Day-cycle background — the time-of-day scene behind Today (#698). On by default.
                 // Off swaps it for the plain dark canvas for people who find the moving scene distracting.
                 Toggle(isOn: $showDayCycleBackground) {
-                    Text("Day-cycle background")
+                    Text("Tageszeiten-Hintergrund")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("Shows a soft sunrise, day, dusk and night scene behind the Today screen. Turn it off for a plain dark canvas. Your cards stay exactly as readable.")
+                Text("Shows a soft sunrise, day, dusk and night scene behind the Heute screen. Turn it off for a plain dark canvas. Deine Karten stay exactly as readable.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -681,7 +681,7 @@ struct SettingsView: View {
     private var strapCard: some View {
         SettingsSection(
             icon: "antenna.radiowaves.left.and.right",
-            title: "Strap",
+            title: "Band",
             blurb: "LLB pairs directly with your WHOOP over Bluetooth: no WHOOP app, no cloud."
         ) {
             VStack(alignment: .leading, spacing: 16) {
@@ -689,8 +689,8 @@ struct SettingsView: View {
                     StatePill("\(strapStatusTitle)", tone: strapTone, pulsing: live.connected)
                     if let pct = live.batteryPct {
                         StatePill(live.charging == true
-                                  ? "Battery \(Int(pct.rounded()))% · Charging"
-                                  : "Battery \(Int(pct.rounded()))%",
+                                  ? "Akku \(Int(pct.rounded()))% · Lädt"
+                                  : "Akku \(Int(pct.rounded()))%",
                                   tone: batteryTone(pct), showsDot: false)
                     }
                     Spacer(minLength: 0)
@@ -699,11 +699,11 @@ struct SettingsView: View {
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                 HStack(spacing: NoopMetrics.space3) {
-                    NoopButton("Re-scan", systemImage: "arrow.clockwise", kind: .primary) {
+                    NoopButton("Erneut scannen", systemImage: "arrow.clockwise", kind: .primary) {
                         model.scan()
                     }
 
-                    NoopButton("Disconnect", systemImage: "xmark.circle", kind: .secondary) {
+                    NoopButton("Trennen", systemImage: "xmark.circle", kind: .secondary) {
                         model.disconnect()
                     }
                     .disabled(!live.connected && !live.bonded)
@@ -718,7 +718,7 @@ struct SettingsView: View {
                     Spacer()
                     Button("Copy") { PlatformPasteboard.copy(live.exportableLogText()) }
                         .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
-                    Button("Save…") {
+                    Button("Speichern…") {
                         FileExport.exportText(live.exportableLogText(),
                                               suggestedName: FileExport.timestampedName("llb-strap-log", ext: "txt"))
                     }
@@ -733,7 +733,7 @@ struct SettingsView: View {
 
                 // MARK: Continuous HRV capture — keep the dense beat-to-beat (R-R) stream armed 24/7.
                 Toggle(isOn: $continuousHrvEnabled) {
-                    Text("Continuous HRV capture")
+                    Text("Durchgehende HRV-Erfassung")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
@@ -750,7 +750,7 @@ struct SettingsView: View {
                 // which re-derives the window gate and arms/disarms on the edge immediately.
                 if continuousHrvEnabled {
                     Toggle(isOn: $continuousHrvOvernightOnly) {
-                        Text("Overnight only")
+                        Text("Nur über Nacht")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textPrimary)
                     }
@@ -795,7 +795,7 @@ struct SettingsView: View {
     /// strap reboots to apply, so the new name lands on the next connect. WHOOP 4.0 only (Harvard).
     @ViewBuilder private var strapNameControl: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Strap name").strandOverline()
+            Text("Band name").strandOverline()
             Text("Current: \(live.advertisingName ?? "—")")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
@@ -842,9 +842,9 @@ struct SettingsView: View {
             return String(localized: "Your strap is paired and sending data. Open Live for a real-time heart rate.")
         }
         if live.connected, let hint = live.pairingHint { return hint }
-        if live.connected { return String(localized: "Connected. Finishing the secure pairing handshake…") }
-        if live.bonded { return String(localized: "Previously paired but not currently connected. Re-scan to reconnect.") }
-        return String(localized: "No strap connected. Put your WHOOP nearby and tap Re-scan to pair.")
+        if live.connected { return String(localized: "Verbunden. Finishing the secure pairing handshake…") }
+        if live.bonded { return String(localized: "Previously paired but not currently connected. Erneut scannen to reconnect.") }
+        return String(localized: "No strap connected. Put your WHOOP nearby and tap Erneut scannen to pair.")
     }
 
     private func batteryTone(_ pct: Double) -> StrandTone {
@@ -863,11 +863,11 @@ struct SettingsView: View {
     private var recoveryCard: some View {
         SettingsSection(
             icon: "heart.text.square",
-            title: "Recovery",
+            title: "Erholung",
             blurb: "Your Charge score learns a personal baseline from your heart-rate variability, resting heart rate and more over time. If a bad first week set it off, you can re-learn it from tonight. Your history stays."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
-                NoopButton("Recalibrate Charge baseline", systemImage: "arrow.triangle.2.circlepath", kind: .secondary) {
+                NoopButton("Charge-Basis neu kalibrieren", systemImage: "arrow.triangle.2.circlepath", kind: .secondary) {
                     showRecalibrateConfirm = true
                 }
 
@@ -891,7 +891,7 @@ struct SettingsView: View {
             await model.intelligence.analyzeRecent()
             await model.repo.refresh()
         }
-        backupAlertTitle = String(localized: "Charge baseline recalibrating")
+        backupAlertTitle = String(localized: "Charge baseline rekalibriert")
         backupAlertMessage = String(localized: "LLB will re-learn your baseline from tonight's data onward. Your history is kept, and it takes a few nights to settle.")
         showBackupAlert = true
     }
@@ -904,12 +904,12 @@ struct SettingsView: View {
     private var testCentreCard: some View {
         SettingsSection(
             icon: "testtube.2",
-            title: "Test Centre",
+            title: "Testcenter",
             blurb: "Turn on a test for the thing that's wrong, wear the strap, then tap Report. Your strap log, recalibrate, scheduled export and experimental probes all live here too."
         ) {
             NavigationLink(destination: TestCentreView()) {
                 HStack {
-                    Text("Open Test Centre")
+                    Text("Open Testcenter")
                         .font(StrandFont.body)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Spacer()
@@ -920,7 +920,7 @@ struct SettingsView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(LiquidPressStyle())
-            .accessibilityLabel("Open Test Centre")
+            .accessibilityLabel("Open Testcenter")
         }
     }
 
@@ -936,7 +936,7 @@ struct SettingsView: View {
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.space2 + 2) {
                 Toggle(isOn: $hydrationEnabled) {
-                    Text("Hydration tracking")
+                    Text("Flüssigkeit tracking")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
@@ -960,7 +960,7 @@ struct SettingsView: View {
                 .tint(StrandPalette.accent)
                 .accessibilityHint("Offers to save a workout when it spots sustained elevated heart rate")
 
-                Text("After a sync, LLB looks over your recent heart rate for a sustained, raised stretch that looks like exercise and offers to save it. It only ever suggests. Nothing is saved until you tap Save, and you can dismiss any suggestion. Deliberately conservative, so the odd workout may be missed. On \(Platform.deviceNounPhrase) only.")
+                Text("After a sync, LLB looks over your recent heart rate for a sustained, raised stretch that looks like exercise and offers to save it. It only ever suggests. Nothing is saved until you tap Speichern, and you can dismiss any suggestion. Deliberately conservative, so the odd workout may be missed. On \(Platform.deviceNounPhrase) only.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1004,18 +1004,18 @@ struct SettingsView: View {
     private var liquidTodayCard: some View {
         SettingsSection(
             icon: "drop.fill",
-            title: "Experimental · Liquid Today",
-            blurb: "A redesigned Today screen in the new liquid language: the scores as living liquid, a time-of-day sky, and a calmer layout. Same numbers, new look."
+            title: "Experimentell · Liquid Heute",
+            blurb: "A redesigned Heute screen in the new liquid language: the scores as living liquid, a time-of-day sky, and a calmer layout. Same numbers, new look."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
                 Toggle(isOn: $liquidTodayEnabled) {
-                    Text("Liquid Today (prototype)")
+                    Text("Liquid Heute (prototype)")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("Replaces the Today tab with the prototype redesign. Turn it off any time to return to the classic dashboard. Reads the same live data from your strap.")
+                Text("Replaces the Heute tab with the prototype redesign. Turn it off any time to return to the classic dashboard. Reads the same live data from your strap.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1029,12 +1029,12 @@ struct SettingsView: View {
     private var sleepStagingCard: some View {
         SettingsSection(
             icon: "bed.double.fill",
-            title: "Experimental · Sleep staging",
+            title: "Experimentell · Schlaf staging",
             blurb: "How LLB splits a night into light / deep / REM. This is a separate, opt-in recipe. Your default staging is unchanged unless you turn it on."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
                 Toggle(isOn: $experimentalSleepV2Enabled) {
-                    Text("Experimental sleep staging (V2)")
+                    Text("Experimentelle Schlafstadien (V2)")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
@@ -1077,7 +1077,7 @@ struct SettingsView: View {
     private var fiveMGCard: some View {
         SettingsSection(
             icon: "flask.fill",
-            title: "Experimental · WHOOP 5 / MG",
+            title: "Experimentell · WHOOP 5 / MG",
             blurb: "Live heart rate already works on a WHOOP 5/MG strap. These probes go further and try to coax more out of it. They are guesses, off by default, and only ever touch a 5/MG strap. WHOOP 4.0 is never affected."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
@@ -1103,13 +1103,13 @@ struct SettingsView: View {
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("WHOOP 5/MG straps hand a fresh app only live heart rate. The official app switches on the deeper streams (high-rate HR + motion + history) by writing a set of feature flags, a sequence two independent projects have documented. With this on, the button below sends that exact sequence to your strap. Unlike everything else here it does write to the strap, but it's reversible (it only changes which data the strap chooses to emit) and is the same thing the official app does. Experimental: it may do nothing on your firmware. iPhone/Android only. A Mac can't write to a 5/MG.")
+                Text("WHOOP 5/MG straps hand a fresh app only live heart rate. The official app switches on the deeper streams (high-rate HR + motion + history) by writing a set of feature flags, a sequence two independent projects have documented. With this on, the button below sends that exact sequence to your strap. Unlike everything else here it does write to the strap, but it's reversible (it only changes which data the strap chooses to emit) and is the same thing the official app does. Experimentell: it may do nothing on your firmware. iPhone/Android only. A Mac can't write to a 5/MG.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if deepDataEnabled {
-                    NoopButton("Send enable sequence to strap", systemImage: "bolt.badge.automatic", kind: .primary) {
+                    NoopButton("Senden enable sequence to strap", systemImage: "bolt.badge.automatic", kind: .primary) {
                         model.ble.enableWhoop5DeepData()
                     }
                     .disabled(deepDataButtonDisabled)
@@ -1120,8 +1120,8 @@ struct SettingsView: View {
                     // Live R22 telemetry (#174): proof of what the strap is doing right now.
                     if live.r22FlagsAccepted > 0 {
                         Label(live.r22FlagsAccepted >= 15
-                              ? "Strap accepted all 15 R22 flags"
-                              : "Strap accepted \(live.r22FlagsAccepted)/15 R22 flags…",
+                              ? "Band accepted all 15 R22 flags"
+                              : "Band accepted \(live.r22FlagsAccepted)/15 R22 flags…",
                               systemImage: live.r22FlagsAccepted >= 15 ? "checkmark.seal.fill" : "ellipsis")
                             .font(StrandFont.caption)
                             .foregroundStyle(live.r22FlagsAccepted >= 15 ? StrandPalette.statusPositive : StrandPalette.textSecondary)
@@ -1144,7 +1144,7 @@ struct SettingsView: View {
 
                 // MARK: Broadcast HR — make the strap a standard BLE HR sensor (Garmin/Zwift/gym).
                 Toggle(isOn: $broadcastHrEnabled) {
-                    Text("Broadcast heart rate (Garmin/ANT)")
+                    Text("Herzfrequenz senden (Garmin/ANT)")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
@@ -1179,7 +1179,7 @@ struct SettingsView: View {
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("Saves every raw 5/MG frame (with a timestamp and the live heart rate) to a JSON file you can share to help map the biometric layout. This only records frames the strap already sent (it never writes to your strap), so it is safe to leave on. Export the file and attach it to a protocol-mapping issue.")
+                Text("Speicherns every raw 5/MG frame (with a timestamp and the live heart rate) to a JSON file you can share to help map the biometric layout. This only records frames the strap already sent (it never writes to your strap), so it is safe to leave on. Exportieren the file and attach it to a protocol-mapping issue.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1191,7 +1191,7 @@ struct SettingsView: View {
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textSecondary)
                     HStack(spacing: NoopMetrics.space3) {
-                        NoopButton("Export frames…", systemImage: "square.and.arrow.up", kind: .primary) {
+                        NoopButton("Exportieren frames…", systemImage: "square.and.arrow.up", kind: .primary) {
                             exportPuffinCaptures()
                         }
 
@@ -1205,10 +1205,10 @@ struct SettingsView: View {
                     // One-tap "matched pair" export (#510): hands a reporter BOTH the raw capture file
                     // and the strap log together (timestamped, same minute) so a protocol-mapping issue
                     // arrives with the frames AND the context that produced them.
-                    NoopButton("Export raw + log", systemImage: "square.and.arrow.up.on.square", kind: .secondary) {
+                    NoopButton("Exportieren raw + log", systemImage: "square.and.arrow.up.on.square", kind: .secondary) {
                         exportRawAndLog()
                     }
-                    Text("Saves the raw capture and the strap log together as a matched pair. Attach both to a protocol-mapping issue.")
+                    Text("Speicherns the raw capture and the strap log together as a matched pair. Attach both to a protocol-mapping issue.")
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1237,10 +1237,10 @@ struct SettingsView: View {
                     if rawCsvBusy {
                         HStack(spacing: NoopMetrics.space1 + 2) {
                             ProgressView().controlSize(.small)
-                            Text("Exporting…")
+                            Text("Exportierening…")
                         }
                     } else {
-                        Label("Export raw sensor data (CSV)", systemImage: "square.and.arrow.up")
+                        Label("Exportieren raw sensor data (CSV)", systemImage: "square.and.arrow.up")
                     }
                 }
                 .buttonStyle(NoopButtonStyle(.secondary))
@@ -1338,14 +1338,14 @@ struct SettingsView: View {
         model.ble.flushPuffinCaptures()
         let url = ScheduledDebugExport.runNow(captureURL: live.puffinCaptureURL)
         if let url {
-            backupAlertTitle = String(localized: "Strap log exported")
+            backupAlertTitle = String(localized: "Band log exported")
             #if os(iOS)
-            backupAlertMessage = String(localized: "Saved \(url.lastPathComponent) to LLB's folder in the Files app.")
+            backupAlertMessage = String(localized: "Speichernd \(url.lastPathComponent) to LLB's folder in the Files app.")
             #else
-            backupAlertMessage = String(localized: "Saved \(url.lastPathComponent) to your Documents folder.")
+            backupAlertMessage = String(localized: "Speichernd \(url.lastPathComponent) to your Documents folder.")
             #endif
         } else {
-            backupAlertTitle = String(localized: "Export failed")
+            backupAlertTitle = String(localized: "Exportieren failed")
             backupAlertMessage = String(localized: "Couldn't write the strap log right now.")
         }
         showBackupAlert = true
@@ -1361,7 +1361,7 @@ struct SettingsView: View {
             guard let store = await model.repo.storeHandle() else {
                 await MainActor.run {
                     rawCsvBusy = false
-                    backupAlertTitle = String(localized: "Export failed")
+                    backupAlertTitle = String(localized: "Exportieren failed")
                     backupAlertMessage = String(localized: "Couldn't open the local store.")
                     showBackupAlert = true
                 }
@@ -1383,7 +1383,7 @@ struct SettingsView: View {
                         if fm.fileExists(atPath: dest.path) { try fm.removeItem(at: dest) }
                         try fm.copyItem(at: url, to: dest)
                     } catch {
-                        backupAlertTitle = String(localized: "Export failed")
+                        backupAlertTitle = String(localized: "Exportieren failed")
                         backupAlertMessage = error.localizedDescription
                         showBackupAlert = true
                     }
@@ -1394,7 +1394,7 @@ struct SettingsView: View {
             } catch {
                 await MainActor.run {
                     rawCsvBusy = false
-                    backupAlertTitle = String(localized: "Export failed")
+                    backupAlertTitle = String(localized: "Exportieren failed")
                     backupAlertMessage = error.localizedDescription
                     showBackupAlert = true
                 }
@@ -1421,7 +1421,7 @@ struct SettingsView: View {
             if fm.fileExists(atPath: dest.path) { try fm.removeItem(at: dest) }
             try fm.copyItem(at: src, to: dest)
         } catch {
-            backupAlertTitle = String(localized: "Export failed")
+            backupAlertTitle = String(localized: "Exportieren failed")
             backupAlertMessage = error.localizedDescription
             showBackupAlert = true
         }
@@ -1461,7 +1461,7 @@ struct SettingsView: View {
         SettingsSection(
             icon: "externaldrive.fill",
             title: "Backup & restore",
-            blurb: "Move all your LLB data to another machine. Export saves everything (history, sleeps, workouts, settings) to a single file you can copy across; import replaces \(Platform.deviceNounPhrase)'s data with a backup."
+            blurb: "Move all your LLB data to another machine. Exportieren saves everything (history, sleeps, workouts, settings) to a single file you can copy across; import replaces \(Platform.deviceNounPhrase)'s data with a backup."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.space4) {
                 // Three labelled buttons must share a narrow iPhone row without wrapping mid-word
@@ -1474,7 +1474,7 @@ struct SettingsView: View {
                     Button {
                         runExport()
                     } label: {
-                        backupButtonLabel(String(localized: "Export…"), systemImage: "square.and.arrow.up")
+                        backupButtonLabel(String(localized: "Exportieren…"), systemImage: "square.and.arrow.up")
                     }
                     .buttonStyle(NoopButtonStyle(.primary, fullWidth: true))
                     .disabled(backupBusy)
@@ -1482,7 +1482,7 @@ struct SettingsView: View {
                     Button {
                         runImport()
                     } label: {
-                        backupButtonLabel(String(localized: "Import…"), systemImage: "square.and.arrow.down")
+                        backupButtonLabel(String(localized: "Importieren…"), systemImage: "square.and.arrow.down")
                     }
                     .buttonStyle(NoopButtonStyle(.secondary, fullWidth: true))
                     .disabled(backupBusy)
@@ -1490,7 +1490,7 @@ struct SettingsView: View {
                     Button {
                         runCsvExport()
                     } label: {
-                        backupButtonLabel(String(localized: "Export CSV…"), systemImage: "tablecells")
+                        backupButtonLabel(String(localized: "Exportieren CSV…"), systemImage: "tablecells")
                     }
                     .buttonStyle(NoopButtonStyle(.secondary, fullWidth: true))
                     .disabled(backupBusy)
@@ -1510,7 +1510,7 @@ struct SettingsView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                         .font(.system(size: 13))
                         .accessibilityHidden(true)
-                    Text("Importing overwrites everything currently on \(Platform.deviceNounPhrase). Your old data is kept in a side file just in case. LLB needs a relaunch for an import to take effect. Export CSV writes a WHOOP-format zip of your days, sleeps, workouts and journal that re-imports into LLB on Mac, iPhone, or Android. On-device computed rows are marked APPROXIMATE in its Source column; the full backup stays the lossless restore path.")
+                    Text("Importierening overwrites everything currently on \(Platform.deviceNounPhrase). Your old data is kept in a side file just in case. LLB needs a relaunch for an import to take effect. Exportieren CSV writes a WHOOP-format zip of your days, sleeps, workouts and journal that re-imports into LLB on Mac, iPhone, or Android. Auf dem Gerät computed rows are marked APPROXIMATE in its Source column; the full backup stays the lossless restore path.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1581,10 +1581,10 @@ struct SettingsView: View {
                 return
             case .exported(let url):
                 backupAlertTitle = String(localized: "CSV exported")
-                backupAlertMessage = String(localized: "Saved to \(url.lastPathComponent). The zip re-imports into LLB (Data Sources → WHOOP Export) on any Mac, iPhone, or Android device.")
+                backupAlertMessage = String(localized: "Speichernd to \(url.lastPathComponent). The zip re-imports into LLB (Datenquellen → WHOOP Exportieren) on any Mac, iPhone, or Android device.")
                 showBackupAlert = true
             case .failure(let message):
-                backupAlertTitle = String(localized: "Export problem")
+                backupAlertTitle = String(localized: "Exportieren problem")
                 backupAlertMessage = message
                 showBackupAlert = true
             }
@@ -1599,7 +1599,7 @@ struct SettingsView: View {
             return
         case .exported(let url):
             backupAlertTitle = String(localized: "Backup exported")
-            backupAlertMessage = String(localized: "Saved to \(url.lastPathComponent). Copy this file to your other \(Platform.deviceNoun) and use Import there to restore everything.")
+            backupAlertMessage = String(localized: "Speichernd to \(url.lastPathComponent). Copy this file to your other \(Platform.deviceNoun) and use Importieren there to restore everything.")
             showBackupAlert = true
         case .imported:
             backupAlertTitle = String(localized: "Backup imported")
@@ -1625,7 +1625,7 @@ struct SettingsView: View {
     private var aboutCard: some View {
         SettingsSection(
             icon: "info.circle.fill",
-            title: "About",
+            title: "Über",
             blurb: "LLB: all your data, none of the cloud."
         ) {
             VStack(alignment: .leading, spacing: 16) {
@@ -1635,7 +1635,7 @@ struct SettingsView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                     StatePill("v\(bundleVersionString)", tone: .neutral, showsDot: false)
                     Spacer()
-                    NoopButton("What's new", systemImage: "sparkles", kind: .secondary) {
+                    NoopButton("Neuigkeiten", systemImage: "sparkles", kind: .secondary) {
                         showWhatsNew = true
                     }
                 }
@@ -1651,10 +1651,10 @@ struct SettingsView: View {
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("How LLB works")
+                            Text("So funktioniert LLB")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
-                            Text("Sleep sorting, scores, recording, and where your numbers come from.")
+                            Text("Schlaf sorting, scores, recording, and where your numbers come from.")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.textTertiary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1668,10 +1668,10 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(LiquidPressStyle())
-                .accessibilityLabel("How LLB works")
+                .accessibilityLabel("So funktioniert LLB")
 
                 // How your scores work — the honest explainer for Charge / Effort / Rest and the
-                // confidence labels. Always reachable here, mirroring the "What's new" affordance.
+                // confidence labels. Always reachable here, mirroring the "Neuigkeiten" affordance.
                 Button {
                     showScoringGuide = true
                 } label: {
@@ -1680,7 +1680,7 @@ struct SettingsView: View {
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("How your scores work")
+                            Text("So funktionieren deine Werte")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
                             Text("Charge, Effort and Rest (and how they differ from WHOOP).")
@@ -1697,7 +1697,7 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(LiquidPressStyle())
-                .accessibilityLabel("How your scores work")
+                .accessibilityLabel("So funktionieren deine Werte")
 
                 // About Apple Watch data: the honest capability/confidence page for running LLB off
                 // just an Apple Watch (what it's great at, where it's lighter than a strap, why recovery
@@ -1712,7 +1712,7 @@ struct SettingsView: View {
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("About Apple Watch data")
+                            Text("Über Apple Watch data")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
                             Text("Use LLB with just an Apple Watch. What it's great at, and where it's lighter than a strap.")
@@ -1729,10 +1729,10 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(LiquidPressStyle())
-                .accessibilityLabel("About Apple Watch data")
+                .accessibilityLabel("Über Apple Watch data")
 
                 // Storage (#590) — on-device space breakdown (database, leftover import Inbox, stranded
-                // temp files) plus a one-tap clean-up. iOS is where "Documents & Data" can balloon after
+                // temp files) plus a one-tap clean-up. iOS is where "Documents & Daten" can balloon after
                 // an Apple Health import; it compiles + reads fine on macOS too, so the link is unconditional.
                 NavigationLink {
                     StorageView()
@@ -1782,21 +1782,21 @@ struct SettingsView: View {
                             if updateChecker.state == .checking {
                                 HStack(spacing: NoopMetrics.space1 + 2) {
                                     ProgressView().controlSize(.small)
-                                    Text("Checking…")
+                                    Text("Prüfe…")
                                 }
                             } else {
-                                Label("Check for updates", systemImage: "arrow.triangle.2.circlepath")
+                                Label("Nach Updates suchen", systemImage: "arrow.triangle.2.circlepath")
                             }
                         }
                         .buttonStyle(NoopButtonStyle(.secondary))
                         .disabled(updateChecker.state == .checking)
 
                         if case .upToDate(let v) = updateChecker.state {
-                            Text("You're on the latest (\(v)).")
+                            Text("Du bist auf dem neuesten Stand (\(v)).")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.textSecondary)
                         } else if case .failed = updateChecker.state {
-                            Text("Couldn't check. Try again.")
+                            Text("Prüfung fehlgeschlagen. Bitte erneut versuchen.")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.statusWarning)
                         }
@@ -1807,11 +1807,11 @@ struct SettingsView: View {
                     if case .available(let v, let url, let notes) = updateChecker.state {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text("Version \(v) is available")
+                                Text("Version \(v) ist verfügbar")
                                     .font(StrandFont.subhead)
                                     .foregroundStyle(StrandPalette.textPrimary)
                                 Spacer()
-                                NoopButton("Download", systemImage: "arrow.down.circle.fill", kind: .primary) {
+                                NoopButton("Herunterladen", systemImage: "arrow.down.circle.fill", kind: .primary) {
                                     openURL(url)
                                 }
                             }
@@ -1835,23 +1835,21 @@ struct SettingsView: View {
                         )
                     }
 
-                    Text("Checks the project's home (GitHub) for the latest version when you tap. Nothing else is sent.")
+                    Text("Prüft bei Tippen auf GitHub, ob eine neue Version vorliegt. Es wird nichts anderes gesendet.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
 
-                // Project home — LLB's code, releases, issues and wiki live on GitHub
-                // (canonical; noop.fans is kept as a mirror).
-                Link(destination: URL(string: "https://github.com/NoopApp/noop")!) {
+                Link(destination: URL(string: "https://github.com/leandroluetolf-debug/LLB")!) {
                     HStack(spacing: 10) {
                         Image(systemName: "chevron.left.forwardslash.chevron.right")
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("Project home & source")
+                            Text("Projekt & Quellcode")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
-                            Text("GitHub: code, releases, issues and the wiki.")
+                            Text("GitHub: Code, Releases und Issues.")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.textTertiary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1864,35 +1862,9 @@ struct SettingsView: View {
                     }
                     .contentShape(Rectangle())
                 }
-                .accessibilityLabel("Project home and source code on GitHub")
+                .accessibilityLabel("Projekt auf GitHub öffnen")
 
-                // Mirror: noop.fans carries every release alongside GitHub, so users have a
-                // fallback if GitHub is ever unreachable (#606). Same downloads, release for release.
-                Link(destination: URL(string: "https://noop.fans")!) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .foregroundStyle(StrandPalette.accent)
-                            .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text("Mirror: noop.fans")
-                                .font(StrandFont.body)
-                                .foregroundStyle(StrandPalette.textPrimary)
-                            Text("Every release, mirrored. A fallback if GitHub is ever down.")
-                                .font(StrandFont.footnote)
-                                .foregroundStyle(StrandPalette.textTertiary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(StrandPalette.textTertiary)
-                            .accessibilityHidden(true)
-                    }
-                    .contentShape(Rectangle())
-                }
-                .accessibilityLabel("Mirror at noop dot fans, a fallback if GitHub is down")
-
-                Text("A standalone companion for your WHOOP. Everything stays on this device: your history, your live stream, your numbers. Nothing is uploaded. LLB is an independent, experimental project, not the WHOOP app.")
+                Text("Ein eigenständiger Begleiter für dein WHOOP. Alles bleibt auf diesem Gerät: Verlauf, Live-Stream, Zahlen. Nichts wird hochgeladen. LLB ist ein unabhängiges, experimentelles Projekt – nicht die WHOOP-App.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1951,7 +1923,7 @@ struct SettingsView: View {
     // MARK: - iOS reality & diagnostics (iOS-only)
 
     #if os(iOS)
-    /// A tappable row (mirroring "How your scores work") that opens the environment-diagnostics sheet.
+    /// A tappable row (mirroring "So funktionieren deine Werte") that opens the environment-diagnostics sheet.
     private var iosDiagnosticsRow: some View {
         Button {
             showDiagnostics = true
@@ -1964,7 +1936,7 @@ struct SettingsView: View {
                     Text("Diagnostics")
                         .font(StrandFont.body)
                         .foregroundStyle(StrandPalette.textPrimary)
-                    Text("Device, iOS build, Data Protection and sideload status, for bug reports.")
+                    Text("Device, iOS build, Daten Protection and sideload status, for bug reports.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1998,7 +1970,7 @@ struct SettingsView: View {
             }
 
             iphoneExpectationLine(String(localized: "This is a sideloaded build, installed outside the App Store. It needs re-signing periodically: roughly every 7 days on a free Apple ID, about a year on a paid developer account."))
-            iphoneExpectationLine(String(localized: "After your iPhone reboots, unlock it once. Until you do, iOS keeps LLB's files locked (Data Protection), so new history can't be written or synced."))
+            iphoneExpectationLine(String(localized: "After your iPhone reboots, unlock it once. Until you do, iOS keeps LLB's files locked (Daten Protection), so new history can't be written or synced."))
             iphoneExpectationLine(String(localized: "Background Bluetooth has OS limits: iOS may pause LLB when it's not in the foreground, so keep it open while syncing a fresh strap."))
             iphoneExpectationLine(String(localized: "On a beta version of iOS, things can break that work on the release build."))
 
@@ -2066,17 +2038,17 @@ struct SettingsView: View {
 
 // MARK: - Advanced disclosure (S3)
 
-/// The persisted defaults for the Settings "Advanced" disclosure. Pulled out so the one fact that must
+/// The persisted defaults for the Settings "Erweitert" disclosure. Pulled out so the one fact that must
 /// never regress, that a fresh install lands COLLAPSED, is a single testable constant. The key matches
 /// the Android `SettingsDisclosurePrefs.KEY` suffix so a backup/restore round-trip carries the choice.
 enum SettingsDisclosureDefaults {
-    static let advancedOpenKey = "settingsAdvancedOpen"
+    static let advancedOpenKey = "settingsErweitertOpen"
     static let advancedOpenDefault = false
 }
 
 /// A collapsible group that tucks the lower-frequency settings sections behind one tap. It is NOT a
 /// section card itself (the cards it wraps keep their own `SettingsSection` chrome). It's just a
-/// header row + a default-collapsed reveal, modelled on the Test Centre "Advanced" group. Nothing is
+/// header row + a default-collapsed reveal, modelled on the Test Centre "Erweitert" group. Nothing is
 /// removed: collapsed simply means the wrapped sections aren't drawn until the row is tapped open.
 /// A custom header (not SwiftUI's `DisclosureGroup`) is used so it matches LLB's near-black
 /// instrument look, which the system control's tint and inset don't.
@@ -2126,7 +2098,7 @@ private struct SettingsDisclosureGroup<Content: View>: View {
 
 // MARK: - Section card
 
-/// A grouped settings card: a "Settings" overline + icon + title header, an explanatory blurb,
+/// A grouped settings card: a "Einstellungen" overline + icon + title header, an explanatory blurb,
 /// then content. A faint accent-blue wash anchors the card to LLB's neutral chrome (WHOOP skin).
 private struct SettingsSection<Content: View>: View {
     let icon: String
@@ -2138,7 +2110,7 @@ private struct SettingsSection<Content: View>: View {
         StrandCard(padding: 20, tint: StrandPalette.accent) {
             VStack(alignment: .leading, spacing: NoopMetrics.space4) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Settings").strandOverline()
+                    Text("Einstellungen").strandOverline()
                     HStack(spacing: NoopMetrics.space2 + 2) {
                         Image(systemName: icon)
                             .foregroundStyle(StrandPalette.accent)
@@ -2185,7 +2157,7 @@ private struct DiagnosticsSheet: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Close")
+                .accessibilityLabel("Schließen")
             }
             .padding(20)
 
@@ -2265,7 +2237,7 @@ private struct StepsComparisonRow: Identifiable {
 
 /// WHOOP 4.0 steps-ESTIMATE calibration — honest explainer + current fit + a recent estimated-vs-phone
 /// table + a manual coefficient override with a live preview. Presented as a sheet from Settings →
-/// Profile → "Steps estimate". Reads the SAME data the engine fits against (the computed `steps_est`
+/// Profile → "Schritt-Schätzung". Reads the SAME data the engine fits against (the computed `steps_est`
 /// series and the phone's `steps`), never recomputing the headline. Mirrors Android `StepsCalibrationScreen`.
 // Internal (not file-private) so the Today Steps tile can present the SAME calibration sheet directly
 // when it's showing an ESTIMATE for a WHOOP 4.0 user — one shared entry point, no duplicated screen (H6).
@@ -2337,7 +2309,7 @@ struct StepsCalibrationSheet: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -2346,7 +2318,7 @@ struct StepsCalibrationSheet: View {
         HStack {
             Spacer()
             Button(action: onClose) {
-                Text("Done").frame(minWidth: 120)
+                Text("Fertig").frame(minWidth: 120)
             }
             .buttonStyle(NoopButtonStyle(.primary))
             .keyboardShortcut(.defaultAction)
@@ -2384,11 +2356,11 @@ struct StepsCalibrationSheet: View {
                 Label("No motion synced yet", systemImage: "antenna.radiowaves.left.and.right.slash")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("We're not seeing any motion from your strap yet. Steps are estimated from your WHOOP's banked motion history, so your strap needs to sync that history before LLB has anything to count.")
+                Text("We're not seeing any motion from your strap yet. Schritte are estimated from your WHOOP's banked motion history, so your strap needs to sync that history before LLB has anything to count.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Open LLB near your strap and let it catch up (a full history sync can take a while on first run). Once a day or two of motion lands, your step estimate and the calibration below will start to fill in.")
+                Text("LLB öffnen near your strap and let it catch up (a full history sync can take a while on first run). Once a day or two of motion lands, your step estimate and the calibration below will start to fill in.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -2420,7 +2392,7 @@ struct StepsCalibrationSheet: View {
                                  profile.stepsCalibrationSampleDays == 1
                                      ? String(localized: "1 day your phone also counted")
                                      : String(localized: "\(profile.stepsCalibrationSampleDays) days your phone also counted"))
-                        statLine(String(localized: "Confidence"), "\(StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) · \(Int((profile.stepsCalibrationConfidence * 100).rounded()))%")
+                        statLine(String(localized: "Confidence"), "\(SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) · \(Int((profile.stepsCalibrationConfidence * 100).rounded()))%")
                     }
                 } else {
                     Text("Not calibrated yet")
@@ -2665,7 +2637,7 @@ private struct FormRow<Control: View>: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Settings") {
+#Preview("Einstellungen") {
     let model = AppModel()
     model.live.bonded = true
     model.live.connected = true

@@ -75,7 +75,7 @@ final class AppModel: ObservableObject {
 
     /// Timestamps of "sleep marks" tapped on the strap (#461) , bedtime / wake / mid-night marks the
     /// user double-taps without screenshots or remembering the time. Persisted; each also writes a
-    /// greppable "Sleep mark @ HH:mm" line into the strap log. Phase-1 foundation for tap-driven sleep
+    /// greppable "Schlaf mark @ HH:mm" line into the strap log. Phase-1 foundation for tap-driven sleep
     /// bounds + personal sleep-stage calibration.
     @Published var sleepMarks: [Date] = []
 
@@ -107,7 +107,7 @@ final class AppModel: ObservableObject {
         let start: Date
         /// The named sport chosen at start (e.g. "Tennis", "Padel") , persisted as the saved row's
         /// `sport` so a live-tracked session keeps its label instead of the old generic "Workout".
-        /// Defaults to the catalogue default ("Other") when started without a pick. (#519)
+        /// Defaults to the catalogue default ("Sonstiges") when started without a pick. (#519)
         var sport: String = WorkoutCatalog.defaultSportName
         var samples: [HRSample] = []
         var liveStrain: Double = 0
@@ -275,7 +275,7 @@ final class AppModel: ObservableObject {
         // fire once and never re-arm , silent from day two. Re-arm daily so an always-on session keeps
         // waking the user.
         scheduleDailySmartAlarmRearm()
-        // Re-apply "Continuous HRV capture" on every (re)bond: if on, the strap should hold the dense
+        // Re-apply "Durchgehende HRV-Erfassung" on every (re)bond: if on, the strap should hold the dense
         // realtime stream armed even with no Live screen open, so it banks beat-to-beat R-R 24/7 for
         // better overnight HRV/recovery/sleep. The BLE reconciler arms it on the off→on edge; pushing it
         // here (and at the init tail) covers a fresh launch and every reconnect. (See PuffinExperiment.)
@@ -317,7 +317,7 @@ final class AppModel: ObservableObject {
 
         AppModel.shared = self   // publish for App Intents (Shortcuts) , see the static above (#42)
 
-        // Seed the BLE client with the persisted "Continuous HRV capture" intent so `wantsRealtime`
+        // Seed the BLE client with the persisted "Durchgehende HRV-Erfassung" intent so `wantsRealtime`
         // reflects it from launch , the reconciler then arms the dense stream as soon as the strap bonds
         // (and the bond sink above re-applies it on every reconnect).
         ble.setKeepRealtimeForData(PuffinExperiment.keepRealtimeForDataEnabled)
@@ -421,10 +421,10 @@ final class AppModel: ObservableObject {
             // The engine's last-connected WHOOP uuid drives first-connect identity adoption.
             connectedPeripheralUUID: ble.$connectedPeripheralUUID.eraseToAnyPublisher(),
             // Generic-HR connect lifecycle → the SAME strap log BLEManager writes to (`live.append(log:)`),
-            // so a "connected but no data" report (issue #421) is no longer blind to the Polar/Wahoo/etc
+            // so a "connected but keine Daten" report (issue #421) is no longer blind to the Polar/Wahoo/etc
             // path. Timestamp matches BLEManager.log()'s "HH:mm:ss" so the lines read consistently.
             straplog: { [weak self] line in
-                self?.live.append(log: "[\(AppModel.logTimeFormatter.string(from: Date()))] \(line)")
+                self?.live.append(log: "[\(AppModell.logTimeFormatter.string(from: Date()))] \(line)")
             })
         coordinator.start()
         self.deviceRegistry = registry
@@ -523,7 +523,7 @@ final class AppModel: ObservableObject {
     // MARK: - Manual workout tracking
 
     /// Begin a manually-tracked workout for the named `sport` (the picker passes the chosen catalogue
-    /// name; callers that don't pick a sport get the catalogue default "Other", parity with Android's
+    /// name; callers that don't pick a sport get the catalogue default "Sonstiges", parity with Android's
     /// `startWorkout(sport:)`). The active card on Live then shows elapsed time, live HR and strain
     /// building; End scores + saves it under this sport. Confirms with a single buzz. (#519)
     func startWorkout(sport: String = WorkoutCatalog.defaultSportName) {
@@ -781,11 +781,11 @@ final class AppModel: ObservableObject {
     }
 
     /// Start scanning for the strap. When no model is given, use the one the user
-    /// picked (persisted under "selectedWhoopModel"), so every scan entry point ,
+    /// picked (persisted under "selectedWhoopModell"), so every scan entry point ,
     /// Live, onboarding, the menu bar, Settings , honours the same choice.
     func scan(model: WhoopModel? = nil) {
         let chosen = model
-            ?? UserDefaults.standard.string(forKey: "selectedWhoopModel").flatMap(WhoopModel.init(rawValue:))
+            ?? UserDefaults.standard.string(forKey: "selectedWhoopModell").flatMap(WhoopModel.init(rawValue:))
             ?? .whoop4
         ble.connect(model: chosen)
     }
@@ -809,7 +809,7 @@ final class AppModel: ObservableObject {
     /// True when the selected/connected strap is a WHOOP 5/MG. A thin window onto `BLEManager.isWhoop5`
     /// (its `selectedModel` is private) so a view can branch on the strap generation without reaching into
     /// the BLE layer. #864: the Smart-alarm card uses this to give a 5/MG owner the honest "saved but NOT
-    /// armed until Experimental is on" copy, instead of hardcoding WHOOP 4.0. Mirrors the Android
+    /// armed until Experimentell is on" copy, instead of hardcoding WHOOP 4.0. Mirrors the Android
     /// `LiveState.whoop5Detected` field the equivalent screen reads.
     var whoop5Detected: Bool { ble.isWhoop5 }
 
@@ -821,7 +821,7 @@ final class AppModel: ObservableObject {
     /// allowing present scan). The persisted `selectedWhoopModel` is updated too, so a later real
     /// connect to the chosen strap targets the right family. All via existing public methods.
     func presentWhoopScan(model: WhoopModel) {
-        UserDefaults.standard.set(model.rawValue, forKey: "selectedWhoopModel")
+        UserDefaults.standard.set(model.rawValue, forKey: "selectedWhoopModell")
         ble.prepareForPresentScan(model: model) // idle for a family switch, but KEEP a live same-family bond (#74)
         ble.connect(model: model)             // select the family (sets engine selectedModel + framing)
         ble.scanForWhoops()                   // take over the central, present nearby straps only
@@ -865,7 +865,7 @@ final class AppModel: ObservableObject {
     /// Take over a factory-reset Oura ring: grant the coordinator explicit adopt consent for THIS ring (so
     /// its live session may run the one-time key install, s3.2), register it active (which starts that live
     /// session), then begin mirroring its adopt outcome for the wizard. The irreversible-consent gate has
-    /// ALREADY been passed in the wizard (the consent tick + the "Take over this ring?" confirm); this is the
+    /// ALREADY been passed in the wizard (the consent tick + the "Übernehmen this ring?" confirm); this is the
     /// commit. Never prompts to make-active (the takeover IS the user's new active source).
     func adoptOuraRing(_ device: PairedDevice) {
         sourceCoordinator?.requestOuraAdopt(deviceId: device.id)
@@ -1010,7 +1010,7 @@ final class AppModel: ObservableObject {
     static func postSmartAlarm() {
         #if os(iOS)
         postWristAlert(identifier: "smart-alarm-wake", title: String(localized: "Smart alarm"),
-                       body: String(localized: "Good morning. Your smart alarm just woke you."))
+                       body: String(localized: "Guten Morgen. Your smart alarm just woke you."))
         #endif
     }
 
@@ -1158,7 +1158,7 @@ final class AppModel: ObservableObject {
                                                from now: Date = Date(),
                                                calendar cal: Calendar = .current) -> Date? {
         let valid = weekdays.filter { (1...7).contains($0) }
-        // An empty input means "every day" (backward compatible). A non-empty selection that filters to
+        // An empty input means "jeden Tag" (backward compatible). A non-empty selection that filters to
         // nothing (only out-of-range numbers) has no valid day to fire on, so it's nil, not a daily alarm.
         if !weekdays.isEmpty && valid.isEmpty { return nil }
         let hour = minutes / 60
@@ -1247,7 +1247,7 @@ final class AppModel: ObservableObject {
     }
 
     /// #461: record a "sleep mark" , a bedtime / wake / mid-night tap. Stored like moments (survives
-    /// relaunch) and written as a distinct, greppable "Sleep mark @ HH:mm" line into the strap log so it
+    /// relaunch) and written as a distinct, greppable "Schlaf mark @ HH:mm" line into the strap log so it
     /// rides along in the shared log / raw export. A single buzz confirms it registered. No start/end
     /// smarts yet (Phase 1): marks are logged in sequence; pairing into sleep bounds comes later.
     func markSleep() { markSleep(at: Date()) }
@@ -1259,7 +1259,7 @@ final class AppModel: ObservableObject {
         let hhmm = DateFormatter()
         hhmm.locale = Locale(identifier: "en_US_POSIX")
         hhmm.dateFormat = "HH:mm"
-        live.append(log: "Sleep mark @ \(hhmm.string(from: date))")
+        live.append(log: "Schlaf mark @ \(hhmm.string(from: date))")
         // Persistence parity with Android's `AppViewModel.markSleep` (#461): also upsert the TYPED
         // `sleep_mark` metric-series row that the Sleep screen reads back (SleepView.logMark writes the
         // same row when the user taps a button). A physical double-tap can't choose bedtime vs wake, so
@@ -1514,7 +1514,7 @@ final class AppModel: ObservableObject {
 
     // MARK: - v5 local multi-device fusion adapter
     //
-    // Assemble today's per-source values per metric and run `FusionResolver` so the "Your Data, Fused"
+    // Assemble today's per-source values per metric and run `FusionResolver` so the "Deine Daten, vereint"
     // screen (FusedRecordView) can show the best-sourced number + provenance + agreement. This does NOT
     // touch the core resolvedSeries waterfall , it's an additive read that reuses the rows the store
     // already holds, exactly the seam the view's header documents.
@@ -1529,12 +1529,12 @@ final class AppModel: ObservableObject {
         }
         // The metrics surfaced, in importance-first display order, with a label + accent.
         let specs: [(key: String, label: String, accent: String?)] = [
-            ("rhr", "Resting HR", nil),
+            ("rhr", "Ruhe-HF", nil),
             ("hrv", "HRV", nil),
-            ("sleep_total_min", "Sleep", nil),
-            ("steps", "Steps", nil),
+            ("sleep_total_min", "Schlaf", nil),
+            ("steps", "Schritte", nil),
             ("skin_temp", "Skin temp", nil),
-            ("spo2", "Blood oxygen", nil),
+            ("spo2", "Sauerstoffsättigung", nil),
         ]
         // Every source that could carry a value, mapped to its stored device id. (FusionSource.rawValue
         // IS the canonical source id, but the strap's real id is `deviceId`/`computed` , map explicitly.)
@@ -1603,7 +1603,7 @@ final class AppModel: ObservableObject {
     /// scoped-access timing fragility that blocked iPhone imports (#179). On macOS the picked URL is
     /// read in place. `cleanup()` removes the temp copy AND the original `Documents/Inbox/` copy that
     /// `UIDocumentPickerViewController(asCopy: true)` leaves behind , a multi-GB Apple Health
-    /// `export.zip` parked there was the runaway "Documents & Data" growth in #590 (one import → the
+    /// `export.zip` parked there was the runaway "Documents & Daten" growth in #590 (one import → the
     /// store rows AND a permanent ~19 GB Inbox duplicate the OS never reclaims). Sendable so it can
     /// cross the actor boundary.
     struct ImportFile: Sendable {
@@ -1706,9 +1706,9 @@ final class AppModel: ObservableObject {
                     let f = DateFormatter(); f.dateFormat = "MMM yyyy"
                     span = " · \(f.string(from: a))-\(f.string(from: b))"
                 } else { span = "" }
-                finishImport(.whoop, summary: "Imported \(summary.recordCount) records\(span)")
+                finishImport(.whoop, summary: "Importiereniert \(summary.recordCount) records\(span)")
             } catch {
-                finishImport(.whoop, summary: "Import failed: \(error)", failed: true)
+                finishImport(.whoop, summary: "Importieren failed: \(error)", failed: true)
             }
         }
     }
@@ -1738,10 +1738,10 @@ final class AppModel: ObservableObject {
                     span = " · \(f.string(from: a))-\(f.string(from: b))"
                 } else { span = "" }
                 let days = summary.countsByCategory["days"] ?? 0
-                let sleeps = summary.countsByCategory["sleepSessions"] ?? 0
-                finishImport(.xiaomi, summary: "Imported \(days) days · \(sleeps) sleeps\(span)")
+                let sleeps = summary.countsByCategory["sleepEinheiten"] ?? 0
+                finishImport(.xiaomi, summary: "Importiereniert \(days) days · \(sleeps) sleeps\(span)")
             } catch {
-                finishImport(.xiaomi, summary: "Import failed: \(error)", failed: true)
+                finishImport(.xiaomi, summary: "Importieren failed: \(error)", failed: true)
             }
         }
     }
@@ -1773,9 +1773,9 @@ final class AppModel: ObservableObject {
                 // the next visit re-reads the freshly imported data. (refresh() alone is insufficient here.)
                 repo.appleHealthCache = nil
                 repo.appleHealthLoadedSeq = -1
-                finishImport(.appleHealth, summary: "Imported \(summary.recordCount) records")
+                finishImport(.appleHealth, summary: "Importiereniert \(summary.recordCount) records")
             } catch {
-                finishImport(.appleHealth, summary: "Import failed: \(error)", failed: true)
+                finishImport(.appleHealth, summary: "Importieren failed: \(error)", failed: true)
             }
         }
     }
@@ -1897,7 +1897,7 @@ final class AppModel: ObservableObject {
                 repo.appleHealthCache = nil
                 repo.appleHealthLoadedSeq = -1
                 let w = workouts > 0 ? " · \(workouts) workouts" : ""
-                finishImport(.appleHealth, summary: "Imported \(days) days\(w)")
+                finishImport(.appleHealth, summary: "Importiereniert \(days) days\(w)")
             case .nothingToImport:
                 finishImport(.appleHealth, summary: "Nothing new to import.")
             case .rejected(let reason):

@@ -36,7 +36,7 @@ struct CustomClient: AIProviderClient {
     /// mid-sentence. We can't raise the window over the OpenAI wire format, so we make the cutoff
     /// visible and tell the user exactly how to fix it.
     static let truncationNote = "\n\n---\n*Reply cut off: the model hit its context-window limit. "
-        + "On a local server like Ollama (default 2048 tokens), raise it - create a Modelfile with "
+        + "On a local server like Ollama (default 2048 tokens), raise it - create a Modellfile with "
         + "`PARAMETER num_ctx 8192` and select that model, or set `OLLAMA_CONTEXT_LENGTH=8192` and "
         + "relaunch Ollama - then ask again.*"
 

@@ -235,7 +235,7 @@ struct LiveWorkoutView: View {
 
     private static func zoneName(_ zone: Int) -> String {
         switch zone {
-        case 1: return String(localized: "Recovery")
+        case 1: return String(localized: "Erholung")
         case 2: return String(localized: "Fat burn")
         case 3: return String(localized: "Aerobic")
         case 4: return String(localized: "Threshold")

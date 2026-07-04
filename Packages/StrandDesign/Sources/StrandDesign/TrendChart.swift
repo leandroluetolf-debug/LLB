@@ -103,7 +103,7 @@ public struct TrendChart: View {
         // VoiceOver one-liner: count + mean + range — formatted with the SAME valueFormat the
         // tooltip uses, so units match. Computed once here, not per render.
         if sorted.isEmpty {
-            self.a11ySummary = String(localized: "No data", bundle: .module)
+            self.a11ySummary = String(localized: "Keine Daten", bundle: .module)
         } else {
             let vals = sorted.map(\.value)
             let lo = vals.min()!, hi = vals.max()!
@@ -399,7 +399,7 @@ private func sampleTrend(days: Int, base: Double, swing: Double) -> [TrendPoint]
 
 #Preview("TrendChart — recovery") {
     VStack(alignment: .leading, spacing: 12) {
-        Text("Recovery — 30 days").strandOverline()
+        Text("Erholung — 30 days").strandOverline()
         Text("Hover the line: crosshair + dot + date/value tooltip.")
             .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
         TrendChart(points: sampleTrend(days: 30, base: 62, swing: 22))

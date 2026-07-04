@@ -73,10 +73,10 @@ struct CoachView: View {
                         coach.disconnect()
                         keyDraft = ""
                     } label: {
-                        Label("Disconnect", systemImage: "gearshape")
+                        Label("Trennen", systemImage: "gearshape")
                     }
                     .help("Forget the saved key and disconnect")
-                    .accessibilityLabel("Disconnect provider")
+                    .accessibilityLabel("Trennen provider")
                 }
             }
         }
@@ -92,7 +92,7 @@ struct CoachView: View {
                     .foregroundStyle(coach.dataConsent ? StrandPalette.accent : StrandPalette.textTertiary)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("Let the coach use my data")
+                    Text("Coach darf meine Daten nutzen")
                         .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                     Text(coach.dataConsent
                          ? "On: your charge, rest, HRV and workouts are shared with the provider for tailored coaching."
@@ -103,7 +103,7 @@ struct CoachView: View {
                 Spacer(minLength: 8)
                 Toggle("", isOn: $coach.dataConsent)
                     .labelsHidden().toggleStyle(.switch).tint(StrandPalette.accent)
-                    .accessibilityLabel("Let the coach use my data")
+                    .accessibilityLabel("Coach darf meine Daten nutzen")
             }
         }
     }
@@ -117,18 +117,18 @@ struct CoachView: View {
                     .foregroundStyle(coach.includeOnDeviceSignals ? StrandPalette.accent : StrandPalette.textTertiary)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("Also share my patterns & Lab Book")
+                    Text("Also share my patterns & Laborbuch")
                         .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                     Text(coach.includeOnDeviceSignals
                          ? "On: a short summary of your strongest patterns and logged health numbers is added. Summaries only, never raw readings."
-                         : "Off: only your core metrics are shared, not your patterns or Lab Book.")
+                         : "Off: only your core metrics are shared, not your patterns or Laborbuch.")
                         .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
                 Toggle("", isOn: $coach.includeOnDeviceSignals)
                     .labelsHidden().toggleStyle(.switch).tint(StrandPalette.accent)
-                    .accessibilityLabel("Also share my patterns and Lab Book with the coach")
+                    .accessibilityLabel("Also share my patterns and Laborbuch with the coach")
             }
         }
     }
@@ -153,8 +153,8 @@ struct CoachView: View {
                             Text("Coach instructions")
                                 .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                             Text(coach.hasCustomSystemPrompt
-                                 ? "Customised. Your edited instructions frame every reply."
-                                 : "Edit how the coach thinks and talks. Takes effect on your next message.")
+                                 ? "Anpassend. Your edited instructions frame every reply."
+                                 : "Bearbeiten how the coach thinks and talks. Takes effect on your next message.")
                                 .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -166,7 +166,7 @@ struct CoachView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(promptExpanded ? "Collapse coach instructions" : "Edit coach instructions")
+                .accessibilityLabel(promptExpanded ? "Collapse coach instructions" : "Bearbeiten coach instructions")
 
                 if promptExpanded {
                     TextEditor(text: $promptDraft)
@@ -189,14 +189,14 @@ struct CoachView: View {
                             coach.resetSystemPrompt()
                             promptDraft = coach.customSystemPrompt
                         } label: {
-                            Label("Reset to default", systemImage: "arrow.uturn.backward")
+                            Label("Standard wiederherstellen", systemImage: "arrow.uturn.backward")
                                 .font(StrandFont.footnote)
                                 .labelStyle(.titleAndIcon)
                         }
                         .buttonStyle(.plain)
                         .foregroundStyle(StrandPalette.accent)
                         .disabled(!coach.hasCustomSystemPrompt)
-                        .accessibilityLabel("Reset coach instructions to default")
+                        .accessibilityLabel("Zurücksetzen coach instructions to default")
                     }
                 }
             }
@@ -217,22 +217,22 @@ struct CoachView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
 
-                Text("Coach uses your own API key. Pick a provider, paste a key, and choose a model. Your key is stored securely in the Keychain and never leaves \(Platform.deviceNounPhrase) except as the request you make.")
+                Text("Coach uses your own API-Schlüssel. Pick a provider, paste a key, and choose a model. Your key is stored securely in the Keychain and never leaves \(Platform.deviceNounPhrase) except as the request you make.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 // Provider
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Provider").strandOverline()
-                    Picker("Provider", selection: $coach.provider) {
+                    Text("Anbieter").strandOverline()
+                    Picker("Anbieter", selection: $coach.provider) {
                         ForEach(AIProvider.allCases) { p in
                             Text(p.displayName).tag(p)
                         }
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
-                    .accessibilityLabel("Provider")
+                    .accessibilityLabel("Anbieter")
                 }
 
                 // Server URL (Custom / local LLM only)
@@ -262,10 +262,10 @@ struct CoachView: View {
 
                 // Key
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(coach.provider == .custom ? "API key (optional)" : "API key").strandOverline()
+                    Text(coach.provider == .custom ? "API-Schlüssel (optional)" : "API-Schlüssel").strandOverline()
                     SecureField(coach.provider == .custom
                                 ? "Only if your server requires one"
-                                : "Paste your \(coach.provider.displayName) API key", text: $keyDraft)
+                                : "Paste your \(coach.provider.displayName) API-Schlüssel", text: $keyDraft)
                         .textFieldStyle(.plain)
                         .font(StrandFont.body)
                         .foregroundStyle(StrandPalette.textPrimary)
@@ -275,7 +275,7 @@ struct CoachView: View {
                         .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .strokeBorder(StrandPalette.hairline, lineWidth: 1))
                         .onSubmit { coach.provider == .custom ? connectCustom() : saveKey() }
-                        .accessibilityLabel("API key")
+                        .accessibilityLabel("API-Schlüssel")
                 }
 
                 HStack {
@@ -283,7 +283,7 @@ struct CoachView: View {
                         NoopButton("Connect", systemImage: "link", kind: .primary, action: connectCustom)
                             .disabled(coach.customBaseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     } else {
-                        NoopButton("Save key", systemImage: "key.fill", kind: .primary, action: saveKey)
+                        NoopButton("Speichern key", systemImage: "key.fill", kind: .primary, action: saveKey)
                             .disabled(keyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     }
                     Spacer()
@@ -300,7 +300,7 @@ struct CoachView: View {
     private var modelSelector: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Model").strandOverline()
+                Text("Modell").strandOverline()
                 Spacer()
                 Button {
                     Task { await coach.refreshModels() }
@@ -316,7 +316,7 @@ struct CoachView: View {
                 .accessibilityLabel("Refresh models from provider")
             }
 
-            Picker("Model", selection: modelPickerSelection) {
+            Picker("Modell", selection: modelPickerSelection) {
                 ForEach(coach.availableModels, id: \.self) { m in
                     Text(m).tag(m)
                 }
@@ -326,7 +326,7 @@ struct CoachView: View {
             .labelsHidden()
             .pickerStyle(.menu)
             .fixedSize()
-            .accessibilityLabel("Model")
+            .accessibilityLabel("Modell")
 
             if customModel {
                 HStack(spacing: 8) {
@@ -565,7 +565,7 @@ struct CoachView: View {
             }
             .buttonStyle(.plain)
             .disabled(coach.sending || draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .accessibilityLabel("Send")
+            .accessibilityLabel("Senden")
         }
         .padding(8)
         .background(StrandPalette.surfaceOverlay, in: RoundedRectangle(cornerRadius: 16, style: .continuous))

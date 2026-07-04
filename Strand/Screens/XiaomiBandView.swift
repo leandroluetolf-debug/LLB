@@ -107,7 +107,7 @@ struct XiaomiBandView: View {
         ScreenScaffold(title: "Mi Band", subtitle: spanSubtitle.map { "\($0)" },
                        onRefresh: { await repo.refresh() }, lazy: loaded && hasAnyData) {
             if loaded && !hasAnyData {
-                ComingSoon(what: "Nothing imported yet. In Data Sources, choose your Mi Fitness export (a .zip of the Mi Fitness app folder from the Files app) to bring in your steps, heart rate, sleep stages, SpO₂ and stress.")
+                ComingSoon(what: "Nichts importiert yet. In Datenquellen, choose your Mi Fitness export (a .zip of the Mi Fitness app folder from the Files app) to bring in your steps, heart rate, sleep stages, SpO₂ and stress.")
             } else if !loaded {
                 loadingState
             } else {
@@ -152,25 +152,25 @@ struct XiaomiBandView: View {
 
     private var pageItems: [PageItem] {
         [
-            .header("Heart & Vitals", "Cardiac"),
-            .chart("Resting heart rate", "rhr", roseGradient, 40...90, { "\(Int($0.rounded())) bpm" }),
+            .header("Herz & Vitals", "Cardiac"),
+            .chart("Ruhepuls", "rhr", roseGradient, 40...90, { "\(Int($0.rounded())) bpm" }),
             .chart("Average heart rate", "avg_hr", roseGradient, 50...110, { "\(Int($0.rounded())) bpm" }),
             .chart("Peak heart rate", "max_hr", roseGradient, 80...170, { "\(Int($0.rounded())) bpm" }),
-            .chart("Blood oxygen", "spo2", cyanGradient, 90...100, { String(format: "%.0f%%", $0) }),
+            .chart("Sauerstoffsättigung", "spo2", cyanGradient, 90...100, { String(format: "%.0f%%", $0) }),
             .hypnogram,
-            .header("Sleep", "Rest"),
+            .header("Schlaf", "Rest"),
             .chart("Time asleep", "sleep_total_min", purpleGradient, 240...600, { durationString($0) }),
             .chart("Deep sleep", "sleep_deep_min", purpleGradient, 0...180, { durationString($0) }),
             .chart("REM sleep", "sleep_rem_min", purpleGradient, 0...180, { durationString($0) }),
-            .chart("Sleep score", "sleep_score", accentGradient, 0...100, { "\(Int($0.rounded()))" }),
-            .header("Activity & Energy", "Movement"),
-            .chart("Steps", "steps", cyanGradient, 0...12000, { intString($0) }),
+            .chart("Schlaf score", "sleep_score", accentGradient, 0...100, { "\(Int($0.rounded()))" }),
+            .header("Aktivität & Energy", "Movement"),
+            .chart("Schritte", "steps", cyanGradient, 0...12000, { intString($0) }),
             .chart("Distance", "distance_m", cyanGradient, 0...10000, { String(format: "%.2f km", $0 / 1000) }),
-            .chart("Active energy", "energy_kcal", amberGradient, 0...1000, { "\(intString($0)) kcal" }),
+            .chart("Aktive Energie", "energy_kcal", amberGradient, 0...1000, { "\(intString($0)) kcal" }),
             .chart("Intensity minutes", "intensity_min", amberGradient, 0...120, { "\(Int($0.rounded())) min" }),
-            .header("Wellbeing", "Body energy"),
+            .header("Wellbeing", "Körper energy"),
             .chart("Stress", "stress", amberGradient, 0...100, { "\(Int($0.rounded()))" }),
-            .chart("Vitality", "vitality", accentGradient, 0...100, { "\(Int($0.rounded()))" }),
+            .chart("Vitalität", "vitality", accentGradient, 0...100, { "\(Int($0.rounded()))" }),
         ]
     }
 
@@ -232,7 +232,7 @@ struct XiaomiBandView: View {
         let allDays = series.values.flatMap { $0 }.map(\.day)
         guard let first = allDays.min(), let last = allDays.max(),
               let lo = date(first), let hi = date(last) else {
-            return String(localized: "Steps, heart rate, sleep, SpO₂ and stress, imported from Mi Fitness, read locally on \(Platform.deviceNounPhrase).")
+            return String(localized: "Schritte, heart rate, sleep, SpO₂ and stress, imported from Mi Fitness, read locally on \(Platform.deviceNounPhrase).")
         }
         let loS = Self.spanFormatter.string(from: lo)
         let hiS = Self.spanFormatter.string(from: hi)
@@ -281,7 +281,7 @@ struct XiaomiBandView: View {
                         ChartFooter([
                             ("REM", durationString(s.rem)),
                             ("Deep", durationString(s.deep)),
-                            ("Light", durationString(s.light)),
+                            ("Hell", durationString(s.light)),
                             ("Awake", durationString(s.awake)),
                         ])
                     })
@@ -332,20 +332,20 @@ struct XiaomiBandView: View {
             alignment: .leading,
             spacing: NoopMetrics.gap
         ) {
-            statTile(key: "steps", label: "Steps", accent: StrandPalette.metricCyan, fmt: { intString($0) })
-            statTile(key: "rhr", label: "Resting HR", accent: StrandPalette.metricRose, unit: "bpm",
+            statTile(key: "steps", label: "Schritte", accent: StrandPalette.metricCyan, fmt: { intString($0) })
+            statTile(key: "rhr", label: "Ruhe-HF", accent: StrandPalette.metricRose, unit: "bpm",
                      fmt: { "\(Int($0.rounded()))" })
-            statTile(key: "sleep_total_min", label: "Sleep avg", accent: StrandPalette.metricPurple,
+            statTile(key: "sleep_total_min", label: "Schlaf avg", accent: StrandPalette.metricPurple,
                      aggregate: .mean, fmt: { durationString($0) })
-            statTile(key: "sleep_score", label: "Sleep score", accent: StrandPalette.accent,
+            statTile(key: "sleep_score", label: "Schlaf score", accent: StrandPalette.accent,
                      fmt: { "\(Int($0.rounded()))" })
-            statTile(key: "spo2", label: "Blood oxygen", accent: StrandPalette.metricCyan, unit: "%",
+            statTile(key: "spo2", label: "Sauerstoffsättigung", accent: StrandPalette.metricCyan, unit: "%",
                      fmt: { String(format: "%.0f", $0) })
             statTile(key: "stress", label: "Stress avg", accent: StrandPalette.metricAmber,
                      aggregate: .mean, fmt: { "\(Int($0.rounded()))" })
             statTile(key: "avg_hr", label: "Avg HR", accent: StrandPalette.metricRose, unit: "bpm",
                      aggregate: .mean, fmt: { "\(Int($0.rounded()))" })
-            statTile(key: "vitality", label: "Vitality", accent: StrandPalette.accent,
+            statTile(key: "vitality", label: "Vitalität", accent: StrandPalette.accent,
                      fmt: { "\(Int($0.rounded()))" })
         }
     }

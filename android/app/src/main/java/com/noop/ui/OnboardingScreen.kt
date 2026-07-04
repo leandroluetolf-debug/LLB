@@ -218,16 +218,16 @@ fun OnboardingScreen(viewModel: AppViewModel, onFinished: () -> Unit) {
 
 private enum class OnboardingPage(val cta: String) {
     Welcome("Begin"),
-    WhatItDoes("Continue"),
-    Expectations("Continue"),
-    Bluetooth("Continue"),
-    Wear("Continue"),
-    Connect("Continue"),
-    Bonded("Continue"),
-    Profile("Save & continue"),
-    Import("Continue"),
-    Notifications("Continue"),
-    Appearance("Continue"),
+    WhatItDoes("Weiter"),
+    Expectations("Weiter"),
+    Bluetooth("Weiter"),
+    Wear("Weiter"),
+    Connect("Weiter"),
+    Bonded("Weiter"),
+    Profile("Speichern & continue"),
+    Import("Weiter"),
+    Notifications("Weiter"),
+    Appearance("Weiter"),
     Done("Enter LLB");
 }
 
@@ -405,7 +405,7 @@ private fun WhatItDoesStep() {
                 icon = Icons.Filled.MonitorHeart,
                 tint = Palette.accent,
                 title = "Watch your heart, live",
-                body = "Connect a WHOOP, a heart-rate strap or a gym machine and watch each beat in real time, with zones that match your profile. Already have history elsewhere? Import it from WHOOP, Apple Health, Oura, Fitbit or Garmin.",
+                body = "Connect a WHOOP, a heart-rate strap or a gym machine and watch each beat in real time, with zones that match your profile. Already have history elsewhere? Importieren it from WHOOP, Apple Gesundheit, Oura, Fitbit or Garmin.",
             )
             FeatureRow(
                 icon = Icons.Filled.Lock,
@@ -525,8 +525,8 @@ private fun ConnectStep(viewModel: AppViewModel) {
 
             val (label, tone, pulsing) = when {
                 live.encryptedBond -> Triple("Bonded · streaming", StrandTone.Positive, true)
-                live.bonded -> Triple("Live HR · not fully paired", StrandTone.Warning, true)
-                live.connected -> Triple("Connected · pairing", StrandTone.Warning, true)
+                live.bonded -> Triple("Live-HF · not fully paired", StrandTone.Warning, true)
+                live.connected -> Triple("Verbunden · pairing", StrandTone.Warning, true)
                 live.scanning -> Triple("Searching", StrandTone.Accent, true)
                 else -> Triple("Ready to scan", StrandTone.Neutral, false)
             }
@@ -548,7 +548,7 @@ private fun ConnectStep(viewModel: AppViewModel) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            Text("Strap", style = NoopType.footnote, color = Palette.textSecondary)
+                            Text("Band", style = NoopType.footnote, color = Palette.textSecondary)
                             SegmentedPillControl(
                                 items = WhoopModel.entries.toList(),
                                 selection = selectedModel,
@@ -575,7 +575,7 @@ private fun ConnectStep(viewModel: AppViewModel) {
                             ) {
                                 Icon(Icons.Filled.Bluetooth, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(6.dp))
-                                Text(if (live.connected || live.scanning) "Re-scan" else "Scan again", style = NoopType.body)
+                                Text(if (live.connected || live.scanning) "Erneut scannen" else "Scan again", style = NoopType.body)
                             }
                             OutlinedButton(
                                 onClick = { viewModel.disconnect() },
@@ -603,8 +603,8 @@ private fun ConnectStep(viewModel: AppViewModel) {
             if (!live.bonded) {
                 Text(
                     "No WHOOP? You can still continue. Pair a heart-rate strap (Polar, Wahoo, Coospo, Garmin HRM…) " +
-                        "or a gym machine under Devices, or import from WHOOP, Apple Health, Oura, Fitbit, Garmin " +
-                        "and more under Data Sources. You can do either any time.",
+                        "or a gym machine under Geräte, or import from WHOOP, Apple Gesundheit, Oura, Fitbit, Garmin " +
+                        "and more under Datenquellen. You can do either any time.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
                     textAlign = TextAlign.Center,
@@ -672,7 +672,7 @@ private fun ProfileStep() {
     @Suppress("UNUSED_VARIABLE") val tick = rev
 
     StepShell(
-        title = "About you",
+        title = "Über you",
         subtitle = "So your zones, calories and on-device scoring start from the right numbers.",
     ) {
         NoopCard(padding = 18.dp) {
@@ -717,20 +717,20 @@ private fun ProfileStep() {
                     )
                 }
                 ThinDivider()
-                ProfileFieldRow(label = "Weight") {
+                ProfileFieldRow(label = "Gewicht") {
                     StepperField(
                         // Full re-labelled string (e.g. "74.5 kg" / "164.2 lb"); unit folded into value.
                         value = UnitFormatter.massFromKilograms(profile.weightKg, unitSystem),
-                        accessibility = "Weight",
+                        accessibility = "Gewicht",
                         onMinus = { mutate { profile.weightKg = (profile.weightKg - 0.5).coerceIn(30.0, 250.0) } },
                         onPlus = { mutate { profile.weightKg = (profile.weightKg + 0.5).coerceIn(30.0, 250.0) } },
                     )
                 }
                 ThinDivider()
-                ProfileFieldRow(label = "Height") {
+                ProfileFieldRow(label = "Größe") {
                     StepperField(
                         value = UnitFormatter.heightFromCentimeters(profile.heightCm, unitSystem),
-                        accessibility = "Height",
+                        accessibility = "Größe",
                         onMinus = { mutate { profile.heightCm = (profile.heightCm - 1).coerceIn(120.0, 230.0) } },
                         onPlus = { mutate { profile.heightCm = (profile.heightCm + 1).coerceIn(120.0, 230.0) } },
                     )
@@ -764,10 +764,10 @@ private fun ImportStep(viewModel: AppViewModel) {
 
     fun runImport(block: suspend () -> ImportSummary) {
         busy = true
-        status = "Importing…"
+        status = "Importierening…"
         scope.launch {
             val summary = withContext(Dispatchers.IO) {
-                runCatching { block() }.getOrElse { ImportSummary.failure("Import", it.message ?: "failed") }
+                runCatching { block() }.getOrElse { ImportSummary.failure("Importieren", it.message ?: "failed") }
             }
             // Import & Data Ingest test mode (Test Centre): emit the parser / per-stage / day-delta trace,
             // tagged IMPORT, iff the mode is on. Gated zero-cost when off; shared with the Data Sources flow.
@@ -792,7 +792,7 @@ private fun ImportStep(viewModel: AppViewModel) {
         if (granted.any { it in HealthConnectImporter.PERMISSIONS }) {
             runImport { HealthConnectImporter.import(context, viewModel.repo, ProfileStore.from(context).heightCm) }
         } else {
-            val message = "Health Connect access not granted."
+            val message = "Gesundheit Connect access not granted."
             status = message
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
@@ -817,7 +817,7 @@ private fun ImportStep(viewModel: AppViewModel) {
 
     StepShell(
         title = "Bring your history",
-        subtitle = "Optional: import now, or skip and return to Data Sources later.",
+        subtitle = "Optional: import now, or skip and return to Datenquellen later.",
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -829,23 +829,23 @@ private fun ImportStep(viewModel: AppViewModel) {
                 icon = Icons.Filled.AutoGraph,
                 tint = Palette.accent,
                 title = "History fills the dashboard immediately",
-                message = "A WHOOP export backfills recovery, strain, sleep and workouts. Health Connect can add steps, HR, HRV, sleep and weight from Android sources.",
+                message = "A WHOOP export backfills recovery, strain, sleep and workouts. Gesundheit Connect can add steps, HR, HRV, sleep and weight from Android sources.",
             )
 
             NoopCard(padding = 16.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OnboardingActionButton(
-                        label = "Import WHOOP export (.zip)",
+                        label = "Importieren WHOOP export (.zip)",
                         icon = Icons.Filled.FileUpload,
                         enabled = !busy,
                     ) { whoopImportLauncher.launch(arrayOf("*/*")) }
                     OnboardingActionButton(
-                        label = "Import from Health Connect",
+                        label = "Importieren from Gesundheit Connect",
                         icon = Icons.Filled.MonitorHeart,
                         enabled = !busy && healthConnectAvailable,
                     ) { startHealthConnect() }
                     OnboardingActionButton(
-                        label = "Import Apple Health export",
+                        label = "Importieren Apple Gesundheit export",
                         icon = Icons.Filled.FavoriteBorder,
                         enabled = !busy,
                     ) { appleImportLauncher.launch(arrayOf("*/*")) }
@@ -854,7 +854,7 @@ private fun ImportStep(viewModel: AppViewModel) {
 
             if (!healthConnectAvailable) {
                 Text(
-                    "Health Connect is not available on this device.",
+                    "Gesundheit Connect is not available on this device.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
                     textAlign = TextAlign.Center,
@@ -907,7 +907,7 @@ private fun AppearanceStep() {
 
     StepShell(
         title = "Make it yours",
-        subtitle = "LLB follows your system by default, or pick Light or Dark. You can change this any time in Settings → Appearance.",
+        subtitle = "LLB follows your system by default, or pick Hell or Dunkel. You can change this any time in Einstellungen → Darstellung.",
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -922,13 +922,13 @@ private fun AppearanceStep() {
                 horizontalArrangement = Arrangement.spacedBy(Metrics.gap),
             ) {
                 ThemeSwatch(
-                    title = "Light",
+                    title = "Hell",
                     tokens = LightTokens,
                     selected = Palette.isLight,
                     modifier = Modifier.weight(1f),
                 )
                 ThemeSwatch(
-                    title = "Dark",
+                    title = "Dunkel",
                     tokens = DarkTokens,
                     selected = !Palette.isLight,
                     modifier = Modifier.weight(1f),
@@ -937,7 +937,7 @@ private fun AppearanceStep() {
 
             NoopCard(padding = 18.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    ProfileFieldRow(label = "Theme") {
+                    ProfileFieldRow(label = "Design") {
                         SegmentedPillControl(
                             items = listOf(AppearanceMode.SYSTEM, AppearanceMode.LIGHT, AppearanceMode.DARK),
                             selection = mode,
@@ -1064,7 +1064,7 @@ private fun DoneStep() {
             )
             Spacer(Modifier.height(10.dp))
             Text(
-                "Every beat, every night, every day, woven into one quiet picture of you. Welcome to LLB.",
+                "Every beat, every night, jeden Tag, woven into one quiet picture of you. Welcome to LLB.",
                 style = NoopType.body,
                 color = Palette.textSecondary,
                 textAlign = TextAlign.Center,
@@ -1220,5 +1220,5 @@ private data class OnboardingSexOption(val tag: String, val label: String)
 private val ONBOARDING_SEX_OPTIONS = listOf(
     OnboardingSexOption("male", "Male"),
     OnboardingSexOption("female", "Female"),
-    OnboardingSexOption("nonbinary", "Other"),
+    OnboardingSexOption("nonbinary", "Sonstiges"),
 )

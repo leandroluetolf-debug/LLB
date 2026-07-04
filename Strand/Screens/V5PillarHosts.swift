@@ -14,7 +14,7 @@ import WhoopProtocol
 // Mounted as reachable nav destinations by RootView (macOS sidebar) + RootTabView (iOS More list)
 // and reachable via NavRouter deep-links from the Health / Devices&Sources hubs.
 
-// MARK: - Fused record host ("Your Data, Fused")
+// MARK: - Fused record host ("Deine Daten, vereint")
 
 /// Loads today's fused record via `AppModel.buildTodayFusedRecord()` (the additive multi-device
 /// adapter) and feeds `FusedRecordView`. Re-loads when fresh data lands (`repo.refreshSeq`).
@@ -30,7 +30,7 @@ struct FusedRecordHost: View {
             if loaded {
                 FusedRecordView(record: record)
             } else {
-                ScreenScaffold(title: "Your Data, Fused",
+                ScreenScaffold(title: "Deine Daten, vereint",
                                subtitle: "Building your best-sourced record…") {
                     ComingSoon(what: "Reading your sources…", symbol: "square.stack.3d.up")
                 }

@@ -13,7 +13,7 @@ import StrandDesign
 //
 // Presented as a sheet, mirroring ScoringGuideView / WhatsNewView exactly: a fixed
 // header with a close button over a scenic hero, a scrollable column of frosted
-// cards, and a "Got it" footer. Reachable from Settings → About and a "?" affordance.
+// cards, and a "Verstanden" footer. Reachable from Settings → About and a "?" affordance.
 //
 // All copy here is the single APPROVED source of truth (the spec's COMPONENT 5 text,
 // verbatim), shared word-for-word across macOS / iOS / Android. No fabricated values,
@@ -35,7 +35,7 @@ struct HowNoopWorksView: View {
         var title: String {
             switch self {
             case .sleepSorting: return String(localized: "How your sleep is sorted")
-            case .scores:       return String(localized: "How your scores work")
+            case .scores:       return String(localized: "So funktionieren deine Werte")
             case .recording:    return String(localized: "What \"recording\" means")
             case .provenance:   return String(localized: "Where your numbers come from")
             }
@@ -46,11 +46,11 @@ struct HowNoopWorksView: View {
             case .sleepSorting:
                 return String(localized: "LLB picks your main sleep as your longest real block, and (once it has learned your usual hours) the one nearest your normal sleep time. Everything else that day is a nap. You can always edit bed and wake times.")
             case .scores:
-                return String(localized: "Charge, Effort and Rest are scored on your own device from your strap data. Charge needs about four nights of sleep to learn your baseline (that's \"Calibrating\", counted as nights of 4 on the ring), and keeps sharpening over your first couple of weeks. On a WHOOP 5 or MG the strap banks little history, so that count can sit at 0 of 4 until you have worn it across a few nights. That's the strap's sync limit, not a fault. Before there's a number, LLB shows what it can without faking one.")
+                return String(localized: "Charge, Effort and Rest are scored on your own device from your strap data. Charge needs about four nights of sleep to learn your baseline (that's \"Kalibriert\", counted as nights of 4 on the ring), and keeps sharpening over your first couple of weeks. On a WHOOP 5 or MG the strap banks little history, so that count can sit at 0 of 4 until you have worn it across a few nights. That's the strap's sync limit, not a fault. Before there's a number, LLB shows what it can without faking one.")
             case .recording:
                 return String(localized: "When your strap is connected LLB is saving data live. \"Last synced\" tells you how fresh it is. If it says \"Not recording\", reconnect.")
             case .provenance:
-                return String(localized: "A badge shows whether a number was scored on-device by LLB, or imported from Whoop or Apple Health.")
+                return String(localized: "A badge shows whether a number was scored on-device by LLB, or imported from Whoop or Apple Gesundheit.")
             }
         }
 
@@ -126,9 +126,9 @@ struct HowNoopWorksView: View {
                 Text("THE BASICS").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textTertiary)
-                Text("How LLB works").font(StrandFont.rounded(26, weight: .bold))
+                Text("So funktioniert LLB").font(StrandFont.rounded(26, weight: .bold))
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("Sleep · scores · recording · where your numbers come from")
+                Text("Schlaf · scores · recording · where your numbers come from")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textSecondary)
             }
@@ -139,7 +139,7 @@ struct HowNoopWorksView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -148,7 +148,7 @@ struct HowNoopWorksView: View {
         HStack {
             Spacer()
             Button(action: onClose) {
-                Text("Got it").frame(minWidth: 120).padding(.vertical, 4)
+                Text("Verstanden").frame(minWidth: 120).padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent)
             .tint(StrandPalette.accent)
@@ -224,7 +224,7 @@ struct HowNoopWorksView: View {
             case .charge:     return String(localized: "Charge")
             case .effort:     return String(localized: "Effort")
             case .rest:       return String(localized: "Rest")
-            case .fitnessAge: return String(localized: "Fitness Age")
+            case .fitnessAge: return String(localized: "Fitnessalter")
             }
         }
 
@@ -236,7 +236,7 @@ struct HowNoopWorksView: View {
             case .effort:
                 return String(localized: "A cardiovascular load in the Banister TRIMP family: time spent in each heart-rate zone, weighted so harder zones count for more, summed into one daily figure.")
             case .rest:
-                return String(localized: "Sleep scored from how long you slept versus how much you needed, how efficient the night was, and the restorative (deep and REM) share of it.")
+                return String(localized: "Schlaf scored from how long you slept versus how much you needed, how efficient the night was, and the restorative (deep and REM) share of it.")
             case .fitnessAge:
                 return String(localized: "An estimated VO2max from the Nes / HUNT Fitness Study model (resting heart rate, age and activity), read against population norms to express it as a fitness age.")
             }
@@ -332,7 +332,7 @@ struct HowNoopWorksView: View {
 }
 
 #if DEBUG
-#Preview("How LLB works") {
+#Preview("So funktioniert LLB") {
     HowNoopWorksView(onClose: {})
         .preferredColorScheme(.dark)
 }

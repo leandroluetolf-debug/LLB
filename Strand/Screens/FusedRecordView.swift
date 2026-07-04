@@ -2,7 +2,7 @@ import SwiftUI
 import StrandDesign
 import StrandAnalytics
 
-// MARK: - FusedRecordView — "Your Data, Fused" (v5 — Local Multi-Device Fusion)
+// MARK: - FusedRecordView — "Deine Daten, vereint" (v5 — Local Multi-Device Fusion)
 //
 // The read-only headline screen for the fusion pillar
 // (docs/superpowers/specs/2026-06-19-v5-local-multi-device-fusion-design.md §UX). For each core
@@ -30,7 +30,7 @@ import StrandAnalytics
 /// rows it already loads (it owns the metric→label/unit mapping there, or reuses this one).
 public struct FusedRow: Identifiable, Equatable {
     public let point: FusedMetricPoint
-    /// Human label for the metric ("Resting HR", "Steps", "Sleep").
+    /// Human label for the metric ("Ruhe-HF", "Schritte", "Schlaf").
     public let label: String
     /// Optional accent colour world for the row's value (per-metric tint), defaulted to primary text.
     public let accentHex: String?
@@ -67,9 +67,9 @@ public struct FusedRecord: Equatable {
 
 struct FusedRecordView: View {
     let record: FusedRecord
-    /// The day label shown in the header subtitle ("Today", or a formatted date). Defaulted so the
+    /// The day label shown in the header subtitle ("Heute", or a formatted date). Defaulted so the
     /// preview/caller can omit it.
-    var dayLabel: String = String(localized: "Today")
+    var dayLabel: String = String(localized: "Heute")
 
     /// The metric currently open in the conflict-compare sheet (nil = closed).
     @State private var comparing: FusedRow?
@@ -80,7 +80,7 @@ struct FusedRecordView: View {
 
     var body: some View {
         ScreenScaffold(
-            title: "Your Data, Fused",
+            title: "Deine Daten, vereint",
             subtitle: subtitle
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
@@ -89,7 +89,7 @@ struct FusedRecordView: View {
                 if record.rows.isEmpty {
                     DataPendingNote(
                         title: "Nothing to fuse yet",
-                        message: "Import a WHOOP export, Apple Health or a second band and your best-sourced record builds here, on this device.",
+                        message: "Importieren a WHOOP export, Apple Gesundheit or a second band and your best-sourced record builds here, on this device.",
                         symbol: "square.stack.3d.up"
                     )
                 } else {
@@ -143,7 +143,7 @@ struct FusedRecordView: View {
         #endif
     }
 
-    /// "Today's record owned by WHOOP" — the scores' single-owner, made honest. Only shown when the
+    /// "Heute's record owned by WHOOP" — the scores' single-owner, made honest. Only shown when the
     /// fused record actually spans multiple sources (else there's no ambiguity to caption).
     private var dayBadgeRow: some View {
         HStack(spacing: 8) {
@@ -152,11 +152,11 @@ struct FusedRecordView: View {
                 .foregroundStyle(StrandPalette.accent)
                 .accessibilityHidden(true)
             if let owner = record.dayOwner {
-                Text("Today's scores owned by \(owner.displayName)")
+                Text("Heute's scores owned by \(owner.displayName)")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textSecondary)
             } else {
-                Text("Scores still calibrating, no single day-owner yet")
+                Text("Scores still kalibriert, no single day-owner yet")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
             }
@@ -250,7 +250,7 @@ private struct FusedMetricRowView: View {
         // The whole conflict row is the compare affordance, so VoiceOver and a tap both reach it.
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(point.agreement == .conflict ? .isButton : [])
-        .accessibilityHint(point.agreement == .conflict ? "Compare sources" : "")
+        .accessibilityHint(point.agreement == .conflict ? "Vergleichen sources" : "")
         .onTapGesture { if point.agreement == .conflict { onCompare() } }
     }
 
@@ -303,7 +303,7 @@ private struct FusedMetricRowView: View {
         }
     }
 
-    /// "Apple Health says 6h 40m. Tap to compare" style line for a conflict.
+    /// "Apple Gesundheit says 6h 40m. Tap to compare" style line for a conflict.
     private var conflictSummary: String {
         guard let other = point.contributors.dropFirst().first else { return String(localized: "Tap to compare") }
         return String(localized: "\(other.source.displayName) says \(FusionFormat.value(other.value, metricKey: point.metric)). Tap to compare")
@@ -354,7 +354,7 @@ private struct ConflictCompareSheet: View {
                     .padding(.horizontal, 4)
                 }
 
-                Button("Done") { dismiss() }
+                Button("Fertig") { dismiss() }
                     .buttonStyle(.noopSecondary)
                     .padding(.top, 4)
             }
@@ -456,15 +456,15 @@ private extension FusedMetricPoint {
     }
 }
 
-#Preview("Your Data, Fused — multi-source") {
+#Preview("Deine Daten, vereint — multi-source") {
     let record = FusedRecord(
         rows: [
             FusedRow(point: .fixture("rhr", [(.whoopImport, 52), (.appleHealth, 53)]),
-                     label: "Resting HR", accentHex: nil),
+                     label: "Ruhe-HF", accentHex: nil),
             FusedRow(point: .fixture("steps", [(.xiaomiBand, 8420), (.whoopImport, 6100)]),
-                     label: "Steps"),
+                     label: "Schritte"),
             FusedRow(point: .fixture("sleep_total_min", [(.whoopImport, 432), (.appleHealth, 400)]),
-                     label: "Sleep"),
+                     label: "Schlaf"),
             FusedRow(point: .fixture("skin_temp", [(.whoopImport, 34.1)]),
                      label: "Skin temp"),
             FusedRow(point: .fixture("hrv", [(.whoopImport, 68)]),
@@ -481,8 +481,8 @@ private extension FusedMetricPoint {
 #Preview("Single WHOOP — plain record") {
     let record = FusedRecord(
         rows: [
-            FusedRow(point: .fixture("rhr", [(.whoopImport, 52)]), label: "Resting HR"),
-            FusedRow(point: .fixture("sleep_total_min", [(.whoopImport, 432)]), label: "Sleep"),
+            FusedRow(point: .fixture("rhr", [(.whoopImport, 52)]), label: "Ruhe-HF"),
+            FusedRow(point: .fixture("sleep_total_min", [(.whoopImport, 432)]), label: "Schlaf"),
             FusedRow(point: .fixture("hrv", [(.whoopImport, 68)]), label: "HRV"),
         ],
         dayOwner: .whoopImport,

@@ -180,16 +180,16 @@ public struct OnboardingWizard: View {
     private var ctaTitle: String {
         switch step {
         case .welcome:    return String(localized: "Get Started")
-        case .what:       return String(localized: "Continue")
+        case .what:       return String(localized: "Weiter")
         case .expectations: return String(localized: "I understand")
-        case .bluetooth:  return String(localized: "Continue")
+        case .bluetooth:  return String(localized: "Weiter")
         case .wear:       return String(localized: "I'm wearing it")
-        case .scan:       return String(localized: "Continue")
-        case .bonded:     return String(localized: "Continue")
-        case .profile:    return String(localized: "Save & Continue")
-        case .importData: return String(localized: "Continue")
-        case .notifications: return String(localized: "Continue")
-        case .appearance: return String(localized: "Continue")
+        case .scan:       return String(localized: "Weiter")
+        case .bonded:     return String(localized: "Weiter")
+        case .profile:    return String(localized: "Speichern & Weiter")
+        case .importData: return String(localized: "Weiter")
+        case .notifications: return String(localized: "Weiter")
+        case .appearance: return String(localized: "Weiter")
         case .done:       return String(localized: "Enter LLB")
         }
     }
@@ -291,7 +291,7 @@ private struct WhatItDoesStep: View {
         .init(icon: "waveform.path.ecg",
               tint: StrandPalette.accent,
               title: String(localized: "Watch your heart, live"),
-              body: String(localized: "Connect a WHOOP, a heart-rate strap or a gym machine and watch each beat in real time: heart rate, variability and zones as they happen. Already have history elsewhere? Import it from WHOOP, Apple Health, Oura, Fitbit or Garmin.")),
+              body: String(localized: "Connect a WHOOP, a heart-rate strap or a gym machine and watch each beat in real time: heart rate, variability and zones as they happen. Already have history elsewhere? Importieren it from WHOOP, Apple Gesundheit, Oura, Fitbit or Garmin.")),
         .init(icon: "lock.shield",
               tint: StrandPalette.statusPositive,
               title: String(localized: "Own your data, offline"),
@@ -501,7 +501,7 @@ private struct ScanStep: View {
     @State private var showHelp = false
 
     /// Which strap to look for — shared with the Live screen via the same key.
-    @AppStorage("selectedWhoopModel") private var selectedModelRaw = WhoopModel.whoop4.rawValue
+    @AppStorage("selectedWhoopModell") private var selectedModelRaw = WhoopModel.whoop4.rawValue
     private var selectedModel: WhoopModel { WhoopModel(rawValue: selectedModelRaw) ?? .whoop4 }
 
     var body: some View {
@@ -551,7 +551,7 @@ private struct ScanStep: View {
                     // WHOOP is LLB's primary band, so onboarding leads with it — but it isn't required.
                     // Make that obvious so a non-WHOOP user doesn't feel stuck here: they can continue now
                     // and pair a heart-rate strap or import data afterwards (in Devices / Data Sources).
-                    Text("No WHOOP? You can still continue. Pair a heart-rate strap (Polar, Wahoo, Coospo, Garmin HRM…) or a gym machine under Devices, or import from WHOOP, Apple Health, Oura, Fitbit, Garmin and more under Data Sources. You can do either any time.")
+                    Text("No WHOOP? You can still continue. Pair a heart-rate strap (Polar, Wahoo, Coospo, Garmin HRM…) or a gym machine under Geräte, or import from WHOOP, Apple Gesundheit, Oura, Fitbit, Garmin and more under Datenquellen. You can do either any time.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .multilineTextAlignment(.center)
@@ -566,9 +566,9 @@ private struct ScanStep: View {
     private var statusLine: some View {
         Group {
             if live.bonded {
-                StatePill("Connected", tone: .positive)
+                StatePill("Verbunden", tone: .positive)
             } else if live.connected {
-                StatePill("Connecting…", tone: .warning, pulsing: true)
+                StatePill("Verbinde…", tone: .warning, pulsing: true)
             } else if scanning {
                 StatePill("Searching", tone: .accent, pulsing: true)
             } else {
@@ -703,11 +703,11 @@ private struct ProfileStep: View {
 
     private let sexes: [(String, String)] = [
         ("male", String(localized: "Male")), ("female", String(localized: "Female")),
-        ("nonbinary", String(localized: "Other"))
+        ("nonbinary", String(localized: "Sonstiges"))
     ]
 
     var body: some View {
-        StepShell(title: String(localized: "About you"),
+        StepShell(title: String(localized: "Über you"),
                   subtitle: String(localized: "So your zones, calories and baselines are accurate.")) {
             VStack(spacing: 16) {
                 StrandCard {
@@ -752,14 +752,14 @@ private struct ProfileStep: View {
                         // profile editor (same ranges/steps), so every numeric profile field is
                         // consistent across onboarding and Settings on both platforms.
                         Stepper(value: $profile.weightKg, in: 30...250, step: 0.5) {
-                            FieldRow(label: String(localized: "Weight"),
+                            FieldRow(label: String(localized: "Gewicht"),
                                      value: UnitFormatter.massFromKilograms(profile.weightKg, system: unitSystem))
                         }
 
                         Divider().overlay(StrandPalette.hairline)
 
                         Stepper(value: $profile.heightCm, in: 120...230, step: 1) {
-                            FieldRow(label: String(localized: "Height"),
+                            FieldRow(label: String(localized: "Größe"),
                                      value: UnitFormatter.heightFromCentimeters(profile.heightCm, system: unitSystem))
                         }
                     }
@@ -786,7 +786,7 @@ private struct ImportStep: View {
 
     var body: some View {
         StepShell(title: String(localized: "Bring your history"),
-                  subtitle: String(localized: "Optional: import now, or continue and return to Data Sources later.")) {
+                  subtitle: String(localized: "Optional: import now, or continue and return to Datenquellen later.")) {
             VStack(spacing: 18) {
                 ZStack {
                     Circle()
@@ -801,20 +801,20 @@ private struct ImportStep: View {
                     icon: "clock.arrow.circlepath",
                     tint: StrandPalette.accent,
                     title: String(localized: "History fills the dashboard immediately"),
-                    message: String(localized: "A WHOOP export backfills recovery, strain, sleep and workouts. Apple Health can add HR, HRV, sleep, SpO₂, steps, workouts and weight.")
+                    message: String(localized: "A WHOOP export backfills recovery, strain, sleep and workouts. Apple Gesundheit can add HR, HRV, sleep, SpO₂, steps, workouts and weight.")
                 )
 
                 StrandCard {
                     VStack(spacing: 10) {
                         ImportActionButton(
-                            title: model.isImporting(.whoop) ? String(localized: "Importing…") : String(localized: "Import WHOOP export"),
+                            title: model.isImporting(.whoop) ? String(localized: "Importierening…") : String(localized: "Importieren WHOOP export"),
                             systemImage: "tray.and.arrow.down",
                             disabled: model.hasActiveImport
                         ) {
                             presentImporter(.whoop)
                         }
                         ImportActionButton(
-                            title: model.isImporting(.appleHealth) ? String(localized: "Working…") : String(localized: "Import Apple Health export"),
+                            title: model.isImporting(.appleHealth) ? String(localized: "Working…") : String(localized: "Importieren Apple Gesundheit export"),
                             systemImage: "heart.fill",
                             disabled: model.hasActiveImport
                         ) {
@@ -957,7 +957,7 @@ private struct NotificationsStep: View {
                 )
 
                 VStack(spacing: 12) {
-                    Checkline(text: String(localized: "Pick which apps reach your wrist in Settings → Notifications."))
+                    Checkline(text: String(localized: "Pick which apps reach your wrist in Einstellungen → Mitteilungen."))
                     Checkline(text: String(localized: "Strain nudges and your smart alarm tap your wrist the same way."))
                 }
                 .frame(maxWidth: 460)
@@ -998,7 +998,7 @@ private struct DoneStep: View {
                     Text("Your thread starts here.")
                         .font(StrandFont.title1)
                         .foregroundStyle(StrandPalette.textPrimary)
-                    Text("Every beat, every night, every day, woven into one quiet picture of you. Welcome to LLB.")
+                    Text("Every beat, every night, jeden Tag, woven into one quiet picture of you. Welcome to LLB.")
                         .font(StrandFont.body)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .multilineTextAlignment(.center)
@@ -1026,7 +1026,7 @@ private struct AppearanceStep: View {
     }
     var body: some View {
         StepShell(title: String(localized: "Make it yours"),
-                  subtitle: String(localized: "Choose how LLB looks. The whole app updates as you tap. You can change this any time in Settings → Appearance.")) {
+                  subtitle: String(localized: "Choose how LLB looks. The whole app updates as you tap. You can change this any time in Einstellungen → Darstellung.")) {
             VStack(spacing: 28) {
                 Image(systemName: "circle.lefthalf.filled")
                     .font(.system(size: 56, weight: .light))

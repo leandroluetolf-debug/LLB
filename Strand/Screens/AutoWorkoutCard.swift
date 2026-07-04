@@ -73,7 +73,7 @@ struct AutoWorkoutCard: View {
                     Button {
                         save(w)
                     } label: {
-                        Label("Save it", systemImage: "checkmark")
+                        Label("Speichern it", systemImage: "checkmark")
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(StrandPalette.accent)
@@ -89,7 +89,7 @@ struct AutoWorkoutCard: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// "Looks like a workout [yesterday ]around 14:05–14:32 (avg HR 148, 27 min). Save it?"
+    /// "Looks like a workout [yesterday ]around 14:05–14:32 (avg HR 148, 27 min). Speichern it?"
     /// Three whole-phrase variants (today / yesterday / dated, #719) so translators see complete
     /// sentences rather than a stitched day-label fragment.
     private func promptText(_ w: DetectedWorkout) -> String {
@@ -98,12 +98,12 @@ struct AutoWorkoutCard: View {
         let end = Self.timeFmt.string(from: Date(timeIntervalSince1970: TimeInterval(w.endSec)))
         let cal = Calendar.current
         if cal.isDateInToday(startDate) {
-            return String(localized: "Looks like a workout around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Save it?")
+            return String(localized: "Looks like a workout around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Speichern it?")
         }
         if cal.isDateInYesterday(startDate) {
-            return String(localized: "Looks like a workout yesterday around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Save it?")
+            return String(localized: "Looks like a workout yesterday around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Speichern it?")
         }
-        return String(localized: "Looks like a workout on \(Self.dateFmt.string(from: startDate)) around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Save it?")
+        return String(localized: "Looks like a workout on \(Self.dateFmt.string(from: startDate)) around \(start)-\(end) (avg HR \(w.avgBpm), \(w.durationMin) min). Speichern it?")
     }
 
     private func reload() async {

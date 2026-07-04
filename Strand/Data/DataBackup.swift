@@ -57,19 +57,19 @@ enum DataBackup {
 
         let dbURL = URL(fileURLWithPath: dbPath)
         guard FileManager.default.fileExists(atPath: dbPath) else {
-            return .failure(String(localized: "There's no LLB data to export yet. Import or record some first."))
+            return .failure(String(localized: "There's no LLB data to export yet. Importieren or record some first."))
         }
 
         // Flush the WAL so the single .sqlite carries everything. Required for ZIP (no sidecar
         // fallback in a single-file archive).
         guard await checkpoint() else {
-            return .failure(String(localized: "Couldn't safely export right now. Recent changes are still in the database's write-ahead log. Close any in-flight sync, then try again."))
+            return .failure(String(localized: "Couldn't safely export right now. Recent changes are still in the database's write-ahead log. Schließen any in-flight sync, then try again."))
         }
 
         #if os(macOS)
         let panel = NSSavePanel()
-        panel.title = String(localized: "Export LLB backup")
-        panel.prompt = String(localized: "Export")
+        panel.title = String(localized: "Exportieren LLB backup")
+        panel.prompt = String(localized: "Exportieren")
         panel.canCreateDirectories = true
         panel.nameFieldStringValue = defaultBackupName()
         panel.allowedContentTypes = backupContentTypes()
@@ -89,7 +89,7 @@ enum DataBackup {
             try await Task.detached(priority: .utility) { try writeBackupZip(dbURL: dbURL, to: dest) }.value
             return .exported(dest)
         } catch {
-            return .failure(String(localized: "Export failed: \(error.localizedDescription)"))
+            return .failure(String(localized: "Exportieren failed: \(error.localizedDescription)"))
         }
         #else
         let fm = FileManager.default
@@ -101,7 +101,7 @@ enum DataBackup {
             // Off the main actor: same reason as the macOS branch (heavy read + DEFLATE). Only paths hop.
             try await Task.detached(priority: .utility) { try writeBackupZip(dbURL: dbURL, to: staged) }.value
         } catch {
-            return .failure(String(localized: "Export failed: \(error.localizedDescription)"))
+            return .failure(String(localized: "Exportieren failed: \(error.localizedDescription)"))
         }
         guard let dest = await DocumentPicker.export(staged) else { return .cancelled }
         return .exported(dest)
@@ -169,8 +169,8 @@ enum DataBackup {
 
         #if os(macOS)
         let panel = NSOpenPanel()
-        panel.title = String(localized: "Import LLB backup")
-        panel.prompt = String(localized: "Import")
+        panel.title = String(localized: "Importieren LLB backup")
+        panel.prompt = String(localized: "Importieren")
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
@@ -262,7 +262,7 @@ enum DataBackup {
         let origin = backupOrigin(of: backupTables)
         let holdsData = backupTables.contains("device") || backupTables.contains("hrSample")
         if origin == .android || (origin == .unknown && holdsData) {
-            return .failure(String(localized: "This isn't a LLB backup from this app. It's missing the migration bookkeeping a LLB backup carries (it looks like an Android backup or another app's database), and restoring it would strand your store. To move your history across platforms, export the WHOOP-format CSV on the other device (Settings → Export data) and import that here, or import your original WHOOP / Apple Health export."))
+            return .failure(String(localized: "This isn't a LLB backup from this app. It's missing the migration bookkeeping a LLB backup carries (it looks like an Android backup or another app's database), and restoring it would strand your store. To move your history across platforms, export the WHOOP-format CSV on the other device (Einstellungen → Exportieren data) and import that here, or import your original WHOOP / Apple Gesundheit export."))
         }
 
         let dbURL = URL(fileURLWithPath: dbPath)
@@ -302,11 +302,11 @@ enum DataBackup {
                     removeIfPresent(dbURL)
                     try? fm.copyItem(at: sidecar, to: dbURL)
                 }
-                return .failure(String(localized: "Import failed. Your existing data was kept. \(error.localizedDescription)"))
+                return .failure(String(localized: "Importieren failed. Your existing data was kept. \(error.localizedDescription)"))
             }
             return .imported(sidecar: sidecar)
         } catch {
-            return .failure(String(localized: "Import failed: \(error.localizedDescription)"))
+            return .failure(String(localized: "Importieren failed: \(error.localizedDescription)"))
         }
     }
 

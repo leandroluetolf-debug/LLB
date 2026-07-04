@@ -130,7 +130,7 @@ public final class OuraLiveSource: NSObject, ObservableObject {
     /// EXPLICIT, USER-GRANTED adopt consent for THIS connection. Default FALSE. The dangerous installKey
     /// opcode (`0x24`) may be sent ONLY when this is true: it is what gates the post-factory-reset key
     /// provisioning (s3.2). It is set true by the adopt flow AFTER the wizard's irreversible-consent gate
-    /// (the consent tick AND the "Take over this ring?" confirm), and it gates the driver's `allowKeyInstall`
+    /// (the consent tick AND the "Übernehmen this ring?" confirm), and it gates the driver's `allowKeyInstall`
     /// so a read-only / Advanced-key connection can NEVER install a key. Set once at construction (the
     /// coordinator builds a fresh source per connection, so a new value just means a new source).
     private let adoptIntent: Bool
@@ -918,7 +918,7 @@ extension OuraLiveSource: @preconcurrency CBPeripheralDelegate {
                            error: Error?) {
         guard characteristic.uuid == Self.notifyChar else { return }
         if let error = error {
-            log("Oura: WARNING enabling notifications FAILED - \(error.localizedDescription) - ring will send no data")
+            log("Oura: WARNING enabling notifications FAILED - \(error.localizedDescription) - ring will send keine Daten")
             return
         }
         log("Oura: notifications enabled (isNotifying=\(characteristic.isNotifying)) - beginning auth")

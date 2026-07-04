@@ -10,8 +10,8 @@ struct ShortcutExportSettingsView: View {
     @AppStorage(ShortcutHealthExport.enabledKey) private var enabled = false
 
     var body: some View {
-        ScreenScaffold(title: "Shortcuts Export",
-                       subtitle: "Strap data into Apple Health without HealthKit, for sideloaded installs.") {
+        ScreenScaffold(title: "Shortcuts Exportieren",
+                       subtitle: "Band data into Apple Gesundheit without GesundheitKit, for sideloaded installs.") {
             exportCard
         }
     }
@@ -28,13 +28,13 @@ struct ShortcutExportSettingsView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 Toggle(isOn: $enabled) {
-                    Text("Export for Shortcuts (Apple Health)")
+                    Text("Exportieren for Shortcuts (Apple Gesundheit)")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("When this is on, LLB rewrites a plain-text file (On My iPhone › LLB › llb_sync.txt) each time you leave the app: one line per 15 minutes of heart rate, HRV and steps, read straight from your strap. Pair it with the Siri Shortcut that reads the file and logs everything into Apple Health (no HealthKit entitlement needed), so it works on sideloaded installs. The setup guide and the pre-built Shortcut live in the project wiki on GitHub.")
+                Text("When this is on, LLB rewrites a plain-text file (On My iPhone › LLB › llb_sync.txt) each time you leave the app: one line per 15 minutes of heart rate, HRV and steps, read straight from your strap. Pair it with the Siri Shortcut that reads the file and logs everything into Apple Gesundheit (no GesundheitKit entitlement needed), so it works on sideloaded installs. The setup guide and the pre-built Shortcut live in the project wiki on GitHub.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)

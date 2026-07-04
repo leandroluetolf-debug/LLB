@@ -333,7 +333,7 @@ struct MarkerEditorView: View {
     // MARK: - Disclaimer + footer
 
     private var disclaimerNote: some View {
-        Text("Lab Book keeps your own numbers. It doesn't test, read, or judge them, and it's not medical advice. Everything stays on \(Platform.deviceNounPhrase).")
+        Text("Laborbuch keeps your own numbers. It doesn't test, read, or judge them, and it's not medical advice. Everything stays on \(Platform.deviceNounPhrase).")
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textTertiary)
             .fixedSize(horizontal: false, vertical: true)
@@ -341,16 +341,16 @@ struct MarkerEditorView: View {
 
     private var footer: some View {
         HStack {
-            Button("Cancel") { dismiss() }
+            Button("Abbrechen") { dismiss() }
                 .buttonStyle(.plain)
                 .font(StrandFont.body)
                 .foregroundStyle(StrandPalette.textSecondary)
             Spacer()
-            Button("Save") { save() }
+            Button("Speichern") { save() }
                 .buttonStyle(.noopPrimary)
                 .frame(maxWidth: 160)
                 .disabled(drafts.isEmpty || saving)
-                .accessibilityLabel("Save reading")
+                .accessibilityLabel("Speichern reading")
         }
     }
 
@@ -541,7 +541,7 @@ private func markerEditorPreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Marker Editor") {
+#Preview("Marker Bearbeitenor") {
     MarkerEditorView { _ in }
         .environmentObject(markerEditorPreviewRepo())
         .frame(width: 520, height: 720)

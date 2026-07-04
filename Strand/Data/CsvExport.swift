@@ -8,7 +8,7 @@ import UniformTypeIdentifiers
 import WhoopStore
 import StrandImport
 
-/// Settings → Backup & restore → "Export CSV…": serialize the merged "my-whoop" ∪ "my-whoop-noop"
+/// Settings → Backup & restore → "Exportieren CSV…": serialize the merged "my-whoop" ∪ "my-whoop-noop"
 /// history (imported wins per day — exactly what the dashboards show; Apple Health rows are
 /// deliberately EXCLUDED so a re-import can't mis-attribute them as WHOOP data) into WHOOP's
 /// 4-CSV zip via StrandImport.WhoopCsvExporter. The zip re-imports into LLB on Mac (Data Sources →
@@ -138,7 +138,7 @@ enum CsvExport {
             #if os(macOS)
             // Save panel — DataBackup.runExport precedent (NSSavePanel + .zip content type).
             let panel = NSSavePanel()
-            panel.title = String(localized: "Export LLB data as CSV")
+            panel.title = String(localized: "Exportieren LLB data as CSV")
             panel.nameFieldStringValue = name
             panel.allowedContentTypes = [.zip]
             panel.canCreateDirectories = true

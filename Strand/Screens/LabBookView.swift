@@ -19,7 +19,7 @@ import WhoopStore
 // the on-device WhoopStore, where the LabMarkerStore extension lives (v17 `labMarker`
 // table). Raw readings are stored under the strap device id (`repo.deviceId`); every
 // write also projects a daily series under the `lab-book` source so Compare/Explore/
-// Coach see markers unchanged. The "Compare with a signal" surface reuses the same
+// Coach see markers unchanged. The "Vergleichen with a signal" surface reuses the same
 // Pearson idiom + restrained copy as CompareView's pairCard.
 //
 // NON-CLINICAL (load-bearing, spec §"Non-clinical / legal framing"): no word here
@@ -51,7 +51,7 @@ struct LabBookView: View {
 
     var body: some View {
         ScreenScaffold(
-            title: "Lab Book",
+            title: "Laborbuch",
             subtitle: "Your bloods, BP and body numbers. Kept private, on \(Platform.deviceNounPhrase).",
             onRefresh: { await load() },
             // PERF: the column ends in one `categorySection` per marker category (bloods / BP / body / …),
@@ -101,7 +101,7 @@ struct LabBookView: View {
             case .success(let urls):
                 if let url = urls.first { importMarkersCsv(url: url) }
             case .failure(let error):
-                NSLog("Import: markers CSV picker failed - \(error.localizedDescription)")
+                NSLog("Importieren: markers CSV picker failed - \(error.localizedDescription)")
             }
         }
     }
@@ -132,7 +132,7 @@ struct LabBookView: View {
                             .foregroundStyle(StrandPalette.textTertiary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("What Lab Book is (and isn't)")
+                    .accessibilityLabel("What Laborbuch is (and isn't)")
                 }
                 Text("It's a notebook, not a lab. LLB lines up the numbers you enter. It doesn't test, read, or judge them. Not medical advice.")
                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
@@ -177,7 +177,7 @@ struct LabBookView: View {
                         .frame(width: 30, height: 30)
                         .background(StrandPalette.metricAmber.opacity(0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                         .accessibilityHidden(true)
-                    Text("Import readings").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                    Text("Importieren readings").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
                     Spacer(minLength: 8)
                 }
                 Text("Bring in a markers CSV (date, marker, value, unit). Names that match the catalog fold onto your existing markers; anything else comes in as a custom marker. Rows that can't be read are skipped and counted, never guessed. Everything you import stays on \(Platform.deviceNounPhrase).")
@@ -188,7 +188,7 @@ struct LabBookView: View {
                     Button {
                         presentCsvImporter()
                     } label: {
-                        Label(csvImporting ? "Importing…" : "Choose CSV…", systemImage: "tray.and.arrow.down")
+                        Label(csvImporting ? "Importierening…" : "Choose CSV…", systemImage: "tray.and.arrow.down")
                     }
                     .buttonStyle(.noopPrimary)
                     .disabled(csvImporting)
@@ -240,7 +240,7 @@ struct LabBookView: View {
                 guard result.importedReadings > 0 else {
                     csvSummary = String(localized: "No usable rows found. Check the file has date, marker and value columns.")
                     csvFailed = true
-                    logImport("Lab Book CSV: no usable rows (\(result.skippedRows) skipped)")
+                    logImport("Laborbuch CSV: no usable rows (\(result.skippedRows) skipped)")
                     csvImporting = false
                     return
                 }
@@ -273,7 +273,7 @@ struct LabBookView: View {
                 try await store.upsertLabMarkers(rows)
                 await repo.refresh()   // re-resolves the lab-book projection into Compare/Explore/Coach
                 await load()
-                var msg = String(localized: "Imported \(result.importedReadings) readings (\(result.distinctMarkers) markers)")
+                var msg = String(localized: "Importiereniert \(result.importedReadings) readings (\(result.distinctMarkers) markers)")
                 if let a = result.earliestDay, let b = result.latestDay, a != b { msg += " · \(a)-\(b)" }
                 if result.skippedRows > 0 {
                     // Whole-phrase variants per count; the separator stays outside the localized key.
@@ -283,11 +283,11 @@ struct LabBookView: View {
                 }
                 csvSummary = msg
                 csvFailed = false
-                logImport("Lab Book CSV: \(result.importedReadings) readings, \(result.distinctMarkers) markers, \(result.skippedRows) rejected")
+                logImport("Laborbuch CSV: \(result.importedReadings) readings, \(result.distinctMarkers) markers, \(result.skippedRows) rejected")
             } catch {
-                csvSummary = String(localized: "Import failed: \(error.localizedDescription)")
+                csvSummary = String(localized: "Importieren failed: \(error.localizedDescription)")
                 csvFailed = true
-                logImport("Lab Book CSV failed: \(error.localizedDescription)")
+                logImport("Laborbuch CSV failed: \(error.localizedDescription)")
             }
             csvImporting = false
         }
@@ -297,7 +297,7 @@ struct LabBookView: View {
     /// (issue #421 parity): COUNTS only, never a file name, a path, or any health value.
     /// Same shape as DataSourcesView.logImport.
     private func logImport(_ line: String) {
-        live.append(log: "[\(AppModel.logTimeFormatter.string(from: Date()))] Import \(line)")
+        live.append(log: "[\(AppModell.logTimeFormatter.string(from: Date()))] Importieren \(line)")
     }
 
     // MARK: - Empty state (honest)
@@ -398,7 +398,7 @@ struct LabBookView: View {
 
     private var disclaimerNote: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Lab Book is a private notebook, not a medical service. LLB stores and lines up the numbers you enter. It doesn't test, read, diagnose, or advise. Your records never leave \(Platform.deviceNounPhrase); there's no account or cloud, so it isn't \"HIPAA-covered.\" Always rely on your doctor or pharmacist to interpret results.")
+            Text("Laborbuch is a private notebook, not a medical service. LLB stores and lines up the numbers you enter. It doesn't test, read, diagnose, or advise. Your records never leave \(Platform.deviceNounPhrase); there's no account or cloud, so it isn't \"HIPAA-covered.\" Always rely on your doctor or pharmacist to interpret results.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -406,7 +406,7 @@ struct LabBookView: View {
                 .buttonStyle(.plain)
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.accent)
-                .accessibilityLabel("Read the full Lab Book note")
+                .accessibilityLabel("Read the full Laborbuch note")
         }
     }
 
@@ -486,7 +486,7 @@ extension LabMarkerCategory {
         switch self {
         case .bloodPanel:      return String(localized: "Blood panel")
         case .bloodPressure:   return String(localized: "Blood pressure")
-        case .bodyMeasurement: return String(localized: "Body")
+        case .bodyMeasurement: return String(localized: "Körper")
         case .imaging:         return String(localized: "Imaging")
         case .appointmentNote: return String(localized: "Notes")
         case .other:           return String(localized: "Custom")
@@ -681,7 +681,7 @@ private struct MarkerDetailView: View {
 
     private var compareSection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Compare with a signal", overline: "side by side · \(window.phrase) before each reading")
+            SectionHeader("Vergleichen with a signal", overline: "side by side · \(window.phrase) before each reading")
             NoopCard {
                 VStack(alignment: .leading, spacing: 12) {
                     // Signal picker + window control.
@@ -798,7 +798,7 @@ private struct MarkerDetailView: View {
             // from no link (0) to a perfect one (1). Decorative and non-clinical.
             LiquidTube(frac: min(abs(c.r), 1), tint: tint, height: 8, animated: false)
                 .accessibilityHidden(true)
-            // The mandatory clause for markers (spec §"On-device algorithm").
+            // The mandatory clause for markers (spec §"Auf dem Gerät algorithm").
             Text("\(n) readings used · \(LabBookSignals.strengthWord(c.r)) \(LabBookSignals.directionWord(c.r)) association. This is your own data sitting side by side. It's not a medical finding, and it shows association, not cause.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
@@ -851,7 +851,7 @@ private struct MarkerDetailView: View {
                     .foregroundStyle(StrandPalette.statusCritical)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Delete this reading")
+            .accessibilityLabel("Löschen this reading")
         }
         .padding(.vertical, 9)
         .accessibilityElement(children: .combine)
@@ -913,7 +913,7 @@ enum LabWindow: String, CaseIterable, Identifiable {
 // MARK: - Wearable signals offered for correlation + the shared insight language
 //
 // The pickable wearable metrics + the restrained correlation copy, kept here so the
-// Lab Book detail's "Compare with a signal" reads in the exact CompareView idiom
+// Lab Book detail's "Vergleichen with a signal" reads in the exact CompareView idiom
 // (strength words, tends-to, association-not-cause) plus the mandatory markers clause.
 
 enum LabBookSignals {
@@ -980,14 +980,14 @@ private struct LabBookDisclaimerView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ScreenScaffold(title: "About Lab Book", subtitle: "A private notebook, not a medical service.") {
+        ScreenScaffold(title: "Über Laborbuch", subtitle: "A private notebook, not a medical service.") {
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
                 bullet(String(localized: "LLB stores and lines up the numbers you enter yourself. It does not test you, read your results, give medical advice, or diagnose anything."))
                 bullet(String(localized: "Anything you see here (including any side-by-side trend) is your own information shown back to you. It's an association, never a cause, and never a medical finding."))
                 bullet(String(localized: "LLB never decides whether a value is \"normal,\" \"high,\" or \"low.\" Any reference range shown is exactly what you typed from your own report."))
                 bullet(String(localized: "Your records never leave \(Platform.deviceNounPhrase). There's no account, no cloud, no LLB server. Because LLB is an independent app you run yourself (not a healthcare provider), it isn't \"HIPAA-covered,\" and that protection doesn't apply here; the safety comes from the data being local-only and yours."))
                 bullet(String(localized: "Always rely on your doctor, pharmacist, or a qualified professional to interpret results and make decisions. If a number worries you, talk to them, not to an app."))
-                Button("Got it") { dismiss() }
+                Button("Verstanden") { dismiss() }
                     .buttonStyle(.noopPrimary)
                     .padding(.top, 4)
             }
@@ -1023,7 +1023,7 @@ private func labBookPreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Lab Book") {
+#Preview("Laborbuch") {
     LabBookView()
         .environmentObject(labBookPreviewRepo())
         .environmentObject(LiveState())

@@ -162,10 +162,10 @@ private fun WidgetContent(snap: WidgetSnapshot, dark: Boolean) {
         Spacer(modifier = GlanceModifier.height(2.dp))
         Text(
             text = when {
-                snap.connected -> "Connected"
+                snap.connected -> "Verbunden"
                 snap.updatedAtMs > 0L ->
                     DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(snap.updatedAtMs))
-                else -> "Open LLB to connect"
+                else -> "LLB öffnen zum Verbinden"
             },
             style = TextStyle(color = textSecondary, fontSize = 11.sp),
         )

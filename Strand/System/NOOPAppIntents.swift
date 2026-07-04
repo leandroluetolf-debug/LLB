@@ -16,7 +16,7 @@ enum LLBIntentError: Error, CustomLocalizedStringResourceConvertible {
     case notConnected
     var localizedStringResource: LocalizedStringResource {
         switch self {
-        case .notRunning:   return "Open LLB first so it can reach your strap."
+        case .notRunning:   return "LLB öffnen first so it can reach your strap."
         case .notConnected: return "Connect your WHOOP strap in LLB, then try again."
         }
     }
@@ -24,7 +24,7 @@ enum LLBIntentError: Error, CustomLocalizedStringResourceConvertible {
 
 @available(macOS 13.0, *)
 struct BuzzStrapIntent: AppIntent {
-    static var title: LocalizedStringResource = "Buzz Strap"
+    static var title: LocalizedStringResource = "Buzz Band"
     static var description = IntentDescription("Vibrate your connected WHOOP strap.")
     static var openAppWhenRun = false
 
@@ -60,7 +60,7 @@ struct NOOPShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: BuzzStrapIntent(),
                     phrases: ["Buzz my strap with \(.applicationName)", "Buzz \(.applicationName)"],
-                    shortTitle: "Buzz Strap", systemImageName: "waveform")
+                    shortTitle: "Buzz Band", systemImageName: "waveform")
         AppShortcut(intent: MarkMomentIntent(),
                     phrases: ["Mark a moment with \(.applicationName)", "Mark a moment in \(.applicationName)"],
                     shortTitle: "Mark a Moment", systemImageName: "mappin.and.ellipse")

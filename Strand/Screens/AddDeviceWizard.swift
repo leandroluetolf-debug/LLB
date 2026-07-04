@@ -50,7 +50,7 @@ struct AddDeviceWizard: View {
             }
         }
 
-        /// True for the EXPERIMENTAL tier (shown under a clearly-labelled "Experimental" heading).
+        /// True for the EXPERIMENTAL tier (shown under a clearly-labelled "Experimentell" heading).
         var isExperimental: Bool {
             switch self {
             case .amazfit, .miBand, .garmin, .oura: return true
@@ -67,7 +67,7 @@ struct AddDeviceWizard: View {
     ///   - gate     What you get / what you lose + the irreversible red consent gate (or the Advanced key field).
     ///   - prep     Factory-reset the ring in the Oura app first (single-owner warning).
     ///   - pick     Live scan + pick a ring; an unreset ring surfaces honestly.
-    ///   - confirm  Detected generation + per-gen capability checklist + the SECOND destructive "Take over" gate.
+    ///   - confirm  Detected generation + per-gen capability checklist + the SECOND destructive "Übernehmen" gate.
     ///   - adopting Honest key-install progress (no fake percent), driven by the live source's adopt phase.
     ///   - failed   An honest dead-end when adoption fails, with the file-import + Advanced-key fallbacks.
     enum OuraStep { case gate, prep, pick, confirm, adopting, failed }
@@ -76,7 +76,7 @@ struct AddDeviceWizard: View {
     @State private var type: DeviceType?
     /// The Oura sub-flow step (only meaningful while `type == .oura`). Reset to `.gate` on each Oura entry.
     @State private var ouraStep: OuraStep = .gate
-    /// The destructive "Take over this ring?" confirm alert (the SECOND irreversible gate, after the consent
+    /// The destructive "Übernehmen this ring?" confirm alert (the SECOND irreversible gate, after the consent
     /// tick). Mirrors the Android `ouraConfirmAdopt`. Only the standard adopt path raises it; the Advanced
     /// key path is non-destructive and skips it.
     @State private var ouraConfirmAdopt = false
@@ -145,7 +145,7 @@ struct AddDeviceWizard: View {
         // safe. Privacy-safe: statuses / service UUIDs / counts only, never a device address.
         let wizardLog: (String) -> Void = { line in
             MainActor.assumeIsolated {
-                live.append(log: "[\(AppModel.logTimeFormatter.string(from: Date()))] \(line)")
+                live.append(log: "[\(AppModell.logTimeFormatter.string(from: Date()))] \(line)")
             }
         }
         _hrScanner = StateObject(wrappedValue: StandardHRSource(
@@ -193,16 +193,16 @@ struct AddDeviceWizard: View {
         .alert("Make this your active device?",
                isPresented: $askMakeActive) {
             Button("Not now", role: .cancel) { finishAdd(makeActive: false) }
-            Button("Make active") { finishAdd(makeActive: true) }
+            Button("Aktiv setzen") { finishAdd(makeActive: true) }
         } message: {
             Text("Make \(confirmName) your active device now? It will provide your live data. You can change this any time.")
         }
-        // The SECOND irreversible gate (after the consent tick): the destructive "Take over this ring?"
+        // The SECOND irreversible gate (after the consent tick): the destructive "Übernehmen this ring?"
         // confirm. Tapping Take over grants adopt consent + registers the ring active (the live source then
         // runs the one-time key install), and moves the wizard to its honest Adopting step. Cancel returns.
-        .alert("Take over this ring?", isPresented: $ouraConfirmAdopt) {
-            Button("Cancel", role: .cancel) { }
-            Button("Take over", role: .destructive) { commitOuraAdopt() }
+        .alert("Übernehmen this ring?", isPresented: $ouraConfirmAdopt) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Übernehmen", role: .destructive) { commitOuraAdopt() }
         } message: {
             Text("LLB will install its own key on the ring and become its owner. The Oura app will no longer control this ring. This is intended and it cannot be undone from LLB.")
         }
@@ -256,7 +256,7 @@ struct AddDeviceWizard: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -271,7 +271,7 @@ struct AddDeviceWizard: View {
     private var headerTitle: LocalizedStringKey {
         if type == .oura {
             switch ouraStep {
-            case .gate:     return ouraAdvancedKeyMode ? "Advanced: use your own key" : "Oura ring"
+            case .gate:     return ouraAdvancedKeyMode ? "Erweitert: use your own key" : "Oura ring"
             case .prep:     return "Get your ring ready"
             case .pick:     return "Pick the ring"
             case .confirm:  return "Your ring"
@@ -280,8 +280,8 @@ struct AddDeviceWizard: View {
             }
         }
         switch step {
-        case .type:    return "Add a device"
-        case .prep:    return LocalizedStringKey(type.map(typeTitle) ?? String(localized: "Add a device"))
+        case .type:    return "Gerät hinzufügen"
+        case .prep:    return LocalizedStringKey(type.map(typeTitle) ?? String(localized: "Gerät hinzufügen"))
         case .pick:    return "Pick your device"
         case .confirm: return "Name & confirm"
         }
@@ -291,7 +291,7 @@ struct AddDeviceWizard: View {
         if type == .oura {
             switch ouraStep {
             case .gate:    return ouraAdvancedKeyMode ? "Power users only." : "Take it over locally. Beta."
-            case .prep:    return "Reset it in the Oura app first."
+            case .prep:    return "Zurücksetzen it in the Oura app first."
             case .pick:    return "Tap the one that's yours."
             case .confirm, .adopting, .failed: return nil
             }
@@ -315,19 +315,19 @@ struct AddDeviceWizard: View {
                     title: "WHOOP 4.0",
                     subtitle: String(localized: "LLB's primary, fully-supported band"))
             typeRow(.hrStrap, icon: "heart.circle",
-                    title: String(localized: "Heart-rate strap"),
+                    title: String(localized: "Herz-rate strap"),
                     subtitle: String(localized: "Polar, Wahoo, Coospo, Garmin HRM, Amazfit Helio broadcast"))
             typeRow(.gymEquipment, icon: "figure.run.treadmill",
-                    title: String(localized: "Gym equipment"),
+                    title: String(localized: "Fitnessgeräte"),
                     subtitle: String(localized: "Treadmill, indoor bike, rower or cross-trainer (Bluetooth FTMS)"))
 
             // EXPERIMENTAL tier — clearly labelled, opt-in, best-effort. Each is honest about what it can
             // actually read; none fabricates data.
-            Text("Experimental").strandOverline().padding(.top, 8)
+            Text("Experimentell").strandOverline().padding(.top, 8)
             experimentalTierNote
             typeRow(.oura, icon: "circle.circle",
                     title: String(localized: "Oura ring"),
-                    subtitle: String(localized: "Take over your ring locally. Beta. This replaces the Oura app."))
+                    subtitle: String(localized: "Übernehmen your ring locally. Beta. This replaces the Oura app."))
             typeRow(.amazfit, icon: "waveform.path.ecg.rectangle",
                     title: "Amazfit / Zepp",
                     subtitle: String(localized: "Incl. Helio. Live heart rate where the band exposes it. Help us test."))
@@ -336,7 +336,7 @@ struct AddDeviceWizard: View {
                     subtitle: String(localized: "Live heart rate on bands that don't need pairing. Help us test."))
             typeRow(.garmin, icon: "applewatch",
                     title: String(localized: "Garmin watch"),
-                    subtitle: String(localized: "Uses the watch's Broadcast Heart Rate. We'll show you how."))
+                    subtitle: String(localized: "Uses the watch's Broadcast Herzfrequenz. We'll show you how."))
 
             whoopFirstNote
         }
@@ -480,13 +480,13 @@ struct AddDeviceWizard: View {
             return [
                 String(localized: "Wake your Amazfit / Zepp band and make sure it isn't connected to the Zepp app right now."),
                 String(localized: "LLB reads live heart rate when the band exposes it. Some bands need a pairing we can't do yet. If so, we'll say so honestly."),
-                String(localized: "Experimental: this is best-effort. If live doesn't work, you can export from Zepp and import the file."),
+                String(localized: "Experimentell: this is best-effort. If live doesn't work, you can export from Zepp and import the file."),
             ]
         case .miBand:
             return [
                 String(localized: "Wake your Mi Band and make sure it isn't connected to the Mi Fitness / Zepp Life app right now."),
                 String(localized: "LLB reads live heart rate on bands that don't require pairing. Newer bands need an auth handshake we can't do yet."),
-                String(localized: "Experimental: if your band needs pairing, we'll tell you honestly rather than show a fake reading."),
+                String(localized: "Experimentell: if your band needs pairing, we'll tell you honestly rather than show a fake reading."),
             ]
         case .garmin:
             return GarminBroadcast.broadcastHint
@@ -509,7 +509,7 @@ struct AddDeviceWizard: View {
     ///   - gate     irreversible-consent gate ("This replaces Oura") OR the Advanced key field.
     ///   - prep     factory-reset checklist + single-owner warning + Scan.
     ///   - pick     live scan + pick a ring (honest needs-pairing fallback).
-    ///   - confirm  detected generation + per-gen capability checklist + the SECOND destructive "Take over".
+    ///   - confirm  detected generation + per-gen capability checklist + the SECOND destructive "Übernehmen".
     ///   - adopting honest key-install progress (no fake percent).
     ///   - failed   honest dead-end with Try again + Use file import.
     /// All copy is honest, US-neutral, no em-dashes (spec docs/superpowers/specs/2026-06-29-oura-onboarding-ux.md).
@@ -560,7 +560,7 @@ struct AddDeviceWizard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("What you lose").strandOverline()
                     ouraBullet(String(localized: "The Oura app and your Oura account stop working with this ring. This is the point. You are replacing Oura."))
-                    ouraBullet(String(localized: "Oura's own Readiness and Sleep scores. LLB does not copy them. It computes its own."))
+                    ouraBullet(String(localized: "Oura's own Bereitschaft and Schlaf scores. LLB does not copy them. It computes its own."))
                     ouraBullet(String(localized: "Anything that needs Oura's cloud (web dashboard, Oura's coaching, shared circles)."))
                     ouraBullet(String(localized: "Likely your Oura warranty and support, because the ring is no longer paired to Oura. Treat this as permanent."))
                 }
@@ -595,7 +595,7 @@ struct AddDeviceWizard: View {
         Button {
             ouraStep = .prep   // tick confirmed: advance to the factory-reset checklist face
         } label: {
-            Label("Continue", systemImage: "arrow.right")
+            Label("Weiter", systemImage: "arrow.right")
                 .font(StrandFont.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
@@ -603,7 +603,7 @@ struct AddDeviceWizard: View {
         .buttonStyle(.borderedProminent)
         .tint(StrandPalette.accent)
         .disabled(!ouraConsented)
-        .accessibilityHint("Continue to get your ring ready")
+        .accessibilityHint("Weiter to get your ring ready")
 
         // Secondary: keep the Oura app, import a file instead (non-destructive, always one tap away).
         Button("Keep the Oura app instead (import a file)") {
@@ -616,19 +616,19 @@ struct AddDeviceWizard: View {
         .accessibilityLabel("Keep the Oura app instead, import a file")
 
         // Tertiary: Advanced power-user key path (no reset, Oura app keeps working).
-        Button("Advanced: I already have my ring's key") {
+        Button("Erweitert: I already have my ring's key") {
             ouraAdvancedKeyMode = true
         }
         .font(StrandFont.footnote)
         .buttonStyle(.plain)
         .foregroundStyle(StrandPalette.accent)
-        .accessibilityLabel("Advanced. I already have my ring's key.")
+        .accessibilityLabel("Erweitert. I already have my ring's key.")
     }
 
     /// Face 2, the factory-reset checklist + the single-owner amber warning + Scan. Reached after the
     /// consent box is ticked.
     @ViewBuilder private var ouraResetChecklistFace: some View {
-        Text("Reset it in the Oura app first, then scan.")
+        Text("Zurücksetzen it in the Oura app first, then scan.")
             .font(StrandFont.subhead)
             .foregroundStyle(StrandPalette.textSecondary)
 
@@ -676,7 +676,7 @@ struct AddDeviceWizard: View {
             startScan(for: .oura)
             ouraStep = .pick
         } label: {
-            Label("Scan for your ring", systemImage: "dot.radiowaves.left.and.right")
+            Label("Nach Ring suchen", systemImage: "dot.radiowaves.left.and.right")
                 .font(StrandFont.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
@@ -734,7 +734,7 @@ struct AddDeviceWizard: View {
             startScan(for: .oura)
             ouraStep = .pick
         } label: {
-            Label("Scan for your ring", systemImage: "dot.radiowaves.left.and.right")
+            Label("Nach Ring suchen", systemImage: "dot.radiowaves.left.and.right")
                 .font(StrandFont.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
@@ -779,7 +779,7 @@ struct AddDeviceWizard: View {
 
     /// The Oura confirm face: the identified ring (gen name + Beta pill), the per-gen capability checklist
     /// (tick / * estimate / dash not-available), a name field, then the adopt action. On the standard adopt
-    /// path the action is the red "Take over this ring" (which raises the SECOND irreversible confirm); on the
+    /// path the action is the red "Übernehmen this ring" (which raises the SECOND irreversible confirm); on the
     /// non-destructive Advanced-key path it is a plain "Connect to this ring" that registers without a key
     /// install. Mirrors the Android `OuraConfirmStep`.
     @ViewBuilder private var ouraConfirmFace: some View {
@@ -808,7 +808,7 @@ struct AddDeviceWizard: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                Text("Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, steps are a raw motion count, and HRV needs you to be still. No Oura Readiness or SpO2 percentage comes off the ring (import an Oura file for those).")
+                Text("Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, steps are a raw motion count, and HRV needs you to be still. No Oura Bereitschaft or SpO2 percentage comes off the ring (import an Oura file for those).")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -825,7 +825,7 @@ struct AddDeviceWizard: View {
                 .padding(12)
                 .background(StrandPalette.surfaceInset,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .accessibilityLabel("Device name")
+                .accessibilityLabel("Gerätename")
 
             if ouraAdvancedKeyMode {
                 // Non-destructive: the user's own key authenticates without resetting the ring, so this reads
@@ -846,11 +846,11 @@ struct AddDeviceWizard: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
-                // Destructive (key install): raise the SECOND irreversible "Take over this ring?" confirm.
+                // Destructive (key install): raise the SECOND irreversible "Übernehmen this ring?" confirm.
                 Button {
                     ouraConfirmAdopt = true
                 } label: {
-                    Text("Take over this ring")
+                    Text("Übernehmen this ring")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.statusCritical)
                         .frame(maxWidth: .infinity)
@@ -859,7 +859,7 @@ struct AddDeviceWizard: View {
                                     in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Take over this ring")
+                .accessibilityLabel("Übernehmen this ring")
             }
         }
     }
@@ -897,7 +897,7 @@ struct AddDeviceWizard: View {
             Text("We could not take over this ring.")
                 .font(StrandFont.headline)
                 .foregroundStyle(StrandPalette.textPrimary)
-            Text(model.ouraNeedsPairing ?? "The most common cause is the ring was not fully reset in the Oura app, or the Oura app is still running. Reset the ring again, force-quit Oura, then try once more. If it keeps failing, your ring may be a generation LLB cannot adopt yet. The ring is not bricked: re-pair it in the Oura app to recover it. You can still use file import.")
+            Text(model.ouraNeedsPairing ?? "The most common cause is the ring was not fully reset in the Oura app, or the Oura app is still running. Zurücksetzen the ring again, force-quit Oura, then try once more. If it keeps failing, your ring may be a generation LLB cannot adopt yet. The ring is not bricked: re-pair it in the Oura app to recover it. You can still use file import.")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -948,13 +948,13 @@ struct AddDeviceWizard: View {
         return [
             (live, String(localized: "Live heart rate")),
             ("*", "HRV (rMSSD)"),
-            (firm, String(localized: "Resting heart rate")),
-            (firm, String(localized: "Sleep staging")),
+            (firm, String(localized: "Ruhepuls")),
+            (firm, String(localized: "Schlaf staging")),
             ("*", String(localized: "Skin-temperature trend")),
-            ("*", String(localized: "Steps / motion")),
-            (firm, String(localized: "Battery")),
-            ("-", String(localized: "Blood oxygen (SpO2 %)")),
-            ("-", String(localized: "Oura Readiness / Sleep score")),
+            ("*", String(localized: "Schritte / motion")),
+            (firm, String(localized: "Akku")),
+            ("-", String(localized: "Sauerstoffsättigung (SpO2 %)")),
+            ("-", String(localized: "Oura Bereitschaft / Schlaf score")),
         ]
     }
 
@@ -1111,14 +1111,14 @@ struct AddDeviceWizard: View {
             .frostedCardSurface(cornerRadius: 12)
 
             Text("Name").strandOverline()
-            TextField("Device name", text: $nameDraft)
+            TextField("Gerätename", text: $nameDraft)
                 .textFieldStyle(.plain)
                 .font(StrandFont.body)
                 .foregroundStyle(StrandPalette.textPrimary)
                 .padding(12)
                 .background(StrandPalette.surfaceInset,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .accessibilityLabel("Device name")
+                .accessibilityLabel("Gerätename")
 
             Button("Add") { askMakeActive = true }
                 .buttonStyle(.borderedProminent)
@@ -1145,7 +1145,7 @@ struct AddDeviceWizard: View {
     }
     private var confirmBrand: String {
         if type?.isWhoop == true { return "WHOOP" }
-        if type == .gymEquipment { return String(localized: "Gym equipment") }
+        if type == .gymEquipment { return String(localized: "Fitnessgeräte") }
         if type == .amazfit { return "Amazfit" }
         if type == .miBand { return "Mi Band" }
         if type == .garmin { return "Garmin" }
@@ -1153,7 +1153,7 @@ struct AddDeviceWizard: View {
         // identified before adopting (the gen is best-effort from the scan, fixed by this pick).
         if let pickedOura { return String(localized: "\(pickedOura.gen.displayName) · Beta") }
         if let pickedStrap { return brandGuess(from: pickedStrap.name) }
-        return String(localized: "Heart-rate strap")
+        return String(localized: "Herz-rate strap")
     }
     private var confirmRSSI: Int {
         pickedWhoop?.rssi ?? pickedStrap?.rssi ?? pickedMachine?.rssi ?? pickedHuami?.rssi ?? pickedOura?.ring.rssi ?? -70
@@ -1255,7 +1255,7 @@ struct AddDeviceWizard: View {
             // device (its live HR IS the standard 0x180D path) but branded "Garmin"; both are HR + HRV.
             let isGarmin = type == .garmin
             device = PairedDevice(
-                id: "\(isGarmin ? "garmin" : "strap")-\(pickedStrap.id.uuidString)",
+                id: "\(isGarmin ? "garmin" : "strap")-\(pickedBand.id.uuidString)",
                 brand: isGarmin ? "Garmin" : brandGuess(from: pickedStrap.name),
                 model: pickedStrap.name,
                 nickname: name == pickedStrap.name ? nil : name,
@@ -1283,7 +1283,7 @@ struct AddDeviceWizard: View {
             // live-workout path. sourceKind `.ftms` routes the SourceCoordinator to the FTMSSource.
             device = PairedDevice(
                 id: "ftms-\(pickedMachine.id.uuidString)",
-                brand: "Gym equipment",
+                brand: "Fitnessgeräte",
                 model: pickedMachine.name,
                 nickname: name == pickedMachine.name ? nil : name,
                 peripheralId: pickedMachine.id.uuidString,
@@ -1325,7 +1325,7 @@ struct AddDeviceWizard: View {
             addedAt: now, lastSeenAt: now)
     }
 
-    /// COMMIT the standard destructive adopt: reached ONLY from the "Take over" confirm (the SECOND
+    /// COMMIT the standard destructive adopt: reached ONLY from the "Übernehmen" confirm (the SECOND
     /// irreversible gate, after the consent tick). It grants the coordinator adopt consent for THIS ring and
     /// registers it active; the live source then runs the one-time key install (s3.2). The wizard moves to its
     /// honest Adopting step, which the live source's adopt phase drives to success (close) or Failed. NO key is
@@ -1375,8 +1375,8 @@ struct AddDeviceWizard: View {
         switch t {
         case .whoop5mg:     return "WHOOP 5.0 / MG"
         case .whoop4:       return "WHOOP 4.0"
-        case .hrStrap:      return String(localized: "Heart-rate strap")
-        case .gymEquipment: return String(localized: "Gym equipment")
+        case .hrStrap:      return String(localized: "Herz-rate strap")
+        case .gymEquipment: return String(localized: "Fitnessgeräte")
         case .amazfit:      return "Amazfit / Zepp"
         case .miBand:       return "Xiaomi Mi Band"
         case .garmin:       return String(localized: "Garmin watch")
@@ -1391,7 +1391,7 @@ struct AddDeviceWizard: View {
             Image(systemName: "flask")
                 .foregroundStyle(StrandPalette.statusWarning)
                 .accessibilityHidden(true)
-            Text("Experimental, best-effort support. We're still testing these, so they might not connect on every device. They never make up data, and they'll tell you honestly when live isn't possible.")
+            Text("Experimentell, best-effort support. We're still testing these, so they might not connect on every device. They never make up data, and they'll tell you honestly when live isn't possible.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.statusWarning)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1452,7 +1452,7 @@ struct AddDeviceWizard: View {
             Image(systemName: "info.circle")
                 .foregroundStyle(StrandPalette.textTertiary)
                 .accessibilityHidden(true)
-            Text("WHOOP is LLB's primary, fully-supported band. Other heart-rate straps stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
+            Text("WHOOP is LLB's primary, fully-supported band. Sonstiges heart-rate straps stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1470,7 +1470,7 @@ struct AddDeviceWizard: View {
         if lower.contains("scosche") || lower.contains("rhythm") { return "Scosche" }
         if lower.contains("magene") { return "Magene" }
         if lower.contains("amazfit") || lower.contains("helio") || lower.contains("zepp") { return "Amazfit" }
-        return String(localized: "Heart-rate strap")
+        return String(localized: "Herz-rate strap")
     }
 }
 
@@ -1535,7 +1535,7 @@ private struct HRPickList: View {
         if lower.contains("scosche") || lower.contains("rhythm") { return "Scosche" }
         if lower.contains("magene") { return "Magene" }
         if lower.contains("amazfit") || lower.contains("helio") || lower.contains("zepp") { return "Amazfit" }
-        return String(localized: "Heart-rate strap")
+        return String(localized: "Herz-rate strap")
     }
 }
 
@@ -1554,7 +1554,7 @@ private struct FTMSPickList: View {
             } else {
                 ForEach(scanner.discovered.sorted { $0.rssi > $1.rssi }) { machine in
                     DiscoveredRow(name: machine.name,
-                                  subtitle: String(localized: "Gym equipment"),
+                                  subtitle: String(localized: "Fitnessgeräte"),
                                   rssi: machine.rssi) {
                         onSelect(machine)
                     }
@@ -1578,7 +1578,7 @@ private struct HuamiPickList: View {
                 SearchingCard()
             } else {
                 ForEach(scanner.discovered.sorted { $0.rssi > $1.rssi }) { dev in
-                    DiscoveredRow(name: dev.name, subtitle: String(localized: "Experimental"), rssi: dev.rssi) {
+                    DiscoveredRow(name: dev.name, subtitle: String(localized: "Experimentell"), rssi: dev.rssi) {
                         onSelect(dev)
                     }
                 }
@@ -1653,7 +1653,7 @@ private struct ScanStatusBar: View {
     let onRescan: () -> Void
     var body: some View {
         HStack(spacing: 8) {
-            StatePill(searching ? "Searching…" : "Idle",
+            StatePill(searching ? "Suche…" : "Idle",
                       tone: searching ? .accent : .neutral,
                       pulsing: searching)
             Spacer()
@@ -1673,10 +1673,10 @@ private struct SearchingCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             ProgressView().tint(StrandPalette.accent)
-            Text("Searching…")
+            Text("Suche…")
                 .font(StrandFont.body)
                 .foregroundStyle(StrandPalette.textPrimary)
-            Text("Make sure it's awake and not connected elsewhere.")
+            Text("Make sure it's awake and nicht verbunden elsewhere.")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

@@ -6,7 +6,7 @@ enum BackfillTrigger {
     case periodic      // the repeating timer while connected+bonded
     case connect       // a (re)connect / bond confirmation
     case foreground    // the app became active (scenePhase .active)
-    case manual        // the user tapped "Sync now"
+    case manual        // the user tapped "Jetzt synchronisieren"
     case strap         // an incoming strap EVENT packet (WHOOP's HighFreqSyncPrompt analog)
     case autoContinue  // #364: an immediate back-to-back continuation of a deep oldest-first backlog,
                        // fired right after a 60s idle-cap exit while still connected. Like .manual it

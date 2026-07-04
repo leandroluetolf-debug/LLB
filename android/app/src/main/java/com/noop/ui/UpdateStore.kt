@@ -45,7 +45,7 @@ enum class UpdateKind(val storageValue: String) {
  * @property deepLink Optional route key the inbox navigates to when tapped (null = purely
  *   informational). Matches a nav route string (e.g. "trends"); an unknown key just closes the sheet.
  * @property restorePayload For [UpdateKind.DISMISSED_CARD] only: the Today card id to restore (the
- *   stable suffix of the dismissed-flag pref key). "Restore to Today" flips that flag back.
+ *   stable suffix of the dismissed-flag pref key). "Auf Heute wiederherstellen" flips that flag back.
  */
 data class UpdateItem(
     val id: String = UUID.randomUUID().toString(),
@@ -152,7 +152,7 @@ class UpdateStore private constructor(private val prefs: SharedPreferences) {
      *  mutation. Newest-first ordering is derived at read time ([sortedItems]). */
     val items: androidx.compose.runtime.snapshots.SnapshotStateList<UpdateItem> = mutableStateListOf()
 
-    /** A restore signal TodayScreen observes: set to a card id when "Restore to Today" is tapped, so
+    /** A restore signal TodayScreen observes: set to a card id when "Auf Heute wiederherstellen" is tapped, so
      *  the Today screen (which holds the dismissed flags in local state) can flip the matching flag
      *  back. Cleared by the observer once handled. Mirrors the Swift `restoreRequest`. */
     var restoreRequest: String? by mutableStateOf(null)
@@ -267,7 +267,7 @@ class UpdateStore private constructor(private val prefs: SharedPreferences) {
         post(
             UpdateItem(
                 kind = UpdateKind.WHATS_NEW,
-                title = if (title.isEmpty()) "What's new in LLB $version" else title,
+                title = if (title.isEmpty()) "Neuigkeiten in LLB $version" else title,
                 message = "LLB $version is here — tap to read what's new.",
             ),
         )

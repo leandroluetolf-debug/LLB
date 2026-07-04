@@ -179,7 +179,7 @@ struct LLBChargeView: View {
         return snap.freshnessText(now: entry.date)
     }
 
-    /// True when the snapshot's scores read as current ("Today" / "just now"). The families below skip
+    /// True when the snapshot's scores read as current ("Heute" / "just now"). The families below skip
     /// the recency label in that case because it adds no information next to a live-looking number.
     /// Decided by the SEMANTIC flag on the shared contract, never by comparing the localized display
     /// text `freshness` returns; a display-text comparison would silently stop matching in every
@@ -279,7 +279,7 @@ struct LLBChargeView: View {
             }
             return String(localized: "Charge · cal")
         case .missing:
-            return noSnapshot ? String(localized: "Open LLB") : String(localized: "Charge")
+            return noSnapshot ? String(localized: "LLB öffnen") : String(localized: "Charge")
         }
     }
 
@@ -299,7 +299,7 @@ struct LLBChargeView: View {
             if let hr = entry.snapshot?.hr { return String(localized: "Charge \(v) · \(hr) bpm\(suffix)") }
             return String(localized: "Charge \(v)\(suffix)")
         case .calibrating:
-            return String(localized: "Charge calibrating")
+            return String(localized: "Charge kalibriert")
         case .missing:
             return String(localized: "Charge –")
         }
@@ -344,7 +344,7 @@ struct LLBChargeView: View {
     }
 
     /// The trailing header text: a sync hint when empty, otherwise the honest recency label so a stale
-    /// snapshot reads as "Yesterday" / "2h ago" rather than implying it is live. The three cells below
+    /// snapshot reads as "Gestern" / "2h ago" rather than implying it is live. The three cells below
     /// already collapse to the calibrating dash when stale, so the header and the numbers agree.
     private var headerTrailing: String {
         guard let snap = entry.snapshot else { return String(localized: "open iPhone") }
@@ -408,29 +408,29 @@ struct LLBChargeView: View {
 
     private var accessibilityCharge: String {
         // A stale snapshot collapses to the calibrating dash visually, but for VoiceOver we say WHY it
-        // is a dash plainly so it is never mistaken for "still calibrating".
+        // is a dash plainly so it is never mistaken for "still kalibriert".
         if isStale {
             let fresh = freshness ?? String(localized: "a while ago")
-            return String(localized: "Charge out of date, last synced \(fresh). Open LLB on iPhone.")
+            return String(localized: "Charge out of date, last synced \(fresh). LLB öffnen on iPhone.")
         }
         switch charge {
         case .value(let v):    return String(localized: "Charge \(v) out of 100")
-        case .calibrating:     return String(localized: "Charge calibrating, needs more data")
-        case .missing:         return noSnapshot ? String(localized: "No data, open LLB on iPhone")
+        case .calibrating:     return String(localized: "Charge kalibriert, needs more data")
+        case .missing:         return noSnapshot ? String(localized: "Keine Daten, open LLB on iPhone")
                                                  : String(localized: "Charge unavailable")
         }
     }
 
     private var accessibilityRectangular: String {
-        if noSnapshot { return String(localized: "LLB. No data yet, open LLB on your iPhone to sync.") }
+        if noSnapshot { return String(localized: "LLB. Keine Daten yet, open LLB on your iPhone to sync.") }
         if isStale {
             let fresh = freshness ?? String(localized: "a while ago")
-            return String(localized: "LLB. Scores out of date, last synced \(fresh). Open LLB on iPhone to refresh.")
+            return String(localized: "LLB. Scores out of date, last synced \(fresh). LLB öffnen on iPhone to refresh.")
         }
         func phrase(_ label: String, _ r: ScoreReadout) -> String {
             switch r {
             case .value(let v):  return String(localized: "\(label) \(v)")
-            case .calibrating:   return String(localized: "\(label) calibrating")
+            case .calibrating:   return String(localized: "\(label) kalibriert")
             case .missing:       return String(localized: "\(label) unavailable")
             }
         }

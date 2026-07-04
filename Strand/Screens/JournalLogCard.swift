@@ -83,12 +83,12 @@ struct JournalLogCard: View {
                 SectionHeader("Journal", overline: "Log")
                 Spacer()
                 if editing {
-                    pillButton("Done", selected: true) { editing = false }
+                    pillButton("Fertig", selected: true) { editing = false }
                 } else {
-                    pillButton("Edit", selected: false) { editing = true }
+                    pillButton("Bearbeiten", selected: false) { editing = true }
                     dayPill("Tomorrow", offset: -1)
-                    dayPill("Today", offset: 0)
-                    dayPill("Yesterday", offset: 1)
+                    dayPill("Heute", offset: 0)
+                    dayPill("Gestern", offset: 1)
                 }
             }
             NoopCard(tint: StrandPalette.restColor) {
@@ -223,7 +223,7 @@ struct JournalLogCard: View {
     private func editControls(_ item: JournalCatalogItem) -> some View {
         HStack(spacing: 10) {
             if item.hidden {
-                pillButton("Restore", selected: false) { catalog.restore(item.canonical) }
+                pillButton("Wiederherstellen", selected: false) { catalog.restore(item.canonical) }
             } else {
                 Menu {
                     Button("Rename…") { startRename(item) }
@@ -244,7 +244,7 @@ struct JournalLogCard: View {
                 }
                 .menuStyle(.borderlessButton)
                 .fixedSize()
-                .accessibilityLabel("Edit \(item.display)")
+                .accessibilityLabel("Bearbeiten \(item.display)")
 
                 removeButton(item)
             }
@@ -259,8 +259,8 @@ struct JournalLogCard: View {
                 .foregroundStyle(StrandPalette.statusCritical)
         }
         .buttonStyle(.plain)
-        .help(item.custom ? "Delete this custom item" : "Hide this item")
-        .accessibilityLabel(item.custom ? "Delete \(item.display)" : "Hide \(item.display)")
+        .help(item.custom ? "Löschen this custom item" : "Hide this item")
+        .accessibilityLabel(item.custom ? "Löschen \(item.display)" : "Hide \(item.display)")
     }
 
     // MARK: - Rename sheet
@@ -280,10 +280,10 @@ struct JournalLogCard: View {
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
             HStack {
-                Button("Cancel") { renaming = nil }
+                Button("Abbrechen") { renaming = nil }
                     .buttonStyle(.bordered)
                 Spacer()
-                Button("Save") {
+                Button("Speichern") {
                     catalog.rename(item.canonical, to: renameDraft)
                     renaming = nil
                 }

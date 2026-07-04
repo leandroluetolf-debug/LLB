@@ -93,7 +93,7 @@ struct InsightsView: View {
             case .recovery: return String(localized: "Charge")
             case .hrv:      return "HRV"
             case .sleep:    return String(localized: "Rest")
-            case .rhr:      return String(localized: "Resting HR")
+            case .rhr:      return String(localized: "Ruhe-HF")
             }
         }
         /// Whether a higher value is the "good" direction (drives tint).
@@ -194,17 +194,17 @@ struct InsightsView: View {
     /// -1 = tomorrow (log ahead), 0 = today, 1 = yesterday (late logging).
     @State private var journalDayOffset = 0
     /// #860 item 4: today's local calendar-day key, captured on appear and refreshed on foreground. The
-    /// journal day chips ("Today"/"Yesterday"/"Tomorrow") are relative to the CURRENT date, but the
+    /// journal day chips ("Heute"/"Gestern"/"Tomorrow") are relative to the CURRENT date, but the
     /// answers (`dayAnswers`) and the resolved day key are derived from `Date()` only inside `load()`,
     /// which re-runs on `repo.refreshSeq`. A day can pass with the screen alive and no data refresh (the
     /// app simply backgrounded overnight), so without re-keying on this the previous day's answers stayed
-    /// pinned under "Today" instead of the new day starting blank. Folding it into the `.task(id:)` key
-    /// re-runs the load the moment the date rolls over, so "Today" always resolves to the live day and
+    /// pinned under "Heute" instead of the new day starting blank. Folding it into the `.task(id:)` key
+    /// re-runs the load the moment the date rolls over, so "Heute" always resolves to the live day and
     /// prior answers move to their real date. Local CALENDAR day (matches the journal's `localDayKey`).
     @State private var currentDayKey = Repository.localDayKey(Date())
 
     var body: some View {
-        ScreenScaffold(title: "Insights", subtitle: "Interrogate what affects what.",
+        ScreenScaffold(title: "Einblicke", subtitle: "Interrogate what affects what.",
                        // PERF (scroll): lazy column, byte-identical layout (LazyVStack == eager VStack
                        // alignment/spacing/header). The content is one inner eager VStack, so any nested
                        // staggered reveals are unchanged; this only defers building that stack on scroll-in.
@@ -232,7 +232,7 @@ struct InsightsView: View {
                     // journal card so the two daily-logging surfaces read as one
                     // "log today" block above the derived insights.
                     MindSection()
-                    // Caffeine window (#526), log an intake + a rough on-device "still active" hint.
+                    // Caffeine window (#526), log an intake + a rough on-device "noch aktiv" hint.
                     // Self-contained (owns its own UserDefaults-backed store); sits in the same
                     // "log today" block. Opt-in: shows nothing until the user logs an intake.
                     CaffeineLogCard()
@@ -240,7 +240,7 @@ struct InsightsView: View {
                     if behaviours.isEmpty {
                         // No journal yet, explain, without dead-ending on a paid export.
                         NoopCard {
-                            Text("Log behaviours above. After a few days of answers, LLB ranks how each one moves your charge, HRV and rest. Importing a WHOOP export (which includes its journal) backfills history instantly.")
+                            Text("Log behaviours above. After a few days of answers, LLB ranks how each one moves your charge, HRV and rest. Importierening a WHOOP export (which includes its journal) backfills history instantly.")
                                 .font(StrandFont.subhead)
                                 .foregroundStyle(StrandPalette.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -255,7 +255,7 @@ struct InsightsView: View {
         }
         // #860 item 4: key on the data-refresh seq AND today's day-key, so the journal re-loads both on a
         // data change and the moment the calendar day rolls over (driven by the foreground/appear refresh
-        // of `currentDayKey` below), so yesterday's answers leave "Today" and the new day starts fresh.
+        // of `currentDayKey` below), so yesterday's answers leave "Heute" and the new day starts fresh.
         .task(id: InsightsLoadKey(seq: repo.refreshSeq, dayKey: currentDayKey)) { await load(allowCache: true) }
         // Recompute the cached ranking only when the outcome selection changes.
         // (behaviours / outcomeByKey change only at load, which calls
@@ -270,7 +270,7 @@ struct InsightsView: View {
     }
 
     /// Re-stamp `currentDayKey` to today's local calendar day. A no-op while the day is unchanged; when the
-    /// date has rolled over it flips the value, which re-keys the journal load so the chips' "Today" and the
+    /// date has rolled over it flips the value, which re-keys the journal load so the chips' "Heute" and the
     /// answers behind them snap to the new day (#860 item 4).
     private func refreshCurrentDayKey() {
         let key = Repository.localDayKey(Date())
@@ -397,7 +397,7 @@ struct InsightsView: View {
         }
 
         // Activity Cost (#439): shape the engine's inputs in the VIEW, not the engine. From the loaded
-        // sessions build [sport: Set<localDayKey>], collapsing detected/"Activity" into one bucket via
+        // sessions build [sport: Set<localDayKey>], collapsing detected/"Aktivität" into one bucket via
         // displaySport, keeping manual/imported labels, keyed by the LOCAL calendar day the session
         // STARTED (the same local-day calendar DailyMetric.day uses, so the engine's D+1 alignment is
         // honest). The recovery side is [localDayKey: Charge] off the merged DailyMetric.recovery.
@@ -483,7 +483,7 @@ struct InsightsView: View {
         let tzOffset = TimeZone.current.secondsFromGMT()
         var activityDaysBySport: [String: Set<String>] = [:]
         for w in workouts {
-            // displaySport collapses the detector's "detected" token into one "Activity" bucket and
+            // displaySport collapses the detector's "detected" token into one "Aktivität" bucket and
             // de-camelCases WHOOP sport names; manual/imported labels pass through unchanged.
             let sport = WorkoutSource.displaySport(w.sport)
             guard !sport.isEmpty else { continue }
@@ -523,7 +523,7 @@ struct InsightsView: View {
     // and a short window, then compare the outcome on days you logged the behaviour
     // (the intervention) against your behaviour-ABSENT days before the start (the
     // baseline). The absent-day baseline mirrors the with/without model used by the
-    // Behaviour Effects section above, so "Baseline" vs "Intervention" is an honest
+    // Behaviour Effects section above, so "Basis" vs "Intervention" is an honest
     // present-vs-absent contrast rather than a raw pre/post window. Nothing leaves the
     // device: state is @AppStorage and "Mark done" writes a normal journal answer.
 
@@ -570,8 +570,8 @@ struct InsightsView: View {
                     alignment: .leading,
                     spacing: NoopMetrics.gap
                 ) {
-                    experimentField("Behaviour") {
-                        Picker("Behaviour", selection: experimentBehaviourBinding) {
+                    experimentField("Verhalten") {
+                        Picker("Verhalten", selection: experimentBehaviourBinding) {
                             ForEach(candidates, id: \.self) { q in
                                 Text(verbatim: q).tag(q)
                             }
@@ -591,7 +591,7 @@ struct InsightsView: View {
                     }
                 }
 
-                NoopButton("Start experiment", systemImage: "flask.fill",
+                NoopButton("Experiment starten", systemImage: "flask.fill",
                            kind: .primary, fullWidth: true) { startExperiment() }
                     .disabled(resolvedExperimentBehaviour == nil)
                     .help("Start a local experiment using today's date as day one.")
@@ -626,7 +626,7 @@ struct InsightsView: View {
                 alignment: .leading,
                 spacing: NoopMetrics.gap
             ) {
-                experimentMeasure("Baseline",
+                experimentMeasure("Basis",
                                   value: snapshot.baselineMean.map { formatOutcome($0, as: snapshot.outcome) } ?? "—",
                                   caption: String(localized: "\(snapshot.baselineCount) days without it"),
                                   tint: StrandPalette.textSecondary)
@@ -788,7 +788,7 @@ struct InsightsView: View {
         let loggedDays = behaviours[behavior] ?? []
 
         // Baseline = behaviour-ABSENT days BEFORE the start (with/without model, matching
-        // Behaviour Effects). Restricting to absent days is triage fix (c): "Baseline" vs
+        // Behaviour Effects). Restricting to absent days is triage fix (c): "Basis" vs
         // "Intervention" is now an honest present-vs-absent contrast, not a raw pre/post window.
         let baselineDays = outcomeDays.keys
             .filter { $0 < experimentStartedDay && !loggedDays.contains($0) }
@@ -866,7 +866,7 @@ struct InsightsView: View {
 
     private func experimentReading(_ snapshot: ExperimentSnapshot) -> String {
         guard let delta = snapshot.delta else {
-            return String(localized: "Collect a few logged intervention days before reading the effect. Baseline and imported metrics stay in place.")
+            return String(localized: "Collect a few logged intervention days before reading the effect. Basis and imported metrics stay in place.")
         }
         let absDelta = formatExperimentDelta(abs(delta), outcome: snapshot.outcome, includeSign: false)
         if abs(delta) < 0.05 {
@@ -978,7 +978,7 @@ struct InsightsView: View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
             // Header + the ONE segmented pill control for choosing the outcome.
             HStack(alignment: .center) {
-                SectionHeader("Behaviour Effects",
+                SectionHeader("Verhalten Effects",
                               overline: "What moves your \(outcome.outcomeName.lowercased())")
                 Spacer()
                 SegmentedPillControl(Outcome.allCases, selection: $outcome) { $0.label }
@@ -1113,7 +1113,7 @@ struct InsightsView: View {
     /// a positive cost (recovery dipped) reads warmer/critical, a recovery-POSITIVE delta reads green.
     @ViewBuilder private var activityCostSection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Activity Cost", overline: "What each activity costs your recovery")
+            SectionHeader("Aktivität Cost", overline: "What each activity costs your recovery")
             if activityCosts.isEmpty {
                 NoopCard {
                     Text("Tag a few sessions of the same activity and LLB will learn its personal recovery cost.")
@@ -1174,7 +1174,7 @@ struct InsightsView: View {
                              value: cost.daysToBaseline.map { "\($0)d" } ?? "—",
                              caption: cost.daysToBaseline != nil ? String(localized: "to baseline") : String(localized: "not within 7d"),
                              accent: StrandPalette.chargeColor)
-                    StatTile(label: "Sessions",
+                    StatTile(label: "Einheiten",
                              value: "\(cost.n)",
                              caption: cost.confidence == .solid ? String(localized: "solid") : String(localized: "building"),
                              accent: StrandPalette.textPrimary)
@@ -1217,7 +1217,7 @@ struct InsightsView: View {
     /// A curated metric relationship plus its computed correlation.
     private struct Relationship: Identifiable {
         let id: String
-        let title: String        // "Sleep → Recovery"
+        let title: String        // "Schlaf → Erholung"
         let blurb: String        // what the pairing probes
         let corr: Correlation
     }
@@ -1239,14 +1239,14 @@ struct InsightsView: View {
             CorrelationEngine.alignByDay(series("hrv"), series("recovery"))) {
             out.append(.init(id: "hrv-rec",
                              title: String(localized: "HRV ↔ Charge"),
-                             blurb: String(localized: "Heart-rate variability as the engine behind your charge score."),
+                             blurb: String(localized: "Herzfrequenzvariabilität as the engine behind your charge score."),
                              corr: c))
         }
         // Resting HR ↔ recovery (same day), expected to be negative.
         if let c = CorrelationEngine.pearson(
             CorrelationEngine.alignByDay(series("rhr"), series("recovery"))) {
             out.append(.init(id: "rhr-rec",
-                             title: String(localized: "Resting HR ↔ Charge"),
+                             title: String(localized: "Ruhe-HF ↔ Charge"),
                              blurb: String(localized: "A lower resting heart rate usually means a higher charge."),
                              corr: c))
         }
@@ -1455,7 +1455,7 @@ private func insightsPreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Insights") {
+#Preview("Einblicke") {
     InsightsView()
         .environmentObject(insightsPreviewRepo())
         .environmentObject(NavRouter())

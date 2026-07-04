@@ -18,7 +18,7 @@ import Foundation
 //   • `TrendsReportPage` — the laid-out SwiftUI page (the thing rendered to PDF),
 //     built ENTIRELY from the locked StrandDesign component system (NoopCard,
 //     SectionHeader, Sparkline, the colour worlds) so it matches every other surface.
-//   • `TrendsReportSheet` — the in-app range picker + "Export" CTA presented from Trends.
+//   • `TrendsReportSheet` — the in-app range picker + "Exportieren" CTA presented from Trends.
 //
 // Honesty: an empty range (no metric carried a reading) renders a friendly
 // "not enough data in this range yet" state, never a blank or fabricated page.
@@ -362,7 +362,7 @@ struct TrendsReportPage: View {
             // Provenance legend (#457): a clinician (or anyone) reading this needs to know which numbers
             // are directly measured vs. LLB's own derived scores. HRV / Resting HR come off the strap;
             // Recovery and Strain are computed on-device and are NOT clinical measures.
-            Text("How to read this: HRV, Resting HR, Sleep duration, Respiratory rate and Skin temperature are measured from the strap (skin temp is shown as the deviation from your own baseline). Workouts is the count of activities you logged or that were detected. Recovery, Strain and Stress are LLB's own on-device scores, not clinical measures: Recovery is a daily readiness composite (HRV, resting HR, sleep and skin-temp trend), Strain is cardiovascular load derived from heart rate, and Stress is a 0-3 autonomic-load index from resting HR and HRV.")
+            Text("How to read this: HRV, Ruhe-HF, Schlaf duration, Atemfrequenz and Hauttemperatur are measured from the strap (skin temp is shown as the deviation from your own baseline). Workouts is the count of activities you logged or that were detected. Erholung, Strain and Stress are LLB's own on-device scores, not clinical measures: Erholung is a daily readiness composite (HRV, resting HR, sleep and skin-temp trend), Strain is cardiovascular load derived from heart rate, and Stress is a 0-3 autonomic-load index from resting HR and HRV.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -414,7 +414,7 @@ struct TrendsReportPage: View {
 // MARK: - Export sheet (range picker + CTA)
 
 /// The in-app sheet: pick a range, preview the page, export to PDF. Presented from the
-/// Trends screen's "Export trends report" button.
+/// Trends screen's "Exportieren trends report" button.
 struct TrendsReportSheet: View {
     let days: [DailyMetric]
     @EnvironmentObject private var repo: Repository
@@ -458,10 +458,10 @@ struct TrendsReportSheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 VStack(alignment: .leading, spacing: NoopMetrics.space2) {
-                    Text("Export trends report")
+                    Text("Exportieren trends report")
                         .font(StrandFont.title2)
                         .foregroundStyle(StrandPalette.textPrimary)
-                    Text("A clean, shareable one-page PDF of your recovery, sleep, HRV, resting heart rate and strain over a date range. Saved on your \(Platform.deviceNoun). Nothing leaves the device.")
+                    Text("A clean, shareable one-page PDF of your recovery, sleep, HRV, resting heart rate and strain over a date range. Speichernd on your \(Platform.deviceNoun). Nothing leaves the device.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -493,7 +493,7 @@ struct TrendsReportSheet: View {
 
                 // WHOOP primary action — routed through the unified button system (filled blue accent,
                 // white ink, no glow). The label swaps to "Preparing…" while a PDF is being written.
-                NoopButton(exporting ? "Preparing…" : "Export PDF",
+                NoopButton(exporting ? "Preparing…" : "Exportieren PDF",
                            systemImage: "square.and.arrow.up", kind: .primary, fullWidth: true) {
                     export(rpt)
                 }

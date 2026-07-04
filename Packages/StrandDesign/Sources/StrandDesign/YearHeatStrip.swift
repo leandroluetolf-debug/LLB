@@ -48,7 +48,7 @@ public struct YearHeatStrip: View {
         spacing: CGFloat = 3,
         showsMonthLabels: Bool = true,
         showsHover: Bool = true,
-        valueFormat: @escaping (Double) -> String = { "Recovery \(Int($0.rounded()))" }
+        valueFormat: @escaping (Double) -> String = { "Erholung \(Int($0.rounded()))" }
     ) {
         let sorted = days.sorted { $0.date < $1.date }
         self.days = sorted
@@ -193,10 +193,10 @@ public struct YearHeatStrip: View {
     private var axSummary: String {
         let scored = days.compactMap { $0.score }
         guard let lo = scored.min(), let hi = scored.max() else {
-            return String(localized: "Recovery calendar, no data", bundle: .module)
+            return String(localized: "Erholung calendar, keine Daten", bundle: .module)
         }
         let avg = scored.reduce(0, +) / Double(scored.count)
-        return String(localized: "Recovery calendar, \(scored.count) days, average \(Int(avg.rounded())), low \(Int(lo.rounded())), high \(Int(hi.rounded()))", bundle: .module)
+        return String(localized: "Erholung calendar, \(scored.count) days, average \(Int(avg.rounded())), low \(Int(lo.rounded())), high \(Int(hi.rounded()))", bundle: .module)
     }
 
     // MARK: Grid geometry
@@ -316,7 +316,7 @@ private func sampleYear() -> [RecoveryDay] {
 
 #Preview("YearHeatStrip") {
     VStack(alignment: .leading, spacing: 12) {
-        Text("Recovery — past year").strandOverline()
+        Text("Erholung — past year").strandOverline()
         Text("Hover a cell: ring + date, score and recovery-state tooltip.")
             .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
         YearHeatStrip(days: sampleYear())

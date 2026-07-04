@@ -70,7 +70,7 @@ struct AppleWatchSetupView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                 Text("Use LLB with your watch").font(StrandFont.rounded(26, weight: .bold))
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text(step == .intro ? "What to expect" : "Connect Apple Health")
+                Text(step == .intro ? "What to expect" : "Connect Apple Gesundheit")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textSecondary)
             }
@@ -81,7 +81,7 @@ struct AppleWatchSetupView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -94,12 +94,12 @@ struct AppleWatchSetupView: View {
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) { step = .permission }
                 } label: {
-                    Text("Continue").frame(minWidth: 120).padding(.vertical, 4)
+                    Text("Weiter").frame(minWidth: 120).padding(.vertical, 4)
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(StrandPalette.accent)
                 .keyboardShortcut(.defaultAction)
-                .accessibilityHint("Goes to the Apple Health permission step")
+                .accessibilityHint("Goes to the Apple Gesundheit permission step")
             }
             .padding(16)
         case .permission:
@@ -115,7 +115,7 @@ struct AppleWatchSetupView: View {
                     Button {
                         onClose()
                     } label: {
-                        Text("Done").frame(minWidth: 120).padding(.vertical, 4)
+                        Text("Fertig").frame(minWidth: 120).padding(.vertical, 4)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(StrandPalette.accent)
@@ -126,7 +126,7 @@ struct AppleWatchSetupView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
                 #else
-                Button("Close") { onClose() }
+                Button("Schließen") { onClose() }
                     .buttonStyle(.bordered)
                     .tint(StrandPalette.accent)
                 #endif
@@ -154,7 +154,7 @@ struct AppleWatchSetupView: View {
                             .foregroundStyle(StrandPalette.textPrimary)
                         Spacer(minLength: 0)
                     }
-                    Text("No chest strap? No problem. LLB can run off only your Apple Watch. It reads your watch's data through Apple Health and works out your Charge, Rest, Effort and Fitness Age right here on your phone. Everything stays on the device.")
+                    Text("No chest strap? No problem. LLB can run off only your Apple Watch. It reads your watch's data through Apple Gesundheit and works out your Charge, Rest, Effort and Fitnessalter right here on your phone. Everything stays on the device.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -165,7 +165,7 @@ struct AppleWatchSetupView: View {
             goodAtCard
             lighterCard
 
-            Text("Want the full breakdown of every metric and how sure LLB is about each one? The \u{201C}About Apple Watch data\u{201D} page in Settings has the honest table.")
+            Text("Want the full breakdown of every metric and how sure LLB is about each one? The \u{201C}Über Apple Watch data\u{201D} page in Einstellungen has the honest table.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -179,11 +179,11 @@ struct AppleWatchSetupView: View {
                 Text("WHAT IT'S GREAT AT").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.statusPositive)
-                bullet("bed.double.fill", String(localized: "Sleep & Rest"),
+                bullet("bed.double.fill", String(localized: "Schlaf & Rest"),
                        String(localized: "Apple's sleep stages are strong, and they drive your Rest score directly."))
-                bullet("figure.walk", String(localized: "Steps & workouts"),
-                       String(localized: "Steps, active energy and logged workouts feed your Effort. Dense and reliable."))
-                bullet("bolt.heart.fill", String(localized: "Fitness Age"),
+                bullet("figure.walk", String(localized: "Schritte & workouts"),
+                       String(localized: "Schritte, active energy and logged workouts feed your Effort. Dense and reliable."))
+                bullet("bolt.heart.fill", String(localized: "Fitnessalter"),
                        String(localized: "Built from the watch's cardio-fitness VO₂ max, the same number the Fitness app shows."))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -196,7 +196,7 @@ struct AppleWatchSetupView: View {
                 Text("WHERE IT'S LIGHTER THAN A STRAP").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.statusWarning)
-                bullet("heart.fill", String(localized: "Recovery takes about a week"),
+                bullet("heart.fill", String(localized: "Erholung takes about a week"),
                        String(localized: "A watch samples your heart-rate variability rather than streaming it all night, so your Charge score needs roughly seven nights to calibrate. Until then LLB shows \u{201C}needs more data\u{201D}, never a guessed number."))
                 bullet("drop.degreesign", String(localized: "A couple of metrics depend on your model"),
                        String(localized: "Wrist temperature needs Series 8 or later, and the newest US units dropped the blood-oxygen sensor. Where a sensor isn't there, LLB reads \u{201C}not available\u{201D} instead of zero."))
@@ -241,19 +241,19 @@ struct AppleWatchSetupView: View {
                         .background(StrandPalette.metricCyan.opacity(0.14),
                                     in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                         .accessibilityHidden(true)
-                    Text("Connect Apple Health")
+                    Text("Connect Apple Gesundheit")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Spacer()
                     if health.auth == .authorized {
-                        StatePill(health.syncing ? "Syncing" : "Connected",
+                        StatePill(health.syncing ? "Syncing" : "Verbunden",
                                   tone: .positive, pulsing: health.syncing)
                     }
                 }
 
                 switch health.auth {
                 case .unavailable:
-                    Text("Apple Health isn't available on this device, so there's nothing to connect here.")
+                    Text("Apple Gesundheit isn't available on this device, so there's nothing to connect here.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -263,17 +263,17 @@ struct AppleWatchSetupView: View {
                     // lack it, and some paid reseller certs do too, #930), so the request can never present
                     // and the app can never appear under Settings › Health. Give the honest path instead
                     // of an impossible Settings instruction (mirrors #348).
-                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to grant here.")
+                    Text("This install can't connect to Apple Gesundheit directly. It was signed with a profile that doesn't include Apple's Gesundheit permission, so there's nothing to grant here.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("You can still bring your data in by importing a Health export from Data Sources. A build from the App Store, or one signed with a paid Apple Developer account, connects directly.")
+                    Text("You can still bring your data in by importing a Gesundheit export from Datenquellen. A build from the App Store, or one signed with a paid Apple Developer account, connects directly.")
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .unknown, .denied:
-                    Text("LLB reads your heart rate, HRV, resting heart rate, sleep, steps, energy and VO₂ max from Apple Health to compute your scores. It all stays on this iPhone, and you pick exactly what to share on the next screen.")
+                    Text("LLB reads your heart rate, HRV, resting heart rate, sleep, steps, energy and VO₂ max from Apple Gesundheit to compute your scores. It all stays on this iPhone, and you pick exactly what to share on the next screen.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -282,23 +282,23 @@ struct AppleWatchSetupView: View {
                         // arming continuous live ingestion once granted. We just trigger it.
                         Task { await health.requestAuthorization() }
                     } label: {
-                        Label("Allow Apple Health access", systemImage: "heart.fill")
+                        Label("Allow Apple Gesundheit access", systemImage: "heart.fill")
                     }
                     .buttonStyle(NoopButtonStyle(.primary, fullWidth: true))
-                    .accessibilityHint("Shows the Apple Health permission sheet")
+                    .accessibilityHint("Shows the Apple Gesundheit permission sheet")
                     if health.auth == .denied {
-                        Text("If you don't see the prompt, turn LLB on under Settings › Health › Data Access & Devices.")
+                        Text("If you don't see the prompt, turn LLB on under Einstellungen › Gesundheit › Daten Access & Geräte.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
                 case .authorized:
-                    Text("You're connected. LLB is reading your Apple Watch data now. Your Charge score will spend its first week or so calibrating, then settle in.")
+                    Text("You're connected. LLB is reading your Apple Watch data now. Your Charge score will spend its first week or so kalibriert, then settle in.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("You can change what you share any time in Settings › Health › Data Access & Devices.")
+                    Text("You can change what you share any time in Einstellungen › Gesundheit › Daten Access & Geräte.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -326,7 +326,7 @@ struct AppleWatchSetupView: View {
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
-                Text("Apple Health lives on the iPhone, not the Mac, so connecting your Apple Watch happens there. Open LLB on your iPhone, head to Settings, and run this same Apple Watch setup. Your scores then show up across your devices.")
+                Text("Apple Gesundheit lives on the iPhone, not the Mac, so connecting your Apple Watch happens there. LLB öffnen on your iPhone, head to Einstellungen, and run this same Apple Watch setup. Your scores then show up across your devices.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -10,7 +10,7 @@ struct NotificationSettingsView: View {
     @StateObject private var store = NotificationSettingsStore()
 
     var body: some View {
-        ScreenScaffold(title: "Notifications",
+        ScreenScaffold(title: "Mitteilungen",
                        subtitle: "Buzz your strap when these apps notify you. Everything runs on \(Platform.deviceNounPhrase).") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 masterCard
@@ -88,9 +88,9 @@ struct NotificationSettingsView: View {
     /// Strap status — mirrors SettingsView's three-state mapping so the pill, its tone and its
     /// pulse always agree (and never reads "connected" while the strap is offline).
     private var strapPillTitle: String {
-        if live.connected { return String(localized: "Strap connected") }
-        if live.bonded { return String(localized: "Strap idle") }          // paired but offline — won't deliver
-        return String(localized: "Strap not connected")
+        if live.connected { return String(localized: "Band connected") }
+        if live.bonded { return String(localized: "Band idle") }          // paired but offline — won't deliver
+        return String(localized: "Band nicht verbunden")
     }
     private var strapPillTone: StrandTone {
         if live.connected { return .positive }
@@ -223,7 +223,7 @@ struct NotificationSettingsView: View {
     // MARK: - Behaviour
 
     private var behaviourCard: some View {
-        AlertSection(icon: "slider.horizontal.3", title: String(localized: "Behaviour"),
+        AlertSection(icon: "slider.horizontal.3", title: String(localized: "Verhalten"),
                      blurb: String(localized: "Fine-tune when alerts reach your wrist.")) {
             VStack(spacing: 0) {
                 FormToggleRow(label: String(localized: "Only buzz when worn"),
@@ -355,7 +355,7 @@ private struct FormToggleRow: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Notifications") {
+#Preview("Mitteilungen") {
     let model = AppModel()
     model.live.bonded = true
     model.live.connected = true

@@ -55,10 +55,10 @@ import kotlin.math.roundToInt
 // concise spoken summary (count + latest/low/high, or per-stage totals) — O(1) instead of O(elements).
 // These are pure helpers; they change NO drawing.
 
-/** One-line spoken summary of a numeric series: count + latest + low/high. Empty → "No data". */
+/** One-line spoken summary of a numeric series: count + latest + low/high. Empty → "Keine Daten". */
 private fun seriesSummary(values: List<Double>, noun: String): String {
     val clean = values.filter { it.isFinite() }
-    if (clean.isEmpty()) return "$noun, no data"
+    if (clean.isEmpty()) return "$noun, keine Daten"
     val last = clean.last()
     val lo = clean.min()
     val hi = clean.max()
@@ -68,10 +68,10 @@ private fun seriesSummary(values: List<Double>, noun: String): String {
 
 /** Per-stage total summary for the Hypnogram (deep · REM · light · awake, naming only stages present). */
 private fun hypnogramSummary(stages: List<Pair<String, Float>>): String {
-    if (stages.isEmpty()) return "Sleep stages, no data"
+    if (stages.isEmpty()) return "Schlaf stages, keine Daten"
     // Weights are relative widths, not minutes, so report the share of the night in each stage.
     val total = stages.map { if (it.second.isFinite() && it.second > 0f) it.second else 0f }.sum()
-    if (total <= 0f) return "Sleep stages, no data"
+    if (total <= 0f) return "Schlaf stages, keine Daten"
     val order = listOf("deep", "rem", "light", "awake")
     val byStage = LinkedHashMap<String, Float>()
     for (key in order) byStage[key] = 0f
@@ -90,7 +90,7 @@ private fun hypnogramSummary(stages: List<Pair<String, Float>>): String {
             "$pct percent $label"
         }
     }
-    return if (parts.isEmpty()) "Sleep stages, no data" else "Sleep stages, " + parts.joinToString(", ")
+    return if (parts.isEmpty()) "Schlaf stages, keine Daten" else "Schlaf stages, " + parts.joinToString(", ")
 }
 
 // MARK: - Shared geometry helpers
@@ -397,7 +397,7 @@ fun MultiLineChart(
     // the a11y delegate reads a single line rather than walking the canvas. Changes no drawing.
     val axSummary = run {
         val all = cleanSeries.flatMap { it.values }
-        if (all.isEmpty()) "Trends, no data"
+        if (all.isEmpty()) "Trends, keine Daten"
         else "Trends, ${cleanSeries.size} series, low ${formatLineValue(all.min())}, high ${formatLineValue(all.max())}"
     }
 
@@ -682,7 +682,7 @@ fun SegmentBar(
     // drawWithCache (keyed on segments + the implicit size); the draw lambda replays the segment list.
     // ONE collapsed semantics node so the a11y delegate doesn't walk each segment. The segments are a
     // caller-supplied colour breakdown with no inherent label, so the summary is just the segment count.
-    val axSummary = if (segments.isEmpty()) "Breakdown, no data" else "Breakdown, ${segments.size} segments"
+    val axSummary = if (segments.isEmpty()) "Breakdown, keine Daten" else "Breakdown, ${segments.size} segments"
     Box(modifier = modifier.fillMaxWidth().height(height).clearAndSetSemantics { contentDescription = axSummary }.drawWithCache {
         val w = size.width
         val h = size.height

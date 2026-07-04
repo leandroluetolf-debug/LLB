@@ -236,8 +236,8 @@ fun BodyClockCard(
         Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Overline("Body clock")
-                    Text("Light + sleep timing only", style = NoopType.footnote, color = Palette.textTertiary)
+                    Overline("Körper clock")
+                    Text("Hell + sleep timing only", style = NoopType.footnote, color = Palette.textTertiary)
                 }
                 StatePill(bodyClockConfidenceLabel(estimate.confidence), tone = bodyClockConfidenceTone(estimate.confidence))
             }
@@ -261,9 +261,9 @@ fun BodyClockCard(
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Overline("Plan · ${plan.estimatedDays}-day shift")
                     Text(
-                        "Day 1: bright light ${clockString(firstDay.brightLightStartHour)} - " +
-                            "${clockString(firstDay.brightLightEndHour)}, lights-out around " +
-                            "${clockString(firstDay.targetSleepHour)}.",
+                        "Day 1: bright light ${clockString(firstDay.brightHellStartHour)} - " +
+                            "${clockString(firstDay.brightHellEndHour)}, lights-out around " +
+                            "${clockString(firstDay.targetSchlafHour)}.",
                         style = NoopType.subhead,
                         color = Palette.textSecondary,
                     )
@@ -402,7 +402,7 @@ private fun cycleDayText(r: CyclePhaseEngine.Result): String? {
 private fun cycleConfidenceLabel(c: CyclePhaseEngine.Confidence): String = when (c) {
     CyclePhaseEngine.Confidence.LEARNING -> "Learning"
     CyclePhaseEngine.Confidence.BUILDING -> "Building"
-    CyclePhaseEngine.Confidence.SOLID -> "Solid"
+    CyclePhaseEngine.Confidence.SOLID -> "Stabil"
 }
 
 private fun cycleConfidenceTone(c: CyclePhaseEngine.Confidence): StrandTone = when (c) {
@@ -411,19 +411,19 @@ private fun cycleConfidenceTone(c: CyclePhaseEngine.Confidence): StrandTone = wh
     CyclePhaseEngine.Confidence.SOLID -> StrandTone.Accent
 }
 
-/** "About 25 min later than your schedule" — a plain, skimmable headline. */
+/** "Über 25 min later than your schedule" — a plain, skimmable headline. */
 private fun bodyClockOffsetTitle(e: CircadianEngine.PhaseEstimate): String {
     if (e.confidence == CircadianEngine.PhaseConfidence.UNREADABLE) return "Hard to read right now"
     val mins = abs(e.offsetVsScheduleMinutes).roundToInt()
-    if (mins <= 20) return "About in sync with your schedule"
+    if (mins <= 20) return "Über in sync with your schedule"
     val dir = if (e.offsetVsScheduleMinutes > 0) "later" else "earlier"
-    return "About $mins min $dir than your schedule"
+    return "Über $mins min $dir than your schedule"
 }
 
 private fun bodyClockConfidenceLabel(c: CircadianEngine.PhaseConfidence): String = when (c) {
-    CircadianEngine.PhaseConfidence.UNREADABLE -> "Calibrating"
+    CircadianEngine.PhaseConfidence.UNREADABLE -> "Kalibriert"
     CircadianEngine.PhaseConfidence.WIDE -> "Building"
-    CircadianEngine.PhaseConfidence.SOLID -> "Solid"
+    CircadianEngine.PhaseConfidence.SOLID -> "Stabil"
 }
 
 private fun bodyClockConfidenceTone(c: CircadianEngine.PhaseConfidence): StrandTone = when (c) {

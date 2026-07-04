@@ -8,7 +8,7 @@ struct IntelligenceView: View {
     @EnvironmentObject var intelligence: IntelligenceEngine
     // NOTE: IntelligenceView deliberately does NOT observe `LiveState`. A connected strap publishes at
     // ~1 Hz, which would re-evaluate this body (and its lazy By-Day list) on every tick. The only live
-    // dependency — the "Syncing strap history…" note shown over the empty state — owns its OWN
+    // dependency — the "Band-Verlauf wird synchronisiert…" note shown over the empty state — owns its OWN
     // `@EnvironmentObject var live` in the `IntelSyncingNote` leaf below (mirrors the Today/Sleep
     // leaf-scoping pattern), so a tick refreshes only that note.
 
@@ -22,7 +22,7 @@ struct IntelligenceView: View {
         // `lazy` so the trailing By-Day `ForEach` renders day cards on demand. With an 800+ day
         // imported history, an eager VStack built every card up-front on the main thread and froze
         // the app when ALL was tapped (#345); LazyVStack only materialises what's on screen.
-        ScreenScaffold(title: "Intelligence",
+        ScreenScaffold(title: "Intelligenz",
                        subtitle: "LLB scores your charge, effort and rest itself: on-device, no cloud.",
                        lazy: true,
                        // Liquid finish: the same full-bleed day-of-sky backdrop Today + the other liquid
@@ -55,7 +55,7 @@ struct IntelligenceView: View {
                 IntelSyncingNote()
                 DataPendingNote(
                     title: "Building from your strap",
-                    message: "This builds from the strap as it syncs. Effort and rest appear after you have worn it and slept a night. Charge needs about four nights of sleep to learn your baseline (you'll see \"Calibrating\" until then), and keeps sharpening over your first couple of weeks. On a WHOOP 5 or MG the strap banks little history, so the night count can climb slowly or sit at 0 of 4 until you have worn it across a few nights. That's its sync limit, not a fault. Import your WHOOP export to skip the wait.",
+                    message: "This builds from the strap as it syncs. Effort and rest appear after you have worn it and slept a night. Charge needs about four nights of sleep to learn your baseline (you'll see \"Kalibriert\" until then), and keeps sharpening over your first couple of weeks. On a WHOOP 5 or MG the strap banks little history, so the night count can climb slowly or sit at 0 of 4 until you have worn it across a few nights. That's its sync limit, not a fault. Importieren your WHOOP export to skip the wait.",
                     symbol: "brain.head.profile"
                 )
             } else {
@@ -168,7 +168,7 @@ struct IntelligenceView: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Tomorrow's Charge estimate \(Int(f.charge.rounded())) plus or minus \(Int(f.band.rounded()))")
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("You'll likely wake around \(Int(f.charge.rounded())) ± \(Int(f.band.rounded())) Charge if you sleep about \(sleepHoursLabel(f.plannedSleepHours)) tonight.")
+                        Text("You'll likely wake around \(Int(f.charge.rounded())) ± \(Int(f.band.rounded())) Charge if you sleep about \(sleepHoursLabel(f.plannedSchlafHours)) tonight.")
                             .font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -204,8 +204,8 @@ struct IntelligenceView: View {
                 // The Charge model made concrete — the five weighted inputs, each its own metric accent.
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                     Text("Charge model").strandOverline()
-                    weightRow(String(localized: "Heart-rate variability"), "~55%", fraction: 0.55, color: StrandPalette.metricPurple)
-                    weightRow(String(localized: "Resting heart rate"), "~20%", fraction: 0.20, color: StrandPalette.metricRose)
+                    weightRow(String(localized: "Herzfrequenzvariabilität"), "~55%", fraction: 0.55, color: StrandPalette.metricPurple)
+                    weightRow(String(localized: "Ruhepuls"), "~20%", fraction: 0.20, color: StrandPalette.metricRose)
                     weightRow(String(localized: "Rest quality"), "~15%", fraction: 0.15, color: StrandPalette.metricCyan)
                     weightRow(String(localized: "Respiration"), "~5%", fraction: 0.05, color: StrandPalette.accent)
                     weightRow(String(localized: "Skin-temperature deviation"), "~5%", fraction: 0.05, color: StrandPalette.metricAmber)
@@ -263,8 +263,8 @@ struct IntelligenceView: View {
                     }
                     // The REAL source of the day's dashboard headline, not a hard-coded "LLB-computed".
                     // The By-Day numbers are always LLB's on-device scores, but when an import covers the
-                    // day it WINS the dashboard merge, so the badge says so ("Whoop" / "Apple Health") and
-                    // a strap-scored night reads "On-device". Dynamic String → wrap in "\()" so it's shown
+                    // day it WINS the dashboard merge, so the badge says so ("Whoop" / "Apple Gesundheit") and
+                    // a strap-scored night reads "Auf dem Gerät". Dynamic String → wrap in "\()" so it's shown
                     // verbatim, not looked up as a LocalizedStringKey (the String≠LocalizedStringKey
                     // SwiftUI footgun). Imported rows use the accent tint to stand out from computed ones.
                     SourceBadge("\(d.source.badge)",
@@ -288,7 +288,7 @@ struct IntelligenceView: View {
                                height: 8, animated: false)
                         .accessibilityHidden(true)
                 }
-                // A1: "What shaped it" , one row per engine-supplied Charge driver. Gated on a non-empty
+                // A1: "Was es geprägt hat" , one row per engine-supplied Charge driver. Gated on a non-empty
                 // list so a cold-start / calibrating night (no real contributions to attribute) shows
                 // nothing here rather than a fake breakdown. A5's relative skin-temp marker rides at the
                 // foot when the night carries one.
@@ -312,7 +312,7 @@ struct IntelligenceView: View {
 
 }
 
-/// The "Syncing strap history…" note, shown only while a historical offload is running (#77). Owns the
+/// The "Band-Verlauf wird synchronisiert…" note, shown only while a historical offload is running (#77). Owns the
 /// `LiveState` observation in its own leaf (scroll-stutter isolation) so the chunk count ticks without
 /// re-rendering IntelligenceView. Renders byte-for-byte what the prior inline `live.backfilling` check did.
 private struct IntelSyncingNote: View {

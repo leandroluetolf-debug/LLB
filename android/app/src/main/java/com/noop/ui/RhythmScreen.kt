@@ -46,7 +46,7 @@ import com.noop.analytics.RhythmScreener
 import kotlin.math.min
 
 /*
- * RhythmScreen.kt — EXPERIMENTAL beat-to-beat regularity VISUALIZATION (v5 "Rhythm").
+ * RhythmScreen.kt — EXPERIMENTAL beat-to-beat regularity VISUALIZATION (v5 "Rhythmus").
  *
  * Faithful Compose twin of Strand/Screens/RhythmView.swift.
  * Spec: docs/superpowers/specs/2026-06-19-v5-rhythm-screening-design.md (§6, §9, §11).
@@ -105,7 +105,7 @@ object RhythmConsent {
     /** The points the user must read before turning the feature on (spec §9). No condition
      *  name, no diagnosis, no "consider a clinician" verdict. Kept identical to macOS. */
     val points: List<Pair<String, String>> = listOf(
-        "Experimental, and not a medical device" to
+        "Experimentell, and not a medical device" to
             "This is an experimental wellness visualization of your beat-to-beat timing. It is NOT an ECG, and it cannot diagnose, detect, or rule out any heart condition.",
         "It is a picture, not a verdict" to
             "It shows the shape of your heartbeat timing and a plain-language description of how steady it looked. It does not tell you whether anything is right or wrong.",
@@ -135,7 +135,7 @@ fun RhythmConsentGate(
     Surface(modifier = Modifier.fillMaxSize(), color = Palette.surfaceBase) {
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
             Spacer(Modifier.height(40.dp))
-            Text("Before you turn on Rhythm", style = NoopType.title1, color = Palette.textPrimary)
+            Text("Before you turn on Rhythmus", style = NoopType.title1, color = Palette.textPrimary)
             Spacer(Modifier.height(4.dp))
             Text(
                 "An experimental picture of your beat-to-beat timing. Please read these first.",
@@ -183,7 +183,7 @@ fun RhythmConsentGate(
                     contentColor = Palette.goldDeepText,
                 ),
             ) {
-                Text("Turn on Rhythm", style = NoopType.body)
+                Text("Turn on Rhythmus", style = NoopType.body)
             }
             if (onCancel != null) {
                 TextButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
@@ -246,25 +246,25 @@ private fun RhythmVisualization(
     // only on-screen cards compose + are accessibility-walked, with the LazyColumn's `spacedBy(20.dp)`
     // reproducing the eager column's inter-card spacing exactly. The Poincaré PlotCard is the heavy one.
     LazyScreenScaffold(
-        title = "Rhythm",
+        title = "Rhythmus",
         subtitle = "An experimental picture of your beat-to-beat timing",
         trailing = if (onClose != null) {
             {
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Filled.Close, contentDescription = "Close Rhythm", tint = Palette.textTertiary)
+                    Icon(Icons.Filled.Close, contentDescription = "Schließen Rhythmus", tint = Palette.textTertiary)
                 }
             }
         } else {
             null
         },
     ) {
-        item { SourceBadge("Experimental", tint = Palette.restColor) }
+        item { SourceBadge("Experimentell", tint = Palette.restColor) }
 
         if (allPoints.isEmpty()) {
             item {
             DataPendingNote(
                 title = "No clear reading yet",
-                body = "Rhythm only looks during quiet, still, resting windows, so it needs a calm night's worth of steady beats. Once there's a clean window, the scatter and its description show here.",
+                body = "Rhythmus only looks during quiet, still, resting windows, so it needs a calm night's worth of steady beats. Once there's a clean window, the scatter and its description show here.",
             )
             }
         } else {
@@ -289,7 +289,7 @@ private fun SummaryCard(
     NoopCard(padding = 18.dp, tint = Palette.restColor) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Overline("Last night", modifier = Modifier.weight(1f))
+                Overline("Letzte Nacht", modifier = Modifier.weight(1f))
                 ConfidencePill(headline = headline, readable = night?.readableWindows)
             }
             Text(headlineLabel(label), style = NoopType.title2, color = Palette.textPrimary)
@@ -306,14 +306,14 @@ private fun SummaryCard(
 private fun ConfidencePill(headline: RhythmScreener.WindowResult?, readable: Int?) {
     when (headline?.confidence ?: RhythmConfidence.CALIBRATING) {
         RhythmConfidence.SOLID ->
-            StatePill("Solid", tone = StrandTone.Accent)
+            StatePill("Stabil", tone = StrandTone.Accent)
         RhythmConfidence.BUILDING ->
             StatePill(
                 if ((readable ?: 0) <= 1) "Building · 1 window" else "Building",
                 tone = StrandTone.Warning,
             )
         RhythmConfidence.CALIBRATING ->
-            StatePill("Calibrating", tone = StrandTone.Neutral)
+            StatePill("Kalibriert", tone = StrandTone.Neutral)
     }
 }
 
@@ -481,7 +481,7 @@ private fun RhythmDisclaimerNote() {
                 modifier = Modifier.size(18.dp),
             )
             Text(
-                "Experimental wellness visualization: not a diagnosis, not an ECG, and not a medical device. It cannot detect any heart condition. Beat-to-beat variation has many ordinary, benign causes. If you feel unwell or are worried, contact a qualified professional; in an emergency, your local emergency service. Everything is computed on your device.",
+                "Experimentell wellness visualization: not a diagnosis, not an ECG, and not a medical device. It cannot detect any heart condition. Beat-to-beat variation has many ordinary, benign causes. If you feel unwell or are worried, contact a qualified professional; in an emergency, your local emergency service. Everything is computed on your device.",
                 style = NoopType.footnote, color = Palette.textTertiary,
             )
         }

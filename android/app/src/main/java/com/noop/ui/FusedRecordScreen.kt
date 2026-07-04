@@ -45,7 +45,7 @@ import com.noop.analytics.MetricArbitrationPolicy
 import java.text.NumberFormat
 import kotlin.math.roundToInt
 
-// MARK: - FusedRecordScreen — "Your Data, Fused" (v5 — Local Multi-Device Fusion)
+// MARK: - FusedRecordScreen — "Deine Daten, vereint" (v5 — Local Multi-Device Fusion)
 //
 // Value-for-value Compose twin of Strand/Screens/FusedRecordView.swift
 // (docs/superpowers/specs/2026-06-19-v5-local-multi-device-fusion-design.md §UX). For each core metric
@@ -94,7 +94,7 @@ data class FusedRecord(
 @Composable
 fun FusedRecordScreen(
     record: FusedRecord,
-    dayLabel: String = "Today",
+    dayLabel: String = "Heute",
     modifier: Modifier = Modifier,
 ) {
     // The metric currently open in the conflict-compare dialog (null = closed).
@@ -109,13 +109,13 @@ fun FusedRecordScreen(
         "$dayLabel · your record, on $deviceNoun."
     }
 
-    ScreenScaffold(title = "Your Data, Fused", subtitle = subtitle, modifier = modifier) {
+    ScreenScaffold(title = "Deine Daten, vereint", subtitle = subtitle, modifier = modifier) {
         if (isMultiSource) DayBadgeRow(record.dayOwner)
 
         if (record.rows.isEmpty()) {
             DataPendingNote(
                 title = "Nothing to fuse yet",
-                body = "Import a WHOOP export, Health Connect or a second band and your best-sourced record builds here, on this device.",
+                body = "Importieren a WHOOP export, Gesundheit Connect or a second band and your best-sourced record builds here, on this device.",
             )
         } else {
             NoopCard(padding = 0.dp) {
@@ -146,13 +146,13 @@ fun FusedRecordScreen(
     }
 }
 
-/** "Today's scores owned by WHOOP" — the scores' single-owner, made honest. */
+/** "Heute's scores owned by WHOOP" — the scores' single-owner, made honest. */
 @Composable
 private fun DayBadgeRow(owner: FusionSource?) {
     val text = if (owner != null) {
-        "Today's scores owned by ${owner.displayName}"
+        "Heute's scores owned by ${owner.displayName}"
     } else {
-        "Scores still calibrating, no single day-owner yet"
+        "Scores still kalibriert, no single day-owner yet"
     }
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -228,7 +228,7 @@ private fun FusedMetricRow(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClickLabel = "Compare sources",
+                onClickLabel = "Vergleichen sources",
             ) { onCompare() }
     } else {
         Modifier.fillMaxWidth()
@@ -397,7 +397,7 @@ private fun ConflictCompareDialog(row: FusedRow, onDismiss: () -> Unit) {
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Done", style = NoopType.headline, color = Palette.accent)
+                        Text("Fertig", style = NoopType.headline, color = Palette.accent)
                     }
                 }
             }

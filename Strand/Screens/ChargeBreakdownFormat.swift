@@ -4,7 +4,7 @@ import StrandAnalytics
 
 // MARK: - Charge breakdown presentation (pure, testable)
 //
-// LANE 2 (iOS UI) presentation helpers for the "What shaped it" Charge breakdown, the score-
+// LANE 2 (iOS UI) presentation helpers for the "Was es geprägt hat" Charge breakdown, the score-
 // confidence tier chip, the calibrating countdown copy and the relative skin-temp label. Every
 // helper here is PURE (no SwiftUI state, no I/O) so the chip formatter and countdown copy are
 // unit-tested directly; the views below consume them. They are presentation only: nothing here
@@ -122,10 +122,10 @@ enum ChargeBreakdownFormat {
         String(localized: "more overnight wear to unlock your \(scoreName) baseline")
     }
 
-    /// "Calibrating, 1 of 4 nights" progress label for the countdown card header. `banked` is the
+    /// "Kalibriert, 1 of 4 nights" progress label for the countdown card header. `banked` is the
     /// nights gathered so far, `seed` the gate (`Baselines.minNightsSeed`). Pure + unit-tested.
     static func calibrationProgress(banked: Int, seed: Int) -> String {
-        String(localized: "Calibrating, \(max(0, banked)) of \(seed) nights")
+        String(localized: "Kalibriert, \(max(0, banked)) of \(seed) nights")
     }
 
     // MARK: - Relative skin-temp label (A5)
@@ -182,16 +182,16 @@ struct ConfidenceTierChip: View {
 
     private var accessibility: String {
         switch confidence {
-        case .calibrating: return String(localized: "Confidence: calibrating")
+        case .calibrating: return String(localized: "Confidence: kalibriert")
         case .building:    return String(localized: "Confidence: estimate")
         case .solid:       return String(localized: "Confidence: reliable")
         }
     }
 }
 
-// MARK: - A1: "What shaped it" Charge breakdown
+// MARK: - A1: "Was es geprägt hat" Charge breakdown
 
-/// The "What shaped it" breakdown rendered under the Charge ring: a header carrying the confidence
+/// The "Was es geprägt hat" breakdown rendered under the Charge ring: a header carrying the confidence
 /// tier chip, then one row per engine-supplied `ChargeDriver` (biggest mover first), and the A5
 /// relative skin-temp marker at the foot when present. Every value is surfaced verbatim from the
 /// engine; nothing here recomputes a score, a delta or a tier. The caller GATES on a non-empty driver
@@ -205,7 +205,7 @@ struct ChargeBreakdownSection: View {
         VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
             Divider().overlay(StrandPalette.hairline)
             HStack(alignment: .firstTextBaseline) {
-                Text("What shaped it").strandOverline()
+                Text("Was es geprägt hat").strandOverline()
                 Spacer()
                 ConfidenceTierChip(confidence: confidence)
             }
@@ -279,7 +279,7 @@ struct ChargeDriverRow: View {
     }
 }
 
-/// A5 , the relative skin-temp deviation row: "Skin temperature · +0.3 C vs your normal" with a REL.
+/// A5 , the relative skin-temp deviation row: "Hauttemperatur · +0.3 C vs your normal" with a REL.
 /// tag pill (the relative tier is reliable presentation, never a clinical absolute). Tinted amber to
 /// match the skin-temp accent used in the Charge model explainer.
 struct SkinTempDeviationRow: View {
@@ -296,7 +296,7 @@ struct SkinTempDeviationRow: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
-                    Text("Skin temperature")
+                    Text("Hauttemperatur")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Text(deviationText)
@@ -312,7 +312,7 @@ struct SkinTempDeviationRow: View {
             ConfidenceTierChip(confidence: .solid)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Skin temperature \(deviationText). \(tierWord). Reliable.")
+        .accessibilityLabel("Hauttemperatur \(deviationText). \(tierWord). Reliable.")
     }
 }
 
@@ -328,13 +328,13 @@ struct SkinTempDeviationRow: View {
             NoopCard(padding: 18, tint: StrandPalette.chargeColor) {
                 ChargeBreakdownSection(
                     drivers: [
-                        ChargeDriver(label: "Heart rate variability", deltaPoints: 7,
+                        ChargeDriver(label: "Herzfrequenzvariabilität", deltaPoints: 7,
                                      valueText: "72 ms", baselineText: "64 ms baseline",
                                      verdict: "above baseline, supporting recovery"),
-                        ChargeDriver(label: "Resting heart rate", deltaPoints: -4,
+                        ChargeDriver(label: "Ruhepuls", deltaPoints: -4,
                                      valueText: "60 bpm", baselineText: "56 bpm baseline",
                                      verdict: "above baseline, limiting recovery"),
-                        ChargeDriver(label: "Sleep quality", deltaPoints: 2,
+                        ChargeDriver(label: "Schlaf quality", deltaPoints: 2,
                                      valueText: "88%", baselineText: "",
                                      verdict: "a strong night, supporting recovery"),
                     ],
@@ -348,7 +348,7 @@ struct SkinTempDeviationRow: View {
     .preferredColorScheme(.dark)
 }
 
-/// DEBUG-only screenshot host for `--demo-screen chargebreakdown`: renders the "What shaped it" Charge
+/// DEBUG-only screenshot host for `--demo-screen chargebreakdown`: renders the "Was es geprägt hat" Charge
 /// breakdown populated with deterministic demo drivers, exactly as it appears when the Today Charge ring is
 /// tapped (confidence/tier chip in the header, signed point rows, the relative skin-temp marker). Stripped
 /// from Release.
@@ -360,19 +360,19 @@ struct ChargeBreakdownDemoHost: View {
                     NoopCard(padding: 18, tint: StrandPalette.chargeColor) {
                         ChargeBreakdownSection(
                             drivers: [
-                                ChargeDriver(label: "Heart rate variability", deltaPoints: 9,
+                                ChargeDriver(label: "Herzfrequenzvariabilität", deltaPoints: 9,
                                              valueText: "78 ms", baselineText: "62 ms baseline",
                                              verdict: "above baseline, supporting recovery"),
-                                ChargeDriver(label: "Resting heart rate", deltaPoints: 4,
+                                ChargeDriver(label: "Ruhepuls", deltaPoints: 4,
                                              valueText: "53 bpm", baselineText: "58 bpm baseline",
                                              verdict: "below baseline, supporting recovery"),
-                                ChargeDriver(label: "Sleep quality", deltaPoints: 2,
+                                ChargeDriver(label: "Schlaf quality", deltaPoints: 2,
                                              valueText: "91%", baselineText: "",
                                              verdict: "a strong night, supporting recovery"),
-                                ChargeDriver(label: "Respiratory rate", deltaPoints: 1,
+                                ChargeDriver(label: "Atemfrequenz", deltaPoints: 1,
                                              valueText: "14.2 br/min", baselineText: "15.0 br/min baseline",
                                              verdict: "below baseline, supporting recovery"),
-                                ChargeDriver(label: "Skin temperature", deltaPoints: -1,
+                                ChargeDriver(label: "Hauttemperatur", deltaPoints: -1,
                                              valueText: "+0.4 C vs baseline", baselineText: "",
                                              verdict: "warmer than baseline, limiting recovery"),
                             ],

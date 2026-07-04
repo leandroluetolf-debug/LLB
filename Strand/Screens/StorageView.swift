@@ -1,7 +1,7 @@
 import SwiftUI
 import StrandDesign
 
-/// #590 — on-device storage diagnostics. iOS users saw "Documents & Data" balloon to ~19 GB after an
+/// #590 — on-device storage diagnostics. iOS users saw "Documents & Daten" balloon to ~19 GB after an
 /// Apple Health import: the document picker's `asCopy:true` duplicate sat in `Documents/Inbox/` forever
 /// and the WAL never truncated. AppModel now reclaims both automatically (Inbox cleanup on import +
 /// launch, WAL truncate after each import); this screen makes the footprint VISIBLE and gives a manual
@@ -44,12 +44,12 @@ struct StorageView: View {
     private func breakdownCard(_ r: AppModel.StorageReport) -> some View {
         StrandCard {
             VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
-                Text("On-device footprint")
+                Text("Auf dem Gerät footprint")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
 
                 row(icon: "cylinder.split.1x2",
-                    label: "Health database",
+                    label: "Gesundheit database",
                     bytes: r.db,
                     tint: StrandPalette.accent)
                 Divider().overlay(StrandPalette.hairline)
@@ -60,7 +60,7 @@ struct StorageView: View {
                     note: r.inbox > 0 ? "Reclaimable" : nil)
                 Divider().overlay(StrandPalette.hairline)
                 row(icon: "clock.arrow.circlepath",
-                    label: "Import temp files",
+                    label: "Importieren temp files",
                     bytes: r.importTemp,
                     tint: r.importTemp > 0 ? StrandPalette.statusWarning : StrandPalette.textTertiary,
                     note: r.importTemp > 0 ? "Reclaimable" : nil)
@@ -106,7 +106,7 @@ struct StorageView: View {
     private var explainerCard: some View {
         DataPendingNote(
             title: "Why does this grow?",
-            message: "When you import an Apple Health or WHOOP export, iOS hands LLB a private copy of the file. LLB reads it, saves your data into the health database, then deletes the copy. Older builds didn't delete every copy. This screen reclaims any that were left behind.",
+            message: "When you import an Apple Gesundheit or WHOOP export, iOS hands LLB a private copy of the file. LLB reads it, saves your data into the health database, then deletes the copy. Older builds didn't delete every copy. This screen reclaims any that were left behind.",
             symbol: "questionmark.circle")
     }
 
@@ -158,7 +158,7 @@ struct StorageView: View {
         cleaning = false
     }
 
-    /// Human byte size, decimal (matches iOS Settings' "Documents & Data" presentation).
+    /// Human byte size, decimal (matches iOS Settings' "Documents & Daten" presentation).
     static func format(_ bytes: Int64) -> String {
         let f = ByteCountFormatter()
         f.countStyle = .file

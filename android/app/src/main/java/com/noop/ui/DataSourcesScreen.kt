@@ -157,7 +157,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
     // Whole-store backup: export to a user-created document; import from a picked one.
     var busy by remember { mutableStateOf(false) }
     var restartNeeded by remember { mutableStateOf(false) }
-    // ah-delete (#616): drives the "Remove Apple Health imported data" confirm dialog.
+    // ah-delete (#616): drives the "Entfernen Apple Gesundheit imported data" confirm dialog.
     var confirmDeleteApple by remember { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(
@@ -188,7 +188,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                     restartNeeded = true
                     Toast.makeText(
                         context,
-                        "Imported. Fully close and reopen Strand to load it.",
+                        "Importiereniert. Fully close and reopen Strand to load it.",
                         Toast.LENGTH_LONG,
                     ).show()
                 }
@@ -223,19 +223,19 @@ fun DataSourcesScreen(vm: AppViewModel) {
         busy = true
         scope.launch {
             val summary = withContext(Dispatchers.IO) {
-                runCatching { block() }.getOrElse { ImportSummary.failure("Import", it.message ?: "failed") }
+                runCatching { block() }.getOrElse { ImportSummary.failure("Importieren", it.message ?: "failed") }
             }
             // Mirror the import into the SAME exported strap log the WHOOP path uses (issue #421 parity),
             // so a tester's file import is captured in a shared debug bundle. On success: brand label +
             // per-table COUNTS only (e.g. "dailyMetric=120, sleepSession=88"). On a zero-row/failed import:
             // the brand label + the human reason from the summary. Never a file name, a path, or any health
-            // value. Prefixed "Import: " so it's distinguishable from WHOOP / generic-HR lines. The Swift
+            // value. Prefixed "Importieren: " so it's distinguishable from WHOOP / generic-HR lines. The Swift
             // twin logs the same in DataSourcesView's import handlers.
             if (summary.totalRows > 0) {
                 val countsText = summary.counts.entries.joinToString(", ") { "${it.key}=${it.value}" }
-                vm.ble.externalLog("Import ${summary.source}: $countsText")
+                vm.ble.externalLog("Importieren ${summary.source}: $countsText")
             } else {
-                vm.ble.externalLog("Import ${summary.source} failed: ${summary.message}")
+                vm.ble.externalLog("Importieren ${summary.source} failed: ${summary.message}")
             }
             // Import & Data Ingest test mode (Test Centre): emit the parser / per-stage / day-delta trace,
             // tagged IMPORT, iff the mode is on. Gated zero-cost when off (one SharedPreferences bool read).
@@ -296,7 +296,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
         if (granted.any { it in HealthConnectImporter.PERMISSIONS }) {
             runImport { HealthConnectImporter.import(context, vm.repo, ProfileStore.from(context).heightCm) }
         } else {
-            Toast.makeText(context, "Health Connect access not granted.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Gesundheit Connect access not granted.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -304,7 +304,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
         HealthConnectImporter.sdkStatus(context) == HealthConnectClient.SDK_AVAILABLE
     }
 
-    // "Broadcast heart rate": flip the toggle on only AFTER the BLUETOOTH_ADVERTISE (+ CONNECT) runtime
+    // "Herzfrequenz senden": flip the toggle on only AFTER the BLUETOOTH_ADVERTISE (+ CONNECT) runtime
     // permission is granted on Android 12+ — otherwise advertising silently no-ops. On grant (or pre-12,
     // where it's install-time) the VM starts the HR peripheral.
     val requestAdvertise = rememberRequestAdvertise(onGranted = { vm.setHrBroadcast(true) })
@@ -332,7 +332,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
             vm.writebackHealthConnectNow()
         } else {
             vm.setHcWriteback(false)
-            Toast.makeText(context, "Health Connect write access not granted.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Gesundheit Connect write access not granted.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -362,7 +362,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
     // cards now compose + get accessibility-walked on scroll — this list of 11 source cards is long. The
     // confirm dialogs below the scaffold are untouched.
     LazyScreenScaffold(
-        title = "Data Sources",
+        title = "Datenquellen",
         subtitle = "Everything stays on this phone. Bring your history in once, then it's yours.",
     ) {
         // --- WHOOP data (cached history) ---
@@ -370,8 +370,8 @@ fun DataSourcesScreen(vm: AppViewModel) {
         SourceCard(
             title = "WHOOP History",
             icon = Icons.Filled.MonitorHeart,
-            subtitle = "Recovery, strain, sleep and workouts, stored locally. Import a full " +
-                "WHOOP data export (.zip) from app.whoop.com → Data Management and it " +
+            subtitle = "Erholung, strain, sleep and workouts, stored locally. Importieren a full " +
+                "WHOOP data export (.zip) from app.whoop.com → Daten Management and it " +
                 "backfills your whole history in about a minute. Working now on Android.",
         ) {
             StatePill(
@@ -384,7 +384,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = whoopWorkouts?.let { "$it workouts stored" } ?: "Counting…",
             )
             BackupButton(
-                label = "Import WHOOP export (.zip)",
+                label = "Importieren WHOOP export (.zip)",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -395,16 +395,16 @@ fun DataSourcesScreen(vm: AppViewModel) {
         // --- Apple Health ---
         item {
         SourceCard(
-            title = "Apple Health",
+            title = "Apple Gesundheit",
             icon = Icons.Filled.FavoriteBorder,
             tint = Palette.metricCyan,
-            subtitle = "Import HR, HRV, sleep, SpO₂ and steps from an Apple Health export. On " +
-                "an iPhone: Health app → tap your photo → Export All Health Data, then " +
+            subtitle = "Importieren HR, HRV, sleep, SpO₂ and steps from an Apple Gesundheit export. On " +
+                "an iPhone: Gesundheit app → tap your photo → Exportieren All Gesundheit Daten, then " +
                 "import the .zip here. Working now on Android.",
         ) {
             val hasApple = (appleDays ?: 0) > 0 || (appleWorkouts ?: 0) > 0
             StatePill(
-                title = if (hasApple) "Imported" else "Nothing imported",
+                title = if (hasApple) "Importiereniert" else "Nichts importiert",
                 tone = if (hasApple) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -413,18 +413,18 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = appleWorkouts?.let { "$it workouts" } ?: "Counting…",
             )
             BackupButton(
-                label = "Import Apple Health export…",
+                label = "Importieren Apple Gesundheit export…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 tint = Palette.metricCyan,
                 modifier = Modifier.fillMaxWidth(),
             ) { appleImportLauncher.launch(arrayOf("*/*")) }
-            // ah-delete (#616): a destructive "Remove imported data" action wired to
+            // ah-delete (#616): a destructive "Entfernen imported data" action wired to
             // DeviceRegistry.deleteDeviceData("apple-health") (via vm.deletePairedDeviceData), mirroring
             // the Swift card. Shown only once there's something to remove; a confirm dialog gates it.
             if (hasApple) {
                 BackupButton(
-                    label = "Remove imported data",
+                    label = "Entfernen imported data",
                     icon = Icons.Filled.DeleteOutline,
                     enabled = !busy,
                     tint = Palette.statusCritical,
@@ -437,15 +437,15 @@ fun DataSourcesScreen(vm: AppViewModel) {
         // --- Health Connect (native Android health data) ---
         item {
         SourceCard(
-            title = "Health Connect",
+            title = "Gesundheit Connect",
             icon = Icons.Filled.MonitorHeart,
             subtitle = "Pull steps, heart rate, HRV, sleep, SpO₂, weight and workouts straight from " +
-                "Android's Health Connect. No file needed. On-device; it never overwrites richer " +
+                "Android's Gesundheit Connect. No file needed. Auf dem Gerät; it never overwrites richer " +
                 "WHOOP data, and writes nothing unless you opt in to sharing back below.",
         ) {
             val hasHc = (hcDays ?: 0) > 0 || (hcWorkouts ?: 0) > 0
             if (hasHc) {
-                StatePill(title = "Imported", tone = StrandTone.Accent, showsDot = true)
+                StatePill(title = "Importiereniert", tone = StrandTone.Accent, showsDot = true)
                 CountLine(
                     primary = hcDays?.let { "$it days" } ?: "—",
                     secondary = hcWorkouts?.let { "$it workouts" } ?: "Counting…",
@@ -453,7 +453,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
             }
             if (healthConnectAvailable) {
                 BackupButton(
-                    label = "Import from Health Connect",
+                    label = "Importieren from Gesundheit Connect",
                     icon = Icons.Filled.FileUpload,
                     enabled = !busy,
                     modifier = Modifier.fillMaxWidth(),
@@ -470,7 +470,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Auto-sync periodically", style = NoopType.subhead, color = Palette.textPrimary)
                         Text(
-                            "Re-pull new Health Connect data (e.g. Samsung Health → Health Connect) each " +
+                            "Re-pull new Gesundheit Connect data (e.g. Samsung Gesundheit → Gesundheit Connect) each " +
                                 "time you open LLB, if it's been longer than the interval below. " +
                                 "Read-only; never overwrites strap data.",
                             style = NoopType.footnote,
@@ -492,7 +492,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                             uncheckedBorderColor = Palette.hairline,
                         ),
                         modifier = Modifier.semantics {
-                            contentDescription = "Auto-sync Health Connect periodically"
+                            contentDescription = "Auto-sync Gesundheit Connect periodically"
                         },
                     )
                 }
@@ -525,12 +525,12 @@ fun DataSourcesScreen(vm: AppViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Share back to Health Connect", style = NoopType.subhead, color = Palette.textPrimary)
+                        Text("Share back to Gesundheit Connect", style = NoopType.subhead, color = Palette.textPrimary)
                         Text(
                             "Write the metrics LLB computes from your strap (resting HR, HRV, SpO₂, " +
                                 "respiratory rate, heart rate, steps, active energy and sleep) into " +
-                                "Health Connect so other apps can use them. Only LLB's own values are " +
-                                "shared. Imported data is never echoed back.",
+                                "Gesundheit Connect so other apps can use them. Only LLB's own values are " +
+                                "shared. Importiereniert data is never echoed back.",
                             style = NoopType.footnote,
                             color = Palette.textTertiary,
                         )
@@ -550,12 +550,12 @@ fun DataSourcesScreen(vm: AppViewModel) {
                             uncheckedBorderColor = Palette.hairline,
                         ),
                         modifier = Modifier.semantics {
-                            contentDescription = "Share computed metrics back to Health Connect"
+                            contentDescription = "Share computed metrics back to Gesundheit Connect"
                         },
                     )
                 }
             } else {
-                RoadmapNote("Health Connect isn't set up on this device. Install it from Google Play, then return here to import.")
+                RoadmapNote("Gesundheit Connect isn't set up on this device. Install it from Google Play, then return here to import.")
             }
         }
         }
@@ -563,16 +563,16 @@ fun DataSourcesScreen(vm: AppViewModel) {
         // --- Nutrition CSV (calories / macros / body weight) ---
         item {
         SourceCard(
-            title = "Nutrition (CSV)",
+            title = "Ernährung (CSV)",
             icon = Icons.Filled.Restaurant,
             tint = Palette.metricAmber,
-            subtitle = "Import daily calories, protein, carbs, fat and body weight from a " +
+            subtitle = "Importieren daily calories, protein, carbs, fat and body weight from a " +
                 "nutrition CSV: a MyFitnessPal or Cronometer export, or any spreadsheet " +
                 "with a date column plus those values. Meal-level rows are summed per day.",
         ) {
             val hasNutrition = (nutritionDays ?: 0) > 0 || (nutritionWeighIns ?: 0) > 0
             StatePill(
-                title = if (hasNutrition) "Imported" else "Nothing imported",
+                title = if (hasNutrition) "Importiereniert" else "Nichts importiert",
                 tone = if (hasNutrition) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -581,7 +581,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = nutritionWeighIns?.let { "$it weigh-ins" } ?: "Counting…",
             )
             BackupButton(
-                label = "Import nutrition CSV…",
+                label = "Importieren nutrition CSV…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -595,14 +595,14 @@ fun DataSourcesScreen(vm: AppViewModel) {
             title = "Xiaomi Mi Band",
             icon = Icons.Filled.Watch,
             tint = Palette.metricPurple,
-            subtitle = "Import a Mi Band / Smart Band 8, 9 or 10's full history (steps, heart rate, " +
+            subtitle = "Importieren a Mi Band / Smart Band 8, 9 or 10's full history (steps, heart rate, " +
                 "resting HR, sleep stages, SpO₂, stress and sleep score) straight from the Mi Fitness " +
-                "app's on-device database. Fully offline; no Xiaomi account or Bluetooth. Export the Mi " +
+                "app's on-device database. Fully offline; no Xiaomi account or Bluetooth. Exportieren the Mi " +
                 "Fitness folder (or its .db / a .zip of it) from your phone and choose it here.",
         ) {
             val hasXiaomi = (xiaomiDays ?: 0) > 0
             StatePill(
-                title = if (hasXiaomi) "Imported" else "Nothing imported",
+                title = if (hasXiaomi) "Importiereniert" else "Nichts importiert",
                 tone = if (hasXiaomi) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -611,7 +611,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = if (xiaomiDays == null) "Counting…" else "Mi Band / Smart Band 8 · 9 · 10",
             )
             BackupButton(
-                label = "Import Mi Band export…",
+                label = "Importieren Mi Band export…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -625,14 +625,14 @@ fun DataSourcesScreen(vm: AppViewModel) {
             title = "Lifting log (Hevy / Liftosaur)",
             icon = Icons.Filled.FitnessCenter,
             tint = DomainTheme.Effort.color,
-            subtitle = "Import your strength-training history from a Hevy CSV export or a Liftosaur " +
+            subtitle = "Importieren your strength-training history from a Hevy CSV export or a Liftosaur " +
                 "JSON export. Each workout becomes a Strength session with a training-volume " +
                 "estimate (weight × reps). It's a volume figure, not a measured strain, so it never " +
                 "changes your Effort.",
         ) {
             val hasLifting = (liftingWorkouts ?: 0) > 0
             StatePill(
-                title = if (hasLifting) "Imported" else "Nothing imported",
+                title = if (hasLifting) "Importiereniert" else "Nichts importiert",
                 tone = if (hasLifting) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -641,7 +641,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = "volume load shown per session",
             )
             BackupButton(
-                label = "Import lifting log…",
+                label = "Importieren lifting log…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -655,13 +655,13 @@ fun DataSourcesScreen(vm: AppViewModel) {
             title = "Workout file (GPX / TCX / FIT)",
             icon = Icons.Filled.Map,
             tint = Palette.metricAmber,
-            subtitle = "Import a single exported workout file from any brand (Garmin, Coros, Suunto, " +
+            subtitle = "Importieren a single exported workout file from any brand (Garmin, Coros, Suunto, " +
                 "Wahoo, Polar, Strava, Apple) straight off your phone. GPS route, distance, heart rate " +
                 "and calories come in where the file has them. Fully offline; nothing leaves your phone.",
         ) {
             val hasFiles = (activityFiles ?: 0) > 0
             StatePill(
-                title = if (hasFiles) "Imported" else "Nothing imported",
+                title = if (hasFiles) "Importiereniert" else "Nichts importiert",
                 tone = if (hasFiles) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -670,7 +670,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = "GPX · TCX · FIT (one workout per file)",
             )
             BackupButton(
-                label = "Import workout file…",
+                label = "Importieren workout file…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -684,15 +684,15 @@ fun DataSourcesScreen(vm: AppViewModel) {
             title = "Oura / Fitbit / Garmin export",
             icon = Icons.Filled.Watch,
             tint = Palette.metricPurple,
-            subtitle = "Import your own data export from Oura, Fitbit or Garmin: sleep, resting heart " +
-                "rate, HRV, steps and more, where the export has them. Download it from the brand's app " +
-                "(Oura: Account → Export Data; Fitbit: Google Takeout; Garmin: Export Your Data), then " +
+            subtitle = "Importieren your own data export from Oura, Fitbit or Garmin: sleep, resting heart " +
+                "rate, HRV, steps and more, where the export has them. Herunterladen it from the brand's app " +
+                "(Oura: Account → Exportieren Daten; Fitbit: Google Takeout; Garmin: Exportieren Your Daten), then " +
                 "choose the file here. Fully offline; nothing leaves your phone. Each brand's own " +
                 "readiness or sleep score is kept for reference only. Your scores stay yours.",
         ) {
             val hasDays = (wearableDays ?: 0) > 0
             StatePill(
-                title = if (hasDays) "Imported" else "Nothing imported",
+                title = if (hasDays) "Importiereniert" else "Nichts importiert",
                 tone = if (hasDays) StrandTone.Accent else StrandTone.Neutral,
                 showsDot = true,
             )
@@ -701,7 +701,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 secondary = "Oura JSON · Fitbit Takeout · Garmin GDPR (daily metrics + sleep)",
             )
             BackupButton(
-                label = "Import wearable export…",
+                label = "Importieren wearable export…",
                 icon = Icons.Filled.FileUpload,
                 enabled = !busy,
                 modifier = Modifier.fillMaxWidth(),
@@ -712,7 +712,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
         // --- Broadcast heart rate (LLB as a standard BLE HR peripheral) ---
         item {
         SourceCard(
-            title = "Broadcast heart rate",
+            title = "Herzfrequenz senden",
             icon = Icons.Filled.MonitorHeart,
             tint = DomainTheme.Effort.color,
             subtitle = "Re-share your live strap heart rate over Bluetooth as a standard heart-rate " +
@@ -748,7 +748,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Broadcast heart rate", style = NoopType.subhead, color = Palette.textPrimary)
+                    Text("Herzfrequenz senden", style = NoopType.subhead, color = Palette.textPrimary)
                     Text(
                         "Acts as a standard Bluetooth heart-rate strap. Pair LLB from your treadmill, " +
                             "bike or app to see your strap's heart rate there.",
@@ -771,7 +771,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
                         uncheckedBorderColor = Palette.hairline,
                     ),
                     modifier = Modifier.semantics {
-                        contentDescription = "Broadcast heart rate as a Bluetooth sensor"
+                        contentDescription = "Herzfrequenz senden as a Bluetooth sensor"
                     },
                 )
             }
@@ -807,14 +807,14 @@ fun DataSourcesScreen(vm: AppViewModel) {
         // --- Live WHOOP strap over BLE ---
         item {
         SourceCard(
-            title = "WHOOP Strap (Live BLE)",
+            title = "WHOOP Band (Live BLE)",
             icon = Icons.Filled.Bluetooth,
             subtitle = "Pairs directly with your strap over Bluetooth: no WHOOP app, no cloud.",
         ) {
             val (label, tone) = when {
                 live.bonded -> "Bonded, streaming." to StrandTone.Positive
-                live.connected -> "Connected, pairing…" to StrandTone.Warning
-                else -> "Not connected. Open Live to pair." to StrandTone.Critical
+                live.connected -> "Verbunden, pairing…" to StrandTone.Warning
+                else -> "Nicht verbunden. Open Live to pair." to StrandTone.Critical
             }
             StatePill(title = label, tone = tone, showsDot = true, pulsing = live.connected && !live.bonded)
         }
@@ -825,7 +825,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
         SourceCard(
             title = "Backup & Move",
             icon = Icons.Filled.FileDownload,
-            subtitle = "Your whole history is one file on this phone. Export it to keep a copy " +
+            subtitle = "Your whole history is one file on this phone. Exportieren it to keep a copy " +
                 "or move to a new phone, then import it there. Nothing leaves the device " +
                 "except through the file you choose.",
         ) {
@@ -834,13 +834,13 @@ fun DataSourcesScreen(vm: AppViewModel) {
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 BackupButton(
-                    label = "Export…",
+                    label = "Exportieren…",
                     icon = Icons.Filled.FileDownload,
                     enabled = !busy,
                     modifier = Modifier.weight(1f),
                 ) { exportLauncher.launch("noop-backup-${java.time.LocalDate.now()}.noopbak") }
                 BackupButton(
-                    label = "Import…",
+                    label = "Importieren…",
                     icon = Icons.Filled.FileUpload,
                     enabled = !busy,
                     modifier = Modifier.weight(1f),
@@ -851,7 +851,7 @@ fun DataSourcesScreen(vm: AppViewModel) {
             }
             if (restartNeeded) {
                 Text(
-                    "Import staged. Fully close and reopen Strand to load the new data.",
+                    "Importieren staged. Fully close and reopen Strand to load the new data.",
                     style = NoopType.subhead,
                     color = Palette.statusWarning,
                 )
@@ -862,17 +862,17 @@ fun DataSourcesScreen(vm: AppViewModel) {
 
     // ah-delete (#616): strongly-worded confirm before purging the "apple-health" source. On confirm,
     // deletes every Apple-Health-sourced row (deviceId-keyed tables) in one transaction via the registry,
-    // re-counts so the card flips back to "Nothing imported", and toasts the result.
+    // re-counts so the card flips back to "Nichts importiert", and toasts the result.
     if (confirmDeleteApple) {
         AlertDialog(
             onDismissRequest = { confirmDeleteApple = false },
             containerColor = Palette.surfaceOverlay,
             title = {
-                Text("Remove Apple Health imported data?", style = NoopType.title2, color = Palette.textPrimary)
+                Text("Entfernen Apple Gesundheit imported data?", style = NoopType.title2, color = Palette.textPrimary)
             },
             text = {
                 Text(
-                    "This permanently deletes everything imported from Apple Health: heart rate, HRV, " +
+                    "This permanently deletes everything imported from Apple Gesundheit: heart rate, HRV, " +
                         "sleep, steps, workouts and more. Your live strap data is untouched. This can't be undone.",
                     style = NoopType.subhead,
                     color = Palette.textSecondary,
@@ -886,19 +886,19 @@ fun DataSourcesScreen(vm: AppViewModel) {
                         runCatching {
                             withContext(Dispatchers.IO) { vm.deletePairedDeviceData("apple-health") }
                         }
-                        vm.ble.externalLog("Import apple-health: imported data removed")
+                        vm.ble.externalLog("Importieren apple-health: imported data removed")
                         refreshCounts()
                         vm.loadWorkouts()
                         busy = false
-                        Toast.makeText(context, "Removed Apple Health imported data.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Entfernend Apple Gesundheit imported data.", Toast.LENGTH_LONG).show()
                     }
                 }) {
-                    Text("Remove", style = NoopType.body, color = Palette.statusCritical)
+                    Text("Entfernen", style = NoopType.body, color = Palette.statusCritical)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { confirmDeleteApple = false }) {
-                    Text("Cancel", style = NoopType.body, color = Palette.textSecondary)
+                    Text("Abbrechen", style = NoopType.body, color = Palette.textSecondary)
                 }
             },
         )

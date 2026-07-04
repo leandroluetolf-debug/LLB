@@ -148,7 +148,7 @@ internal object NotifPrefs {
     const val MASTER = "notif.masterEnabled"
     /** Catch-all: buzz for any app NOT in the curated catalog (Android can't enumerate installed
      *  apps, so this is how a user covers BeReal/etc. that aren't listed). Opt-in, default OFF. (#168) */
-    const val ALL_OTHER = "notif.allOtherApps"
+    const val ALL_OTHER = "notif.allSonstigesApps"
     const val WORN = "notif.onlyWhenWorn"
     const val QUIET = "notif.quietHoursEnabled"
     const val QUIET_START = "notif.quietStartMinutes"
@@ -260,7 +260,7 @@ fun NotificationsSettingsScreen(vm: AppViewModel) {
     val enabledCount = enabledState.values.count { it }
 
     ScreenScaffold(
-        title = "Notifications",
+        title = "Mitteilungen",
         subtitle = "Buzz your strap when these apps notify you. Everything runs on this device.",
     ) {
         // MARK: Master card
@@ -375,7 +375,7 @@ fun NotificationsSettingsScreen(vm: AppViewModel) {
         // MARK: Behaviour card
         AlertSection(
             icon = Icons.Filled.Tune,
-            title = "Behaviour",
+            title = "Verhalten",
             blurb = "Fine-tune when alerts reach your wrist.",
         ) {
             FormToggleRow(
@@ -478,9 +478,9 @@ fun NotificationsSettingsScreen(vm: AppViewModel) {
 // MARK: - Strap status (mirrors the three-state mapping from the Mac screen)
 
 private fun strapPillTitle(live: com.noop.ble.LiveState): String = when {
-    live.connected -> "Strap connected"
-    live.bonded -> "Strap idle"
-    else -> "Strap not connected"
+    live.connected -> "Band connected"
+    live.bonded -> "Band idle"
+    else -> "Band nicht verbunden"
 }
 
 private fun strapPillTone(live: com.noop.ble.LiveState): StrandTone = when {
@@ -877,7 +877,7 @@ internal fun TimeChip(
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 ) {
                     Text(
-                        "Cancel",
+                        "Abbrechen",
                         style = NoopType.body,
                         color = Palette.textSecondary,
                         modifier = Modifier

@@ -89,7 +89,7 @@ import kotlin.math.sqrt
 fun StressScreen(vm: AppViewModel, onBreathe: () -> Unit = {}) {
     val days by vm.recentDays.collectAsStateWithLifecycle()
 
-    // #698: the liquid day-of-sky backdrop is gated on the same "Day-cycle background" setting as Today,
+    // #698: the liquid day-of-sky backdrop is gated on the same "Tageszeiten-Hintergrund" setting as Today,
     // so turning it off falls back to the flat theme canvas on every liquid screen alike.
     val context = LocalContext.current
     val showDayCycleBackground = remember { NoopPrefs.showDayCycleBackground(context) }
@@ -136,7 +136,7 @@ fun StressScreen(vm: AppViewModel, onBreathe: () -> Unit = {}) {
         // into the theme canvas behind the header + hero vessel, full-bleed (full-width, up behind the
         // status bar via the scaffold's topBackground plumbing), and the cards float OVER it on the flat
         // surface below. The Android equivalent of the iOS `ScreenScaffold(topBackground: liquidScaffoldSky())`.
-        // Gated on the "Day-cycle background" setting like Today; off passes null (the flat-canvas path).
+        // Gated on the "Tageszeiten-Hintergrund" setting like Today; off passes null (the flat-canvas path).
         topBackground = if (showDayCycleBackground) { { LiquidScreenSky() } } else null,
     ) {
         when {
@@ -217,7 +217,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.StressContent(
             modifier = Modifier.staggeredAppear(1),
             verticalArrangement = Arrangement.spacedBy(Metrics.gap),
         ) {
-            SectionHeader("Today", overline = "Markers", trailing = "vs 30-day baseline")
+            SectionHeader("Heute", overline = "Markers", trailing = "vs 30-day baseline")
             StressTiles(model)
         }
     }
@@ -380,7 +380,7 @@ private fun StressAdvancedCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Overline("Advanced HRV", modifier = Modifier.weight(1f))
+                Overline("Erweitert HRV", modifier = Modifier.weight(1f))
                 Text(
                     "on demand · today's R-R",
                     style = NoopType.footnote,
@@ -457,7 +457,7 @@ private fun StressDaytimeSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
-        SectionHeader("Today's Timeline", overline = "Intraday", trailing = timelineTrailing(day))
+        SectionHeader("Heute's Timeline", overline = "Intraday", trailing = timelineTrailing(day))
 
         NoopCard(tint = Palette.stressColor) {
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -832,7 +832,7 @@ private fun SustainedBreatheCard(day: DaytimeStress.Result, onBreathe: () -> Uni
                 color = Palette.textSecondary,
             )
             NoopButton(
-                text = "Start a Breathe session",
+                text = "Start a Atmen session",
                 leadingIcon = Icons.Filled.Air,
                 kind = NoopButtonKind.Primary,
                 fullWidth = true,
@@ -870,7 +870,7 @@ private fun StressTiles(model: StressModel) {
             // Resting HR — an INCREASE is the stressful direction.
             MarkerTile(
                 modifier = m,
-                label = "Resting HR",
+                label = "Ruhe-HF",
                 value = model.rhrToday?.let { "$it bpm" } ?: "—",
                 delta = model.rhrDelta,
                 accent = Palette.metricRose,
@@ -930,7 +930,7 @@ private fun MarkerTile(
         deltaText = "${if (up) "+" else "−"}${kotlin.math.abs(delta).roundToInt()} vs base"
         deltaColor = if (isStressful) Palette.statusWarning else Palette.statusPositive
     } else {
-        deltaText = "at baseline"
+        deltaText = "auf Basisniveau"
         deltaColor = Palette.textTertiary
     }
     StatTile(
@@ -983,7 +983,7 @@ private fun StressTrendSection(model: StressModel, modifier: Modifier = Modifier
                     )
                     HorizontalDivider(color = Palette.hairline)
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        TrendFooterItem("Today", String.format(Locale.US, "%.1f", model.score))
+                        TrendFooterItem("Heute", String.format(Locale.US, "%.1f", model.score))
                         TrendFooterItem("Average", String.format(Locale.US, "%.1f", avg))
                         TrendFooterItem("Days", points.size.toString())
                     }
@@ -1036,7 +1036,7 @@ private fun StressMethodologyCard(model: StressModel, modifier: Modifier = Modif
             Overline("How this is computed")
             Text(
                 if (model.usingStored) {
-                    "Today's value is your recorded daily stress score (0-3)."
+                    "Heute's value is your recorded daily stress score (0-3)."
                 } else {
                     "Stress is derived from two autonomic signals."
                 },
@@ -1107,7 +1107,7 @@ private fun StressLoading() {
 private fun StressEmpty() {
     DataPendingNote(
         title = "No stress history yet",
-        body = "No stress history yet. Import your WHOOP export in Data Sources to see it.",
+        body = "No stress history yet. Importieren your WHOOP export in Datenquellen to see it.",
     )
 }
 
@@ -1314,9 +1314,9 @@ internal class StressModel private constructor(
             val rhrDn = (rhrDelta ?: 0.0) < -1.0
             return when (band) {
                 StressBand.High -> when {
-                    rhrUp && hrvDn -> "Resting HR is elevated and HRV is below your baseline, both classic signs of high activation. Prioritise rest, hydration and an easy day."
+                    rhrUp && hrvDn -> "Ruhe-HF is elevated and HRV is below your baseline, both classic signs of high activation. Prioritise rest, hydration and an easy day."
                     hrvDn -> "HRV has dropped well below your baseline, pointing to elevated stress or fatigue. Ease off and give your body time to recover."
-                    rhrUp -> "Resting heart rate is running high versus your norm. Your body is under load today. Keep effort light."
+                    rhrUp -> "Ruhepuls is running high versus your norm. Your body is under load today. Keep effort light."
                     else -> "Your autonomic markers are skewed toward stress today. Treat it as a recovery-focused day."
                 }
                 StressBand.Medium -> when {
@@ -1324,9 +1324,9 @@ internal class StressModel private constructor(
                     else -> "You're sitting around your typical autonomic baseline: moderate stress, a normal, balanced day."
                 }
                 StressBand.Low -> when {
-                    rhrDn && hrvUp -> "Resting heart rate is low and HRV is up. Your nervous system looks well-recovered and calm. A great day to push if you want to."
+                    rhrDn && hrvUp -> "Ruhepuls is low and HRV is up. Your nervous system looks well-recovered and calm. A great day to push if you want to."
                     hrvUp -> "HRV is above baseline, a sign of a relaxed, well-recovered nervous system. Stress is low."
-                    else -> "Resting heart rate and HRV are sitting at or below baseline: low physiological stress. You're in a calm, recovered state."
+                    else -> "Ruhepuls and HRV are sitting at or below baseline: low physiological stress. You're in a calm, recovered state."
                 }
             }
         }

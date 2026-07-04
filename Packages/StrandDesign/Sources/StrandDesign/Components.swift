@@ -453,7 +453,7 @@ public extension View {
         #endif
     }
 
-    /// Adds a single trailing "Done" button to the software-keyboard accessory bar that
+    /// Adds a single trailing "Fertig" button to the software-keyboard accessory bar that
     /// resigns the given focus binding. iOS-only; the keyboard toolbar is hosted by the
     /// keyboard itself, so it works inside a sheet with no NavigationStack. No-op on macOS.
     func keyboardDoneToolbar<Value: Hashable>(_ focus: FocusState<Value?>.Binding) -> some View {
@@ -461,7 +461,7 @@ public extension View {
         self.toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { focus.wrappedValue = nil }
+                Button("Fertig") { focus.wrappedValue = nil }
                     .font(StrandFont.body)
                     .foregroundStyle(StrandPalette.accent)
             }
@@ -577,9 +577,9 @@ public enum ScoreState: Sendable, Equatable {
     }
     public var label: LocalizedStringKey {
         switch self {
-        case .solid:       return "Solid"
+        case .solid:       return "Stabil"
         case .building:    return "Building"
-        case .calibrating: return "Calibrating"
+        case .calibrating: return "Kalibriert"
         case .live:        return "Live"
         }
     }

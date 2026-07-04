@@ -68,18 +68,18 @@ fun SupportScreen() {
     var copied by remember { mutableStateOf<String?>(null) }
 
     ScreenScaffold(
-        title = "Support",
+        title = "Hilfe",
         subtitle = "LLB is free and always will be. If it's useful to you, you can chip in to help with development and testing costs. Totally optional.",
     ) {
         // --- Support the build (donate) ---
-        SectionHeader("Support the build", overline = "Optional")
+        SectionHeader("Hilfe the build", overline = "Optional")
 
         // Donate — tinted to the support (rose) world.
         NoopCard(padding = 20.dp, tint = Palette.metricRose) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                     GlyphChip(Icons.Filled.Favorite, Palette.metricRose)
-                    Text("Support the build", style = NoopType.headline, color = Palette.textPrimary)
+                    Text("Hilfe the build", style = NoopType.headline, color = Palette.textPrimary)
                 }
                 Text(
                     "LLB is free and always will be, nothing is locked. It cost real money and a lot of unpaid hours to build, and there are Windows and iOS builds I want to ship next. If it's useful to you and you want to help with the development and testing costs, even a few quid in crypto genuinely keeps it moving, and honestly it keeps me motivated to keep building.",

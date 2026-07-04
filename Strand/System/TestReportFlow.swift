@@ -30,7 +30,7 @@ enum TestReportFlow {
 
         /// The toast shown after the issue page opens, naming the exact saved file to attach.
         static func attachToast(savedName: String) -> String {
-            "Saved as \(savedName). On the next screen tap the paperclip and pick it."
+            "Speichernd as \(savedName). On the next screen tap the paperclip and pick it."
         }
 
         /// GitHub's mobile composer can't reliably attach a .zip, so iOS also offers "Copy report.txt".

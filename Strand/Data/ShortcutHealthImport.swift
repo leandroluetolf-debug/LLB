@@ -254,7 +254,7 @@ enum ShortcutHealthImport {
                        targetSource source: String = ShortcutHealthImport.targetSource) async -> Outcome {
         // Loop guard: never write to the strap source, or the export would re-emit imported rows.
         guard !forbiddenSources.contains(source), source == targetSource else {
-            return .rejected("Import target must be the Apple Health source, not the strap.")
+            return .rejected("Importieren target must be the Apple Gesundheit source, not the strap.")
         }
         let text: String
         switch decodePayload(from: url) {
@@ -275,7 +275,7 @@ enum ShortcutHealthImport {
             try? await store.checkpointWAL()   // a Shortcut import can still be sizeable (#590)
             return .imported(days: parsed.days.count, workouts: parsed.workouts.count)
         } catch {
-            return .rejected("Import failed: \(error.localizedDescription)")
+            return .rejected("Importieren failed: \(error.localizedDescription)")
         }
     }
 }

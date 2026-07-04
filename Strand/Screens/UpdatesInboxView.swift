@@ -6,7 +6,7 @@ import StrandDesign
 // The sheet behind the Today header's bell. A calm, newest-first log of what's new — release notes,
 // "new data arrived" readings, strap heads-ups, and the Today info-cards the user swiped away (which
 // can be restored from here). Tapping an actionable row routes via NavRouter; a dismissed-card row
-// offers "Restore to Today". Everything is on-device and non-clinical — informational, never a verdict.
+// offers "Auf Heute wiederherstellen". Everything is on-device and non-clinical — informational, never a verdict.
 //
 // Sheet idiom matches WhatsNewView: a FIXED macOS frame (a macOS sheet hosting a ScrollView collapses
 // without one) and iOS presentationDetents via `noopSheetPresentation`.
@@ -61,14 +61,14 @@ struct UpdatesInboxView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
 
     private var subtitle: String {
         let n = updateStore.unreadCount
-        if updateStore.items.isEmpty { return String(localized: "What's new in the app and your data") }
+        if updateStore.items.isEmpty { return String(localized: "Neuigkeiten in the app and your data") }
         return n == 0 ? String(localized: "All caught up") : String(localized: "\(n) unread")
     }
 
@@ -222,7 +222,7 @@ private struct UpdateRow: View {
                 }
                 if item.kind == .dismissedCard {
                     Button(action: onRestore) {
-                        Label("Restore to Today", systemImage: "arrow.uturn.up")
+                        Label("Auf Heute wiederherstellen", systemImage: "arrow.uturn.up")
                             .font(StrandFont.subhead)
                     }
                     .buttonStyle(.plain)

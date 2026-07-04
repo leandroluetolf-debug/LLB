@@ -155,7 +155,7 @@ struct CompareView: View {
     private var loadTaskID: String { "\(selectionKey)|\(repo.refreshSeq)" }
 
     var body: some View {
-        ScreenScaffold(title: "Compare", subtitle: "Overlay signals, draw conclusions.",
+        ScreenScaffold(title: "Vergleichen", subtitle: "Overlay signals, draw conclusions.",
                        // PERF (scroll): lazy column — byte-identical layout (LazyVStack == eager VStack
                        // alignment/spacing/header). The content is one inner eager VStack; no staggered
                        // reveals, and the only GeometryReaders are chart-local (.chartOverlay plot rects),
@@ -168,12 +168,12 @@ struct CompareView: View {
                 metricSection
 
                 if selected.count < minSelection {
-                    ComingSoon(what: "Compare needs at least two metrics with history. Import your WHOOP export in Data Sources first.")
+                    ComingSoon(what: "Vergleichen needs at least two metrics with history. Importieren your WHOOP export in Datenquellen first.")
                 } else {
                     let series = activeSeries
                     if series.allSatisfy({ $0.rows.isEmpty }) {
                         ComingSoon(what: loadedOnce
-                            ? "No data for these metrics in \(range.phrase). Widen the range or pick metrics you've logged."
+                            ? "Keine Daten for these metrics in \(range.phrase). Widen the range or pick metrics you've logged."
                             : "Reading your history…")
                     } else {
                         overlaySection(series)
@@ -584,7 +584,7 @@ struct CompareView: View {
 
     // MARK: - Insight language
 
-    /// "Weight ↔ Recovery: r = −0.34 (moderate negative) over 1Y" + a plain-English
+    /// "Gewicht ↔ Erholung: r = −0.34 (moderate negative) over 1Y" + a plain-English
     /// conclusion when |r| is notable.
     private func insightSentence(_ p: PairResult) -> String {
         let head = String(localized: "\(p.a.metric.title) ↔ \(p.b.metric.title): r = \(signedR(p.r)) (\(strengthWord(p.r)) \(directionWord(p.r))) over \(p.n) shared days.")
@@ -653,7 +653,7 @@ private struct FlowChips: View {
                             .foregroundStyle(StrandPalette.textTertiary)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Remove \(metric.title)")
+                    .accessibilityLabel("Entfernen \(metric.title)")
                 }
                 .padding(.horizontal, 11)
                 .padding(.vertical, 8)
@@ -1096,7 +1096,7 @@ private func comparePreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Compare") {
+#Preview("Vergleichen") {
     CompareView()
         .environmentObject(comparePreviewRepo())
         .frame(width: 920, height: 860)

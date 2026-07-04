@@ -63,14 +63,14 @@ import kotlin.math.roundToInt
 // range (never fed back into scoring) that is byte-identical to the Swift [CoupledView.optimalStrainRange].
 //
 // Every colour routes through the [Palette] ramps, so the Classic / Titanium appearance carries automatically.
-// The brand word never appears in a shipped UI string (legal posture); the screen is called "Coupled view".
+// The brand word never appears in a shipped UI string (legal posture); the screen is called "Gekoppelte Ansicht".
 
 /** The 0-21 Day-Strain axis the coupled read always uses, regardless of the user's #268 display toggle. */
 private const val COUPLED_STRAIN_OUT_OF = 21.0
 
-/** The missing-value placeholder, matching the app's shipped "No Data" token (TodayScreen.COUPLED_NO_DATA is
+/** The missing-value placeholder, matching the app's shipped "Keine Daten" token (TodayScreen.COUPLED_NO_DATA is
  *  file-private, so the coupled screen carries its own copy of the same string). */
-private const val COUPLED_NO_DATA = "No Data"
+private const val COUPLED_NO_DATA = "Keine Daten"
 
 // The liquid hero-card wrapper values, byte-identical to the liquid Today pilot (TodayScreen's
 // LIQUID_HERO_FILL / LIQUID_HERO_RADIUS are file-private, so the coupled screen carries its own copy):
@@ -223,7 +223,7 @@ fun CoupledScreen(
             )
         }
     }
-    // "How Charge is calculated" from the breakdown opens the scoring guide at the Charge section, the
+    // "So wird Charge berechnet" from the breakdown opens the scoring guide at the Charge section, the
     // same target the Today per-ring info buttons use.
     if (showGuide) {
         Dialog(
@@ -253,10 +253,10 @@ private fun HeroCard(
     onTap: () -> Unit,
 ) {
     val a11y = when {
-        recovery != null -> "Recovery ${recovery.roundToInt()} percent. See what shaped your Charge"
+        recovery != null -> "Erholung ${recovery.roundToInt()} percent. See what shaped your Charge"
         calibrationNights != null ->
-            "Recovery calibrating, $calibrationNights of ${Baselines.minNightsSeed} nights"
-        else -> "Recovery, no data yet"
+            "Erholung kalibriert, $calibrationNights of ${Basiss.minNightsSeed} nights"
+        else -> "Erholung, keine Daten yet"
     }
     // The vessel runs LIVE (per-frame slosh + tilt) once there's a real value to show; an empty/calibrating
     // hero poses it static so a brand-new user's launch churn isn't fighting a live canvas (the Today
@@ -293,7 +293,7 @@ private fun HeroCard(
                     // The recovery ring becomes a liquid VESSEL filled to the recovery fraction in the sampled
                     // recovery colour, with the number counting up over it (the Today HeroScoreVessel idiom).
                     // A carried (not-yet-rescored) morning reads dimmed, the Today #802 idiom. Empty (no score)
-                    // draws an empty vessel and the centre stack shows the "No Data" token instead of a number.
+                    // draws an empty vessel and the centre stack shows the "Keine Daten" token instead of a number.
                     LiquidVessel(
                         value = ((recovery ?: 0.0) / 100.0).coerceIn(0.0, 1.0),
                         tint = if (recovery != null) Palette.recoveryColor(recovery) else Palette.chargeColor,
@@ -304,7 +304,7 @@ private fun HeroCard(
                     )
                     HeroCentre(recovery = recovery, readinessLevel = readinessLevel)
                 }
-                // The honest state line under the ring: the "Last night · <date>" stamp when carrying a
+                // The honest state line under the ring: the "Letzte Nacht · <date>" stamp when carrying a
                 // prior score (#543/#779, the SAME caption Today uses), or the calibrating progress while
                 // the baseline seeds. Nothing when today's own score is showing.
                 if (isCarrying && carriedDay != null) {
@@ -315,7 +315,7 @@ private fun HeroCard(
                     )
                 } else if (recovery == null && calibrationNights != null) {
                     Text(
-                        "Calibrating, $calibrationNights of ${Baselines.minNightsSeed} nights",
+                        "Kalibriert, $calibrationNights of ${Basiss.minNightsSeed} nights",
                         style = NoopType.footnote,
                         color = Palette.textTertiary,
                     )
@@ -345,7 +345,7 @@ private fun HeroCentre(recovery: Double?, readinessLevel: ReadinessEngine.Level)
                 modifier = Modifier.clearAndSetSemantics {},
             )
         } else {
-            // The honest empty read at the ring-label size (never the 56sp numeral, "No Data" would
+            // The honest empty read at the ring-label size (never the 56sp numeral, "Keine Daten" would
             // overflow the ring interior), matching the Today hero rings' RingNoData idiom.
             Text(COUPLED_NO_DATA, style = NoopType.headline, color = Palette.textSecondary)
         }
@@ -437,7 +437,7 @@ private fun StrainCard(dayStrain21: Double?, recovery: Double?, calories: Double
             ) {
                 HeroStat("Day Strain", dayStrain21?.let { String.format(Locale.US, "%.1f", it) } ?: COUPLED_NO_DATA, Palette.effortColor)
                 HeroStat("Optimal", optimalStrainRangeText(recovery), Palette.chargeColor)
-                HeroStat("Calories", calories?.let { "${it.roundToInt()} kcal" } ?: COUPLED_NO_DATA, Palette.metricAmber)
+                HeroStat("Kalorien", calories?.let { "${it.roundToInt()} kcal" } ?: COUPLED_NO_DATA, Palette.metricAmber)
                 HeroStat("Workouts", workouts.toString(), Palette.textPrimary)
             }
         }
@@ -476,7 +476,7 @@ private fun SleepCard(
             .clickable(
                 interactionSource = interaction,
                 indication = null,
-                onClickLabel = "Open Sleep",
+                onClickLabel = "Open Schlaf",
                 onClick = onOpenSleep,
             )
             .liquidPress(interaction),
@@ -537,7 +537,7 @@ private fun SleepCard(
 
 /** The header subtitle "Today, d MMM". */
 private fun subtitleToday(): String =
-    "Today, " + SimpleDateFormat("d MMM", Locale.getDefault()).format(Date())
+    "Heute, " + SimpleDateFormat("d MMM", Locale.getDefault()).format(Date())
 
 /** "6h 42m" from a minutes count, for the slept-vs-needed read. Mirrors CoupledView.hoursMinutes EXACTLY. */
 internal fun hoursMinutes(minutes: Double): String {

@@ -152,7 +152,7 @@ public struct Sparkline: View {
     /// formatted via the same `valueFormat` closure so units match the call site.
     private var axSummary: String {
         guard let last = values.last, let lo = values.min(), let hi = values.max() else {
-            return String(localized: "No data", bundle: .module)
+            return String(localized: "Keine Daten", bundle: .module)
         }
         return String(localized: "Trend, \(values.count) points, latest \(valueFormat(last)), low \(valueFormat(lo)), high \(valueFormat(hi))", bundle: .module)
     }

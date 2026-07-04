@@ -25,7 +25,7 @@ public struct NOOPActivityAttributes: ActivityAttributes {
     /// Static title shown for the session.
     public var title: String
 
-    public init(title: String = "Live HR") {
+    public init(title: String = "Live-HF") {
         self.title = title
     }
 }

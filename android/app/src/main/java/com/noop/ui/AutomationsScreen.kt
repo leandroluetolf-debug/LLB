@@ -109,7 +109,7 @@ fun AutomationsScreen(viewModel: AppViewModel) {
     // reproduced by the LazyColumn), so spacing is byte-identical; only on-screen sections compose + get
     // accessibility-walked on scroll.
     LazyScreenScaffold(
-        title = "Automations",
+        title = "Automationen",
         subtitle = "Make the strap do things: tap to act, walk away to lock, train by feel.",
     ) {
         // Double-tap (parity since 4.2.8): a real, persisted action picker bound to the ViewModel, with a
@@ -143,7 +143,7 @@ fun AutomationsScreen(viewModel: AppViewModel) {
                 }
                 Spacer(Modifier.weight(1f))
                 StatePill(
-                    if (live.bonded) "Strap bonded" else "Not connected",
+                    if (live.bonded) "Band bonded" else "Nicht verbunden",
                     tone = if (live.bonded) StrandTone.Positive else StrandTone.Warning,
                 )
             }
@@ -160,14 +160,14 @@ fun AutomationsScreen(viewModel: AppViewModel) {
         ) {
             ToggleRow(
                 label = "HR-zone coaching",
-                help = "A triple-buzz when you climb into your top zone (Zone 5, ≥ $zone5Bpm bpm), a cue to ease off. Max HR comes from Settings.",
+                help = "A triple-buzz when you climb into your top zone (Zone 5, ≥ $zone5Bpm bpm), a cue to ease off. Max. HF comes from Einstellungen.",
                 checked = zoneCoaching,
                 onChange = { viewModel.setZoneCoaching(it) },
             )
             if (zoneCoaching) {
                 RowDivider()
                 ToggleRow(
-                    label = "Recovery buzz",
+                    label = "Erholung buzz",
                     help = "Also buzz once when your heart rate drops back to Zone 1, a cue that you've recovered.",
                     checked = zoneCoachRecovery,
                     onChange = { viewModel.setZoneCoachRecovery(it) },
@@ -225,8 +225,8 @@ fun AutomationsScreen(viewModel: AppViewModel) {
                 if (!notifMasterOn) {
                     RowDivider()
                     Text(
-                        "Notifications are off, so this can't buzz yet. Turn on the master switch in " +
-                            "Settings → Notifications to let it through.",
+                        "Mitteilungen are off, so this can't buzz yet. Turn on the master switch in " +
+                            "Einstellungen → Mitteilungen to let it through.",
                         style = NoopType.footnote, color = Palette.statusWarning,
                     )
                 }
@@ -321,12 +321,12 @@ fun AutomationsScreen(viewModel: AppViewModel) {
         SettingsSection(
             icon = Icons.Filled.MonitorHeart,
             title = "Illness early-warning",
-            blurb = "Watches your resting HR, HRV, skin temperature and respiration against your own 28-day baseline. On-device and approximate: informational only, not a diagnosis.",
+            blurb = "Watches your resting HR, HRV, skin temperature and respiration against your own 28-day baseline. Auf dem Gerät and approximate: informational only, not a diagnosis.",
             active = illnessWatch,
         ) {
             ToggleRow(
                 label = "Watch for early-illness signs",
-                help = "Needs at least 14 days of history. When two or more signals drift together you get a banner on Today and a notification, at most once a day.",
+                help = "Needs at least 14 days of history. When two or more signals drift together you get a banner on Heute and a notification, at most once a day.",
                 checked = illnessWatch,
                 onChange = { viewModel.setIllnessWatchEnabled(it) },
             )
@@ -337,13 +337,13 @@ fun AutomationsScreen(viewModel: AppViewModel) {
         item {
         SettingsSection(
             icon = Icons.Filled.BatteryStd,
-            title = "Battery alerts",
+            title = "Akku alerts",
             blurb = "A heads-up when the strap battery gets low so you can recharge before bed, and a note when it's finished charging.",
             active = batteryAlerts,
         ) {
             ToggleRow(
                 label = "Notify on low and full battery",
-                help = "Sends a notification when the strap drops to 15% or reaches a full charge, at most once per charge cycle.",
+                help = "Sendens a notification when the strap drops to 15% or reaches a full charge, at most once per charge cycle.",
                 checked = batteryAlerts,
                 onChange = { viewModel.setBatteryAlertsEnabled(it) },
             )
@@ -453,7 +453,7 @@ private fun napDetailLabel(nap: NapCandidate): String =
 /**
  * Per-weekday wake-time OVERRIDES for the smart alarm (#554). For each day the alarm fires on, shows the
  * effective wake time (the day's override, else the default) as a [TimeChip]; picking a time sets that
- * day's override, and a "Reset" affordance clears it back to the default. Days the alarm doesn't fire on
+ * day's override, and a "Zurücksetzen" affordance clears it back to the default. Days the alarm doesn't fire on
  * aren't shown (no point overriding a day it won't ring). Empty enabledDays = every day, so all seven show.
  */
 // internal (not private) so the consolidated Alarms screen (SmartAlarmScreen, #766) can reuse the
@@ -476,7 +476,7 @@ internal fun AlarmDayOverridePicker(
                 Spacer(Modifier.weight(1f))
                 if (hasOverride) {
                     Text(
-                        "Reset",
+                        "Zurücksetzen",
                         style = NoopType.caption,
                         color = Palette.accent,
                         modifier = Modifier
@@ -616,7 +616,7 @@ private fun RowDivider() {
 
 /**
  * Weekday selector for the smart alarm (#539). One tappable circle per weekday, Monday-first. An empty
- * [selected] set means "every day" (all circles read as on). Mirrors the macOS AutomationsView picker.
+ * [selected] set means "jeden Tag" (all circles read as on). Mirrors the macOS AutomationsView picker.
  */
 // internal (not private) so SmartAlarmScreen (the consolidated Alarms surface, #766) can reuse it.
 @Composable
@@ -657,9 +657,9 @@ internal fun smartAlarmWeekdayIsSelected(dow: Int, days: Set<Int>): Boolean =
     days.isEmpty() || days.contains(dow)
 
 /**
- * Toggle one weekday, normalising "every day" at both ends so the empty set always means every day.
- * Pure + side-effect-free for unit tests. Pulling a day out of the implicit "every day" expands to the
- * explicit other six; selecting the seventh collapses back to the empty "every day" set. Mirrors macOS
+ * Toggle one weekday, normalising "jeden Tag" at both ends so the empty set always means every day.
+ * Pure + side-effect-free for unit tests. Pulling a day out of the implicit "jeden Tag" expands to the
+ * explicit other six; selecting the seventh collapses back to the empty "jeden Tag" set. Mirrors macOS
  * `AutomationsView.toggledWeekday`.
  */
 internal fun toggledSmartAlarmWeekday(dow: Int, days: Set<Int>): Set<Int> {

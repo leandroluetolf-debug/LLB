@@ -61,7 +61,7 @@ final class ProfileStore: ObservableObject {
         static let stepsConfidence = "profile.stepsCalibrationConfidence"
         static let stepsManualFlag = "profile.stepsCalibrationManual"
         static let stepsManualCoeff = "profile.stepsManualCoefficient"
-        static let avatar = "profile.avatarImageData"
+        static let avatar = "profile.avatarImageDaten"
     }
 
     init() {

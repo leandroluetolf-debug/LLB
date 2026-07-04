@@ -108,8 +108,8 @@ struct LiquidTodayView: View {
     /// The big header title: Today / Yesterday / weekday for older days.
     private var dayTitle: String {
         switch selectedDayOffset {
-        case 0: return "Today"
-        case 1: return "Yesterday"
+        case 0: return "Heute"
+        case 1: return "Gestern"
         default:
             let f = DateFormatter(); f.locale = Locale(identifier: "en_US_POSIX"); f.dateFormat = "EEEE"
             return f.string(from: selectedLogicalDay)
@@ -251,7 +251,7 @@ struct LiquidTodayView: View {
 
     // MARK: - Liquid pull-to-refresh
 
-    static let pullSpace = "liqTodayScroll"
+    static let pullSpace = "liqHeuteScroll"
 
     /// Reserves the revealed space at the top and shows a vessel that fills with the pull, then sloshes
     /// while the refresh runs.
@@ -331,7 +331,7 @@ struct LiquidTodayView: View {
                             .frame(width: 34, height: 34)
                     }
                     .buttonStyle(LiquidPressStyle())
-                    .accessibilityLabel("Profile and settings")
+                    .accessibilityLabel("Profil and settings")
                     LiquidAddButton()
                     LiquidBatteryButton()
                 }
@@ -402,7 +402,7 @@ struct LiquidTodayView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                 Spacer()
                 Button { showCustomise = true } label: {
-                    Text("CUSTOMISE").font(StrandFont.overlineScaled(11)).tracking(1.0)
+                    Text("ANPASSEN").font(StrandFont.overlineScaled(11)).tracking(1.0)
                         .foregroundStyle(StrandPalette.accent)
                 }
                 .buttonStyle(.plain)
@@ -418,7 +418,7 @@ struct LiquidTodayView: View {
         }
     }
 
-    /// One "Your cards" row for a given card type — honours the user's CUSTOMISE selection + order.
+    /// One "Deine Karten" row for a given card type — honours the user's CUSTOMISE selection + order.
     /// Wired cards show real values; the rest render "–" for now (they still appear, so add/remove/
     /// reorder is reflected). stress → Stress screen, sleep → Sleep, everything else → Health.
     @ViewBuilder
@@ -530,7 +530,7 @@ struct LiquidTodayView: View {
                     }
                     HStack(spacing: 5) {
                         Circle().fill(StrandPalette.chargeColor).frame(width: 6, height: 6)
-                        Text(displayDay?.recovery != nil ? "Solid" : "Calibrating")
+                        Text(displayDay?.recovery != nil ? "Stabil" : "Kalibriert")
                             .font(StrandFont.caption.weight(.bold))
                             .foregroundStyle(StrandPalette.chargeColor)
                     }
@@ -538,7 +538,7 @@ struct LiquidTodayView: View {
                     .padding(.vertical, 6)
                     .background(Capsule().strokeBorder(StrandPalette.chargeColor.opacity(0.3), lineWidth: 1))
                 }
-                .fixedSize(horizontal: true, vertical: false)   // pills keep their natural width — no "Calibrating" wrap
+                .fixedSize(horizontal: true, vertical: false)   // pills keep their natural width — no "Kalibriert" wrap
             }
             .padding(.horizontal, 2)
             .padding(.top, 4)
@@ -585,9 +585,9 @@ struct LiquidTodayView: View {
                         Text(line).font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
                     }
                 }
-                vitalRow("Heart-rate variability", unitText(hrv, "ms"),
+                vitalRow("Herzfrequenzvariabilität", unitText(hrv, "ms"),
                          StrandPalette.metricCyan, fracOver(hrv, 120))
-                vitalRow("Resting heart rate", unitText(rhr, "bpm"),
+                vitalRow("Ruhepuls", unitText(rhr, "bpm"),
                          StrandPalette.metricRose, fracOver(rhr, 100))
                 vitalRow("Breaths per minute", unitText(resp, "rpm", decimals: 1),
                          StrandPalette.accent, fracOver(resp, 24))
@@ -614,12 +614,12 @@ struct LiquidTodayView: View {
         return VStack(spacing: 8) {
             sectionHead("KEY METRICS", trailing: "14-day trend")
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
-                ktile("Recovery", intText(displayDay?.recovery), "%", StrandPalette.chargeColor, frac(displayDay?.recovery))
+                ktile("Erholung", intText(displayDay?.recovery), "%", StrandPalette.chargeColor, frac(displayDay?.recovery))
                 ktile("Strain", intText(displayDay?.strain), "%", StrandPalette.effortColor, frac(displayDay?.strain))
-                ktile("Sleep", sleepText, "", StrandPalette.restColor, fracOver(displayDay?.totalSleepMin, 480))
+                ktile("Schlaf", sleepText, "", StrandPalette.restColor, fracOver(displayDay?.totalSleepMin, 480))
                 ktile("HRV", intText(hrv), "ms", StrandPalette.metricCyan, fracOver(hrv, 120))
                 ktile("Rest HR", intText(rhr), "bpm", StrandPalette.metricRose, fracOver(rhr, 100))
-                ktile("Steps", stepsText, "", StrandPalette.chargeColor, fracOver(stepCount, 10000))
+                ktile("Schritte", stepsText, "", StrandPalette.chargeColor, fracOver(stepCount, 10000))
             }
             NavigationLink { MetricExplorerView() } label: {
                 Text("Show all metrics").font(StrandFont.subhead).foregroundStyle(StrandPalette.accent)
@@ -830,7 +830,7 @@ struct LiquidTodayView: View {
 
     private var greeting: String {
         let h = Calendar.current.component(.hour, from: Date())
-        return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"
+        return h < 12 ? "Guten Morgen" : h < 17 ? "Good afternoon" : "Good evening"
     }
 
     private var stepCount: Double? { displayDay?.steps.map(Double.init) ?? stepsEst }
@@ -852,7 +852,7 @@ struct LiquidTodayView: View {
         return unit.isEmpty ? n : "\(n) \(unit)"
     }
 
-    private var stressText: String { stress.map { String(Int($0.rounded())) } ?? "Calibrating" }
+    private var stressText: String { stress.map { String(Int($0.rounded())) } ?? "Kalibriert" }
 
     private var sleepText: String {
         guard let m = displayDay?.totalSleepMin else { return "–" }
@@ -897,9 +897,9 @@ struct LiquidTodayView: View {
     /// Provenance caption for the recovery-vitals card, keyed on the row a vital actually came from — NOT a
     /// hardcoded "yesterday". If ANY shown vital fell back to `vitalsDay` (today's own value is nil and the
     /// carried row supplies it), it stamps that row's date via the shared `TodayView.carriedCaption`, so a
-    /// genuine post-rollover carry reads "Last night · <date>" and a weeks-old carry relabels to
-    /// "Latest sleep · <date>" (#779) instead of a false "Last night". When every shown vital is today's
-    /// own (or there's nothing to carry), it returns nil — the card must not claim "Last night" at all.
+    /// genuine post-rollover carry reads "Letzte Nacht · <date>" and a weeks-old carry relabels to
+    /// "Latest sleep · <date>" (#779) instead of a false "Letzte Nacht". When every shown vital is today's
+    /// own (or there's nothing to carry), it returns nil — the card must not claim "Letzte Nacht" at all.
     private var vitalsProvenanceLine: String? {
         guard let carried = vitalsDay else { return nil }
         let carriedHrv = displayDay?.avgHrv == nil && carried.avgHrv != nil
@@ -1086,7 +1086,7 @@ private struct LiquidLiveHR: View {
     private var subtitle: String {
         if isLive { return "Live · beat by beat" }
         if fallback.count >= 2 { return "5-minute average · since midnight" }
-        return live.connected ? "Waiting for the strap" : "Strap not connected"
+        return live.connected ? "Waiting for the strap" : "Band nicht verbunden"
     }
 
     var body: some View {
@@ -1169,7 +1169,7 @@ private struct LiquidBatteryButton: View {
                         .foregroundStyle(.white.opacity(0.9))
                     if live.charging == true {
                         // #972: the default Today never surfaced charging state — only the % ring. A small
-                        // bolt over the ring gives the same signal as the "· Charging" text on Mac/Android.
+                        // bolt over the ring gives the same signal as the "· Lädt" text on Mac/Android.
                         Image(systemName: "bolt.fill")
                             .font(.system(size: 7, weight: .bold))
                             .foregroundStyle(StrandPalette.chargeColor)
@@ -1187,7 +1187,7 @@ private struct LiquidBatteryButton: View {
         .accessibilityLabel(batteryAccessibility)
     }
     private var batteryAccessibility: String {
-        let base = live.batteryPct.map { "Strap battery \(Int($0.rounded())) percent" } ?? "Strap battery"
+        let base = live.batteryPct.map { "Band battery \(Int($0.rounded())) percent" } ?? "Band battery"
         return live.charging == true ? base + ", charging" : base
     }
     private func ringColor(_ p: Double) -> Color {
@@ -1201,10 +1201,10 @@ private struct LiquidStrapBatteryRow: View {
     var body: some View {
         if live.connected, let pct = live.batteryPct {
             HStack {
-                Text("Strap battery").font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
+                Text("Band battery").font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
                 Spacer()
-                // #972: append "· Charging" here too, matching the Settings / Mac / Android battery pill.
-                Text(live.charging == true ? "\(Int(pct.rounded()))% · Charging" : "\(Int(pct.rounded()))%")
+                // #972: append "· Lädt" here too, matching the Settings / Mac / Android battery pill.
+                Text(live.charging == true ? "\(Int(pct.rounded()))% · Lädt" : "\(Int(pct.rounded()))%")
                     .font(StrandFont.number(15)).foregroundStyle(StrandPalette.textPrimary)
             }
         }
@@ -1218,19 +1218,19 @@ private struct LiquidStrapBatteryRow: View {
 // don't exist on macOS, and `presentationCompactAdaptation` is an iOS phone-width concern. These keep the
 // exact iOS behaviour while giving macOS the platform-correct equivalent.
 private extension View {
-    /// A sheet's trailing "Done" button (inline title on iOS; the confirmation-action toolbar slot on macOS).
+    /// A sheet's trailing "Fertig" button (inline title on iOS; the confirmation-action toolbar slot on macOS).
     @ViewBuilder func liquidSheetDoneChrome(done: @escaping () -> Void) -> some View {
         #if os(iOS)
         self.navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done", action: done).foregroundStyle(StrandPalette.accent)
+                    Button("Fertig", action: done).foregroundStyle(StrandPalette.accent)
                 }
             }
         #else
         self.toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done", action: done).foregroundStyle(StrandPalette.accent)
+                Button("Fertig", action: done).foregroundStyle(StrandPalette.accent)
             }
         }
         #endif

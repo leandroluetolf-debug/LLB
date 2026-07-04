@@ -18,7 +18,7 @@ public final class LiveState: ObservableObject {
     /// True ONLY when the link reached a GENUINE encrypted bond — the WHOOP 5/MG CLIENT_HELLO ack, the
     /// WHOOP 4 confirmed-write bond, or a restored already-bonded link. Deliberately NOT set by the
     /// live-HR shortcut that flips `bonded` true when HR streams over the *unbonded* standard profile on
-    /// a 5/MG (issue #69) — so `bonded` can be true while `encryptedBond` is false ("Live HR, not fully
+    /// a 5/MG (issue #69) — so `bonded` can be true while `encryptedBond` is false ("Live-HF, not fully
     /// paired"). WHOOP 4 always reaches a genuine bond, so the two track together there. Reset on
     /// connect/disconnect. Drives the Live pill's two-state distinction; the encrypted channel (buzz,
     /// alarm, double-tap, history offload) only works when this is true.
@@ -261,14 +261,14 @@ public final class LiveState: ObservableObject {
     // MARK: - Connection status (single source of truth, #266)
 
     /// Short connection-status label shared by the sidebar footer (RootView) and the Settings strap
-    /// card, so the two can't disagree the way they did in #266 (sidebar "Connecting…" vs Settings
-    /// "Connected" for the same connected-but-unbonded 5/MG link). Once the link is up and HR is
-    /// flowing — even over the unbonded standard profile — this reads "Connected", never "Connecting…".
+    /// card, so the two can't disagree the way they did in #266 (sidebar "Verbinde…" vs Settings
+    /// "Verbunden" for the same connected-but-unbonded 5/MG link). Once the link is up and HR is
+    /// flowing — even over the unbonded standard profile — this reads "Verbunden", never "Verbinde…".
     public var connectionStatusLabel: String {
         if connected && bonded { return "Bonded · streaming" }
-        if connected { return "Connected" }
+        if connected { return "Verbunden" }
         if bonded { return "Bonded · idle" }
-        return "Disconnected"
+        return "Getrennt"
     }
     /// True when the link is up (HR flowing) → status reads green. Drives the sidebar + Settings tone.
     public var connectionStatusIsActive: Bool { connected }
@@ -319,7 +319,7 @@ public final class LiveState: ObservableObject {
     @Published public var consoleChunksThisSession: Int = 0
 
     /// EXPERIMENTAL R22 telemetry (#174). How many of the 15 `enable_r22_*` SET_CONFIG flags the strap
-    /// has ACKed since the last "Send enable sequence" tap — 15 means the strap accepted the whole
+    /// has ACKed since the last "Senden enable sequence" tap — 15 means the strap accepted the whole
     /// sequence (hardware-confirmed: it returns a COMMAND_RESPONSE per flag). Reset on each new attempt.
     @Published public var r22FlagsAccepted: Int = 0
     /// Count of type-0x2F records seen this session OUTSIDE our own history offload. #494 showed these are
@@ -336,7 +336,7 @@ public final class LiveState: ObservableObject {
     /// Settings → Experimental). Drives the capture status line + export button.
     @Published public var puffinCaptureCount: Int = 0
     /// On-disk location of the current puffin capture file, once anything has been flushed. The
-    /// Settings "Export" / "Reveal" actions target this URL.
+    /// Settings "Exportieren" / "Reveal" actions target this URL.
     @Published public var puffinCaptureURL: URL?
 
     /// Set when a WHOOP 5/MG strap refuses the encrypted bond on first connect ("Encryption/Authentication

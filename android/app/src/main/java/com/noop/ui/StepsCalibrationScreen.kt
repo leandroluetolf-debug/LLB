@@ -56,7 +56,7 @@ import kotlin.math.roundToInt
 // the current calibration, a recent estimated-vs-phone accuracy table, and a manual coefficient
 // override with a live preview. Mirrors the macOS StepsCalibrationSheet card-for-card and shares its
 // confidence wording via [StepsCalibrationFormat]. Presented in a full-screen Dialog from Settings →
-// Profile → "Steps estimate".
+// Profile → "Schritt-Schätzung".
 
 /** Shared formatters for the steps-estimate calibration UI — kept apart so the Profile summary row and
  *  this screen agree on the confidence wording. Mirrors the macOS `StepsCalibrationFormat`. */
@@ -201,12 +201,12 @@ private fun Header(onClose: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Overline("Steps estimate", color = Palette.textTertiary)
+            Overline("Schritt-Schätzung", color = Palette.textTertiary)
             Text("Calibrate your steps", style = NoopType.display(26f), color = Palette.textPrimary)
             Text("WHOOP 4.0 · motion → steps", style = NoopType.caption, color = Palette.textSecondary)
         }
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
-            Icon(Icons.Filled.Close, contentDescription = "Close", tint = Palette.textTertiary, modifier = Modifier.size(22.dp))
+            Icon(Icons.Filled.Close, contentDescription = "Schließen", tint = Palette.textTertiary, modifier = Modifier.size(22.dp))
         }
     }
 }
@@ -218,7 +218,7 @@ private fun Footer(onClose: () -> Unit) {
             onClick = onClose,
             colors = ButtonDefaults.buttonColors(containerColor = Palette.accent, contentColor = Palette.surfaceBase),
         ) {
-            Text("Done", modifier = Modifier.padding(horizontal = 24.dp))
+            Text("Fertig", modifier = Modifier.padding(horizontal = 24.dp))
         }
     }
 }
@@ -273,14 +273,14 @@ private fun NoMotionNote() {
                 Text("No motion synced yet", style = NoopType.headline, color = Palette.textPrimary)
             }
             Text(
-                "We're not seeing any motion from your strap yet. Steps are estimated from your WHOOP's " +
+                "We're not seeing any motion from your strap yet. Schritte are estimated from your WHOOP's " +
                     "banked motion history, so your strap needs to sync that history before LLB has " +
                     "anything to count.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
             Text(
-                "Open LLB near your strap and let it catch up (a full history sync can take a while on " +
+                "LLB öffnen near your strap and let it catch up (a full history sync can take a while on " +
                     "first run). Once a day or two of motion lands, your step estimate and the calibration " +
                     "below will start to fill in.",
                 style = NoopType.footnote,
@@ -314,7 +314,7 @@ private fun CurrentFitCard(profile: ProfileStore, matchedDays: Int) {
                     StatLine("Fitted from", "$days day${if (days == 1) "" else "s"} your phone also counted")
                     StatLine(
                         "Confidence",
-                        "${StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} · " +
+                        "${SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)} · " +
                             "${(profile.stepsCalibrationConfidence * 100).roundToInt()}%",
                     )
                 }

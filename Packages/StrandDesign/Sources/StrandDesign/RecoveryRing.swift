@@ -51,7 +51,7 @@ public struct RecoveryRing: View {
         showsLabel: Bool = true,
         showsWordmark: Bool = true,
         showsHover: Bool = true,
-        valueFormat: @escaping (Double) -> String = { "Recovery \(Int($0.rounded()))" }
+        valueFormat: @escaping (Double) -> String = { "Erholung \(Int($0.rounded()))" }
     ) {
         self.score = score
         self.supporting = supporting
@@ -202,7 +202,7 @@ public struct RecoveryArc: Shape {
 }
 
 #if DEBUG && !os(watchOS)
-#Preview("RecoveryRing — scores") {
+#Preview("ErholungRing — scores") {
     VStack(spacing: 16) {
         HStack(spacing: 28) {
             RecoveryRing(score: 22, supporting: "HRV 38ms · RHR 58 · take it easy", diameter: 220)
@@ -216,7 +216,7 @@ public struct RecoveryArc: Shape {
     .preferredColorScheme(.dark)
 }
 
-#Preview("RecoveryRing — primed/peak") {
+#Preview("ErholungRing — primed/peak") {
     HStack(spacing: 28) {
         RecoveryRing(score: 78, supporting: "HRV 62ms · RHR 51 · ready for moderate strain", diameter: 220)
         RecoveryRing(score: 91, supporting: "HRV 74ms · RHR 47 · primed to push", diameter: 220)
@@ -240,5 +240,5 @@ private struct RecoveryRingLive: View {
     }
 }
 
-#Preview("RecoveryRing — interactive") { RecoveryRingLive() }
+#Preview("ErholungRing — interactive") { RecoveryRingLive() }
 #endif

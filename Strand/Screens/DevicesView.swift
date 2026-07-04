@@ -19,7 +19,7 @@ struct DevicesView: View {
     // for `DevicesContent` and the Add-device wizard, so nothing downstream loses its live readout.
 
     var body: some View {
-        ScreenScaffold(title: "Devices",
+        ScreenScaffold(title: "Geräte",
                        subtitle: "Pair and manage the bands LLB reads from.",
                        // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends: a fixed,
                        // full-bleed time-of-day sky behind the scroll content (it does not scroll).
@@ -67,7 +67,7 @@ private struct DevicesContent: View {
             // multi-WHOOP reality reads at a glance.
             sectionHead("YOUR BANDS", trailing: activeDevices.count == 1
                         ? String(localized: "1 paired")
-                        : String(localized: "\(activeDevices.count) paired"))
+                        : String(localized: "\(activeGeräte.count) paired"))
             ForEach(Array(activeDevices.enumerated()), id: \.element.id) { idx, device in
                 DeviceCard(
                     device: device,
@@ -104,8 +104,8 @@ private struct DevicesContent: View {
                isPresented: Binding(get: { switchTarget != nil },
                                     set: { if !$0 { switchTarget = nil } }),
                presenting: switchTarget) { device in
-            Button("Cancel", role: .cancel) { switchTarget = nil }
-            Button("Make active") {
+            Button("Abbrechen", role: .cancel) { switchTarget = nil }
+            Button("Aktiv setzen") {
                 registry.setActive(device.id)
                 switchTarget = nil
             }
@@ -118,8 +118,8 @@ private struct DevicesContent: View {
                                     set: { if !$0 { renameTarget = nil } }),
                presenting: renameTarget) { device in
             TextField("Name", text: $renameDraft)
-            Button("Cancel", role: .cancel) { renameTarget = nil }
-            Button("Save") {
+            Button("Abbrechen", role: .cancel) { renameTarget = nil }
+            Button("Speichern") {
                 registry.rename(device.id, to: renameDraft)
                 renameTarget = nil
             }
@@ -127,22 +127,22 @@ private struct DevicesContent: View {
             Text("Give \(device.brand) \(device.model) a name you'll recognise.")
         }
         // Remove confirm
-        .alert("Remove this device?",
+        .alert("Entfernen this device?",
                isPresented: Binding(get: { removeTarget != nil },
                                     set: { if !$0 { removeTarget = nil } }),
                presenting: removeTarget) { device in
-            Button("Cancel", role: .cancel) { removeTarget = nil }
-            Button("Remove", role: .destructive) { confirmRemove(device) }
+            Button("Abbrechen", role: .cancel) { removeTarget = nil }
+            Button("Entfernen", role: .destructive) { confirmRemove(device) }
         } message: { device in
-            Text("Remove \(device.displayName)? LLB will stop connecting to it. Its recorded data is kept and you can re-add it any time.")
+            Text("Entfernen \(device.displayName)? LLB will stop connecting to it. Its recorded data is kept and you can re-add it any time.")
         }
         // Second, strongly-worded delete-data confirm (reached from the Remove card's secondary control)
-        .alert("Delete all of this device's data?",
+        .alert("Löschen all of this device's data?",
                isPresented: Binding(get: { deleteDataTarget != nil },
                                     set: { if !$0 { deleteDataTarget = nil } }),
                presenting: deleteDataTarget) { device in
-            Button("Cancel", role: .cancel) { deleteDataTarget = nil }
-            Button("Delete data", role: .destructive) {
+            Button("Abbrechen", role: .cancel) { deleteDataTarget = nil }
+            Button("Löschen data", role: .destructive) {
                 // Route the heavy 16+-table delete through the WhoopStore actor (off the main thread) so a
                 // large device dataset can't freeze the UI. Resolve the store handle inside the Task, then
                 // await the delete; the registry reloads the (now-emptied) list on completion.
@@ -172,15 +172,15 @@ private struct DevicesContent: View {
     // MARK: Pieces
 
     private var addButton: some View {
-        NoopButton("Add a device", systemImage: "plus", kind: .primary, fullWidth: true) {
+        NoopButton("Gerät hinzufügen", systemImage: "plus", kind: .primary, fullWidth: true) {
             showAddWizard = true
         }
-        .accessibilityLabel("Add a device")
+        .accessibilityLabel("Gerät hinzufügen")
     }
 
     private var removedSection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
-            sectionHead("REMOVED", trailing: String(localized: "Data kept"))
+            sectionHead("REMOVED", trailing: String(localized: "Daten kept"))
             ForEach(removedDevices) { device in
                 DeviceCard(
                     device: device,
@@ -201,7 +201,7 @@ private struct DevicesContent: View {
             Image(systemName: "info.circle")
                 .foregroundStyle(StrandPalette.textTertiary)
                 .accessibilityHidden(true)
-            Text("WHOOP is LLB's primary, fully-supported band. Other heart-rate straps are an early, in-development addition: they stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
+            Text("WHOOP is LLB's primary, fully-supported band. Sonstiges heart-rate straps are an early, in-development addition: they stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -305,7 +305,7 @@ private struct DeviceCard: View {
                 }
 
                 // What this device CAPTURES — honest, per-model (not the generic stored set, which would
-                // mislabel e.g. a "Blood oxygen" chip when no SpO₂ % ever comes off the strap).
+                // mislabel e.g. a "Sauerstoffsättigung" chip when no SpO₂ % ever comes off the strap).
                 capabilityRow(symbol: "waveform.path.ecg", text: profile.captures,
                               tint: StrandPalette.textSecondary)
                 // What LLB USES it for — the scores/screens this device drives.
@@ -388,8 +388,8 @@ private struct DeviceCard: View {
     /// Short accent hint mirroring the primary tap, shown in the footer row. nil when the card has no
     /// whole-card action (active band / menu-only removed band).
     private var primaryActionHint: String? {
-        if device.status == .archived { return onReAdd == nil ? nil : String(localized: "Make active") }
-        if !isActive { return String(localized: "Make active") }
+        if device.status == .archived { return onReAdd == nil ? nil : String(localized: "Aktiv setzen") }
+        if !isActive { return String(localized: "Aktiv setzen") }
         return nil
     }
 
@@ -408,7 +408,7 @@ private struct DeviceCard: View {
                 .foregroundStyle(StrandPalette.textSecondary)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Battery \(pct) percent")
+        .accessibilityLabel("Akku \(pct) percent")
     }
 
     /// The charge-band colour for the battery tube/icon (mirrors the menu-bar battery buckets).
@@ -419,7 +419,7 @@ private struct DeviceCard: View {
     private var statePill: some View {
         Group {
             if device.status == .archived {
-                StatePill("Removed", tone: .neutral, showsDot: false)
+                StatePill("Entfernend", tone: .neutral, showsDot: false)
             } else if isActive {
                 StatePill(isLiveConnected ? "Active · Live" : "Active",
                           tone: .positive, pulsing: isLiveConnected)
@@ -433,24 +433,24 @@ private struct DeviceCard: View {
         Menu {
             if device.status == .archived {
                 if let onReAdd {
-                    Button { onReAdd() } label: { Label("Make active", systemImage: "bolt.fill") }
+                    Button { onReAdd() } label: { Label("Aktiv setzen", systemImage: "bolt.fill") }
                 }
                 Button { onRename() } label: { Label("Rename", systemImage: "pencil") }
                 if let onDeleteData {
                     Divider()
                     Button(role: .destructive) { onDeleteData() } label: {
-                        Label("Delete this device's data…", systemImage: "trash")
+                        Label("Löschen this device's data…", systemImage: "trash")
                     }
                 }
             } else {
                 if !isActive {
-                    Button { onMakeActive() } label: { Label("Make active", systemImage: "bolt.fill") }
+                    Button { onMakeActive() } label: { Label("Aktiv setzen", systemImage: "bolt.fill") }
                 }
                 Button { onRename() } label: { Label("Rename", systemImage: "pencil") }
                 if let onRemove {
                     Divider()
                     Button(role: .destructive) { onRemove() } label: {
-                        Label("Remove", systemImage: "minus.circle")
+                        Label("Entfernen", systemImage: "minus.circle")
                     }
                 }
             }
@@ -493,8 +493,8 @@ private struct DeviceCard: View {
     }
 
     private var lastSeenLine: String {
-        if device.status == .archived { return String(localized: "Removed · data kept") }
-        if isLiveConnected { return String(localized: "Connected now") }
+        if device.status == .archived { return String(localized: "Entfernend · data kept") }
+        if isLiveConnected { return String(localized: "Verbunden now") }
         return String(localized: "Last seen \(relativeAgo(TimeInterval(device.lastSeenAt)))")
     }
 
@@ -532,7 +532,7 @@ private struct DeviceCard: View {
 /// Honest, per-model summary of what a device captures and what LLB uses it for — shown on its card.
 ///
 /// Derived from brand/model/sourceKind, NOT from the stored capability `Set`. The stored set is generic
-/// across WHOOP models (it would render an identical "Heart rate · HRV · Blood oxygen · Skin temp · …"
+/// across WHOOP models (it would render an identical "Herzfrequenz · HRV · Sauerstoffsättigung · Skin temp · …"
 /// line for a 4.0 and a 5/MG alike) and it mislabels: no SpO₂ **percentage** ever comes off any WHOOP
 /// strap (raw red/IR only — a real % exists only from a WHOOP CSV / Apple Health import), skin temp is a
 /// nightly ±°C sleep deviation rather than a live reading, steps are 5/MG-only and a raw motion count,
@@ -550,8 +550,8 @@ struct DeviceCapabilityProfile {
         // Effort-scored only when the machine actually reports heart rate.
         if d.sourceKind == .ftms {
             return DeviceCapabilityProfile(
-                displayModel: String(localized: "Gym equipment (FTMS)"),
-                captures: String(localized: "Speed · Cadence · Power · Distance · Energy · Heart rate (if the machine sends it)"),
+                displayModel: String(localized: "Fitnessgeräte (FTMS)"),
+                captures: String(localized: "Speed · Cadence · Power · Distance · Energy · Herzfrequenz (if the machine sends it)"),
                 powers: String(localized: "Records a live machine workout, Effort-scored from HR when the machine reports it"),
                 footnote: String(localized: "Live machine data over Bluetooth FTMS. No sleep, recovery, skin temp or SpO₂. Effort needs the machine's heart rate; without it the session logs the machine metrics only."))
         }
@@ -559,9 +559,9 @@ struct DeviceCapabilityProfile {
         if d.sourceKind == .huami {
             return DeviceCapabilityProfile(
                 displayModel: String(localized: "\(d.brand) (experimental)"),
-                captures: String(localized: "Heart rate (live, best-effort)"),
-                powers: String(localized: "Powers the live console + Effort. No Charge, Rest or Sleep"),
-                footnote: String(localized: "Experimental: live heart rate where the band exposes it. Some bands need a pairing we can't do yet. LLB will say so honestly and never show a made-up number. No sleep, recovery, skin temp, SpO₂ or steps."))
+                captures: String(localized: "Herzfrequenz (live, best-effort)"),
+                powers: String(localized: "Powers the live console + Effort. No Charge, Rest or Schlaf"),
+                footnote: String(localized: "Experimentell: live heart rate where the band exposes it. Some bands need a pairing we can't do yet. LLB will say so honestly and never show a made-up number. No sleep, recovery, skin temp, SpO₂ or steps."))
         }
         // EXPERIMENTAL locally-adopted Oura ring (gen 3/4/5). The gen is carried on `model` ("Oura Ring
         // 3/4/5") and recovered with OuraRingGen.from(model:). LLB reads the ring's OWN raw signals + open
@@ -574,16 +574,16 @@ struct DeviceCapabilityProfile {
             // gen3/4 are verified-shape; gen5 ("newer") carries the least-proven caveat.
             let newer = (gen == .gen5)
             let captures = newer
-                ? String(localized: "Heart rate* · HRV* · Sleep* · Resting HR* · Skin temp* · Battery*")
-                : String(localized: "Heart rate · HRV* · Sleep · Resting HR · Skin temp* · Battery")
+                ? String(localized: "Herzfrequenz* · HRV* · Schlaf* · Ruhe-HF* · Skin temp* · Akku*")
+                : String(localized: "Herzfrequenz · HRV* · Schlaf · Ruhe-HF · Skin temp* · Akku")
             let powers = newer
                 ? String(localized: "Powers Effort now; Charge and Rest once enough nights and decode are confirmed")
-                : String(localized: "Powers Charge, Effort, Rest and Sleep")
+                : String(localized: "Powers Charge, Effort, Rest and Schlaf")
             return DeviceCapabilityProfile(
                 displayModel: String(localized: "\(gen.displayName) (Beta)"),
                 captures: captures,
                 powers: powers,
-                footnote: String(localized: "Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, and HRV needs you to be still. No Oura Readiness or SpO₂ percentage comes off the ring (import an Oura file for those)."))
+                footnote: String(localized: "Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, and HRV needs you to be still. No Oura Bereitschaft or SpO₂ percentage comes off the ring (import an Oura file for those)."))
         }
         // Apple Watch (live HealthKit source). UNLIKE the WHOOP/strap branches, the watch's stored
         // capability `Set` is already the honest per-model trim (AppleWatchDevice only adds a metric
@@ -592,33 +592,33 @@ struct DeviceCapabilityProfile {
         // score (~a week of nights), so the footnote sets that expectation rather than over-promising.
         if d.sourceKind == .liveAppleWatch {
             let labels: [(Metric, String)] = [
-                (.hr, String(localized: "Heart rate")), (.hrv, "HRV"), (.sleep, String(localized: "Sleep")),
-                (.steps, String(localized: "Steps")), (.spo2, String(localized: "Blood oxygen")), (.skinTemp, String(localized: "Wrist temp")),
+                (.hr, String(localized: "Herzfrequenz")), (.hrv, "HRV"), (.sleep, String(localized: "Schlaf")),
+                (.steps, String(localized: "Schritte")), (.spo2, String(localized: "Sauerstoffsättigung")), (.skinTemp, String(localized: "Wrist temp")),
             ]
             let captures = labels.filter { d.capabilities.contains($0.0) }.map { $0.1 }.joined(separator: " · ")
             return DeviceCapabilityProfile(
                 displayModel: "Apple Watch",
-                captures: captures.isEmpty ? String(localized: "Calibrating, no data yet") : captures,
-                powers: String(localized: "Powers Rest, Effort, Fitness Age and steps, plus Charge once recovery calibrates"),
-                footnote: String(localized: "Computed live from your Apple Watch via Health. Recovery needs about a week of nights to calibrate, and every watch-derived score is labelled with its confidence. Only the metrics your watch actually records are listed above."))
+                captures: captures.isEmpty ? String(localized: "Kalibriert, keine Daten yet") : captures,
+                powers: String(localized: "Powers Rest, Effort, Fitnessalter and steps, plus Charge once recovery calibrates"),
+                footnote: String(localized: "Computed live from your Apple Watch via Gesundheit. Erholung needs about a week of nights to calibrate, and every watch-derived score is labelled with its confidence. Only the metrics your watch actually records are listed above."))
         }
         // Generic heart-rate strap: live HR + R-R only; drives the live console + Effort, nothing nightly.
         // (Same WHOOP test as SourceCoordinator.isWhoop, inlined so this stays nonisolated.)
         let isWhoop = d.id == "my-whoop" || d.brand.caseInsensitiveCompare("WHOOP") == .orderedSame
         guard isWhoop else {
             return DeviceCapabilityProfile(
-                displayModel: String(localized: "Heart-rate strap"),
-                captures: String(localized: "Heart rate · HRV (live)* · Strain"),
-                powers: String(localized: "Powers the live console + Effort. No Charge, Rest or Sleep"),
-                footnote: String(localized: "Live HR + R-R only · no sleep, recovery, skin temp, SpO₂, steps or battery (those are WHOOP-only)."))
+                displayModel: String(localized: "Herz-rate strap"),
+                captures: String(localized: "Herzfrequenz · HRV (live)* · Strain"),
+                powers: String(localized: "Powers the live console + Effort. No Charge, Rest or Schlaf"),
+                footnote: String(localized: "Live-HF + R-R only · no sleep, recovery, skin temp, SpO₂, steps or battery (those are WHOOP-only)."))
         }
-        let whoopPowers = String(localized: "Powers Charge, Effort, Rest, Sleep + Health Monitor")
+        let whoopPowers = String(localized: "Powers Charge, Effort, Rest, Schlaf + Gesundheit Monitor")
         let model = d.model.lowercased()
         // WHOOP 5.0 / MG — adds a (raw) step count the 4.0 can't read over BLE.
         if model.contains("5") || model.contains("mg") {
             return DeviceCapabilityProfile(
                 displayModel: "WHOOP 5.0 / MG",
-                captures: String(localized: "Heart rate · HRV · Skin temp* · Resp rate* · Steps* · Sleep · Strain · Battery"),
+                captures: String(localized: "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schritte* · Schlaf · Strain · Akku"),
                 powers: whoopPowers,
                 footnote: String(localized: "* on-device estimate: skin temp is a nightly ±°C deviation, steps are a raw motion count (#78). No SpO₂ % off the strap; import a WHOOP CSV for a real %."))
         }
@@ -626,14 +626,14 @@ struct DeviceCapabilityProfile {
         if model.contains("4") {
             return DeviceCapabilityProfile(
                 displayModel: "WHOOP 4.0",
-                captures: String(localized: "Heart rate · HRV · Skin temp* · Resp rate* · Sleep · Strain · Battery"),
+                captures: String(localized: "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schlaf · Strain · Akku"),
                 powers: whoopPowers,
                 footnote: String(localized: "* on-device estimate: skin temp is a nightly ±°C deviation (firmware-dependent); no steps over BLE on a 4.0. No SpO₂ % off the strap; import a WHOOP CSV for a real %."))
         }
         // Legacy / unknown WHOOP (the seeded device, model just "WHOOP") — show only the common-to-all set.
         return DeviceCapabilityProfile(
             displayModel: "WHOOP",
-            captures: String(localized: "Heart rate · HRV · Skin temp* · Resp rate* · Sleep · Strain · Battery"),
+            captures: String(localized: "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schlaf · Strain · Akku"),
             powers: whoopPowers,
             footnote: String(localized: "Exact model unknown. Shows what every WHOOP can do. * on-device estimate · no SpO₂ % off the strap (import a WHOOP CSV for that)."))
     }
@@ -703,7 +703,7 @@ struct DeviceCardCatalog: View {
     }
 
     var body: some View {
-        ScreenScaffold(title: "Devices",
+        ScreenScaffold(title: "Geräte",
                        subtitle: "What each band captures (and what LLB uses it for).",
                        topBackground: liquidScaffoldSky()) {
             VStack(spacing: NoopMetrics.gap) {
@@ -737,7 +737,7 @@ struct DeviceCardCatalog: View {
 /// so it can reach it. Stripped from Release.
 struct OuraDeviceDemoScreen: View {
     var body: some View {
-        ScreenScaffold(title: "Devices",
+        ScreenScaffold(title: "Geräte",
                        subtitle: "A locally-adopted Oura ring, in beta.",
                        topBackground: liquidScaffoldSky()) {
             VStack(spacing: NoopMetrics.gap) {
@@ -759,7 +759,7 @@ struct OuraDeviceDemoScreen: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Devices") {
+#Preview("Geräte") {
     let model = AppModel()
     return DevicesView()
         .environmentObject(model)

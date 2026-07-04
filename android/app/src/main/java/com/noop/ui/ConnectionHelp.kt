@@ -85,7 +85,7 @@ fun ConnectionHelp(viewModel: AppViewModel, modifier: Modifier = Modifier) {
 
             HelpStep(
                 done = !whoopInstalled,
-                title = "Close the official WHOOP app",
+                title = "Schließen the official WHOOP app",
                 body = "Your strap only pairs with ONE app at a time. If the WHOOP app is connected, " +
                     "LLB can't reach the strap. Force stop it (swiping it out of recents isn't enough).",
                 actionLabel = if (whoopInstalled) "Open WHOOP app, then Force stop" else "WHOOP app isn't installed",

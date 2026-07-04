@@ -1,10 +1,10 @@
 import Foundation
 import SwiftUI
 
-// MARK: - "Your cards" customisable dashboard (WHOOP "My Dashboard")
+// MARK: - "Deine Karten" customisable dashboard (WHOOP "Mein Dashboard")
 //
-// The Today screen's "Your cards" section was a fixed trio (Stress / Fitness age / Vitality). This turns
-// it into a user-customisable dashboard faithful to WHOOP's "My Dashboard": the user chooses WHICH metric
+// The Today screen's "Deine Karten" section was a fixed trio (Stress / Fitness age / Vitality). This turns
+// it into a user-customisable dashboard faithful to WHOOP's "Mein Dashboard": the user chooses WHICH metric
 // cards show and in WHAT order from a registry of the values Today already loads. Persistence is
 // DISPLAY-ONLY, no metric is computed or stored differently; this just decides which already-loaded
 // values render as WHOOP metric rows and in what sequence.
@@ -14,7 +14,7 @@ import SwiftUI
 // be lost. Mirrors the existing KeyMetric layout mechanism but as its own list so the two sections stay
 // independent (Key Metrics grid vs. the Your-cards dashboard).
 
-/// One available card in the "Your cards" dashboard. The `rawValue` is the stable persisted identifier,
+/// One available card in the "Deine Karten" dashboard. The `rawValue` is the stable persisted identifier,
 /// keep it byte-identical to the Android `DashboardCard` ids so a backup/restore reads the same dashboard
 /// on either OS.
 enum DashboardCard: String, CaseIterable, Identifiable {
@@ -44,18 +44,18 @@ enum DashboardCard: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .hrv:         return String(localized: "HRV")
-        case .restingHr:   return String(localized: "Resting HR")
-        case .respiratory: return String(localized: "Respiratory")
-        case .steps:       return String(localized: "Steps")
+        case .restingHr:   return String(localized: "Ruhe-HF")
+        case .respiratory: return String(localized: "Atmung")
+        case .steps:       return String(localized: "Schritte")
         case .stress:      return String(localized: "Stress")
-        case .fitnessAge:  return String(localized: "Fitness Age")
-        case .vitality:    return String(localized: "Vitality")
-        case .bloodOxygen: return String(localized: "Blood Oxygen")
+        case .fitnessAge:  return String(localized: "Fitnessalter")
+        case .vitality:    return String(localized: "Vitalität")
+        case .bloodOxygen: return String(localized: "Sauerstoffsättigung")
         case .skinTemp:    return String(localized: "Skin Temp")
-        case .sleep:       return String(localized: "Sleep")
-        case .calories:    return String(localized: "Calories")
-        case .hydration:   return String(localized: "Hydration")
-        case .coupled:     return String(localized: "Coupled view")
+        case .sleep:       return String(localized: "Schlaf")
+        case .calories:    return String(localized: "Kalorien")
+        case .hydration:   return String(localized: "Flüssigkeit")
+        case .coupled:     return String(localized: "Gekoppelte Ansicht")
         }
     }
 
@@ -63,19 +63,19 @@ enum DashboardCard: String, CaseIterable, Identifiable {
     /// Static descriptive text only, never invented data. Localized via the String Catalog.
     var subtitle: String {
         switch self {
-        case .hrv:         return String(localized: "Heart-rate variability")
-        case .restingHr:   return String(localized: "Resting heart rate")
+        case .hrv:         return String(localized: "Herzfrequenzvariabilität")
+        case .restingHr:   return String(localized: "Ruhepuls")
         case .respiratory: return String(localized: "Breaths per minute")
-        case .steps:       return String(localized: "Today")
+        case .steps:       return String(localized: "Heute")
         case .stress:      return String(localized: "Autonomic load")
         case .fitnessAge:  return String(localized: "Updated weekly")
         case .vitality:    return String(localized: "Wellness score")
-        case .bloodOxygen: return String(localized: "Blood oxygen")
-        case .skinTemp:    return String(localized: "Skin temperature")
-        case .sleep:       return String(localized: "Last night")
-        case .calories:    return String(localized: "Active energy")
-        case .hydration:   return String(localized: "Today's fluid")
-        case .coupled:     return String(localized: "Recovery, strain and sleep in one glance")
+        case .bloodOxygen: return String(localized: "Sauerstoffsättigung")
+        case .skinTemp:    return String(localized: "Hauttemperatur")
+        case .sleep:       return String(localized: "Letzte Nacht")
+        case .calories:    return String(localized: "Aktive Energie")
+        case .hydration:   return String(localized: "Heute's fluid")
+        case .coupled:     return String(localized: "Erholung, strain and sleep in one glance")
         }
     }
 
@@ -128,7 +128,7 @@ enum DashboardCard: String, CaseIterable, Identifiable {
     static let canonicalOrder: [DashboardCard] = allCases
 }
 
-/// Display-only persistence for the "Your cards" dashboard selection. Holds an ORDERED list of the enabled
+/// Display-only persistence for the "Deine Karten" dashboard selection. Holds an ORDERED list of the enabled
 /// cards as a JSON-encoded [String] of ids; a card not in the list is hidden. Stored in
 /// @AppStorage("today.dashboardCards").
 enum DashboardCardPrefs {

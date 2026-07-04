@@ -21,14 +21,14 @@ import WhoopStore
 struct LiveView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var live: LiveState
-    /// Cross-screen navigation — drives the "Manage devices" affordance to the first-class Devices
+    /// Cross-screen navigation — drives the "Geräte verwalten" affordance to the first-class Devices
     /// manager (where bands are paired / switched). The shell (sidebar on macOS, a sheet on iOS) routes
     /// the request; LiveView never needs to know which.
     @EnvironmentObject private var router: NavRouter
 
     /// Which strap the user is pairing — persists across launches. Drives which
     /// BLE service we scan for so a WHOOP 4.0 scan never hangs on a WHOOP 5 wrist.
-    @AppStorage("selectedWhoopModel") private var selectedModelRaw = WhoopModel.whoop4.rawValue
+    @AppStorage("selectedWhoopModell") private var selectedModelRaw = WhoopModel.whoop4.rawValue
     private var selectedModel: WhoopModel { WhoopModel(rawValue: selectedModelRaw) ?? .whoop4 }
 
     /// Maps the picked strap model to the HRV-reading source so the spot caveat is honest (#537): a
@@ -67,7 +67,7 @@ struct LiveView: View {
     @State private var showHRVSnapshot = false
 
     var body: some View {
-        ScreenScaffold(title: "Live Body Console",
+        ScreenScaffold(title: "Live Körper Console",
                        subtitle: "Current physiology, strap trust, and session controls in one working view.",
                        topBackground: liquidScaffoldSky()) {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
@@ -197,7 +197,7 @@ struct LiveView: View {
     }
 
     /// Whether to render the connection-mode SourceBadge. When fully offline the `connectionPill`
-    /// already reads "● Disconnected" in metricRose, so the duplicate rose "OFFLINE" badge is pure
+    /// already reads "● Getrennt" in metricRose, so the duplicate rose "OFFLINE" badge is pure
     /// redundancy — suppress it. We keep the badge for every informative state (FULL BOND / LIVE HR
     /// ONLY / CONNECTING / PAIRED), where it adds signal beyond the pill. The gate matches exactly the
     /// branch where `connectionModeBadge` would return "OFFLINE".
@@ -214,13 +214,13 @@ struct LiveView: View {
     private var connectionPill: some View {
         // Distinguish a GENUINE encrypted bond from the 5/MG live-HR shortcut that flips `bonded` true
         // over the unbonded standard profile (#69): green "Bonded · streaming" only when encryptedBond,
-        // amber "Live HR (not fully paired)" otherwise. The pairingHintBanner below gives the how-to.
+        // amber "Live-HF (not fully paired)" otherwise. The pairingHintBanner below gives the how-to.
         let (label, color): (String, Color) =
             (activeConnection && live.encryptedBond) ? (String(localized: "Bonded · streaming"), StrandPalette.accent)
-            : activeConnection ? (String(localized: "Live HR (not fully paired)"), StrandPalette.statusWarning)
-            : live.connected ? (String(localized: "Connected"), StrandPalette.statusWarning)
+            : activeConnection ? (String(localized: "Live-HF (not fully paired)"), StrandPalette.statusWarning)
+            : live.connected ? (String(localized: "Verbunden"), StrandPalette.statusWarning)
             : live.encryptedBond ? (String(localized: "Paired · idle"), StrandPalette.statusWarning)
-            : (String(localized: "Disconnected"), StrandPalette.metricRose)
+            : (String(localized: "Getrennt"), StrandPalette.metricRose)
         return HStack(spacing: 8) {
             Circle().fill(color).frame(width: 9, height: 9)
             Text(label).font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
@@ -313,7 +313,7 @@ struct LiveView: View {
         HStack(spacing: NoopMetrics.rowSpacing) {
             // All three routed through the unified button system: a filled primary for the lead
             // action, secondary surfaces for the supporting two — sentence-case, single line, 48pt.
-            NoopButton("Start workout", systemImage: "figure.run", kind: .primary) {
+            NoopButton("Workout starten", systemImage: "figure.run", kind: .primary) {
                 showStartSport = true
             }
             .disabled(!activeConnection)
@@ -415,7 +415,7 @@ struct LiveView: View {
                 .foregroundStyle(StrandPalette.statusWarning)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 3) {
-                Text("Live HR works. Free the strap to unlock buzz, alarms & sync")
+                Text("Live-HF works. Free the strap to unlock buzz, alarms & sync")
                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                 Text(hint)
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
@@ -454,7 +454,7 @@ struct LiveView: View {
                 Text(detail)
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Other metrics (R-R, frames, battery, history) need a full sync.")
+                Text("Sonstiges metrics (R-R, frames, battery, history) need a full sync.")
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -475,7 +475,7 @@ struct LiveView: View {
     private var modelPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
-                Text("Strap").font(StrandFont.caption).foregroundStyle(StrandPalette.textSecondary)
+                Text("Band").font(StrandFont.caption).foregroundStyle(StrandPalette.textSecondary)
                 SegmentedPillControl(
                     WhoopModel.allCases,
                     selection: Binding(
@@ -529,7 +529,7 @@ struct LiveView: View {
                             .foregroundStyle(StrandPalette.textPrimary)
                         // Name the band Scan will connect to, and point pairing/switching at Devices — so
                         // an offline user knows both what this button does and where to add a different band.
-                        Text("Scan connects to \(activeDeviceName). To pair or switch bands, open Devices.")
+                        Text("Scan connects to \(activeDeviceName). To pair or switch bands, open Geräte.")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -557,7 +557,7 @@ struct LiveView: View {
                     .foregroundStyle(StrandPalette.accent)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Manage devices")
+                    Text("Geräte verwalten")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Text(manageDevicesDetail)
@@ -579,16 +579,16 @@ struct LiveView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(LiquidPressStyle())
-        .accessibilityLabel("Manage devices")
-        .accessibilityHint("Opens the Devices screen, where you pair and switch bands.")
+        .accessibilityLabel("Geräte verwalten")
+        .accessibilityHint("Opens the Geräte screen, where you pair and switch bands.")
     }
 
     /// One-line subtitle for the Manage-devices row — names the active band and reads correctly whether
-    /// it's the live link ("Connected to …") or just the band Scan would target ("… is your active band").
+    /// it's the live link ("Verbunden to …") or just the band Scan would target ("… is your active band").
     private var manageDevicesDetail: String {
         activeConnection
-            ? String(localized: "Connected to \(activeDeviceName). Pair or switch bands in Devices.")
-            : String(localized: "\(activeDeviceName) is your active band. Pair or switch bands in Devices.")
+            ? String(localized: "Verbunden to \(activeDeviceName). Pair or switch bands in Geräte.")
+            : String(localized: "\(activeDeviceName) is your active band. Pair or switch bands in Geräte.")
     }
 
     // MARK: - Controls
@@ -619,7 +619,7 @@ struct LiveView: View {
     // a filled primary for the lead Scan action, a secondary surface for Buzz, and the destructive
     // role for Disconnect — sentence-case, single line, optical-centred at controlHeight.
     private var scanButton: some View {
-        NoopButton(live.connected ? "Re-scan" : "Scan & connect",
+        NoopButton(live.connected ? "Erneut scannen" : "Scan & connect",
                    systemImage: "antenna.radiowaves.left.and.right",
                    kind: .primary, fullWidth: true) {
             model.scan(model: selectedModel)
@@ -638,7 +638,7 @@ struct LiveView: View {
     }
 
     private var disconnectButton: some View {
-        NoopButton("Disconnect", systemImage: "xmark.circle",
+        NoopButton("Trennen", systemImage: "xmark.circle",
                    kind: .destructive, fullWidth: true) {
             model.disconnect()
         }
@@ -686,7 +686,7 @@ private struct LiveHeaderStats: View {
     var body: some View {
         HStack(spacing: 16) {
             stat(String(localized: "Device"), deviceName)
-            stat(String(localized: "Battery"), live.batteryPct.map { "\(Int($0))%" } ?? "—")
+            stat(String(localized: "Akku"), live.batteryPct.map { "\(Int($0))%" } ?? "—")
             stat(String(localized: "Worn"), activeConnection ? (live.worn ? String(localized: "Yes") : String(localized: "No")) : "—")
             stat(String(localized: "Last sync"), lastSyncLabel)
         }
@@ -779,7 +779,7 @@ private struct LiveHeartReadout: View {
             }
             .frame(width: 210, height: 210)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(displayHR.map { "Heart rate \($0) beats per minute" } ?? "Heart rate not available")
+            .accessibilityLabel(displayHR.map { "Herzfrequenz \($0) beats per minute" } ?? "Herzfrequenz not available")
             Text(signalTrustSummary)
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
@@ -800,7 +800,7 @@ private struct LiveHeartReadout: View {
     private var signalTrustSummary: String {
         if activeConnection && live.encryptedBond { return String(localized: "Encrypted stream: deep controls and history sync available.") }
         if activeConnection { return String(localized: "Live heart rate is flowing; full strap controls need an encrypted bond.") }
-        if live.connected { return String(localized: "Connected, waiting for a streaming state.") }
+        if live.connected { return String(localized: "Verbunden, waiting for a streaming state.") }
         // The actionable "Scan and connect…" CTA now lives in `offlineConnectCallout` above the fold, so
         // this caption stays a calm empty-state descriptor rather than a second, competing CTA.
         return String(localized: "Live heart rate appears here once a strap is connected.")
@@ -923,7 +923,7 @@ private struct LivePhysiology: View {
 
     private var connectionModeDetail: String {
         if activeConnection && live.encryptedBond { return String(localized: "Full strap stream is active.") }
-        if activeConnection { return String(localized: "Heart rate stream is active.") }
+        if activeConnection { return String(localized: "Herzfrequenz stream is active.") }
         if live.connected { return String(localized: "Radio connected, stream not yet trusted.") }
         return String(localized: "No live stream.")
     }
@@ -976,7 +976,7 @@ private struct LiveSignalTrustRail: View {
 
     private var signalTiles: [SignalTrustTile.Model] {
         [
-            .init(title: String(localized: "Heart rate"),
+            .init(title: String(localized: "Herzfrequenz"),
                   value: displayHR.map { "\($0) bpm" } ?? String(localized: "Missing"),
                   detail: activeConnection ? String(localized: "Streaming now") : String(localized: "No active stream"),
                   icon: "waveform.path.ecg",
@@ -989,7 +989,7 @@ private struct LiveSignalTrustRail: View {
                   tint: live.rrRecent.isEmpty ? StrandPalette.textTertiary : StrandPalette.metricCyan,
                   frac: live.rrRecent.isEmpty ? nil : min(1, Double(live.rrRecent.count) / 30)),
             .init(title: String(localized: "Connection"),
-                  value: activeConnection && live.encryptedBond ? String(localized: "Encrypted") : activeConnection ? String(localized: "Partial") : live.connected ? String(localized: "Connected") : String(localized: "Offline"),
+                  value: activeConnection && live.encryptedBond ? String(localized: "Encrypted") : activeConnection ? String(localized: "Partial") : live.connected ? String(localized: "Verbunden") : String(localized: "Offline"),
                   detail: activeConnection && live.encryptedBond ? String(localized: "Controls unlocked") : String(localized: "Standard HR is not a full bond"),
                   icon: "lock.shield",
                   tint: connectionModeColor,
@@ -1000,9 +1000,9 @@ private struct LiveSignalTrustRail: View {
                   icon: "clock.arrow.circlepath",
                   tint: live.backfilling ? StrandPalette.metricCyan : StrandPalette.textSecondary,
                   frac: live.backfilling ? 0.6 : (live.lastSyncedAt == nil ? nil : 1)),
-            .init(title: String(localized: "Battery"),
-                  value: live.batteryPct.map { "\(Int($0))%" } ?? String(localized: "Unknown"),
-                  detail: live.charging == true ? String(localized: "Charging") : String(localized: "Last reported by strap"),
+            .init(title: String(localized: "Akku"),
+                  value: live.batteryPct.map { "\(Int($0))%" } ?? String(localized: "Unbekannt"),
+                  detail: live.charging == true ? String(localized: "Lädt") : String(localized: "Last reported by strap"),
                   icon: "battery.75percent",
                   tint: batteryTint,
                   frac: live.batteryPct.map { max(0.02, min(1, $0 / 100)) }),
@@ -1010,7 +1010,7 @@ private struct LiveSignalTrustRail: View {
             // updated by WRIST_ON/OFF events, so while OFFLINE it would otherwise read a false-green
             // "On wrist". Gate the value AND tint on activeConnection (triage fix for PR#191).
             .init(title: String(localized: "Wear state"),
-                  value: activeConnection ? (live.worn ? String(localized: "On wrist") : String(localized: "Off wrist")) : String(localized: "Unknown"),
+                  value: activeConnection ? (live.worn ? String(localized: "On wrist") : String(localized: "Off wrist")) : String(localized: "Unbekannt"),
                   detail: activeConnection ? (live.worn ? String(localized: "Eligible for live physiology") : String(localized: "Wear the strap for scoring")) : String(localized: "Connect to read wear state"),
                   icon: "sensor.tag.radiowaves.forward",
                   tint: !activeConnection ? StrandPalette.textTertiary : live.worn ? StrandPalette.accent : StrandPalette.statusWarning,
@@ -1069,7 +1069,7 @@ private struct LiveLogCard: View {
                 // had no way to share it). Copy → clipboard; Save… → a .txt file.
                 Button("Copy") { copyStrapLog() }
                     .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
-                Button("Save…") { saveStrapLog() }
+                Button("Speichern…") { saveStrapLog() }
                     .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
             }
             ScrollViewReader { proxy in
@@ -1095,7 +1095,7 @@ private struct LiveLogCard: View {
             NavigationLink(destination: TestCentreView()) {
                 HStack(spacing: 8) {
                     Image(systemName: "testtube.2").foregroundStyle(StrandPalette.accent)
-                    Text("Open Test Centre to report a bug").font(StrandFont.mono)
+                    Text("Open Testcenter to report a bug").font(StrandFont.mono)
                         .foregroundStyle(StrandPalette.accent)
                     Spacer()
                     Image(systemName: "chevron.right").foregroundStyle(StrandPalette.textSecondary)
@@ -1103,7 +1103,7 @@ private struct LiveLogCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Open Test Centre")
+            .accessibilityLabel("Open Testcenter")
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1135,7 +1135,7 @@ private struct LiveLogCard: View {
 /// both read identically.
 private enum LiveSyncFormat {
     static func lastSyncLabel(_ ts: TimeInterval?) -> String {
-        guard let ts else { return String(localized: "Never") }
+        guard let ts else { return String(localized: "Nie") }
         let date = Date(timeIntervalSince1970: ts)
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
@@ -1147,7 +1147,7 @@ private enum LiveSyncFormat {
 
 /// One card in the Signal Trust rail: a small liquid vessel gauge + ALL-CAPS title, a coloured value,
 /// and a one-line detail. The whole card is combined into a single accessibility element so VoiceOver
-/// reads "Heart rate: 62 bpm. Streaming now." rather than three disjoint fragments.
+/// reads "Herzfrequenz: 62 bpm. Streaming now." rather than three disjoint fragments.
 private struct SignalTrustTile: View {
     struct Model: Identifiable {
         let title: String

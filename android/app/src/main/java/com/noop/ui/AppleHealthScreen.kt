@@ -162,7 +162,7 @@ fun AppleHealthScreen(vm: AppViewModel) {
     // so only on-screen sections compose + are accessibility-walked on scroll (this data view is the long,
     // chart-heavy one). The loading/empty branches stay single items. Order + spacing are unchanged
     // (LazyColumn reproduces the eager `spacedBy(20.dp)` between the six sections).
-    LazyScreenScaffold(title = "Apple Health", subtitle = subtitle) {
+    LazyScreenScaffold(title = "Apple Gesundheit", subtitle = subtitle) {
         when {
             !loaded -> item { LoadingCard() }
             !data.hasAnyData -> item { EmptyState() }
@@ -183,12 +183,12 @@ fun AppleHealthScreen(vm: AppViewModel) {
 /** Header subtitle reflects the windowed (visible) per-day span of the steps series. */
 private fun spanSubtitle(loaded: Boolean, data: AppleData, range: AppleRange): String {
     if (!loaded) {
-        return "Steps, heart, sleep, body composition and VO₂ max - synced from the desktop app."
+        return "Schritte, heart, sleep, body composition and VO₂ max - synced from the desktop app."
     }
     // Use steps as the canonical per-day series for the span readout.
     val rows = resolve(data.raw("steps"), range).rows
     if (rows.isEmpty()) {
-        return "Steps, heart, sleep, body composition and VO₂ max - synced from the desktop app."
+        return "Schritte, heart, sleep, body composition and VO₂ max - synced from the desktop app."
     }
     val lo = rows.first().day
     val hi = rows.last().day
@@ -235,7 +235,7 @@ private fun LoadingCard() {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             ConnectionDot(tone = StrandTone.Accent, pulsing = true)
             Text(
-                "Reading your Apple Health history…",
+                "Reading your Apple Gesundheit history…",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
@@ -246,9 +246,9 @@ private fun LoadingCard() {
 @Composable
 private fun EmptyState() {
     DataPendingNote(
-        title = "Nothing imported yet",
-        body = "Nothing imported yet. On an iPhone: Health app, tap your photo, Export " +
-            "All Health Data, then import the .zip here in Data Sources.",
+        title = "Nichts importiert yet",
+        body = "Nichts importiert yet. On an iPhone: Gesundheit app, tap your photo, Exportieren " +
+            "All Gesundheit Daten, then import the .zip here in Datenquellen.",
     )
 }
 
@@ -264,8 +264,8 @@ private fun TileGrid(data: AppleData, range: AppleRange) {
     // Two columns of equal-width fixed-height tiles, mirroring the macOS adaptive grid.
     Column(verticalArrangement = Arrangement.spacedBy(Metrics.gap)) {
         TileRow {
-            MetricTile(Modifier.weight(1f), data, range, "steps", "Steps", Palette.metricCyan) { intString(it) }
-            MetricTile(Modifier.weight(1f), data, range, "resting_hr", "Resting HR", Palette.metricRose, "bpm") {
+            MetricTile(Modifier.weight(1f), data, range, "steps", "Schritte", Palette.metricCyan) { intString(it) }
+            MetricTile(Modifier.weight(1f), data, range, "resting_hr", "Ruhe-HF", Palette.metricRose, "bpm") {
                 "${it.roundToInt()}"
             }
         }
@@ -276,10 +276,10 @@ private fun TileGrid(data: AppleData, range: AppleRange) {
             }
         }
         TileRow {
-            MetricTile(Modifier.weight(1f), data, range, "weight", "Weight", Palette.accent) {
+            MetricTile(Modifier.weight(1f), data, range, "weight", "Gewicht", Palette.accent) {
                 UnitFormatter.massFromKilograms(it, unitSystem)
             }
-            MetricTile(Modifier.weight(1f), data, range, "body_fat", "Body Fat", Palette.metricAmber, "%") {
+            MetricTile(Modifier.weight(1f), data, range, "body_fat", "Körper Fat", Palette.metricAmber, "%") {
                 String.format(Locale.US, "%.1f", it)
             }
         }
@@ -288,7 +288,7 @@ private fun TileGrid(data: AppleData, range: AppleRange) {
                 UnitFormatter.massFromKilograms(it, unitSystem)
             }
             MetricTile(
-                Modifier.weight(1f), data, range, "asleep_min", "Asleep avg", Palette.metricPurple,
+                Modifier.weight(1f), data, range, "asleep_min", "Schlafend avg", Palette.metricPurple,
                 aggregate = Aggregate.Mean,
             ) { durationString(it) }
         }
@@ -353,17 +353,17 @@ private fun MetricTile(
 
 @Composable
 private fun HeartSection(data: AppleData, range: AppleRange) {
-    ChartSection("Heart & Vitals", "Cardiac", range) {
-        MetricChartCard(data, range, "resting_hr", "Resting heart rate", Palette.metricRose) {
+    ChartSection("Herz & Vitals", "Cardiac", range) {
+        MetricChartCard(data, range, "resting_hr", "Ruhepuls", Palette.metricRose) {
             "${it.roundToInt()} bpm"
         }
-        MetricChartCard(data, range, "hrv", "Heart rate variability", Palette.metricPurple) {
+        MetricChartCard(data, range, "hrv", "Herzfrequenzvariabilität", Palette.metricPurple) {
             "${it.roundToInt()} ms"
         }
-        MetricChartCard(data, range, "spo2", "Blood oxygen", Palette.metricCyan) {
+        MetricChartCard(data, range, "spo2", "Sauerstoffsättigung", Palette.metricCyan) {
             String.format(Locale.US, "%.1f%%", it)
         }
-        MetricChartCard(data, range, "resp_rate", "Respiratory rate", Palette.accent) {
+        MetricChartCard(data, range, "resp_rate", "Atemfrequenz", Palette.accent) {
             String.format(Locale.US, "%.1f rpm", it)
         }
     }
@@ -371,9 +371,9 @@ private fun HeartSection(data: AppleData, range: AppleRange) {
 
 @Composable
 private fun ActivitySection(data: AppleData, range: AppleRange) {
-    ChartSection("Activity & Energy", "Movement", range) {
-        MetricChartCard(data, range, "steps", "Steps", Palette.metricCyan) { intString(it) }
-        MetricChartCard(data, range, "active_kcal", "Active energy", Palette.metricAmber) {
+    ChartSection("Aktivität & Energy", "Movement", range) {
+        MetricChartCard(data, range, "steps", "Schritte", Palette.metricCyan) { intString(it) }
+        MetricChartCard(data, range, "active_kcal", "Aktive Energie", Palette.metricAmber) {
             "${intString(it)} kcal"
         }
     }
@@ -383,11 +383,11 @@ private fun ActivitySection(data: AppleData, range: AppleRange) {
 private fun BodySection(data: AppleData, range: AppleRange) {
     // Weight + lean mass (stored kg) re-label to lb under the imperial preference.
     val unitSystem = UnitPrefs.system(LocalContext.current)
-    ChartSection("Body Composition", "Slow threads", range) {
-        MetricChartCard(data, range, "weight", "Weight", Palette.accent) {
+    ChartSection("Körper Composition", "Slow threads", range) {
+        MetricChartCard(data, range, "weight", "Gewicht", Palette.accent) {
             UnitFormatter.massFromKilograms(it, unitSystem)
         }
-        MetricChartCard(data, range, "body_fat", "Body fat", Palette.metricAmber) {
+        MetricChartCard(data, range, "body_fat", "Körper fat", Palette.metricAmber) {
             String.format(Locale.US, "%.1f%%", it)
         }
         MetricChartCard(data, range, "lean_mass", "Lean body mass", Palette.accent) {
@@ -401,8 +401,8 @@ private fun BodySection(data: AppleData, range: AppleRange) {
 
 @Composable
 private fun SleepSection(data: AppleData, range: AppleRange) {
-    ChartSection("Sleep", "Rest", range) {
-        MetricChartCard(data, range, "asleep_min", "Asleep", Palette.metricPurple) { durationString(it) }
+    ChartSection("Schlaf", "Rest", range) {
+        MetricChartCard(data, range, "asleep_min", "Schlafend", Palette.metricPurple) { durationString(it) }
     }
 }
 

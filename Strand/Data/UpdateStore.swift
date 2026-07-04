@@ -27,7 +27,7 @@ struct UpdateItem: Identifiable, Codable, Equatable {
     /// `NavRouter.Destination.rawValue` (e.g. "trends", "labBook"); unknown keys just dismiss the sheet.
     var deepLink: String?
     /// For `.dismissedCard` only: the Today card id to restore (the `@AppStorage` dismissed-flag key's
-    /// stable suffix). Tapping "Restore to Today" in the inbox flips that flag back so the card reappears.
+    /// stable suffix). Tapping "Auf Heute wiederherstellen" in the inbox flips that flag back so the card reappears.
     var restorePayload: String?
 
     init(id: UUID = UUID(), kind: Kind, title: String, message: String,
@@ -67,7 +67,7 @@ final class UpdateStore: ObservableObject {
         didSet { persist() }
     }
 
-    /// A restore signal TodayView observes: set to a card id when "Restore to Today" is tapped, so the
+    /// A restore signal TodayView observes: set to a card id when "Auf Heute wiederherstellen" is tapped, so the
     /// Today screen (which owns the `@AppStorage` dismissed flags) can flip the matching flag back to
     /// false. Cleared by the observer once handled. (The inbox also clears the flag directly via the
     /// shared key, so this is belt-and-braces for an already-mounted Today.)
@@ -200,7 +200,7 @@ final class UpdateStore: ObservableObject {
         let message = summary ?? String(localized: "LLB \(version) is here. Tap to read what's new.")
         post(UpdateItem(
             kind: .whatsNew,
-            title: title.isEmpty ? String(localized: "What's new in LLB \(version)") : title,
+            title: title.isEmpty ? String(localized: "Neuigkeiten in LLB \(version)") : title,
             message: message
         ))
     }

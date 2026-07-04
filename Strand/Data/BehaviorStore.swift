@@ -41,7 +41,7 @@ final class BehaviorStore: ObservableObject {
     /// Target wake time, minutes since local midnight.
     @Published var smartAlarmMinutes: Int { didSet { d.set(smartAlarmMinutes, forKey: K.alarmTime) } }
     /// Weekdays the alarm fires on (Calendar weekday numbers: 1 = Sun … 7 = Sat). An empty set means
-    /// "every day" — the backward-compatible default for anyone upgrading from before per-day scheduling.
+    /// "jeden Tag" — the backward-compatible default for anyone upgrading from before per-day scheduling.
     @Published var smartAlarmWeekdays: Set<Int> { didSet { d.set(Array(smartAlarmWeekdays).sorted(), forKey: K.alarmWeekdays) } }
 
     // MARK: Illness early-warning
@@ -100,7 +100,7 @@ final class BehaviorStore: ObservableObject {
 
     /// Epoch SECONDS the Charge build-up was last manually reset from, or 0 if never. Reads the SAME
     /// canonical key the analytics engine folds against (`Baselines.recoveryBaselineEpochKey`) — no
-    /// second source of truth. The "Recalibrate Charge baseline" Settings button writes it (and the
+    /// second source of truth. The "Charge-Basis neu kalibrieren" Settings button writes it (and the
     /// sibling HRV epoch) via `recalibrateChargeBaseline()`.
     var chargeBaselineEpoch: Double { Baselines.recoveryBaselineEpoch(d) }
 

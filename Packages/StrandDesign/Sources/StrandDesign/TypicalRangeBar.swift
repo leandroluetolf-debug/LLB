@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - TypicalRangeBar (WHOOP detail "typical range" bar)
 //
-// "Solid = you, hatch = the context." A horizontal bar where a DIAGONAL-HATCH track marks the
+// "Stabil = you, hatch = the context." A horizontal bar where a DIAGONAL-HATCH track marks the
 // typical / reference RANGE (lower…upper, as fractions of the bar) and a SOLID coloured fill marks
 // the user's VALUE. Mirrors WHOOP's sleep-stage and metric range rows: the eye instantly sees whether
 // you landed inside, below or above the typical band, without a legend.
@@ -217,11 +217,11 @@ public struct TypicalRangeRow: View {
 #if DEBUG
 #Preview("TypicalRangeBar / Row") {
     VStack(alignment: .leading, spacing: 16) {
-        Text("Sleep stages").strandOverline()
+        Text("Schlaf stages").strandOverline()
         VStack(spacing: 10) {
             TypicalRangeRow(label: "Awake", valueText: "4%", trailingText: "0:18",
                             value: 0.04, typical: 0.02...0.10, color: StrandPalette.sleepAwake)
-            TypicalRangeRow(label: "Light", valueText: "52%", trailingText: "4:02",
+            TypicalRangeRow(label: "Hell", valueText: "52%", trailingText: "4:02",
                             value: 0.52, typical: 0.45...0.60, color: StrandPalette.sleepLight)
             TypicalRangeRow(label: "Deep", valueText: "18%", trailingText: "1:24",
                             value: 0.18, typical: 0.12...0.23, color: StrandPalette.sleepDeep)

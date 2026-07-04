@@ -8,6 +8,12 @@
             "state": "translated",
             "value": "%@ %lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
         }
       }
     },
@@ -18,12 +24,24 @@
             "state": "translated",
             "value": "%@ calibrating"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kalibriert"
+          }
         }
       }
     },
     "%@ unavailable": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ unavailable"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ unavailable"
@@ -90,12 +108,24 @@
             "state": "translated",
             "value": "Charge %lld out of 100"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld out of 100"
+          }
         }
       }
     },
     "Charge %lld · %lld bpm%@": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld · %lld bpm%@"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Charge %lld · %lld bpm%@"
@@ -110,6 +140,12 @@
             "state": "translated",
             "value": "Charge %lld%@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld%@"
+          }
         }
       }
     },
@@ -119,6 +155,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Charge calibrating"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge kalibriert"
           }
         }
       }
@@ -130,6 +172,12 @@
             "state": "translated",
             "value": "Charge calibrating, needs more data"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge kalibriert, needs more data"
+          }
         }
       }
     },
@@ -140,12 +188,24 @@
             "state": "translated",
             "value": "Charge out of date, last synced %@. Open LLB on iPhone."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge out of date, last synced %@. LLB öffnen on iPhone."
+          }
         }
       }
     },
     "Charge stale · %@": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge stale · %@"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Charge stale · %@"
@@ -160,12 +220,24 @@
             "state": "translated",
             "value": "Charge unavailable"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge unavailable"
+          }
         }
       }
     },
     "Charge · %@": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · %@"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Charge · %@"
@@ -180,12 +252,24 @@
             "state": "translated",
             "value": "Charge · cal"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · cal"
+          }
         }
       }
     },
     "Charge –": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge –"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Charge –"
@@ -276,12 +360,24 @@
             "state": "translated",
             "value": "LLB 能量"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB Charge"
+          }
         }
       }
     },
     "LLB · open on iPhone": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB · open on iPhone"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "LLB · open on iPhone"
@@ -296,6 +392,12 @@
             "state": "translated",
             "value": "LLB. %@, %@, %@."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB. %@, %@, %@."
+          }
         }
       }
     },
@@ -305,6 +407,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "LLB. No data yet, open LLB on your iPhone to sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB. Keine Daten yet, open LLB on your iPhone to sync."
           }
         }
       }
@@ -316,6 +424,12 @@
             "state": "translated",
             "value": "LLB. Scores out of date, last synced %@. Open LLB on iPhone to refresh."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB. Scores out of date, last synced %@. LLB öffnen on iPhone to refresh."
+          }
         }
       }
     },
@@ -326,6 +440,12 @@
             "state": "translated",
             "value": "No data, open LLB on iPhone"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Daten, open LLB on iPhone"
+          }
         }
       }
     },
@@ -335,6 +455,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Open LLB"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLB öffnen"
           }
         }
       }
@@ -422,12 +548,24 @@
             "state": "translated",
             "value": "錶面上顯示你的能量（恢復），矩形卡片中則是消耗與休息。"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Charge (recovery) on the watch face, with Effort and Rest in the rectangular card."
+          }
         }
       }
     },
     "a while ago": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a while ago"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "a while ago"
@@ -442,12 +580,24 @@
             "state": "translated",
             "value": "cal"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
         }
       }
     },
     "old": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "old"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "old"
@@ -462,12 +612,24 @@
             "state": "translated",
             "value": "open iPhone"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "open iPhone"
+          }
         }
       }
     },
     "stale": {
       "localizations": {
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "stale"

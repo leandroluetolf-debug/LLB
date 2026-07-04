@@ -97,7 +97,7 @@ fun InsightsHubScreen(vm: AppViewModel) {
     // PERF (#707): lazy scaffold — each section (and its standalone Spacer, a real child of the eager
     // `spacedBy(20.dp)` Column) becomes one `item { }`, so the LazyColumn's matching `spacedBy(20.dp)`
     // reproduces identical spacing and only on-screen sections compose + are semantics-walked.
-    LazyScreenScaffold(title = "Insights", subtitle = "Patterns in your own data: association, not cause.") {
+    LazyScreenScaffold(title = "Einblicke", subtitle = "Patterns in your own data: association, not cause.") {
         if (!state.loaded) {
             item {
             NoopCard {
@@ -411,9 +411,9 @@ private fun HonestyBanner(text: String, accent: Color) {
 @Composable
 private fun ConfidencePill(c: ScoreConfidence) {
     val (label, tone) = when (c) {
-        ScoreConfidence.SOLID -> "Solid" to StrandTone.Positive
+        ScoreConfidence.SOLID -> "Stabil" to StrandTone.Positive
         ScoreConfidence.BUILDING -> "Building" to StrandTone.Accent
-        ScoreConfidence.CALIBRATING -> "Calibrating" to StrandTone.Neutral
+        ScoreConfidence.CALIBRATING -> "Kalibriert" to StrandTone.Neutral
     }
     StatePill(label, tone = tone, showsDot = false)
 }
@@ -492,7 +492,7 @@ internal enum class InsightsOutcome(
     Recovery("Charge", "Charge", "recovery", true, DomainTheme.Charge, { it.recovery }, { "${it.roundToInt()}%" }),
     Hrv("HRV", "HRV", "hrv", true, DomainTheme.Rest, { it.avgHrv }, { "${it.roundToInt()} ms" }),
     Sleep("Rest", "Rest", "sleep_performance", true, DomainTheme.Rest, { it.efficiency }, { "${it.roundToInt()}%" }),
-    Rhr("RHR", "Resting HR", "rhr", false, DomainTheme.Stress, { it.restingHr?.toDouble() }, { "${it.roundToInt()} bpm" }),
+    Rhr("RHR", "Ruhe-HF", "rhr", false, DomainTheme.Stress, { it.restingHr?.toDouble() }, { "${it.roundToInt()} bpm" }),
 }
 
 // MARK: - Dose card view-data
@@ -569,7 +569,7 @@ internal class InsightsHubViewModel {
             "Charge" -> "recovery"
             "HRV" -> "hrv"
             "Rest" -> "sleep_performance"
-            "Resting HR" -> "rhr"
+            "Ruhe-HF" -> "rhr"
             else -> "recovery"
         }
     }

@@ -149,9 +149,9 @@ fun MindSection(vm: AppViewModel) {
                         Spacer(Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(face.word, style = NoopType.headline, color = Palette.textPrimary)
-                            Text("Logged today", style = NoopType.caption, color = Palette.textTertiary)
+                            Text("Heute protokolliert", style = NoopType.caption, color = Palette.textTertiary)
                         }
-                        MoodChip("Edit") { editing = true }
+                        MoodChip("Bearbeiten") { editing = true }
                     }
                 }
 
@@ -283,8 +283,8 @@ private fun buildMindCorrelations(
     }
     return listOfNotNull(
         line("Mood ↔ HRV", days.mapNotNull { d -> d.avgHrv?.let { d.day to it } }),
-        line("Mood ↔ Recovery", days.mapNotNull { d -> d.recovery?.let { d.day to it } }),
-        line("Mood ↔ Sleep duration", days.mapNotNull { d -> d.totalSleepMin?.let { d.day to it } }),
+        line("Mood ↔ Erholung", days.mapNotNull { d -> d.recovery?.let { d.day to it } }),
+        line("Mood ↔ Schlaf duration", days.mapNotNull { d -> d.totalSleepMin?.let { d.day to it } }),
     )
 }
 

@@ -36,7 +36,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
-// MARK: - HowNoopWorksScreen ("How LLB works" primer)
+// MARK: - HowNoopWorksScreen ("So funktioniert LLB" primer)
 //
 // COMPONENT 5 of the sleep-guidance / explainability layer
 // (docs/superpowers/specs/2026-06-20-sleep-guidance-explainability.md): a short,
@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 //
 // Presented as a full-screen sheet, mirroring ScoringGuideScreen / WhatsNewSheet:
 // a fixed scenic header with a close button, a scrollable column of cards, and a
-// "Got it" footer. The four section bodies are the single approved source of truth,
+// "Verstanden" footer. The four section bodies are the single approved source of truth,
 // shared VERBATIM across macOS / iOS / Android — do not paraphrase or re-wrap the
 // wording; keep it identical to the Swift HowNoopWorks primer. Honest per the
 // explainability spec: nothing here promises a number LLB won't show. No em-dashes.
@@ -71,9 +71,9 @@ private enum class PrimerSection(
         icon = Icons.Filled.Bedtime,
     ),
     SCORES(
-        title = "How your scores work",
+        title = "So funktionieren deine Werte",
         body = "Charge, Effort and Rest are scored on your own device from your strap data. " +
-            "Charge needs about four nights of sleep to learn your baseline (that's \"Calibrating\", " +
+            "Charge needs about four nights of sleep to learn your baseline (that's \"Kalibriert\", " +
             "counted as nights of 4 on the ring), and keeps sharpening over your first couple of weeks. " +
             "On a WHOOP 5 or MG the strap banks little history, so that count can sit at 0 of 4 until you " +
             "have worn it across a few nights. That's the strap's sync limit, not a fault. " +
@@ -88,7 +88,7 @@ private enum class PrimerSection(
             "skin-temperature drift in either direction lowers it. Each signal is measured as how far " +
             "tonight sits from your personal baseline, never an absolute target. If a signal is missing, " +
             "it's dropped and the rest are reweighted, so the number always reflects only what was " +
-            "actually measured. The \"What shaped it\" breakdown under the Charge ring shows each signal's " +
+            "actually measured. The \"Was es geprägt hat\" breakdown under the Charge ring shows each signal's " +
             "point contribution.",
         icon = Icons.Filled.Calculate,
     ),
@@ -101,7 +101,7 @@ private enum class PrimerSection(
     PROVENANCE(
         title = "Where your numbers come from",
         body = "A badge shows whether a number was scored on-device by LLB, or imported " +
-            "from Whoop or Apple Health.",
+            "from Whoop or Apple Gesundheit.",
         icon = Icons.Filled.Verified,
     );
 
@@ -117,7 +117,7 @@ private enum class PrimerSection(
 }
 
 /**
- * The "How LLB works" primer sheet. [onClose] dismisses. Pure presentation — it reads
+ * The "So funktioniert LLB" primer sheet. [onClose] dismisses. Pure presentation — it reads
  * nothing and writes nothing; every line is static approved copy.
  */
 @Composable
@@ -159,7 +159,7 @@ fun HowNoopWorksScreen(onClose: () -> Unit) {
     }
 }
 
-// MARK: - Header ("How LLB works" + tagline + close X)
+// MARK: - Header ("So funktioniert LLB" + tagline + close X)
 
 @Composable
 private fun Header(onClose: () -> Unit) {
@@ -175,9 +175,9 @@ private fun Header(onClose: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Overline("The basics", color = Palette.textTertiary)
-            Text("How LLB works", style = NoopType.display(26f), color = Palette.textPrimary)
+            Text("So funktioniert LLB", style = NoopType.display(26f), color = Palette.textPrimary)
             Text(
-                "Sleep · scores · recording · where your numbers come from",
+                "Schlaf · scores · recording · where your numbers come from",
                 style = NoopType.caption,
                 color = Palette.textSecondary,
             )
@@ -185,7 +185,7 @@ private fun Header(onClose: () -> Unit) {
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Close",
+                contentDescription = "Schließen",
                 tint = Palette.textTertiary,
                 modifier = Modifier.size(22.dp),
             )
@@ -252,7 +252,7 @@ private fun PrimerCard(section: PrimerSection) {
     }
 }
 
-// MARK: - Footer note (muted honesty line) + footer bar ("Got it")
+// MARK: - Footer note (muted honesty line) + footer bar ("Verstanden")
 
 @Composable
 private fun FooterNote() {
@@ -282,7 +282,7 @@ private fun Footer(onClose: () -> Unit) {
                 contentColor = Palette.surfaceBase,
             ),
         ) {
-            Text("Got it", style = NoopType.captionNumber)
+            Text("Verstanden", style = NoopType.captionNumber)
         }
     }
 }

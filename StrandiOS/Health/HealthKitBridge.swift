@@ -99,7 +99,7 @@ final class HealthKitBridge: ObservableObject {
         // A free-signed build (no `com.apple.developer.healthkit` entitlement) can NEVER reach Health:
         // `requestAuthorization` either throws "Missing application-identifier"/"missing entitlement"
         // or returns without ever presenting the sheet and leaves every type `.notDetermined`. Either
-        // way the honest answer is "this build can't use Apple Health directly", NOT "you denied it" —
+        // way the honest answer is "this build can't use Apple Gesundheit directly", NOT "you denied it" —
         // so never fall through to `.denied` (which tells the user to fix it in Settings, where the app
         // can never appear). Detect via the embedded provisioning profile up front (#348).
         guard HealthKitBridge.hasHealthKitEntitlement else { auth = .entitlementMissing; return }
@@ -116,7 +116,7 @@ final class HealthKitBridge: ObservableObject {
             auth = .authorized
         } catch {
             // A thrown error here is on a build that carries the entitlement (guarded above), so it's a
-            // genuine denial / request failure — keep the normal `.denied` "enable in Settings" path,
+            // genuine denial / request failure — keep the normal `.denied` "enable in Einstellungen" path,
             // never the entitlement-missing reroute.
             auth = .denied
         }
@@ -406,7 +406,7 @@ final class HealthKitBridge: ObservableObject {
             lastSync = Date()
             lastError = nil
         } catch {
-            lastError = String(localized: "Apple Health sync failed: \(error.localizedDescription)")
+            lastError = String(localized: "Apple Gesundheit sync failed: \(error.localizedDescription)")
         }
     }
 
@@ -496,7 +496,7 @@ final class HealthKitBridge: ObservableObject {
     }
 
     /// Excludes LLB's own write-back samples from reads, so the two-way sync never reads its own
-    /// output back in as "apple-health" data — which would make the strap and "Apple Health" plot the
+    /// output back in as "apple-health" data — which would make the strap and "Apple Gesundheit" plot the
     /// same line for a strap-only user, and bias the apple-health average for someone who also has a
     /// watch. `HKSource.default()` is this app's own source. (Reimplemented from @vulnix0x4's PR #375.)
     private static var notNoopAuthored: NSPredicate {
@@ -573,7 +573,7 @@ final class HealthKitBridge: ObservableObject {
     /// Read the workouts the user logged in Apple Health over `[start, end)` and map each to a
     /// `WorkoutRow` under the apple-health source. ON-DEVICE ONLY: a straight HealthKit `HKWorkout` query,
     /// no cloud or third-party API. LLB-authored workouts are excluded (the same `notNoopAuthored`
-    /// predicate the metric reads use) so our own write-back never re-imports as "Apple Health". Mirrors
+    /// predicate the metric reads use) so our own write-back never re-imports as "Apple Gesundheit". Mirrors
     /// the macOS export importer and the Android Health Connect importer, which already ingest workouts,
     /// closing the iOS gap. The upsert is idempotent on (deviceId, startTs), so re-running a sync window
     /// refreshes rather than duplicates.
@@ -621,17 +621,17 @@ final class HealthKitBridge: ObservableObject {
     /// falls back to a generic "Workout" rather than an opaque numeric type.
     private static func sportName(_ type: HKWorkoutActivityType) -> String {
         switch type {
-        case .running:                    return "Running"
-        case .walking:                    return "Walking"
-        case .hiking:                     return "Hiking"
-        case .cycling:                    return "Cycling"
+        case .running:                    return "Laufen"
+        case .walking:                    return "Gehen"
+        case .hiking:                     return "Wandern"
+        case .cycling:                    return "Radfahren"
         case .traditionalStrengthTraining,
              .functionalStrengthTraining: return LiftingImporter.sport
         case .highIntensityIntervalTraining: return "HIIT"
         case .coreTraining:               return "Core training"
         case .yoga:                       return "Yoga"
         case .pilates:                    return "Pilates"
-        case .rowing:                     return "Rowing"
+        case .rowing:                     return "Rudern"
         case .elliptical:                 return "Elliptical"
         case .stairClimbing, .stairs:     return "Stairs"
         case .jumpRope:                   return "Jump rope"
@@ -651,7 +651,7 @@ final class HealthKitBridge: ObservableObject {
         case .climbing:                   return "Climbing"
         case .downhillSkiing, .crossCountrySkiing: return "Skiing"
         case .snowboarding:               return "Snowboarding"
-        case .swimming:                   return "Swimming"
+        case .swimming:                   return "Schwimmen"
         case .surfingSports:              return "Surfing"
         case .paddleSports:               return "Paddling"
         default:                          return "Workout"

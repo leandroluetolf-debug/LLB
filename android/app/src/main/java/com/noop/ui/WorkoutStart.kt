@@ -132,7 +132,7 @@ fun StartWorkoutSheet(vm: AppViewModel, onDismiss: () -> Unit) {
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) { Text("Cancel") }
+            OutlinedButton(onClick = onDismiss) { Text("Abbrechen") }
         },
     )
 }
@@ -140,7 +140,7 @@ fun StartWorkoutSheet(vm: AppViewModel, onDismiss: () -> Unit) {
 /**
  * Start-a-workout entry for the Workouts screen (#115) — mirrors the Live screen's control so a user
  * can begin a session from either place. Shows a compact "running" banner while a workout is active
- * (the rich live card stays on Live), the "Start workout" button when a strap is bonded, or nothing
+ * (the rich live card stays on Live), the "Workout starten" button when a strap is bonded, or nothing
  * when there's no strap to stream from (matching Live, which only offers the start when bonded).
  */
 @Composable
@@ -193,7 +193,7 @@ fun WorkoutStartSection(vm: AppViewModel) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Palette.accent, contentColor = Palette.surfaceBase,
             ),
-        ) { Text("Start workout", style = NoopType.captionNumber) }
+        ) { Text("Workout starten", style = NoopType.captionNumber) }
     }
 
     if (showSportPicker) {

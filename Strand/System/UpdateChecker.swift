@@ -1,7 +1,7 @@
 import Foundation
 import WhoopProtocol
 
-/// User-initiated "Check for updates": one call to the project's PUBLIC releases API (GitHub),
+/// User-initiated "Nach Updates suchen": one call to the project's PUBLIC releases API (GitHub),
 /// made ONLY when the user taps the button. No background polling and no auto-update — it just reads the latest version
 /// number and compares it to the installed one; nothing about the user is sent. (Uses the
 /// network-client entitlement, which is otherwise only for the opt-in, off-by-default AI Coach.)
@@ -18,7 +18,7 @@ final class UpdateChecker: ObservableObject {
 
     @Published var state: State = .idle
 
-    private static let endpoint = URL(string: "https://api.github.com/repos/NoopApp/noop/releases/latest")!
+    private static let endpoint = URL(string: "https://api.github.com/repos/leandroluetolf-debug/LLB/releases/latest")!
 
     func check(currentVersion: String) {
         guard state != .checking else { return }
@@ -48,9 +48,9 @@ final class UpdateChecker: ObservableObject {
     }
 
     /// Turn a GitHub release body into a short, readable "what's new" for an inline preview: drop the
-    /// "Downloads"/footer boilerplate, strip the heaviest markdown markers, and cap the length.
+    /// "Herunterladens"/footer boilerplate, strip the heaviest markdown markers, and cap the length.
     static func cleanNotes(_ body: String) -> String {
-        var s = body.components(separatedBy: "Downloads").first ?? body
+        var s = body.components(separatedBy: "Herunterladens").first ?? body
         for marker in ["**", "## ", "# "] { s = s.replacingOccurrences(of: marker, with: "") }
         s = s.trimmingCharacters(in: .whitespacesAndNewlines)
         if s.count > 700 { s = String(s.prefix(700)).trimmingCharacters(in: .whitespacesAndNewlines) + "…" }

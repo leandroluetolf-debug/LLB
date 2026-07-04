@@ -19,9 +19,9 @@ struct MetricDescriptor: Identifiable, Hashable {
     /// Human label for the metric's source partition (catalog row caption / detail subtitle).
     var sourceLabel: String {
         switch source {
-        case "apple-health": return "Apple Health"
+        case "apple-health": return "Apple Gesundheit"
         case "xiaomi-band":  return "Mi Band"
-        case "nutrition-csv": return String(localized: "Nutrition")
+        case "nutrition-csv": return String(localized: "Ernährung")
         case "noop-mood":    return String(localized: "Mood")
         default:             return "Whoop"   // "my-whoop" + on-device computed sources
         }
@@ -99,72 +99,72 @@ struct MetricDescriptor: Identifiable, Hashable {
 /// Canonical catalog — mirrors the WHOOP "Trend View" plus Apple Health body metrics.
 /// Keys match exactly what the importers write into metricSeries.
 enum MetricCatalog {
-    static let categories = ["Heart", "Charge", "Rest", "Effort", "Health", "Nutrition", "Mind"]
+    static let categories = ["Herz", "Charge", "Rest", "Effort", "Gesundheit", "Ernährung", "Mind"]
 
     static let all: [MetricDescriptor] = [
         // ── Heart
-        d("avg_hr", String(localized: "Average Heart Rate"), "Heart", "bpm", "my-whoop", "heart", 0, nil),
-        d("max_hr", String(localized: "Max Heart Rate"), "Heart", "bpm", "my-whoop", "bolt.heart", 0, nil),
-        d("energy_kcal", String(localized: "Calories"), "Heart", "kcal", "my-whoop", "flame", 0, nil),
-        d("vo2max", String(localized: "VO₂ Max"), "Heart", "", "apple-health", "lungs.fill", 1, true),
-        d("fitness_age", String(localized: "Fitness Age"), "Heart", "yrs", "my-whoop", "figure.run", 0, false),
-        d("vo2max_est", String(localized: "VO₂ Max (estimated)"), "Heart", "", "my-whoop", "lungs", 1, true),
-        d("vitality", String(localized: "Vitality"), "Heart", "", "my-whoop", "sparkles", 0, true),
-        d("body_age", String(localized: "Body Age"), "Heart", "yrs", "my-whoop", "figure.stand", 0, false),
+        d("avg_hr", String(localized: "Average Herzfrequenz"), "Herz", "bpm", "my-whoop", "heart", 0, nil),
+        d("max_hr", String(localized: "Max Herzfrequenz"), "Herz", "bpm", "my-whoop", "bolt.heart", 0, nil),
+        d("energy_kcal", String(localized: "Kalorien"), "Herz", "kcal", "my-whoop", "flame", 0, nil),
+        d("vo2max", String(localized: "VO₂ Max"), "Herz", "", "apple-health", "lungs.fill", 1, true),
+        d("fitness_age", String(localized: "Fitnessalter"), "Herz", "yrs", "my-whoop", "figure.run", 0, false),
+        d("vo2max_est", String(localized: "VO₂ Max (estimated)"), "Herz", "", "my-whoop", "lungs", 1, true),
+        d("vitality", String(localized: "Vitalität"), "Herz", "", "my-whoop", "sparkles", 0, true),
+        d("body_age", String(localized: "Körper Age"), "Herz", "yrs", "my-whoop", "figure.stand", 0, false),
 
         // ── Charge (was Recovery)
         d("recovery", String(localized: "Charge"), "Charge", "%", "my-whoop", "heart.circle", 0, true,
           String(localized: "How recovered you are, led by HRV versus your personal baseline.")),
-        d("hrv", String(localized: "Heart Rate Variability"), "Charge", "ms", "my-whoop", "waveform.path.ecg", 0, true),
-        d("rhr", String(localized: "Resting Heart Rate"), "Charge", "bpm", "my-whoop", "heart", 0, false),
-        d("resp_rate", String(localized: "Respiratory Rate"), "Charge", "rpm", "my-whoop", "lungs", 1, nil),
-        d("spo2", String(localized: "Blood Oxygen"), "Charge", "%", "my-whoop", "drop", 0, true),
-        d("skin_temp", String(localized: "Skin Temperature"), "Charge", "°C", "my-whoop", "thermometer", 1, nil),
+        d("hrv", String(localized: "Herzfrequenz Variability"), "Charge", "ms", "my-whoop", "waveform.path.ecg", 0, true),
+        d("rhr", String(localized: "Resting Herzfrequenz"), "Charge", "bpm", "my-whoop", "heart", 0, false),
+        d("resp_rate", String(localized: "Atmung Rate"), "Charge", "rpm", "my-whoop", "lungs", 1, nil),
+        d("spo2", String(localized: "Sauerstoffsättigung"), "Charge", "%", "my-whoop", "drop", 0, true),
+        d("skin_temp", String(localized: "Hauttemperatur"), "Charge", "°C", "my-whoop", "thermometer", 1, nil),
 
         // ── Rest (was Sleep)
         d("sleep_performance", String(localized: "Rest"), "Rest", "%", "my-whoop", "moon.stars", 0, true,
           String(localized: "How restorative your sleep was: duration, efficiency, deep+REM, timing.")),
         d("in_bed_min", String(localized: "Time in Bed"), "Rest", "min", "my-whoop", "bed.double", 0, nil),
-        d("sleep_total_min", String(localized: "Asleep Time"), "Rest", "min", "my-whoop", "moon.zzz", 0, true),
+        d("sleep_total_min", String(localized: "Schlafend Time"), "Rest", "min", "my-whoop", "moon.zzz", 0, true),
         d("hours_vs_needed_pct", String(localized: "Hours vs Needed"), "Rest", "%", "my-whoop", "gauge.medium", 0, true),
-        d("sleep_consistency", String(localized: "Sleep Consistency"), "Rest", "%", "my-whoop", "calendar", 0, true),
-        d("restorative_pct", String(localized: "Restorative Sleep"), "Rest", "%", "my-whoop", "sparkles", 0, true),
-        d("restorative_min", String(localized: "Restorative Sleep"), "Rest", "min", "my-whoop", "sparkles", 0, true),
-        d("sleep_efficiency", String(localized: "Sleep Efficiency"), "Rest", "%", "my-whoop", "bed.double.fill", 0, true),
-        d("sleep_deep_min", String(localized: "Deep (SWS) Sleep"), "Rest", "min", "my-whoop", "moon.fill", 0, true),
-        d("sleep_rem_min", String(localized: "REM Sleep"), "Rest", "min", "my-whoop", "moon.haze", 0, true),
-        d("sleep_light_min", String(localized: "Light Sleep"), "Rest", "min", "my-whoop", "moon", 0, nil),
-        d("sleep_need_min", String(localized: "Sleep Need"), "Rest", "min", "my-whoop", "gauge", 0, nil),
-        d("sleep_debt_min", String(localized: "Sleep Debt"), "Rest", "min", "my-whoop", "exclamationmark.circle", 0, false),
+        d("sleep_consistency", String(localized: "Schlaf Consistency"), "Rest", "%", "my-whoop", "calendar", 0, true),
+        d("restorative_pct", String(localized: "Restorative Schlaf"), "Rest", "%", "my-whoop", "sparkles", 0, true),
+        d("restorative_min", String(localized: "Restorative Schlaf"), "Rest", "min", "my-whoop", "sparkles", 0, true),
+        d("sleep_efficiency", String(localized: "Schlaf Efficiency"), "Rest", "%", "my-whoop", "bed.double.fill", 0, true),
+        d("sleep_deep_min", String(localized: "Deep (SWS) Schlaf"), "Rest", "min", "my-whoop", "moon.fill", 0, true),
+        d("sleep_rem_min", String(localized: "REM Schlaf"), "Rest", "min", "my-whoop", "moon.haze", 0, true),
+        d("sleep_light_min", String(localized: "Hell Schlaf"), "Rest", "min", "my-whoop", "moon", 0, nil),
+        d("sleep_need_min", String(localized: "Schlaf Need"), "Rest", "min", "my-whoop", "gauge", 0, nil),
+        d("sleep_debt_min", String(localized: "Schlaf Debt"), "Rest", "min", "my-whoop", "exclamationmark.circle", 0, false),
 
         // ── Effort (was Strain)
         d("strain", String(localized: "Effort"), "Effort", "/100", "my-whoop", "flame", 1, nil,
           String(localized: "Cardiovascular load for the day, on a 0-100 scale (was 0-21).")),
-        d("steps", String(localized: "Steps"), "Effort", "", "apple-health", "figure.walk", 0, true),
+        d("steps", String(localized: "Schritte"), "Effort", "", "apple-health", "figure.walk", 0, true),
         // On-device steps ESTIMATE for a WHOOP 4.0 (no real step count over BLE): the strap's daily
         // motion volume scaled by a personal calibration. Stored under the computed "-noop" source, so
         // it reads through the same exploreSeries fallback fitness_age/vitality use. Distinct from the
         // real "steps" above — labelled "(estimated)" so it's never mistaken for a measured count.
-        d("steps_est", String(localized: "Steps (estimated)"), "Effort", "steps", "my-whoop", "figure.walk.motion", 0, true,
+        d("steps_est", String(localized: "Schritte (estimated)"), "Effort", "steps", "my-whoop", "figure.walk.motion", 0, true,
           String(localized: "Estimated from your WHOOP's motion, calibrated to your phone. Not a measured step count.")),
         d("hr_zones13_min", String(localized: "HR Zones 1-3"), "Effort", "min", "my-whoop", "heart", 0, nil),
         d("hr_zones45_min", String(localized: "HR Zones 4-5"), "Effort", "min", "my-whoop", "heart.fill", 0, nil),
         d("hr_zones_all_min", String(localized: "HR Zones (All)"), "Effort", "min", "my-whoop", "heart.text.square", 0, nil),
-        d("strength_min", String(localized: "Strength Activity Time"), "Effort", "min", "my-whoop", "dumbbell", 0, nil),
+        d("strength_min", String(localized: "Strength Aktivität Time"), "Effort", "min", "my-whoop", "dumbbell", 0, nil),
         d("active_kcal", String(localized: "Active Energy"), "Effort", "kcal", "apple-health", "flame.fill", 0, nil),
 
         // ── Health / Body
-        d("weight", String(localized: "Weight"), "Health", "kg", "apple-health", "scalemass", 1, nil),
-        d("body_fat", String(localized: "Body Fat"), "Health", "%", "apple-health", "percent", 1, false),
-        d("lean_mass", String(localized: "Lean Body Mass"), "Health", "kg", "apple-health", "figure.arms.open", 1, true),
-        d("bmi", "BMI", "Health", "", "apple-health", "figure", 1, nil),
-        d("stress", String(localized: "Day Stress"), "Health", "/3", "my-whoop", "gauge.with.dots.needle.50percent", 1, false),
+        d("weight", String(localized: "Gewicht"), "Gesundheit", "kg", "apple-health", "scalemass", 1, nil),
+        d("body_fat", String(localized: "Körper Fat"), "Gesundheit", "%", "apple-health", "percent", 1, false),
+        d("lean_mass", String(localized: "Lean Körper Mass"), "Gesundheit", "kg", "apple-health", "figure.arms.open", 1, true),
+        d("bmi", "BMI", "Gesundheit", "", "apple-health", "figure", 1, nil),
+        d("stress", String(localized: "Day Stress"), "Gesundheit", "/3", "my-whoop", "gauge.with.dots.needle.50percent", 1, false),
 
         // ── Nutrition (imported from a food-tracker CSV: calories-in alongside calories-out)
-        d("calories_in", String(localized: "Calories In"), "Nutrition", "kcal", "nutrition-csv", "fork.knife", 0, nil),
-        d("protein_g", String(localized: "Protein"), "Nutrition", "g", "nutrition-csv", "p.circle", 0, nil),
-        d("carbs_g", String(localized: "Carbs"), "Nutrition", "g", "nutrition-csv", "c.circle", 0, nil),
-        d("fat_g", String(localized: "Fat"), "Nutrition", "g", "nutrition-csv", "f.circle", 0, nil),
+        d("calories_in", String(localized: "Kalorien In"), "Ernährung", "kcal", "nutrition-csv", "fork.knife", 0, nil),
+        d("protein_g", String(localized: "Protein"), "Ernährung", "g", "nutrition-csv", "p.circle", 0, nil),
+        d("carbs_g", String(localized: "Carbs"), "Ernährung", "g", "nutrition-csv", "c.circle", 0, nil),
+        d("fat_g", String(localized: "Fat"), "Ernährung", "g", "nutrition-csv", "f.circle", 0, nil),
 
         // ── Mind (daily mood check-in, 1–5; non-clinical self-tracking)
         d("mood", String(localized: "Mood"), "Mind", "/5", "noop-mood", "face.smiling", 0, true),
@@ -172,20 +172,20 @@ enum MetricCatalog {
         // ── Mi Band (imported from Mi Fitness). Same metricSeries mechanism as Apple Health /
         //    Nutrition, so these light up Explore, Compare and the correlation scan. Distinct
         //    `source` keeps them comparable against the WHOOP/Apple versions rather than colliding.
-        d("avg_hr", String(localized: "Average Heart Rate"), "Heart", "bpm", "xiaomi-band", "heart", 0, nil),
-        d("max_hr", String(localized: "Max Heart Rate"), "Heart", "bpm", "xiaomi-band", "bolt.heart", 0, nil),
-        d("energy_kcal", String(localized: "Calories"), "Heart", "kcal", "xiaomi-band", "flame", 0, nil),
-        d("vitality", String(localized: "Vitality"), "Heart", "", "xiaomi-band", "sparkles", 0, true),
-        d("rhr", String(localized: "Resting Heart Rate"), "Charge", "bpm", "xiaomi-band", "heart", 0, false),
-        d("spo2", String(localized: "Blood Oxygen"), "Charge", "%", "xiaomi-band", "drop", 0, true),
-        d("sleep_total_min", String(localized: "Asleep Time"), "Rest", "min", "xiaomi-band", "moon.zzz", 0, true),
-        d("sleep_deep_min", String(localized: "Deep (SWS) Sleep"), "Rest", "min", "xiaomi-band", "moon.fill", 0, true),
-        d("sleep_rem_min", String(localized: "REM Sleep"), "Rest", "min", "xiaomi-band", "moon.haze", 0, true),
-        d("sleep_light_min", String(localized: "Light Sleep"), "Rest", "min", "xiaomi-band", "moon", 0, nil),
-        d("sleep_score", String(localized: "Sleep Score"), "Rest", "", "xiaomi-band", "moon.stars", 0, true),
-        d("steps", String(localized: "Steps"), "Effort", "", "xiaomi-band", "figure.walk", 0, true),
+        d("avg_hr", String(localized: "Average Herzfrequenz"), "Herz", "bpm", "xiaomi-band", "heart", 0, nil),
+        d("max_hr", String(localized: "Max Herzfrequenz"), "Herz", "bpm", "xiaomi-band", "bolt.heart", 0, nil),
+        d("energy_kcal", String(localized: "Kalorien"), "Herz", "kcal", "xiaomi-band", "flame", 0, nil),
+        d("vitality", String(localized: "Vitalität"), "Herz", "", "xiaomi-band", "sparkles", 0, true),
+        d("rhr", String(localized: "Resting Herzfrequenz"), "Charge", "bpm", "xiaomi-band", "heart", 0, false),
+        d("spo2", String(localized: "Sauerstoffsättigung"), "Charge", "%", "xiaomi-band", "drop", 0, true),
+        d("sleep_total_min", String(localized: "Schlafend Time"), "Rest", "min", "xiaomi-band", "moon.zzz", 0, true),
+        d("sleep_deep_min", String(localized: "Deep (SWS) Schlaf"), "Rest", "min", "xiaomi-band", "moon.fill", 0, true),
+        d("sleep_rem_min", String(localized: "REM Schlaf"), "Rest", "min", "xiaomi-band", "moon.haze", 0, true),
+        d("sleep_light_min", String(localized: "Hell Schlaf"), "Rest", "min", "xiaomi-band", "moon", 0, nil),
+        d("sleep_score", String(localized: "Schlaf Score"), "Rest", "", "xiaomi-band", "moon.stars", 0, true),
+        d("steps", String(localized: "Schritte"), "Effort", "", "xiaomi-band", "figure.walk", 0, true),
         d("intensity_min", String(localized: "Intensity Minutes"), "Effort", "min", "xiaomi-band", "figure.run", 0, true),
-        d("stress", String(localized: "Stress"), "Health", "/100", "xiaomi-band", "gauge.with.dots.needle.50percent", 0, false),
+        d("stress", String(localized: "Stress"), "Gesundheit", "/100", "xiaomi-band", "gauge.with.dots.needle.50percent", 0, false),
     ]
 
     static func inCategory(_ c: String) -> [MetricDescriptor] { all.filter { $0.category == c } }
@@ -196,12 +196,12 @@ enum MetricCatalog {
     /// function's output back into matching logic. Unknown values pass through untranslated.
     static func categoryDisplayName(_ category: String) -> String {
         switch category {
-        case "Heart":     return String(localized: "Heart")
+        case "Herz":     return String(localized: "Herz")
         case "Charge":    return String(localized: "Charge")
         case "Rest":      return String(localized: "Rest")
         case "Effort":    return String(localized: "Effort")
-        case "Health":    return String(localized: "Health")
-        case "Nutrition": return String(localized: "Nutrition")
+        case "Gesundheit":    return String(localized: "Gesundheit")
+        case "Ernährung": return String(localized: "Ernährung")
         case "Mind":      return String(localized: "Mind")
         default:          return category
         }

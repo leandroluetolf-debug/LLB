@@ -29,7 +29,7 @@ struct GeminiClient: AIProviderClient {
 
         // Built via URL(string:): appendingPathComponent percent-encodes the ":" in
         // ":generateContent" on some Foundation versions and the API rejects %3A.
-        guard let url = URL(string: "\(AIProvider.gemini.endpoint.absoluteString)/\(model):generateContent") else {
+        guard let url = URL(string: "\(AIAnbieter.gemini.endpoint.absoluteString)/\(model):generateContent") else {
             throw AICoachError.network("invalid model id")
         }
         var req = URLRequest(url: url)

@@ -3,10 +3,10 @@ import StrandDesign
 
 // MARK: - Scoring guide
 //
-// "How your scores work" — the one honest explainer for LLB's three daily scores
+// "So funktionieren deine Werte" — the one honest explainer for LLB's three daily scores
 // (Charge, Effort, Rest) and the confidence labels. Presented as a sheet, mirroring
 // WhatsNewView's presentation + dismiss + layout idiom: a fixed header with a close
-// button, a scrollable column of cards, and a "Got it" footer. Reachable from
+// button, a scrollable column of cards, and a "Verstanden" footer. Reachable from
 // Settings → About, the ⓘ on each Today score, and the one-time first-run card.
 //
 // All copy here is the single approved source of truth, shared verbatim across
@@ -90,8 +90,8 @@ struct ScoringGuideView: View {
                         introCard
                         scoreCard(.charge,
                                   headline: String(localized: "Charge: how recovered are you?"),
-                                  body: String(localized: "Led by your heart-rate variability (HRV) measured against your own personal baseline, plus resting heart rate, last night's Rest, breathing rate, and a skin-temperature signal (an early illness or overreach flag). Higher HRV versus your baseline means more Charge. LLB needs a few nights to learn your baseline first. Until then you'll see “Calibrating”."),
-                                  vsWhoop: String(localized: "Same core idea as WHOOP's Recovery % (HRV-led recovery), but our weighting and baseline maths are our own, and openly documented."))
+                                  body: String(localized: "Led by your heart-rate variability (HRV) measured against your own personal baseline, plus resting heart rate, last night's Rest, breathing rate, and a skin-temperature signal (an early illness or overreach flag). Higher HRV versus your baseline means more Charge. LLB needs a few nights to learn your baseline first. Until then you'll see “Kalibriert”."),
+                                  vsWhoop: String(localized: "Same core idea as WHOOP's Erholung % (HRV-led recovery), but our weighting and baseline maths are our own, and openly documented."))
                         scoreCard(.effort,
                                   headline: String(localized: "Effort: how hard did your heart work?"),
                                   body: String(localized: "Your cardiovascular load. LLB turns every second of heart rate into a training-impulse using heart-rate-reserve zones (Karvonen), weights time in harder zones more heavily (Edwards / Banister), and places it on a logarithmic 0-100 scale, so easy days sit low and an all-out day approaches 100, which stays genuinely rare. A long walk with little cardio still counts, through a steps / active-energy floor."),
@@ -99,7 +99,7 @@ struct ScoringGuideView: View {
                         scoreCard(.rest,
                                   headline: String(localized: "Rest: how restorative was your sleep?"),
                                   body: String(localized: "A blend of how long you slept versus your personal need (the biggest factor), how efficiently (asleep versus in bed), how much was restorative (deep + REM sleep), and how consistent your sleep and wake timing is."),
-                                  vsWhoop: String(localized: "Similar in spirit to WHOOP's Sleep Performance %; our composite is our own."))
+                                  vsWhoop: String(localized: "Similar in spirit to WHOOP's Schlaf Performance %; our composite is our own."))
                         confidenceCard
                         footerNote
                     }
@@ -130,7 +130,7 @@ struct ScoringGuideView: View {
                 Text("YOUR DAILY SCORES").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textTertiary)
-                Text("How your scores work").font(StrandFont.rounded(26, weight: .bold))
+                Text("So funktionieren deine Werte").font(StrandFont.rounded(26, weight: .bold))
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text("Charge · Effort · Rest").font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textSecondary)
@@ -142,7 +142,7 @@ struct ScoringGuideView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -151,7 +151,7 @@ struct ScoringGuideView: View {
         HStack {
             Spacer()
             Button(action: onClose) {
-                Text("Got it").frame(minWidth: 120).padding(.vertical, 4)
+                Text("Verstanden").frame(minWidth: 120).padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent)
             .tint(StrandPalette.accent)
@@ -279,17 +279,17 @@ struct ScoringGuideView: View {
     private var confidenceCard: some View {
         NoopCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("How sure is LLB?  ·  Solid · Building · Calibrating")
+                Text("How sure is LLB?  ·  Stabil · Building · Kalibriert")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                 // The three labels as the same pills used elsewhere, in their honest order.
                 HStack(spacing: 8) {
-                    StatePill("Solid", tone: .positive, showsDot: true)
+                    StatePill("Stabil", tone: .positive, showsDot: true)
                     StatePill("Building", tone: .warning, showsDot: true)
-                    StatePill("Calibrating", tone: .neutral, showsDot: true)
+                    StatePill("Kalibriert", tone: .neutral, showsDot: true)
                 }
-                Text("Every score carries a small honesty label. Calibrating means LLB is still learning your baseline, or doesn't have enough data yet. Building means there's enough to show, but it's thin. Solid means full inputs are present. When LLB can't compute a score honestly, it shows nothing rather than a fake number.")
+                Text("Every score carries a small honesty label. Kalibriert means LLB is still learning your baseline, or doesn't have enough data yet. Building means there's enough to show, but it's thin. Stabil means full inputs are present. When LLB can't compute a score honestly, it shows nothing rather than a fake number.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -325,7 +325,7 @@ struct ScoringGuideView: View {
 }
 
 #if DEBUG
-#Preview("Scoring guide") {
+#Preview("Bewertungsleitfaden") {
     ScoringGuideView(initialSection: .effort, onClose: {})
         .preferredColorScheme(.dark)
 }

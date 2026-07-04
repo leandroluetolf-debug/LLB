@@ -83,7 +83,7 @@ import kotlin.math.sqrt
 // SELF-CONTAINED: reads/writes markers through `vm.repo` (the Lab Book DAO methods +
 // metricSeries projection). Raw readings store under the strap device id ("my-whoop");
 // every write also projects a daily series under LAB_BOOK_SOURCE_ID so Compare/Explore/
-// Coach see markers unchanged. The "Compare with a signal" surface reuses the same
+// Coach see markers unchanged. The "Vergleichen with a signal" surface reuses the same
 // Pearson idiom + restrained copy as the Compare screen.
 //
 // NON-CLINICAL (load-bearing): no word here asserts a clinical judgement; any reference
@@ -138,14 +138,14 @@ fun LabBookScreen(vm: AppViewModel) {
         scope.launch {
             val summary = withContext(Dispatchers.IO) {
                 runCatching { LabMarkerCsvImport.importCsv(context, uri, vm.repo) }
-                    .getOrElse { ImportSummary.failure("Lab Book CSV", it.message ?: "failed") }
+                    .getOrElse { ImportSummary.failure("Laborbuch CSV", it.message ?: "failed") }
             }
             // Mirror into the exported strap log (issue #421 parity): counts only on
             // success, the human reason on failure — never a file name, path or value.
             if (summary.totalRows > 0) {
-                vm.ble.externalLog("Import ${summary.source}: labMarker=${summary.totalRows}")
+                vm.ble.externalLog("Importieren ${summary.source}: labMarker=${summary.totalRows}")
             } else {
-                vm.ble.externalLog("Import ${summary.source} failed: ${summary.message}")
+                vm.ble.externalLog("Importieren ${summary.source} failed: ${summary.message}")
             }
             csvSummary = summary.message
             csvFailed = summary.totalRows == 0
@@ -160,7 +160,7 @@ fun LabBookScreen(vm: AppViewModel) {
     // `when {}` item (it's a user-entered, bounded set, not unbounded history), so its appearance is
     // byte-identical; the sheets below the scaffold are untouched.
     LazyScreenScaffold(
-        title = "Lab Book",
+        title = "Laborbuch",
         subtitle = "Your bloods, BP and body numbers. Kept private, on this phone.",
     ) {
         // Header card: count + scope + add action.
@@ -190,7 +190,7 @@ fun LabBookScreen(vm: AppViewModel) {
                             .size(28.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .clickable { showDisclaimer = true }
-                            .semantics { contentDescription = "What Lab Book is (and isn't)" },
+                            .semantics { contentDescription = "What Laborbuch is (and isn't)" },
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(Icons.Filled.Info, contentDescription = null, tint = Palette.textTertiary, modifier = Modifier.size(18.dp))
@@ -223,7 +223,7 @@ fun LabBookScreen(vm: AppViewModel) {
                     ) {
                         Icon(Icons.Filled.FileUpload, contentDescription = null, tint = Palette.metricAmber, modifier = Modifier.size(16.dp))
                     }
-                    Text("Import readings", style = NoopType.headline, color = Palette.textPrimary, modifier = Modifier.weight(1f))
+                    Text("Importieren readings", style = NoopType.headline, color = Palette.textPrimary, modifier = Modifier.weight(1f))
                 }
                 Text(
                     "Bring in a markers CSV (date, marker, value, unit). Names that match the catalog " +
@@ -234,7 +234,7 @@ fun LabBookScreen(vm: AppViewModel) {
                     color = Palette.textSecondary,
                 )
                 PrimaryActionButton(
-                    if (csvImporting) "Importing…" else "Choose CSV…",
+                    if (csvImporting) "Importierening…" else "Choose CSV…",
                     Icons.Filled.FileUpload,
                     enabled = !csvImporting,
                 ) { csvImportLauncher.launch(arrayOf("*/*")) }
@@ -287,7 +287,7 @@ fun LabBookScreen(vm: AppViewModel) {
         item {
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                "Lab Book is a private notebook, not a medical service. LLB stores and lines up the numbers " +
+                "Laborbuch is a private notebook, not a medical service. LLB stores and lines up the numbers " +
                     "you enter. It doesn't test, read, diagnose, or advise. Your records never leave this phone; " +
                     "there's no account or cloud, so it isn't \"HIPAA-covered.\" Always rely on your doctor or " +
                     "pharmacist to interpret results.",
@@ -300,7 +300,7 @@ fun LabBookScreen(vm: AppViewModel) {
                 color = Palette.accent,
                 modifier = Modifier
                     .clickable { showDisclaimer = true }
-                    .semantics { contentDescription = "Read the full Lab Book note" },
+                    .semantics { contentDescription = "Read the full Laborbuch note" },
             )
         }
         }
@@ -431,7 +431,7 @@ private fun MarkerDetailSheet(
 
             // Compare with a signal (reuses the Pearson idiom + restrained copy).
             if (numeric.isNotEmpty()) {
-                SectionHeader("Compare with a signal", overline = "side by side · ${window.phrase} before each reading")
+                SectionHeader("Vergleichen with a signal", overline = "side by side · ${window.phrase} before each reading")
                 NoopCard {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -589,7 +589,7 @@ private fun HistoryRow(markerKey: String, row: LabMarkerRow, onDelete: (String) 
                 .size(28.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .clickable { onDelete(row.id) }
-                .semantics { contentDescription = "Delete this reading" },
+                .semantics { contentDescription = "Löschen this reading" },
             contentAlignment = Alignment.Center,
         ) {
             Icon(Icons.Filled.Delete, contentDescription = null, tint = Palette.statusCritical, modifier = Modifier.size(15.dp))
@@ -603,14 +603,14 @@ private fun HistoryRow(markerKey: String, row: LabMarkerRow, onDelete: (String) 
 private fun LabBookDisclaimerSheet(onDismiss: () -> Unit) {
     NoopBottomSheet(onDismiss = onDismiss) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("About Lab Book", style = NoopType.title2, color = Palette.textPrimary)
+            Text("Über Laborbuch", style = NoopType.title2, color = Palette.textPrimary)
             Text("A private notebook, not a medical service.", style = NoopType.subhead, color = Palette.textSecondary)
             DisclaimerBullet("LLB stores and lines up the numbers you enter yourself. It does not test you, read your results, give medical advice, or diagnose anything.")
             DisclaimerBullet("Anything you see here (including any side-by-side trend) is your own information shown back to you. It's an association, never a cause, and never a medical finding.")
             DisclaimerBullet("LLB never decides whether a value is \"normal,\" \"high,\" or \"low.\" Any reference range shown is exactly what you typed from your own report.")
             DisclaimerBullet("Your records never leave this phone. There's no account, no cloud, no LLB server. Because LLB is an independent app you run yourself (not a healthcare provider), it isn't \"HIPAA-covered,\" and that protection doesn't apply here; the safety comes from the data being local-only and yours.")
             DisclaimerBullet("Always rely on your doctor, pharmacist, or a qualified professional to interpret results and make decisions. If a number worries you, talk to them, not to an app.")
-            PrimaryActionButton("Got it", Icons.Filled.Check, onClick = onDismiss)
+            PrimaryActionButton("Verstanden", Icons.Filled.Check, onClick = onDismiss)
         }
     }
 }
@@ -643,15 +643,15 @@ data class LabSignal(val key: String, val title: String, val source: String)
 
 /** The pickable wearable metrics, mirroring the Swift LabBookSignals.options list. */
 private val LAB_SIGNALS = listOf(
-    LabSignal("rhr", "Resting Heart Rate", "my-whoop"),
-    LabSignal("hrv", "Heart Rate Variability", "my-whoop"),
+    LabSignal("rhr", "Resting Herzfrequenz", "my-whoop"),
+    LabSignal("hrv", "Herzfrequenz Variability", "my-whoop"),
     LabSignal("recovery", "Charge", "my-whoop"),
     LabSignal("sleep_performance", "Rest", "my-whoop"),
-    LabSignal("sleep_total_min", "Asleep Time", "my-whoop"),
+    LabSignal("sleep_total_min", "Schlafend Time", "my-whoop"),
     LabSignal("strain", "Effort", "my-whoop"),
-    LabSignal("skin_temp", "Skin Temperature", "my-whoop"),
-    LabSignal("steps", "Steps", "apple-health"),
-    LabSignal("weight", "Weight", "apple-health"),
+    LabSignal("skin_temp", "Hauttemperatur", "my-whoop"),
+    LabSignal("steps", "Schritte", "apple-health"),
+    LabSignal("weight", "Gewicht", "apple-health"),
 )
 
 // MARK: - Helpers (display, formatting, trend, correlation)

@@ -44,7 +44,7 @@ import java.util.Locale
 // we re-read at the new resolution. Mirrors macOS FullDayChartView + OverviewHRChart's zoom binding.
 
 private enum class TimelineMetric(val title: String) {
-    Hr("Heart Rate"),
+    Hr("Herzfrequenz"),
     // #803: this trace is a rolling rMSSD over the RR series, NOT the raw RR interval it used to plot.
     // The honest title says exactly what the curve is (windowed rMSSD), not a bare "HRV".
     Hrv("rMSSD (5 min)"),
@@ -54,8 +54,8 @@ private enum class TimelineMetric(val title: String) {
     Motion("Motion"),
     // #175: the strap's OWN band sleep_state track (0 wake/1 still/2 asleep/3 up), shown as a distinct
     // stepped track alongside the derived hypnogram. This is the band's REPORTED state, NOT a stage LLB
-    // trusts as truth — the pill names it "Band Sleep State" so it can't be mistaken for the derived stages.
-    BandSleepState("Band Sleep State"),
+    // trusts as truth — the pill names it "Band Schlaf State" so it can't be mistaken for the derived stages.
+    BandSleepState("Band Schlaf State"),
 }
 
 @Composable
@@ -250,7 +250,7 @@ fun FullDayChartScreen(vm: AppViewModel, onBack: () -> Unit) {
             Spacer(Modifier.weight(1f))
             if (window != null) {
                 Text(
-                    "Reset",
+                    "Zurücksetzen",
                     style = NoopType.footnote,
                     color = Palette.accent,
                     modifier = Modifier.clickable { window = null },
@@ -271,7 +271,7 @@ private fun EmptyTimelineState(metric: TimelineMetric, ownedOnly: Boolean) {
             style = NoopType.body, color = Palette.textSecondary)
         Text(
             if (ownedOnly) "Nothing offloaded for this window yet."
-            else "Other sources don’t offload raw per-second data on-device.",
+            else "Sonstiges sources don’t offload raw per-second data on-device.",
             style = NoopType.footnote, color = Palette.textTertiary, textAlign = TextAlign.Center,
         )
     }
@@ -456,9 +456,9 @@ internal fun landTargetDayStart(
     return if (target != null && target < currentDayStart) target else null
 }
 
-/** "Today" / "Yesterday" / "Wed 18 Jun" label for the Deep Timeline day stepper (#597). */
+/** "Heute" / "Gestern" / "Wed 18 Jun" label for the Deep Timeline day stepper (#597). */
 private fun dayLabel(dayStartSec: Long, todayStart: Long): String = when (dayStartSec) {
-    todayStart -> "Today"
-    todayStart - 86_400 -> "Yesterday"
+    todayStart -> "Heute"
+    todayStart - 86_400 -> "Gestern"
     else -> java.text.SimpleDateFormat("EEE d MMM", Locale.US).format(java.util.Date(dayStartSec * 1000))
 }

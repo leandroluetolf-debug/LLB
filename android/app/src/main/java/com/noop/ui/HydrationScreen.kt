@@ -176,7 +176,7 @@ fun HydrationScreen(viewModel: AppViewModel) {
     // pattern — LiquidScreenSky.kt), replacing the classic flat canvas. Gated on the day-cycle pref, so an
     // opted-out user still gets the plain surface. Mirrors the liquid Today scaffold.
     LazyScreenScaffold(
-        title = "Hydration",
+        title = "Flüssigkeit",
         subtitle = "Your fluid intake today, on this phone only.",
         topBackground = if (showDayCycleBackground) { { LiquidScreenSky() } } else null,
     ) {
@@ -295,7 +295,7 @@ fun HydrationScreen(viewModel: AppViewModel) {
         }
         item {
             Text(
-                "Sip ${HydrationGoal.SIP_ML} ml · Cup ${HydrationGoal.CUP_ML} ml · Bottle ${HydrationGoal.BOTTLE_ML} ml",
+                "Sip ${FlüssigkeitGoal.SIP_ML} ml · Cup ${FlüssigkeitGoal.CUP_ML} ml · Bottle ${FlüssigkeitGoal.BOTTLE_ML} ml",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
             )
@@ -317,7 +317,7 @@ fun HydrationScreen(viewModel: AppViewModel) {
         item {
             NoopCard(padding = 18.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Overline("Today")
+                    Overline("Heute")
                     if (totalMl <= 0.0) {
                         Text(
                             "No drinks logged yet. Tap Sip, Cup or Bottle to start.",
@@ -337,7 +337,7 @@ fun HydrationScreen(viewModel: AppViewModel) {
                             )
                             Spacer(Modifier.width(10.dp))
                             Text(
-                                "Logged today",
+                                "Heute protokolliert",
                                 style = NoopType.subhead,
                                 color = Palette.textPrimary,
                                 modifier = Modifier.weight(1f),
@@ -574,7 +574,7 @@ private fun CustomAmountDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Palette.textSecondary)
+                Text("Abbrechen", color = Palette.textSecondary)
             }
         },
     )

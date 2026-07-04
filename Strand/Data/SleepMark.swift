@@ -1,7 +1,7 @@
 import Foundation
 import WhoopStore
 
-// MARK: - SleepMark (#461 Phase 1 — tap-to-mark "going to sleep" / "awake")
+// MARK: - SleepMark (#461 Phase 1 — tap-to-mark "gehe schlafen" / "awake")
 //
 // A user-tapped sleep boundary, captured for the record only — it does NOT feed the sleep detector
 // (that stays the strap's job). Phase 1 is pure logging: every mark is persisted into the existing
@@ -19,7 +19,7 @@ import WhoopStore
 /// One sleep boundary the user tapped.
 enum SleepMarkType: Int, Equatable, Sendable {
     case bedtime = 0   // "Going to sleep"
-    case wake = 1      // "I'm awake"
+    case wake = 1      // "Ich bin wach"
 
     /// The value persisted into the `sleep_mark` metric series (0 = bedtime, 1 = wake).
     var seriesValue: Double { Double(rawValue) }
@@ -74,12 +74,12 @@ struct SleepMark: Equatable, Sendable {
                          tsMs: Int64((day.timeIntervalSince1970 * 1000).rounded()))
     }
 
-    /// The human-readable strap-log line, e.g. "Sleep mark · bedtime (going to sleep) @ 23:42".
+    /// The human-readable strap-log line, e.g. "Schlaf mark · bedtime (gehe schlafen) @ 23:42".
     /// Appended to the shared strap log so the mark appears in a debug export. Carries no PII.
     var logLine: String {
         let clock = SleepMark.clockFormatter.string(from: date)
-        let phrase = type == .bedtime ? "going to sleep" : "awake"
-        return "Sleep mark · \(type.word) (\(phrase)) @ \(clock)"
+        let phrase = type == .bedtime ? "gehe schlafen" : "awake"
+        return "Schlaf mark · \(type.word) (\(phrase)) @ \(clock)"
     }
 
     /// The confirming toast / transient line shown after a tap, e.g. "Logged bedtime at 23:42."

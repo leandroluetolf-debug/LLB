@@ -85,7 +85,7 @@ struct WeeklyDigestView: View {
     @EnvironmentObject var repo: Repository
 
     var body: some View {
-        ScreenScaffold(title: "Week in review",
+        ScreenScaffold(title: "Woche im Rückblick",
                        subtitle: "Your Monday-to-Sunday, read in one glance.",
                        // PERF: chart-heavy column (per-score summary cards with gauges, the metric grid
                        // and the focal-points list, all inside WeeklyDigestContent). The LazyVStack path
@@ -95,14 +95,14 @@ struct WeeklyDigestView: View {
                        lazy: true) {
             if repo.days.isEmpty {
                 ComingSoon(what: repo.loaded
-                    ? "A weekly digest needs a few days of history. Wear your strap or import your WHOOP export in Data Sources."
+                    ? "A weekly digest needs a few days of history. Wear your strap or import your WHOOP export in Datenquellen."
                     : "Loading your history…")
             } else {
                 let digest = WeeklyDigestSource.digest(from: repo.days, anchorDay: Repository.localDayKey(Date()))
                 if digest.isEmpty {
                     DataPendingNote(
-                        title: "No readings this week yet",
-                        message: "Once this week has a day or two of data, your week-in-review appears here.")
+                        title: "No readings diese Woche yet",
+                        message: "Once diese Woche has a day or two of data, your week-in-review appears here.")
                 } else {
                     VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                         WeeklyDigestContent(digest: digest, compact: false)
@@ -165,16 +165,16 @@ struct WeeklyDigestContent: View {
                 .clipShape(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous))
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Week in review").strandOverline()
+                    Text("Woche im Rückblick").strandOverline()
                     Text(weekRangeLabel)
                         .font(StrandFont.title2)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 Spacer()
-                Text("\(digest.daysWithData)/7 days")
+                Text("\(digest.daysWithDaten)/7 days")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textSecondary)
-                    .accessibilityLabel("\(digest.daysWithData) of 7 days had data this week")
+                    .accessibilityLabel("\(digest.daysWithDaten) of 7 days had data diese Woche")
             }
             .padding(NoopMetrics.cardPadding)
         }
@@ -305,7 +305,7 @@ struct WeeklyDigestContent: View {
         VStack(alignment: .leading, spacing: 6) {
             Divider().overlay(StrandPalette.hairline)
             if let sd = digest.sleepConsistencySD {
-                Text("Sleep steadiness: Rest varied ±\(fmt1(sd)) pts night to night.")
+                Text("Schlaf steadiness: Rest varied ±\(fmt1(sd)) pts night to night.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
             }
@@ -376,18 +376,18 @@ struct WeeklyDigestContent: View {
     private func rowAccessibility(_ s: WeeklyMetricSummary, effortScale: EffortScale) -> String {
         let mean = meanText(s, effortScale: effortScale)
         guard s.weekOverWeek.current.n > 0, s.weekOverWeek.previous.n > 0 else {
-            return String(localized: "\(s.metric.label): \(mean) this week, no comparison.")
+            return String(localized: "\(s.metric.label): \(mean) diese Woche, no comparison.")
         }
         // Whole-phrase variants per direction, then a whole-key wrapper per goodness frame, so
         // VoiceOver never hears a stitched half-English fragment.
         let delta = deltaText(s)
         let base: String
         if s.wowDelta > 0 {
-            base = String(localized: "\(s.metric.label): \(mean) this week, up \(delta) week over week")
+            base = String(localized: "\(s.metric.label): \(mean) diese Woche, up \(delta) week over week")
         } else if s.wowDelta < 0 {
-            base = String(localized: "\(s.metric.label): \(mean) this week, down \(delta) week over week")
+            base = String(localized: "\(s.metric.label): \(mean) diese Woche, down \(delta) week over week")
         } else {
-            base = String(localized: "\(s.metric.label): \(mean) this week, unchanged \(delta) week over week")
+            base = String(localized: "\(s.metric.label): \(mean) diese Woche, unchanged \(delta) week over week")
         }
         // A rough comparison drops the verdict framing too, so VoiceOver matches the neutral chip.
         if WeeklyDigestChipStyle.dropsVerdictFrame(s) { return String(localized: "\(base).") }

@@ -66,7 +66,7 @@ fun bleAdvertisePermissions(): Array<String> =
 /**
  * Returns a callback that enables HR broadcasting, first requesting BLUETOOTH_ADVERTISE (+ CONNECT) on
  * Android 12+ if they aren't already granted. Mirrors [rememberRequestScan]: the launcher must live in
- * the Compose layer so it can raise the system dialog, and the "Broadcast heart rate" toggle calls this
+ * the Compose layer so it can raise the system dialog, and the "Herzfrequenz senden" toggle calls this
  * before turning the peripheral on. On grant (or on pre-12, where the perms are install-time) it calls
  * [onGranted]; on denial the toggle stays off and the broadcaster surfaces a status note rather than
  * failing silently.

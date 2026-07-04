@@ -133,7 +133,7 @@ struct KeyMetricsEditorSheet: View {
             Text("CONTROL CENTER").font(StrandFont.overline)
                 .tracking(StrandFont.overlineTracking)
                 .foregroundStyle(StrandPalette.textTertiary)
-            Text("Edit Key Metrics")
+            Text("Bearbeiten Kennzahlen")
                 .font(StrandFont.rounded(24, weight: .bold))
                 .foregroundStyle(StrandPalette.textPrimary)
             Text("Choose which tiles show on your Control Center and reorder them with the arrows.")
@@ -145,13 +145,13 @@ struct KeyMetricsEditorSheet: View {
 
     private var footer: some View {
         HStack {
-            Button("Reset") { resetToDefault() }
+            Button("Zurücksetzen") { resetToDefault() }
                 .buttonStyle(.plain)
                 .font(StrandFont.body)
                 .foregroundStyle(StrandPalette.textSecondary)
-                .accessibilityLabel("Reset Key Metrics to default")
+                .accessibilityLabel("Zurücksetzen Kennzahlen to default")
             Spacer()
-            Button("Done") {
+            Button("Fertig") {
                 commit()
                 dismiss()
             }
@@ -159,7 +159,7 @@ struct KeyMetricsEditorSheet: View {
             .tint(StrandPalette.accent)
             // At least one tile must stay visible — an empty grid reads as a bug, not a choice.
             .disabled(!items.contains { $0.enabled })
-            .accessibilityLabel("Done editing Key Metrics")
+            .accessibilityLabel("Fertig editing Kennzahlen")
         }
     }
 

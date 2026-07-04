@@ -9,7 +9,7 @@ import StrandDesign
 /// `RootView()` — the `NavigationSplitView` sidebar shell — and `RootView.swift` is excluded from the
 /// iOS target in `project.yml` (the sidebar has no iPhone analogue), so `ContentView` cannot compile
 /// on iOS. The first-run onboarding/pairing wizard, the Terms acknowledgment gate, and the post-update
-/// "What's New" sheet that `ContentView` layers on are reproduced here as `iOSRootView`, wrapped around
+/// "Neuigkeiten" sheet that `ContentView` layers on are reproduced here as `iOSRootView`, wrapped around
 /// `RootTabView` so the iOS app keeps the same gating without depending on the macOS-only shell.
 @main
 struct StrandiOSApp: App {
@@ -143,7 +143,7 @@ struct StrandiOSApp: App {
         // HealthKit authorization is intentionally NOT requested on launch. The system permission
         // dialog without prior in-app rationale violates Apple HIG / App Review guidance — the user
         // sees the prompt before any context. It is requested from an explicit user action instead:
-        // the "Enable Apple Health" affordance in AppleHealthView (More → Data → Apple Health).
+        // the "Enable Apple Gesundheit" affordance in AppleHealthView (More → Data → Apple Health).
         // Below, `refreshAuthIfPreviouslyGranted` re-primes `auth` for users who already granted
         // access (it only reads write/share status, never prompts) so background syncs resume; and
         // HealthKitBridge.sync guards on `auth == .authorized`, so the scenePhase trigger stays a
@@ -175,7 +175,7 @@ struct StrandiOSApp: App {
 
 /// iOS root — the `RootTabView` shell with the first-run onboarding/pairing wizard overlaid until
 /// complete, the Terms acknowledgment gate over everything until the current version is accepted, and
-/// a "What's New" changelog sheet shown automatically after an update.
+/// a "Neuigkeiten" changelog sheet shown automatically after an update.
 ///
 /// This mirrors the macOS `ContentView` (same `@AppStorage` keys, same gate ordering) but swaps the
 /// excluded `RootView()` sidebar for `RootTabView()`. The shared `OnboardingWizard`, `TermsGateView`,

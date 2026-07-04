@@ -169,7 +169,7 @@ final class Repository: ObservableObject {
     /// Data Sources "Freshness Pipeline" card so the user can see imported vs computed vs Apple coverage.
     @Published private(set) var freshness: RepositoryFreshness = .empty
     /// Daily metric rows with source provenance, used by vital-sign surfaces that need honest
-    /// "WHOOP import / LLB computed / Apple Health" captions instead of a silent merged row.
+    /// "WHOOP import / LLB computed / Apple Gesundheit" captions instead of a silent merged row.
     @Published private(set) var vitalRows: [SourcedDailyMetric] = []
     /// Monotonic counter bumped on every successful `refresh()`. Intraday-updating views key their
     /// data load on this so they reload when fresh strap data lands , `today?.day` alone is a stable
@@ -451,7 +451,7 @@ final class Repository: ObservableObject {
     }()
     static func localDayKey(_ date: Date) -> String { dayKeyFormatter.string(from: date) }
 
-    /// The hour the LOGICAL day rolls (04:00 local). Between midnight and this hour, "Today" stays put.
+    /// The hour the LOGICAL day rolls (04:00 local). Between midnight and this hour, "Heute" stays put.
     nonisolated static let logicalDayRolloverHour = 4
 
     /// The LOGICAL local day for `now` , the calendar date of `now - rolloverHour hours`. Rolls at
@@ -652,7 +652,7 @@ final class Repository: ObservableObject {
 
     #if DEBUG
     /// v7.7.2 regression guard: DEBUG-only tally of how many times each cached heavy load actually ran its
-    /// store reads (keyed "appleHealth" / "xiaomi" / "todayDayScoped"). A same-state re-mount that restores
+    /// store reads (keyed "appleGesundheit" / "xiaomi" / "todayDayScoped"). A same-state re-mount that restores
     /// from cache must NOT increment this, so a test can assert the cold-mount short-circuit holds.
     /// DEBUG-only, never shipped.
     var loadFireCounts: [String: Int] = [:]
@@ -1144,7 +1144,7 @@ final class Repository: ObservableObject {
     }
 
     /// UserDefaults key holding the dismissed-sleep spans (see `dismissedSleepSpans`).
-    static let dismissedSleepDefaultsKey = "sleep.dismissedSessions"
+    static let dismissedSleepDefaultsKey = "sleep.dismissedEinheiten"
 
     /// Parsed dismissed-sleep windows for the engine's re-detection guard. Malformed / non-positive-width
     /// entries are dropped so a corrupt value can never hide everything (mirrors `WorkoutSource`'s parser).
@@ -1152,7 +1152,7 @@ final class Repository: ObservableObject {
         DismissedSleepSpans.windows(from: dismissedSleepSpans)
     }
 
-    /// The user's deleted-sleep windows for the "Deleted sleep windows" management list (#65 escape hatch):
+    /// The user's deleted-sleep windows for the "Löschend sleep windows" management list (#65 escape hatch):
     /// each with its parsed window so the UI can render "d MMM, HH:mm-HH:mm" + an "Allow re-detection"
     /// action. Ordered newest-first by end-time.
     func dismissedSleepManagementWindows() -> [(start: Int, end: Int)] {
@@ -1318,7 +1318,7 @@ final class Repository: ObservableObject {
         /// User-facing pill label.
         var title: String {
             switch self {
-            case .hr: return String(localized: "Heart Rate")
+            case .hr: return String(localized: "Herzfrequenz")
             // #803: the .hrv series is a TRAILING-WINDOW rMSSD moving across the session (HRVAnalyzer
             // .rollingRmssd), not one opaque "HRV" figure and not raw R-R ms. Label it honestly so the
             // pill names what the chart actually plots.
@@ -1329,9 +1329,9 @@ final class Repository: ObservableObject {
             case .motion: return String(localized: "Motion")
             // #175: the strap's OWN band sleep_state track (0 wake/1 still/2 asleep/3 up), shown as a
             // distinct stepped track alongside the derived hypnogram. This is the band's reported state,
-            // NOT a stage LLB trusts as truth — the pill names it "Band Sleep State" so it can't be
+            // NOT a stage LLB trusts as truth — the pill names it "Band Schlaf State" so it can't be
             // mistaken for the derived stages.
-            case .bandSleepState: return String(localized: "Band Sleep State")
+            case .bandSleepState: return String(localized: "Band Schlaf State")
             }
         }
     }
@@ -2093,7 +2093,7 @@ final class Repository: ObservableObject {
 
     /// Persist a retroactive / edited manual workout under the strap source. `replacing` is the row the
     /// edit started from:
-    ///  - editing a DETECTED bout ("Edit details…") replaces it with this manual row , the detected
+    ///  - editing a DETECTED bout ("Bearbeiten details…") replaces it with this manual row , the detected
     ///    original is dismissed durably so the re-detector doesn't bring it back (else both would show);
     ///  - editing a MANUAL row whose natural key (startTs/sport) changed deletes the stale strap row
     ///    first (the (deviceId, startTs, sport) PK upsert would otherwise orphan it);
@@ -2410,7 +2410,7 @@ final class Repository: ObservableObject {
         #if DEBUG
         // v7.7.2 regression guard: count only genuine heavy loads (the cache restore above returned BEFORE this
         // and must not increment it).
-        loadFireCounts["appleHealth", default: 0] += 1
+        loadFireCounts["appleGesundheit", default: 0] += 1
         #endif
 
         async let rows = appleDailyRows()

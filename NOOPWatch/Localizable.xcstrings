@@ -32,6 +32,12 @@
             "state": "translated",
             "value": "%@ 次/分"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ br/min"
+          }
         }
       }
     },
@@ -65,6 +71,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "配速 %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pace"
           }
         }
       }
@@ -100,6 +112,12 @@
             "state": "translated",
             "value": "%@ · 吸 %@ 秒 / 呼 %@ 秒"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@s in / %@s out"
+          }
         }
       }
     },
@@ -130,6 +148,12 @@
           }
         },
         "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld kcal"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %lld kcal"
@@ -168,6 +192,12 @@
             "state": "translated",
             "value": "%lld 次呼吸 · %@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld breaths · %@"
+          }
         }
       }
     },
@@ -201,6 +231,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%2$@ 還剩 %1$lld 秒"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld seconds remaining in %@"
           }
         }
       }
@@ -236,6 +272,12 @@
             "state": "translated",
             "value": "允許存取"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow access"
+          }
         }
       }
     },
@@ -269,6 +311,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "箱式"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Box"
           }
         }
       }
@@ -356,6 +404,12 @@
             "state": "translated",
             "value": "吸氣"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atmen in"
+          }
         }
       }
     },
@@ -389,6 +443,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "吸氣 %lld 秒"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atmen in for %lld seconds"
           }
         }
       }
@@ -424,6 +484,12 @@
             "state": "translated",
             "value": "吐氣"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atmen out"
+          }
         }
       }
     },
@@ -457,6 +523,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "吐氣 %lld 秒"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atmen out for %lld seconds"
           }
         }
       }
@@ -544,6 +616,12 @@
             "state": "translated",
             "value": "諧振"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coherence"
+          }
         }
       }
     },
@@ -578,6 +656,12 @@
             "state": "translated",
             "value": "完成"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DONE"
+          }
         }
       }
     },
@@ -611,6 +695,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
           }
         }
       }
@@ -698,6 +788,12 @@
             "state": "translated",
             "value": "結束"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End"
+          }
         }
       }
     },
@@ -731,6 +827,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "結束鍛鍊"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End workout"
           }
         }
       }
@@ -766,6 +868,12 @@
             "state": "translated",
             "value": "功能性肌力"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Functional strength"
+          }
         }
       }
     },
@@ -799,6 +907,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "授予「健康」存取權"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grant Gesundheit access"
           }
         }
       }
@@ -886,6 +1000,12 @@
             "state": "translated",
             "value": "無法取得心率"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HR unavailable"
+          }
         }
       }
     },
@@ -919,6 +1039,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "即時心率和能量消耗，記錄在你的手腕上。留在裝置上。"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live heart rate and energy, recorded on your wrist. Stays on device."
           }
         }
       }
@@ -954,6 +1080,12 @@
             "state": "translated",
             "value": "在你的 iPhone 上打開 LLB 以同步"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne LLB auf dem iPhone zum Synchronisieren"
+          }
         }
       }
     },
@@ -987,6 +1119,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "已暫停"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PAUSED"
           }
         }
       }
@@ -1074,6 +1212,12 @@
             "state": "translated",
             "value": "記錄中"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECORDING"
+          }
         }
       }
     },
@@ -1107,6 +1251,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "休息"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REST"
           }
         }
       }
@@ -1142,6 +1292,12 @@
             "state": "translated",
             "value": "準備好呼吸"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready to breathe"
+          }
         }
       }
     },
@@ -1175,6 +1331,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "放鬆"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relax"
           }
         }
       }
@@ -1366,6 +1528,12 @@
             "state": "translated",
             "value": "繼續"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume"
+          }
         }
       }
     },
@@ -1399,6 +1567,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "第 %lld 輪，共 %lld 輪"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Round %lld of %lld"
           }
         }
       }
@@ -1434,6 +1608,12 @@
             "state": "translated",
             "value": "秒"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEC"
+          }
         }
       }
     },
@@ -1467,6 +1647,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "工作階段結束"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session done"
           }
         }
       }
@@ -1606,6 +1792,12 @@
             "state": "translated",
             "value": "停止"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
         }
       }
     },
@@ -1692,6 +1884,12 @@
             "state": "translated",
             "value": "運動"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WORK"
+          }
         }
       }
     },
@@ -1725,6 +1923,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "鍛鍊"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workout"
           }
         }
       }
@@ -1760,6 +1964,12 @@
             "state": "translated",
             "value": "運動已保存"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workout saved"
+          }
         }
       }
     },
@@ -1793,6 +2003,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "截至 %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "as of %@"
           }
         }
       }
@@ -1856,6 +2072,12 @@
             "state": "translated",
             "value": "cal"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
         }
       }
     },
@@ -1889,6 +2111,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "過時 · %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale · %@"
           }
         }
       }

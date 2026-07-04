@@ -64,7 +64,7 @@ struct TermsGateView: View {
                     #endif
 
                     Button(action: onAccept) {
-                        Text("Accept & Continue")
+                        Text("Accept & Weiter")
                             .font(StrandFont.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 9)

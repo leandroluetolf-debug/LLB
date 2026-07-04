@@ -4,7 +4,7 @@ import android.content.Context
 
 // MARK: - Editable Key-Metrics layout (#251)
 //
-// The Today screen's "Key Metrics" grid was a fixed list of ten tiles in one order. This lets the user
+// The Today screen's "Kennzahlen" grid was a fixed list of ten tiles in one order. This lets the user
 // choose WHICH tiles show and in WHAT order, with the default being the original order so nothing changes
 // for anyone who never opens the editor. Persistence is display-only — no metric is computed or stored
 // differently; this just decides which of the already-computed tiles render and in what sequence.
@@ -23,12 +23,12 @@ enum class KeyMetric(val raw: String, val title: String) {
     EFFORT("effort", "Effort"),
     REST("rest", "Rest"),
     HRV("hrv", "HRV"),
-    RESTING_HR("restingHr", "Resting HR"),
-    BLOOD_OXYGEN("bloodOxygen", "Blood Oxygen"),
-    RESPIRATORY("respiratory", "Respiratory"),
-    STEPS("steps", "Steps"),
-    WEIGHT("weight", "Weight"),
-    CALORIES("calories", "Calories");
+    RESTING_HR("restingHr", "Ruhe-HF"),
+    BLOOD_OXYGEN("bloodOxygen", "Sauerstoffsättigung"),
+    RESPIRATORY("respiratory", "Atmung"),
+    STEPS("steps", "Schritte"),
+    WEIGHT("weight", "Gewicht"),
+    CALORIES("calories", "Kalorien");
 
     companion object {
         fun fromRaw(raw: String?): KeyMetric? = entries.firstOrNull { it.raw == raw }

@@ -1,12 +1,12 @@
 import SwiftUI
 import StrandDesign
 
-// MARK: - "Customise" dashboard editor (WHOOP "My Dashboard" ✎)
+// MARK: - "Anpassen" dashboard editor (WHOOP "Mein Dashboard" ✎)
 //
-// A Today-local sheet (no new nav destination) for choosing WHICH "Your cards" dashboard cards show and in
+// A Today-local sheet (no new nav destination) for choosing WHICH "Deine Karten" dashboard cards show and in
 // what order. Display-only: it edits the persisted `today.dashboardCards` selection string, never any
 // stored metric. Enabled cards render in the list's order; a toggle hides/shows a card and a drag handle
-// (List .onMove under EditMode) reorders it — the WHOOP "My Dashboard" customise flow.
+// (List .onMove under EditMode) reorders it — the WHOOP "Mein Dashboard" customise flow.
 //
 // The enabled cards come first in their saved order, then the disabled remainder in canonical order, so
 // toggling one on drops it at the end of the visible set and the editor always lists every card exactly
@@ -70,24 +70,24 @@ struct DashboardCardsEditorSheet: View {
             .environment(\.editMode, $editMode)
             .navigationBarTitleDisplayMode(.inline)
             #endif
-            .navigationTitle("My Dashboard")
+            .navigationTitle("Mein Dashboard")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Reset") { resetToDefault() }
+                    Button("Zurücksetzen") { resetToDefault() }
                         .foregroundStyle(StrandPalette.accent)
-                        .accessibilityLabel("Reset dashboard cards to default")
+                        .accessibilityLabel("Zurücksetzen dashboard cards to default")
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { commit(); dismiss() }
+                    Button("Fertig") { commit(); dismiss() }
                         .fontWeight(.semibold)
                         .foregroundStyle(StrandPalette.accent)
                         // At least one card must stay visible — an empty dashboard reads as a bug.
                         .disabled(!items.contains { $0.enabled })
-                        .accessibilityLabel("Done customising dashboard")
+                        .accessibilityLabel("Fertig customising dashboard")
                 }
             }
             // Persist on EVERY change (toggle / reorder / reset), not only on Done — so closing the sheet by
-            // swipe still keeps the edit, mirroring WHOOP's live "My Dashboard" customise. Done just dismisses.
+            // swipe still keeps the edit, mirroring WHOOP's live "Mein Dashboard" customise. Done just dismisses.
             .onChange(of: items) { _ in commit() }
         }
         .tint(StrandPalette.accent)

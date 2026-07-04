@@ -74,7 +74,7 @@ class AiCoach(private val repo: WhoopRepository) {
         // key saved for one provider is never Bearer-sent to another provider's (or a Custom) endpoint.
         val key = AiKeyStore.read(ctx, provider)
         if (key == null && provider != AiProvider.CUSTOM) {
-            throw Exception("No API key set. Add your ${provider.displayName} key to use the coach.")
+            throw Exception("No API-Schlüssel set. Add your ${provider.displayName} key to use the coach.")
         }
         if (provider == AiProvider.CUSTOM) {
             require(customBaseUrl.isNotBlank()) { "Set your server URL first." }
@@ -219,7 +219,7 @@ class AiCoach(private val repo: WhoopRepository) {
      */
     fun buildContext(days: List<DailyMetric>): String {
         if (days.isEmpty()) {
-            return "USER DATA: No wearable data is available yet (no synced days). " +
+            return "USER DATA: No wearable data ist verfügbar yet (no synced days). " +
                 "Do not invent specific numbers; give general guidance and encourage the user " +
                 "to sync their strap so future advice can reference their real metrics."
         }
@@ -248,7 +248,7 @@ class AiCoach(private val repo: WhoopRepository) {
         sb.append("\n30-day averages (over ${last30.size} days):\n")
         sb.append("  charge ${avgInt(last30) { it.recovery }}%, ")
         sb.append("effort ${avg1(last30) { it.strain }}, ")
-        sb.append("rest ${avg1(last30) { d -> d.totalSleepMin?.div(60.0) }}h, ")
+        sb.append("rest ${avg1(last30) { d -> d.totalSchlafMin?.div(60.0) }}h, ")
         sb.append("HRV ${avgInt(last30) { it.avgHrv }}ms, ")
         sb.append("RHR ${avgInt(last30) { d -> d.restingHr?.toDouble() }}bpm\n")
         // Additional vitals when present (#124, the coach used to see only recovery/strain/sleep/HRV/RHR).
@@ -581,7 +581,7 @@ class AiCoach(private val repo: WhoopRepository) {
     private fun httpError(provider: AiProvider, code: Int, body: String): Exception {
         val detail = extractApiErrorMessage(body)
         val base = when (code) {
-            401, 403 -> "Your ${provider.displayName} API key was rejected. Check the key and try again."
+            401, 403 -> "Your ${provider.displayName} API-Schlüssel was rejected. Check the key and try again."
             429 -> "${provider.displayName} rate limit reached (or quota exhausted). Wait a moment and retry."
             in 500..599 -> "${provider.displayName} had a server error (HTTP $code). Please try again shortly."
             400 -> "The request was rejected by ${provider.displayName} (HTTP 400)."
@@ -644,7 +644,7 @@ class AiCoach(private val repo: WhoopRepository) {
          */
         const val TRUNCATION_NOTE =
             "\n\n---\n*Reply cut off: the model hit its context-window limit. " +
-                "On a local server like Ollama (default 2048 tokens), raise it - create a Modelfile " +
+                "On a local server like Ollama (default 2048 tokens), raise it - create a Modellfile " +
                 "with `PARAMETER num_ctx 8192` and select that model, or set " +
                 "`OLLAMA_CONTEXT_LENGTH=8192` and relaunch Ollama - then ask again.*"
 
@@ -670,27 +670,29 @@ class AiCoach(private val repo: WhoopRepository) {
          * stored in NoopPrefs and read fresh per request via [resolveSystemPrompt].
          */
         const val DEFAULT_SYSTEM_PROMPT =
-            "You are an elite, supportive recovery and performance coach with a real training " +
-                "methodology. You may be given a summary of the user's own wearable data (charge " +
-                "0-100, effort 0-100, rest/sleep, HRV, resting heart rate) and recent workouts. " +
-                "Charge is the daily recovery/readiness score; effort is the day's cardiovascular " +
-                "load. Coach using autoregulation: charge 67-100 = green light to build/push, " +
-                "higher effort is fine; 34-66 = maintain, quality over volume, keep it controlled; " +
-                "0-33 = active recovery only (Zone 2, mobility, extra sleep) and protect against " +
-                "accumulating effort debt. Optimise workouts with progressive overload, polarised ~80/20 " +
-                "intensity, spacing hard sessions, deloads/periodisation, and treat sleep as the " +
-                "biggest recovery lever. Always cite the user's ACTUAL numbers, give a concrete plan " +
-                "(today and the week), and be specific, punchy and motivating. If no data is " +
-                "provided, coach generally and invite them to enable data access. You are NOT a " +
-                "doctor - never diagnose; suggest a professional for genuine health concerns. " +
-                "Format replies in simple Markdown, chat-sized: short paragraphs, **bold** for key " +
-                "numbers, bullet or numbered lists for plans, and ### headings only when structure " +
-                "genuinely helps. No tables or code blocks."
+            "Du bist ein erstklassiger, unterstützender Erholungs- und Leistungscoach mit klarer " +
+                "Trainingsmethodik. Du kannst eine Zusammenfassung der Wearable-Daten des Nutzers " +
+                "erhalten (Charge 0–100, Effort 0–100, Rest/Schlaf, HRV, Ruhepuls) und aktuelle " +
+                "Workouts. Charge ist der tägliche Erholungs-/Bereitschaftswert; Effort ist die " +
+                "kardiovaskuläre Belastung des Tages. Coache mit Autoregulation: Charge 67–100 = " +
+                "grünes Licht zum Aufbauen/Pushen, höhere Belastung ist ok; 34–66 = halten, Qualität " +
+                "vor Umfang, kontrolliert bleiben; 0–33 = nur aktive Erholung (Zone 2, Mobilität, " +
+                "mehr Schlaf) und vor aufgestauter Belastungsschuld schützen. Optimiere Workouts mit " +
+                "progressiver Überlastung, polarisiertem ~80/20-Intensitätsverhältnis, Abstand " +
+                "zwischen harten Einheiten, Deloads/Periodisierung, und behandle Schlaf als den " +
+                "größten Erholungshebel. Beziehe dich immer auf die TATSÄCHLICHEN Zahlen des Nutzers, " +
+                "gib einen konkreten Plan (heute und die Woche) und sei präzise, knackig und " +
+                "motivierend. Wenn keine Daten vorliegen, coache allgemein und lade ein, den " +
+                "Datenzugriff zu aktivieren. Du bist KEIN Arzt – stelle keine Diagnosen; bei echten " +
+                "Gesundheitsfragen an Fachpersonal verweisen. Antworte IMMER auf Deutsch. Formatiere " +
+                "Antworten in einfachem Markdown, chat-tauglich: kurze Absätze, **fett** für wichtige " +
+                "Zahlen, Aufzählungen oder nummerierte Listen für Pläne, und ### Überschriften nur " +
+                "wenn die Struktur wirklich hilft. Keine Tabellen oder Codeblöcke."
 
         /** Used in place of the metrics context when the user has not granted data access. */
         const val NO_CONSENT_NOTE =
-            "NOTE: The user has not granted access to their biometric data. Coach generally and " +
-                "encourage them to enable \"Let the coach use my data\" for tailored guidance."
+            "HINWEIS: Der Nutzer hat keinen Zugriff auf biometrische Daten erteilt. Coache allgemein " +
+                "und ermutige, „Coach darf meine Daten nutzen“ für personalisierte Tipps zu aktivieren."
 
         /**
          * The system prompt actually sent: the user's edited override from [NoopPrefs] when it is

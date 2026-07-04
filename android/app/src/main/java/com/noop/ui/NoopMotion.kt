@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
-// MARK: - NoopMotion — the "Design Reset" motion set (WHOOP design language, 2026-06-22)
+// MARK: - NoopMotion — the "Design Zurücksetzen" motion set (WHOOP design language, 2026-06-22)
 //
 // Compose port of StrandDesign/NoopMotion.swift. The house motion language for the
 // WHOOP-flavoured redesign: smooth, snappy, almost no bounce. Beauty is in the restraint —
@@ -41,13 +41,13 @@ import kotlinx.coroutines.delay
 // Motion: under it, animations collapse to their final frame instantly with no offset, scale
 // or counting. Android has no per-app accessibility flag equivalent to iOS
 // `accessibilityReduceMotion`, so we read the system animator scale
-// (`Settings.Global.ANIMATOR_DURATION_SCALE` == 0 → "Remove animations" / animations off),
+// (`Settings.Global.ANIMATOR_DURATION_SCALE` == 0 → "Entfernen animations" / animations off),
 // the canonical Android signal that the user has opted out of motion.
 
 // MARK: - Reduce-motion detection (Android system signal)
 
 /**
- * True when the user has disabled system animations (Settings → Accessibility → "Remove
+ * True when the user has disabled system animations (Settings → Accessibility → "Entfernen
  * animations", or Developer options → Animator duration scale = Off). The closest Android
  * analogue to iOS `accessibilityReduceMotion`: when on, every LLB motion helper degrades to
  * its final frame instantly.

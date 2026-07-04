@@ -30,11 +30,11 @@ sealed class JournalKind {
  */
 enum class JournalGroup(val title: String) {
     Supplements("Supplements"),
-    Nutrition("Nutrition"),
+    Nutrition("Ernährung"),
     Lifestyle("Lifestyle"),
-    Health("Health"),
-    Behaviour("Behaviour"),
-    Other("Other");
+    Health("Gesundheit"),
+    Behaviour("Verhalten"),
+    Other("Sonstiges");
 
     companion object {
         /** Fixed display order (matches macOS). Empty groups hide outside edit mode. */
@@ -278,7 +278,7 @@ fun decodeJournalCatalog(json: String): List<JournalCatalogItem> {
                 canonical = canonical,
                 displayName = if (o.has("displayName")) o.optString("displayName") else null,
                 kind = kind,
-                group = JournalGroup.fromKey(o.optString("group", "Other")),
+                group = JournalGroup.fromKey(o.optString("group", "Sonstiges")),
                 sortIndex = o.optInt("sortIndex", i),
                 hidden = o.optBoolean("hidden", false),
                 custom = o.optBoolean("custom", false),

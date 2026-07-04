@@ -12,7 +12,7 @@ import CoreBluetooth
 /// -------------------------
 /// This is LOCAL Bluetooth only — nothing leaves the device to any cloud or server. It just re-shares
 /// the strap's HR to nearby gym kit over a standard BLE profile, which fits LLB's offline ethos. It is
-/// OFF by default and only ever runs when the user flips the "Broadcast heart rate" toggle in Data
+/// OFF by default and only ever runs when the user flips the "Herzfrequenz senden" toggle in Data
 /// Sources (persisted at ``defaultsKey``).
 ///
 /// WHOOP-FIRST ISOLATION: this class runs its OWN `CBPeripheralManager` and never imports, calls, or

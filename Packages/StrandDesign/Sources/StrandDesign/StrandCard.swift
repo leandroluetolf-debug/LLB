@@ -237,7 +237,7 @@ public extension View {
     VStack(spacing: 16) {
         StrandCard {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Sleep performance").strandOverline()
+                Text("Schlaf performance").strandOverline()
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("87").font(StrandFont.number(34)).foregroundStyle(StrandPalette.textPrimary)
                     Text("%").font(StrandFont.headline).foregroundStyle(StrandPalette.textTertiary)
@@ -249,7 +249,7 @@ public extension View {
         StrandCard {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Resting HR").strandOverline()
+                    Text("Ruhe-HF").strandOverline()
                     Text("51 bpm").font(StrandFont.title2).foregroundStyle(StrandPalette.textPrimary)
                 }
                 Spacer()

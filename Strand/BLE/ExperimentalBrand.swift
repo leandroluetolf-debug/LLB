@@ -16,7 +16,7 @@ public enum ExperimentalBrand: String, CaseIterable, Sendable, Equatable {
     /// handshake we can't do — the driver surfaces that honestly rather than faking it.
     case miBand
     /// Garmin watch. Live HR is the STANDARD broadcast-HR path (0x180D) when the user enables
-    /// "Broadcast Heart Rate" on the watch — there is no LLB-proprietary Garmin protocol.
+    /// "Broadcast Herzfrequenz" on the watch — there is no LLB-proprietary Garmin protocol.
     case garmin
     /// Oura ring. No open live health stream — proprietary, syncs to Oura's own app. The driver makes
     /// the detection attempt and then points honestly at file import.

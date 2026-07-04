@@ -15,7 +15,7 @@ import StrandDesign
 // (AppleWatchSetupView), which this page links to. Reachable from Settings → About.
 //
 // Honest tone, plain voice, no fabricated numbers. Every confidence label here is the same
-// honest "Great / Good / Calibrating / Not available" stance the scores use on Today.
+// honest "Great / Good / Kalibriert / Not available" stance the scores use on Today.
 
 /// One row of the capability/confidence table: a metric, where the watch sits on it, and a
 /// plain line of why. The confidence drives the row's accent + pill, so a glance reads honestly.
@@ -30,7 +30,7 @@ private struct WatchMetric: Identifiable {
             switch self {
             case .great:        return String(localized: "Great")
             case .good:         return String(localized: "Good")
-            case .calibrating:  return String(localized: "Calibrating")
+            case .calibrating:  return String(localized: "Kalibriert")
             case .unavailable:  return String(localized: "Not available")
             }
         }
@@ -75,31 +75,31 @@ struct AppleWatchAboutView: View {
     // the watch is strongest at down to what it can't honestly do, so the page reads as a fair
     // appraisal rather than a sales pitch.
     private let metrics: [WatchMetric] = [
-        WatchMetric(icon: "bed.double.fill", metric: String(localized: "Sleep / Rest"),
+        WatchMetric(icon: "bed.double.fill", metric: String(localized: "Schlaf / Rest"),
                     confidence: .great,
                     detail: String(localized: "Apple's own sleep stages drive Rest directly. This is one of the watch's strengths.")),
-        WatchMetric(icon: "figure.walk", metric: String(localized: "Steps & workouts"),
+        WatchMetric(icon: "figure.walk", metric: String(localized: "Schritte & workouts"),
                     confidence: .great,
-                    detail: String(localized: "Steps, active energy and logged workouts feed Effort. Dense and reliable.")),
-        WatchMetric(icon: "lungs.fill", metric: String(localized: "Fitness Age"),
+                    detail: String(localized: "Schritte, active energy and logged workouts feed Effort. Dense and reliable.")),
+        WatchMetric(icon: "lungs.fill", metric: String(localized: "Fitnessalter"),
                     confidence: .great,
                     detail: String(localized: "Built from Apple's cardio-fitness VO₂ max estimate, the same number the Fitness app shows.")),
         WatchMetric(icon: "flame.fill", metric: String(localized: "Effort"),
                     confidence: .good,
-                    detail: String(localized: "Heart rate plus active energy give a solid daily cardiovascular load. An on-watch workout sharpens it further.")),
-        WatchMetric(icon: "heart.fill", metric: String(localized: "Recovery / Charge"),
+                    detail: String(localized: "Herzfrequenz plus active energy give a solid daily cardiovascular load. An on-watch workout sharpens it further.")),
+        WatchMetric(icon: "heart.fill", metric: String(localized: "Erholung / Charge"),
                     confidence: .calibrating,
                     detail: String(localized: "Led by your heart-rate variability versus your own baseline. The watch samples HRV rather than streaming it, so this needs about a week of nights to calibrate. Until then LLB shows \u{201C}needs more data\u{201D}, never a guessed number.")),
-        WatchMetric(icon: "thermometer.medium", metric: String(localized: "Skin temperature"),
+        WatchMetric(icon: "thermometer.medium", metric: String(localized: "Hauttemperatur"),
                     confidence: .good,
                     detail: String(localized: "From the watch's wrist-temperature sensor during sleep, on Series 8 and later. Older models don't have the sensor, so it reads \u{201C}not available\u{201D} rather than zero.")),
-        WatchMetric(icon: "drop.degreesign", metric: String(localized: "Blood oxygen (SpO₂)"),
+        WatchMetric(icon: "drop.degreesign", metric: String(localized: "Sauerstoffsättigung (SpO₂)"),
                     confidence: .unavailable,
                     detail: String(localized: "Trend only where supported, and Apple removed the SpO₂ sensor from the newest US units, so on those it simply isn't there. LLB shows nothing rather than a fake reading.")),
     ]
 
     var body: some View {
-        ScreenScaffold(title: "About Apple Watch data",
+        ScreenScaffold(title: "Über Apple Watch data",
                        subtitle: "What your watch is great at, where it's lighter than a chest strap, and how sure LLB is.",
                        lazy: true) {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
@@ -133,7 +133,7 @@ struct AppleWatchAboutView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                     Spacer(minLength: 0)
                 }
-                Text("LLB can run off only an Apple Watch, no chest strap needed. The watch is the sensor; LLB does the thinking on your phone, computing Charge, Rest, Effort and your Fitness Age from your Health data, all on-device.")
+                Text("LLB can run off only an Apple Watch, no chest strap needed. The watch is the sensor; LLB does the thinking on your phone, computing Charge, Rest, Effort and your Fitnessalter from your Gesundheit data, all on-device.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -214,11 +214,11 @@ struct AppleWatchAboutView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Text("Recovery, LLB's Charge score, is led by your heart-rate variability measured against your own personal baseline. A chest strap streams beat-to-beat data densely all night, so it can learn that baseline fast. An Apple Watch instead samples HRV, a handful of readings through the day plus overnight, so the signal is real but sparser.")
+                Text("Erholung, LLB's Charge score, is led by your heart-rate variability measured against your own personal baseline. A chest strap streams beat-to-beat data densely all night, so it can learn thauf Basisniveau fast. An Apple Watch instead samples HRV, a handful of readings through the day plus overnight, so the signal is real but sparser.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("That's why a watch-only Charge starts out \u{201C}Calibrating\u{201D}. LLB needs about seven nights of your HRV to learn what normal looks like for you. Until it has them it withholds the score rather than guess. Once the baseline is set, your Charge appears with its confidence, on the same 0-100 scale as a strap's.")
+                Text("That's why a watch-only Charge starts out \u{201C}Kalibriert\u{201D}. LLB needs about seven nights of your HRV to learn what normal looks like for you. Until it has them it withholds the score rather than guess. Once the baseline is set, your Charge appears with its confidence, on the same 0-100 scale as a strap's.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -242,7 +242,7 @@ struct AppleWatchAboutView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Text("A couple of metrics depend on which Apple Watch you wear. Wrist temperature, which feeds skin temp, arrived with Series 8, so older watches don't report it. Blood oxygen is the bigger one: Apple removed the SpO₂ sensor from the newest US units over a patent dispute, so those simply don't measure it.")
+                Text("A couple of metrics depend on which Apple Watch you wear. Wrist temperature, which feeds skin temp, arrived with Series 8, so older watches don't report it. Sauerstoffsättigung is the bigger one: Apple removed the SpO₂ sensor from the newest US units over a patent dispute, so those simply don't measure it.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -263,7 +263,7 @@ struct AppleWatchAboutView: View {
                 Text("Ready to connect your watch?")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("LLB reads your Apple Watch data through Apple Health, on your phone, nothing leaves the device. You choose exactly what to share.")
+                Text("LLB reads your Apple Watch data through Apple Gesundheit, on your phone, nothing leaves the device. You choose exactly what to share.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -271,14 +271,14 @@ struct AppleWatchAboutView: View {
                     Label("Set up Apple Watch", systemImage: "applewatch")
                 }
                 .buttonStyle(NoopButtonStyle(.primary, fullWidth: true))
-                .accessibilityHint("Opens the Apple Watch setup and Health permission")
+                .accessibilityHint("Opens the Apple Watch setup and Gesundheit permission")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private var footerNote: some View {
-        Text("These are independent estimates computed on your device from your Apple Health data, not medical advice. Confidence labels are honest about how much LLB knows so far.")
+        Text("These are independent estimates computed on your device from your Apple Gesundheit data, not medical advice. Confidence labels are honest about how much LLB knows so far.")
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textTertiary)
             .fixedSize(horizontal: false, vertical: true)
@@ -288,7 +288,7 @@ struct AppleWatchAboutView: View {
 }
 
 #if DEBUG
-#Preview("About Apple Watch data") {
+#Preview("Über Apple Watch data") {
     NavigationStack {
         AppleWatchAboutView(onStartSetup: {})
     }

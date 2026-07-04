@@ -39,7 +39,7 @@ struct HydrationView: View {
     private var percent: Int { min(100, Int((fraction * 100).rounded(.towardZero))) }
 
     var body: some View {
-        ScreenScaffold(title: "Hydration",
+        ScreenScaffold(title: "Flüssigkeit",
                        subtitle: "Your fluid intake today, on \(Platform.deviceNounPhrase) only.",
                        onRefresh: { await reload() },
                        // Liquid finish: the same full-bleed day-of-sky backdrop Today + the other liquid
@@ -68,7 +68,7 @@ struct HydrationView: View {
         .task(id: reloadTick) { await reload() }
         // #798 - edit a logged drink's amount.
         .sheet(item: $editingEntry) { entry in
-            HydrationAmountSheet(title: "Edit drink", initialML: entry.amountMl) { newML in
+            HydrationAmountSheet(title: "Bearbeiten drink", initialML: entry.amountMl) { newML in
                 editingEntry = nil
                 Task { await updateEntry(entry, to: newML) }
             } onCancel: { editingEntry = nil }
@@ -100,15 +100,15 @@ struct HydrationView: View {
                                     font: StrandFont.rounded(40, weight: .bold),
                                     color: StrandPalette.textPrimary)
                             .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
-                        Text(String(localized: "of \(String(format: "%.1f", HydrationGoal.litres(fromML: Double(goalML)))) L"))
+                        Text(String(localized: "of \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: Double(goalML)))) L"))
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     }
                     .allowsHitTesting(false)   // taps fall through to the vessel → splash
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Hydration today")
-                .accessibilityValue("\(String(format: "%.1f", HydrationGoal.litres(fromML: totalML))) of \(String(format: "%.1f", HydrationGoal.litres(fromML: Double(goalML)))) litres")
+                .accessibilityLabel("Flüssigkeit today")
+                .accessibilityValue("\(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: totalML))) of \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: Double(goalML)))) litres")
 
                 Text("\(percent)% of today's goal")
                     .font(StrandFont.footnote)
@@ -160,7 +160,7 @@ struct HydrationView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Set custom container size")
             }
-            Text("Sip \(HydrationGoal.sipML) ml · Cup \(HydrationGoal.cupML) ml · Bottle \(HydrationGoal.bottleML) ml")
+            Text("Sip \(FlüssigkeitGoal.sipML) ml · Cup \(FlüssigkeitGoal.cupML) ml · Bottle \(FlüssigkeitGoal.bottleML) ml")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
         }
@@ -180,7 +180,7 @@ struct HydrationView: View {
         if !entries.isEmpty {
             card(padding: 18) {
                 VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-                    Text("Today's drinks").strandOverline()
+                    Text("Heute's drinks").strandOverline()
                     // #842 — render rows in a plain VStack inside the page ScrollView. The previous nested,
                     // scroll-disabled List with a hardcoded `count * 44 + 8` height clipped every row past
                     // the third (real rows are taller than 44pt) and couldn't be scrolled to. Tap a row to
@@ -236,7 +236,7 @@ struct HydrationView: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Delete the \(entry.amountMl) millilitre drink logged at \(Self.entryTimeFmt.string(from: entry.loggedAt))")
+            .accessibilityLabel("Löschen the \(entry.amountMl) millilitre drink logged at \(Self.entryTimeFmt.string(from: entry.loggedAt))")
         }
     }
 
@@ -285,7 +285,7 @@ struct HydrationView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(weekdayInitial(bar.day)): \(String(format: "%.1f", HydrationGoal.litres(fromML: bar.value))) litres")
+                    .accessibilityLabel("\(weekdayInitial(bar.day)): \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: bar.value))) litres")
                 }
             }
         }
@@ -296,7 +296,7 @@ struct HydrationView: View {
     private var todayTotalSection: some View {
         card(padding: 18) {
             VStack(alignment: .leading, spacing: NoopMetrics.space2) {
-                Text("Today").strandOverline()
+                Text("Heute").strandOverline()
                 if totalML <= 0 {
                     Text("No drinks logged yet. Tap Sip, Cup or Bottle to start.")
                         .font(StrandFont.subhead)
@@ -308,7 +308,7 @@ struct HydrationView: View {
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
-                        Text("Logged today")
+                        Text("Heute protokolliert")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textPrimary)
                         Spacer(minLength: 8)
@@ -420,8 +420,8 @@ private struct HydrationAmountSheet: View {
             .accessibilityLabel("Amount in millilitres")
             .accessibilityValue("\(ml) millilitres")
             HStack(spacing: NoopMetrics.gap) {
-                NoopButton("Cancel", kind: .secondary, fullWidth: true) { onCancel() }
-                NoopButton("Save", kind: .primary, fullWidth: true) { onSave(Self.clamp(ml)) }
+                NoopButton("Abbrechen", kind: .secondary, fullWidth: true) { onCancel() }
+                NoopButton("Speichern", kind: .primary, fullWidth: true) { onSave(Self.clamp(ml)) }
             }
         }
         .padding(NoopMetrics.space5)

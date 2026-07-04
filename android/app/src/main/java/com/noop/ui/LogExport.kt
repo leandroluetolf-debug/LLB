@@ -220,7 +220,7 @@ object LogExport {
                 putExtra(Intent.EXTRA_SUBJECT, "LLB strap log")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            context.startActivity(Intent.createChooser(send, "Share strap log"))
+            context.startActivity(Intent.createChooser(send, "Band-Log teilen"))
         }.onFailure {
             Toast.makeText(context, "Couldn't share the log: ${it.message}", Toast.LENGTH_LONG).show()
         }

@@ -101,7 +101,7 @@ fun HrvSnapshotScreen(
     var runningRmssd by remember { mutableStateOf<Double?>(null) }
     // The completed analysis (null until Done).
     var result by remember { mutableStateOf<HrvAnalyzer.HrvResult?>(null) }
-    // Whether the just-finished snapshot has been saved (drives the Save button → "Saved").
+    // Whether the just-finished snapshot has been saved (drives the Save button → "Speichernd").
     var saved by remember { mutableStateOf(false) }
 
     val bonded = live.bonded
@@ -173,15 +173,15 @@ fun HrvSnapshotScreen(
             }
             Spacer(Modifier.width(8.dp))
             if (bonded) {
-                StatePill("Strap live", tone = StrandTone.Positive)
+                StatePill("Band live", tone = StrandTone.Positive)
             } else {
-                StatePill("Not connected", tone = StrandTone.Warning)
+                StatePill("Nicht verbunden", tone = StrandTone.Warning)
             }
             Spacer(Modifier.weight(1f))
             IconButton(onClick = onClose) {
                 Icon(
                     Icons.Filled.Close,
-                    contentDescription = "Close HRV reading",
+                    contentDescription = "Schließen HRV reading",
                     tint = Palette.textTertiary,
                 )
             }
@@ -285,7 +285,7 @@ fun HrvSnapshotScreen(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Palette.accent),
                 ) {
                     Icon(Icons.Filled.Download, contentDescription = null, modifier = Modifier.padding(end = 6.dp))
-                    Text(if (saved) "Saved" else "Save", style = NoopType.body)
+                    Text(if (saved) "Speichernd" else "Speichern", style = NoopType.body)
                 }
             }
         }
@@ -497,7 +497,7 @@ private fun dialValue(phase: HrvPhase, runningRmssd: Double?, result: HrvAnalyze
 
 private fun primaryLabel(phase: HrvPhase): String = when (phase) {
     HrvPhase.Idle -> "Take an HRV reading"
-    HrvPhase.Capturing -> "Cancel"
+    HrvPhase.Capturing -> "Abbrechen"
     HrvPhase.Done -> "Take another reading"
 }
 
@@ -512,7 +512,7 @@ private fun instruction(phase: HrvPhase, bonded: Boolean, result: HrvAnalyzer.Hr
         HrvPhase.Done -> if (result != null && result.rmssd == null) {
             "Not enough clean beats - sit still and try again."
         } else {
-            "Done. Save this reading to keep it in your trends."
+            "Fertig. Speichern this reading to keep it in your trends."
         }
     }
 

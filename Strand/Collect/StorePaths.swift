@@ -53,7 +53,7 @@ enum StorePaths {
         let productionBundleID = "com.llb.app"
         guard Bundle.main.bundleIdentifier == productionBundleID else { return appSupport }
 
-        let containerSegment = "/Library/Containers/\(productionBundleID)/Data/"
+        let containerSegment = "/Library/Containers/\(productionBundleID)/Daten/"
         // Already inside the container (sandbox resolved the path for us) — use as-is.
         if appSupport.standardizedFileURL.path.contains(containerSegment) {
             return appSupport
@@ -70,7 +70,7 @@ enum StorePaths {
         return home
             .appendingPathComponent("Library/Containers", isDirectory: true)
             .appendingPathComponent(productionBundleID, isDirectory: true)
-            .appendingPathComponent("Data/Library/Application Support", isDirectory: true)
+            .appendingPathComponent("Daten/Library/Application Hilfe", isDirectory: true)
         #else
         return appSupport
         #endif
@@ -106,7 +106,7 @@ enum StorePaths {
         }
     }
 
-    /// Treats a missing file or a zero-byte file as "no data" so a freshly created
+    /// Treats a missing file or a zero-byte file as "keine Daten" so a freshly created
     /// empty container store still triggers migration of legacy data.
     private static func destinationHasData(_ url: URL) -> Bool {
         FileManager.default.fileExists(atPath: url.path) && fileSize(of: url) > 0

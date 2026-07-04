@@ -6,13 +6,13 @@ import WhoopStore
 
 // MARK: - Explore (Metric Explorer + Detail)
 //
-// The catalog-driven "Explore" surface. The root is a grouped list — one
+// The catalog-driven "Entdecken" surface. The root is a grouped list — one
 // SectionHeader per MetricCatalog.category, then a row per metric — pushing a
 // MetricDetailView. The detail is a uniform analytic dossier built ONLY from the
 // locked StrandDesign components (NoopCard / ChartCard / StatTile / InsightCard /
 // SegmentedPillControl). No custom card heights, paddings, or surfaces anywhere.
 //
-// Sparse-metric rule (owner saw "no data" on metrics that HAVE data): a series may
+// Sparse-metric rule (owner saw "keine Daten" on metrics that HAVE data): a series may
 // be sampled weekly (weight / body fat). The window is taken RELATIVE TO THE LATEST
 // data point — not "now" — so a stale-but-present series still resolves. If the
 // selected window holds ≥1 point we SHOW THAT WINDOW (so W/M/3M stay visibly
@@ -150,7 +150,7 @@ enum ExploreRangeGating {
 
 // MARK: - Root: categorized list
 
-/// The "Explore" picker — categories as sections, metrics as rows, each pushing a
+/// The "Entdecken" picker — categories as sections, metrics as rows, each pushing a
 /// MetricDetailView. A faint trailing "•" marks metrics whose series is empty.
 struct MetricExplorerView: View {
     @EnvironmentObject var repo: Repository
@@ -183,7 +183,7 @@ struct MetricExplorerView: View {
         // cards), so LazyVStack genuinely builds the off-screen category cards on demand. No
         // `staggeredAppear` here and identical column alignment/spacing (20) + per-child bottom padding,
         // so the layout is byte-identical to the eager VStack.
-        ScreenScaffold(title: "Explore", subtitle: "Every signal, one tap deep.",
+        ScreenScaffold(title: "Entdecken", subtitle: "Every signal, one tap deep.",
                        onRefresh: { await repo.refresh() }, lazy: true,
                        topBackground: liquidScaffoldSky()) {
             // A quiet, non-blocking hint while the empty-dot probe runs its first pass. The rows below
@@ -373,7 +373,7 @@ private struct MetricRow: View {
                 Text("•")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary.opacity(0.5))
-                    .accessibilityLabel("No data")
+                    .accessibilityLabel("Keine Daten")
             }
             Image(systemName: "chevron.right")
                 .font(.system(size: 11, weight: .semibold))
@@ -385,7 +385,7 @@ private struct MetricRow: View {
         .accessibilityElement(children: .combine)
         // Whole-string key per variant (never a concatenated localized tail on an a11y label).
         .accessibilityLabel(isEmpty
-            ? "\(metric.title), \(unitLabel.isEmpty ? MetricCatalog.categoryDisplayName(metric.category) : unitLabel), no data"
+            ? "\(metric.title), \(unitLabel.isEmpty ? MetricCatalog.categoryDisplayName(metric.category) : unitLabel), keine Daten"
             : "\(metric.title), \(unitLabel.isEmpty ? MetricCatalog.categoryDisplayName(metric.category) : unitLabel)")
         .accessibilityAddTraits(.isButton)
     }
@@ -557,7 +557,7 @@ struct MetricDetailView: View {
                     // the ranges to misrepresent, and hiding the bar here would regress this
                     // "for context" intent.
                     rangeBar(effectiveRange: effRange, windowed: win, windowFellBack: fellBack)
-                    ComingSoon(what: "Import your history first. A WHOOP export in Data Sources fills every metric you can explore here in about a minute.")
+                    ComingSoon(what: "Importieren your history first. A WHOOP export in Datenquellen fills every metric you can explore here in about a minute.")
                 } else if !loaded {
                     rangeBar(effectiveRange: effRange, windowed: win, windowFellBack: fellBack)
                     ComingSoon(what: "Reading your \(metric.title.lowercased())…")
@@ -624,7 +624,7 @@ struct MetricDetailView: View {
         // the whole viewport and left a huge blank band above the chart. As a .background it sizes to
         // the hero content, so the number/ring sits directly under the range pill.
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-                // Category + title on their OWN full-width row so a long title ("Heart Rate Variability")
+                // Category + title on their OWN full-width row so a long title ("Herzfrequenz Variability")
                 // is never crushed into a letter-per-line column by the range pill (2026-07-02).
                 VStack(alignment: .leading, spacing: 2) {
                     Text(MetricCatalog.categoryDisplayName(metric.category).uppercased()).strandOverline()
@@ -988,7 +988,7 @@ private func explorerPreviewRepo() -> Repository {
     return repo
 }
 
-#Preview("Explore") {
+#Preview("Entdecken") {
     MetricExplorerView()
         .environmentObject(explorerPreviewRepo())
         .frame(width: 900, height: 820)

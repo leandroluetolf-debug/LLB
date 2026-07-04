@@ -23,15 +23,15 @@ enum WorkoutCatalog {
     }
 
     /// Ordered to match Android `WorkoutSport.all`: common / distance first, the rest, the EXTRA
-    /// sports HC has no type for (Padel , #77/#152), then the generic "Other" last. Distance flags
+    /// sports HC has no type for (Padel , #77/#152), then the generic "Sonstiges" last. Distance flags
     /// mirror Android `ExerciseTypes.DISTANCE_TYPES`.
     static let all: [Sport] = [
-        Sport(name: "Running", isDistanceSport: true),
-        Sport(name: "Walking", isDistanceSport: true),
-        Sport(name: "Hiking", isDistanceSport: true),
-        Sport(name: "Cycling", isDistanceSport: true),
+        Sport(name: "Laufen", isDistanceSport: true),
+        Sport(name: "Gehen", isDistanceSport: true),
+        Sport(name: "Wandern", isDistanceSport: true),
+        Sport(name: "Radfahren", isDistanceSport: true),
         Sport(name: "Open-water swim", isDistanceSport: true),
-        Sport(name: "Rowing", isDistanceSport: true),
+        Sport(name: "Rudern", isDistanceSport: true),
         Sport(name: "Treadmill run", isDistanceSport: false),
         // Indoor treadmill walk (#714). Distance off so GPS stays defaulted off, like Treadmill run.
         Sport(name: "Treadmill walk", isDistanceSport: false),
@@ -41,8 +41,8 @@ enum WorkoutCatalog {
         Sport(name: "Elliptical", isDistanceSport: false),
         Sport(name: "Strength", isDistanceSport: false),
         // Bodybuilding (#714). A strength-style session with no route, so GPS off.
-        Sport(name: "Bodybuilding", isDistanceSport: false),
-        Sport(name: "Weightlifting", isDistanceSport: false),
+        Sport(name: "Körperbuilding", isDistanceSport: false),
+        Sport(name: "Gewichtlifting", isDistanceSport: false),
         Sport(name: "HIIT", isDistanceSport: false),
         Sport(name: "Yoga", isDistanceSport: false),
         Sport(name: "Pilates", isDistanceSport: false),
@@ -70,13 +70,13 @@ enum WorkoutCatalog {
         Sport(name: "Pickleball", isDistanceSport: false),
         // Bowling (D#850): light lane sport, no route, so GPS stays off.
         Sport(name: "Bowling", isDistanceSport: false),
-        Sport(name: "Other", isDistanceSport: false),
+        Sport(name: "Sonstiges", isDistanceSport: false),
     ]
 
     /// The default sport for a live workout when the user starts one without picking , the generic
-    /// "Other", matching Android `WorkoutSport.default`. (The auto-detector relabels detected bouts;
+    /// "Sonstiges", matching Android `WorkoutSport.default`. (The auto-detector relabels detected bouts;
     /// this is only the manual-start fallback.)
-    static let defaultSportName = "Other"
+    static let defaultSportName = "Sonstiges"
 
     /// Case-insensitive lookup of the suggestion matching a (possibly free-typed) label, or nil for
     /// an off-catalogue sport , which is still valid, just not in the suggestion set.

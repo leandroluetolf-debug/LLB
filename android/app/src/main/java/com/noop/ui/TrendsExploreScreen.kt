@@ -155,12 +155,12 @@ private val builtInMetrics: List<MetricSpec> = listOf(
         dailyPick = { it.avgHrv },
     ),
     MetricSpec(
-        key = "rhr", title = "Resting HR", unit = "bpm", category = "Charge",
+        key = "rhr", title = "Ruhe-HF", unit = "bpm", category = "Charge",
         accent = Palette.metricRose, higherIsBetter = false, decimals = 0,
         dailyPick = { it.restingHr?.toDouble() },
     ),
     MetricSpec(
-        key = "sleep", title = "Sleep", unit = "h", category = "Rest",
+        key = "sleep", title = "Schlaf", unit = "h", category = "Rest",
         // Rest-score accent rides the reset accent token (iOS metricAccent maps every Rest metric ,
         // sleep_performance / sleep_total_min , to StrandPalette.accent), not a stray metric hue.
         accent = Palette.accent, higherIsBetter = true, decimals = 1,
@@ -168,17 +168,17 @@ private val builtInMetrics: List<MetricSpec> = listOf(
         description = "How restorative your sleep was , duration, efficiency, deep+REM, timing.",
     ),
     MetricSpec(
-        key = "efficiency", title = "Sleep Efficiency", unit = "%", category = "Rest",
+        key = "efficiency", title = "Schlaf Efficiency", unit = "%", category = "Rest",
         accent = Palette.accent, higherIsBetter = true, decimals = 0,
         dailyPick = { it.efficiency },
     ),
     MetricSpec(
-        key = "spo2", title = "Blood Oxygen", unit = "%", category = "Health",
+        key = "spo2", title = "Sauerstoffsättigung", unit = "%", category = "Gesundheit",
         accent = Palette.metricCyan, higherIsBetter = true, decimals = 0,
         dailyPick = { it.spo2Pct },
     ),
     MetricSpec(
-        key = "resp", title = "Respiratory Rate", unit = "rpm", category = "Health",
+        key = "resp", title = "Atmung Rate", unit = "rpm", category = "Gesundheit",
         accent = Palette.accent, higherIsBetter = null, decimals = 1,
         dailyPick = { it.respRateBpm },
     ),
@@ -190,19 +190,19 @@ private val builtInMetrics: List<MetricSpec> = listOf(
 private val knownSeriesMetrics: Map<String, MetricSpec> = mapOf(
     // #605/#608: imported avg/max HR is written to metricSeries (Apple Health / WHOOP CSV / Xiaomi) and
     // the Compare screen exposes it, but Explore's picker didn't , iOS MetricCatalog has had both. Series-
-    // backed (no DailyMetric column), "Heart" category, parity. (Strap-only per-second HR lives in the
+    // backed (no DailyMetric column), "Herz" category, parity. (Strap-only per-second HR lives in the
     // Deep Timeline; this surfaces the per-day avg/max for imported sources.)
-    "avg_hr" to MetricSpec("avg_hr", "Average Heart Rate", "bpm", "Heart",
+    "avg_hr" to MetricSpec("avg_hr", "Average Herzfrequenz", "bpm", "Herz",
         Palette.metricRose, null, 0),
-    "max_hr" to MetricSpec("max_hr", "Max Heart Rate", "bpm", "Heart",
+    "max_hr" to MetricSpec("max_hr", "Max Herzfrequenz", "bpm", "Herz",
         Palette.metricRose, null, 0),
-    "calories_in" to MetricSpec("calories_in", "Calories In", "kcal", "Nutrition",
+    "calories_in" to MetricSpec("calories_in", "Kalorien In", "kcal", "Ernährung",
         Palette.metricAmber, null, 0),
-    "protein_g" to MetricSpec("protein_g", "Protein", "g", "Nutrition",
+    "protein_g" to MetricSpec("protein_g", "Protein", "g", "Ernährung",
         Palette.metricCyan, null, 0),
-    "carbs_g" to MetricSpec("carbs_g", "Carbs", "g", "Nutrition",
+    "carbs_g" to MetricSpec("carbs_g", "Carbs", "g", "Ernährung",
         Palette.metricCyan, null, 0),
-    "fat_g" to MetricSpec("fat_g", "Fat", "g", "Nutrition",
+    "fat_g" to MetricSpec("fat_g", "Fat", "g", "Ernährung",
         Palette.metricCyan, null, 0),
     "mood" to MetricSpec("mood", "Mood", "/5", "Mind",
         Palette.metricPurple, true, 0),
@@ -282,7 +282,7 @@ fun TrendsExploreScreen(vm: AppViewModel) {
 
     // The full picker: built-ins first, then any extra metricSeries keys not already covered.
     // Known import/check-in keys get their proper titles/units/categories (matching the macOS
-    // MetricCatalog); anything else falls back to a prettified key under "Other".
+    // MetricCatalog); anything else falls back to a prettified key under "Sonstiges".
     val metrics = remember(extraKeys) {
         val builtInKeys = builtInMetrics.map { it.key }.toSet()
         val extras = extraKeys
@@ -294,7 +294,7 @@ fun TrendsExploreScreen(vm: AppViewModel) {
                     key = k,
                     title = k.replace('_', ' ').replaceFirstChar { c -> c.uppercase() },
                     unit = "",
-                    category = "Other",
+                    category = "Sonstiges",
                     accent = Palette.metricCyan,
                     higherIsBetter = null,
                     decimals = 1,
@@ -374,7 +374,7 @@ fun TrendsExploreScreen(vm: AppViewModel) {
     // are accessibility-walked on scroll. Each top-level child is one `item { }` in the same order; the
     // conditional empty-state note uses `if (cond) { item {} }` so it adds no row when hidden. No standalone
     // Spacers here , the LazyColumn's `spacedBy(20.dp)` reproduces the eager column's row spacing exactly.
-    LazyScreenScaffold(title = "Explore", subtitle = "Every signal, one tap deep.") {
+    LazyScreenScaffold(title = "Entdecken", subtitle = "Every signal, one tap deep.") {
 
         // The headline tap-through (#575): a full-day, full-resolution, zoomable timeline. Sits above the
         // per-metric catalog because it's a different kind of view , every second of one day, not one
@@ -386,8 +386,8 @@ fun TrendsExploreScreen(vm: AppViewModel) {
         if (series.isEmpty()) {
             item {
             DataPendingNote(
-                title = "Import your history first",
-                body = "Import your history first. A WHOOP export in Data Sources fills " +
+                title = "Importieren your history first",
+                body = "Importieren your history first. A WHOOP export in Datenquellen fills " +
                     "every metric you can explore here in about a minute.",
             )
             }

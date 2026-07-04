@@ -131,7 +131,7 @@ private val LIQUID_HERO_RADIUS = 26.dp
 
 /** The three biofeedback layers as a mode switch (mirrors BreathingView.Mode). */
 private enum class BreatheMode(val label: String) {
-    Breathe("Breathe"),
+    Breathe("Atmen"),
     Resonance("Resonance"),
     Calm("Calm me"),
 }
@@ -290,7 +290,7 @@ fun BreatheScreen(viewModel: AppViewModel) {
     }
 
     ScreenScaffold(
-        title = "Breathe",
+        title = "Atmen",
         subtitle = "Haptic-paced breathing · find your pace · calm down",
         // LIQUID SKY BACKDROP (the pilot pattern — LiquidScreenSky.kt): the time-of-day liquid sky settles
         // into the theme canvas behind the header + top card and bleeds full-width up behind the status bar
@@ -533,11 +533,11 @@ fun BreatheScreen(viewModel: AppViewModel) {
         Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
             ReadoutTile(
                 modifier = Modifier.weight(1f),
-                label = "Heart rate",
+                label = "Herzfrequenz",
                 value = bpm?.toString() ?: "—",
                 unit = "bpm",
                 accent = Palette.metricRose,
-                caption = if (live.worn) "Live" else "Strap not worn",
+                caption = if (live.worn) "Live" else "Band not worn",
             )
             ReadoutTile(
                 modifier = Modifier.weight(1f),
@@ -656,7 +656,7 @@ private fun CoherenceCard(rmssd: Double?) {
 }
 
 private fun coherenceState(rmssd: Double?): Pair<String, StrandTone> = when {
-    rmssd == null -> "No data" to StrandTone.Neutral
+    rmssd == null -> "Keine Daten" to StrandTone.Neutral
     rmssd < 20 -> "Building" to StrandTone.Warning
     rmssd < 45 -> "Settling" to StrandTone.Neutral
     rmssd < 80 -> "Coherent" to StrandTone.Positive
@@ -723,8 +723,8 @@ private fun HapticHint() {
 }
 
 private fun phaseWord(phase: Phase): String = when (phase) {
-    Phase.Inhale -> "Breathe in…"
-    Phase.Exhale -> "Breathe out…"
+    Phase.Inhale -> "Atmen in…"
+    Phase.Exhale -> "Atmen out…"
 }
 
 private fun timeString(total: Int): String =
@@ -769,7 +769,7 @@ private fun StressCheckInCard(onBreatheNow: () -> Unit) {
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Palette.accent, contentColor = Palette.surfaceBase),
                     modifier = Modifier.weight(1f),
-                ) { Text("Breathe now", style = NoopType.headline) }
+                ) { Text("Atmen now", style = NoopType.headline) }
                 OutlinedButton(
                     onClick = { StressNudgeCenter.dismiss() },
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Palette.textSecondary),
@@ -991,7 +991,7 @@ private fun LockedPaceCard(bpm: Double, context: android.content.Context) {
             }
             val dateMs = BiofeedbackPrefs.lockedPaceDateMs(context)
             if (dateMs > 0) {
-                Text("Locked ${formatDay(dateMs)}. Switch to Breathe to use it, or re-measure above.",
+                Text("Locked ${formatDay(dateMs)}. Switch to Atmen to use it, or re-measure above.",
                     style = NoopType.footnote, color = Palette.textTertiary)
             }
         }
@@ -1088,7 +1088,7 @@ private fun CalmMode(viewModel: AppViewModel, live: com.noop.ble.LiveState, bpm:
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Overline("Calm me")
                     Spacer(Modifier.weight(1f))
-                    StatePill(if (canRun) "Ready" else "Strap needed",
+                    StatePill(if (canRun) "Ready" else "Band needed",
                         tone = if (canRun) StrandTone.Neutral else StrandTone.Warning)
                 }
                 Text(

@@ -158,7 +158,7 @@ struct LLBWidgetView: View {
             HStack(alignment: .top, spacing: 0) {
                 statCell("Rest HR", value: snap.restingHr.map { "\($0)" }, unit: "bpm")
                 statCell("HR", value: snap.bpm.map { "\($0)" }, unit: "bpm")
-                statCell("Battery", value: snap.batteryPct.map { "\($0)%" })
+                statCell("Akku", value: snap.batteryPct.map { "\($0)%" })
             }
             Spacer(minLength: 0)
         }

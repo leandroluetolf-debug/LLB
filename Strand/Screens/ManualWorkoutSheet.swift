@@ -42,7 +42,7 @@ struct ManualWorkoutSheet: View {
          onSave: @escaping (_ row: WorkoutRow, _ replacing: WorkoutRow?) -> Void) {
         self.editing = editing
         self.onSave = onSave
-        // Pre-fill from the edited row (display "detected" as "Activity" so a re-label starts clean).
+        // Pre-fill from the edited row (display "detected" as "Aktivität" so a re-label starts clean).
         let e = editing
         // Seeds the LOCALE-STABLE editable form, not the localized display: the field's content is
         // persisted verbatim on save, and a translated word would split cross-source dedup per language.
@@ -81,9 +81,9 @@ struct ManualWorkoutSheet: View {
                         numberInput(String(localized: "optional"), text: $avgHrText, unit: "bpm", field: .avgHr)
                             .accessibilityLabel("Average heart rate in beats per minute, optional")
                     }
-                    field(String(localized: "Calories")) {
+                    field(String(localized: "Kalorien")) {
                         numberInput(String(localized: "optional"), text: $kcalText, unit: "kcal", field: .calories)
-                            .accessibilityLabel("Calories in kilocalories, optional")
+                            .accessibilityLabel("Kalorien in kilocalories, optional")
                     }
                 }
             }
@@ -129,7 +129,7 @@ struct ManualWorkoutSheet: View {
 
     private var sportPicker: some View {
         VStack(alignment: .leading, spacing: 6) {
-            TextField("e.g. Running", text: $sport)
+            TextField("e.g. Laufen", text: $sport)
                 .textFieldStyle(.plain)
                 .font(StrandFont.body)
                 .foregroundStyle(StrandPalette.textPrimary)
@@ -184,7 +184,7 @@ struct ManualWorkoutSheet: View {
                 .background(StrandPalette.effortColor.opacity(0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
-                Text(editing == nil ? "Add Workout" : "Edit Workout")
+                Text(editing == nil ? "Add Workout" : "Bearbeiten Workout")
                     .font(StrandFont.title2)
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text(editing == nil
@@ -199,13 +199,13 @@ struct ManualWorkoutSheet: View {
 
     private var footer: some View {
         HStack(spacing: NoopMetrics.space3) {
-            NoopButton("Cancel", kind: .tertiary) { dismiss() }
+            NoopButton("Abbrechen", kind: .tertiary) { dismiss() }
             Spacer()
-            NoopButton(editing == nil ? "Add" : "Save", systemImage: "checkmark", kind: .primary) {
+            NoopButton(editing == nil ? "Add" : "Speichern", systemImage: "checkmark", kind: .primary) {
                 save()
             }
             .disabled(builtRow == nil)
-            .accessibilityLabel(editing == nil ? "Add workout" : "Save workout")
+            .accessibilityLabel(editing == nil ? "Add workout" : "Speichern workout")
         }
     }
 
@@ -292,7 +292,7 @@ struct ManualWorkoutSheet: View {
             return String(localized: "Average HR must be 25-250 bpm.")
         }
         if !kcalText.trimmingCharacters(in: .whitespaces).isEmpty, kcal == nil || (kcal ?? -1) < 0 || (kcal ?? 0) > 20_000 {
-            return String(localized: "Calories must be 0-20,000.")
+            return String(localized: "Kalorien must be 0-20,000.")
         }
         return String(localized: "Check the values and try again.")
     }
@@ -309,7 +309,7 @@ struct ManualWorkoutSheet: View {
 // The Apple-side entry point for LIVE tracking, mirroring Android's StartWorkoutSheet (WorkoutStart.kt):
 // pick a named sport from the shared WorkoutCatalog, then begin the session. Brings the iOS/macOS live
 // tracker to parity with Android, which has had a named-sport picker on Start since #115 — previously
-// the Apple "Start workout" buttons called `startWorkout()` with no sport and every live session saved
+// the Apple "Workout starten" buttons called `startWorkout()` with no sport and every live session saved
 // as the generic "Workout". A host presents this and forwards the chosen name to
 // `AppModel.startWorkout(sport:)`. Free-text isn't offered here (a live start is a quick tap from a
 // fixed list); an unusual sport can still be set afterwards via the manual edit sheet's free-text field.
@@ -405,7 +405,7 @@ struct StartWorkoutSheet: View {
             .overlay(inputShape.strokeBorder(StrandPalette.hairline, lineWidth: 1))
 
             HStack(spacing: NoopMetrics.space3) {
-                NoopButton("Cancel", kind: .tertiary) { dismiss() }
+                NoopButton("Abbrechen", kind: .tertiary) { dismiss() }
                 Spacer()
                 NoopButton("\(actionVerb) \(selected)", systemImage: "figure.run", kind: .primary) {
                     onStart(selected)
@@ -431,10 +431,10 @@ struct StartWorkoutSheet: View {
         .preferredColorScheme(.dark)
 }
 
-#Preview("Edit") {
+#Preview("Bearbeiten") {
     ManualWorkoutSheet(editing: WorkoutRow(
         startTs: Int(Date().timeIntervalSince1970) - 3600, endTs: Int(Date().timeIntervalSince1970),
-        sport: "Running", source: "manual", durationS: 3600, energyKcal: 540,
+        sport: "Laufen", source: "manual", durationS: 3600, energyKcal: 540,
         avgHr: 148, maxHr: 172, strain: 12.4, distanceM: nil, zonesJSON: nil, notes: nil)) { _, _ in }
         .preferredColorScheme(.dark)
 }

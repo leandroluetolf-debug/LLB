@@ -221,7 +221,7 @@ fun SyncingHistoryNote(chunks: Int, modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        StatePill("Syncing strap history…", tone = StrandTone.Accent, pulsing = true)
+        StatePill("Band-Verlauf wird synchronisiert…", tone = StrandTone.Accent, pulsing = true)
         if (chunks > 0) {
             Text(
                 "$chunks chunks pulled",
@@ -865,7 +865,7 @@ fun BevelGauge(
  * The centre-number text style for a ring of the given [diameter] — the house numeral at `diameter * 0.36`,
  * Bold. The ONE source of truth for a ring's centre number, shared by [GlowRing]'s live label and the
  * carried-value overlay on the Today hero so a carried Charge, a clean value and (at the headline size)
- * "No Data" read with one consistent size + weight. Mirrors iOS `GlowRing.centerFont(diameter:)`.
+ * "Keine Daten" read with one consistent size + weight. Mirrors iOS `GlowRing.centerFont(diameter:)`.
  */
 fun glowRingCenterTextStyle(diameter: Dp, color: Color = Palette.textPrimary): TextStyle =
     TextStyle(fontWeight = FontWeight.Bold, fontSize = (diameter.value * 0.36f).sp, color = color)

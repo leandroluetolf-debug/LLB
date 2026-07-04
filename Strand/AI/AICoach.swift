@@ -54,7 +54,7 @@ enum AIKeyStore {
 
     /// UserDefaults key recording which provider the stored API key belongs to, so one provider's key
     /// is never sent to another provider's endpoint (above all the arbitrary user-typed Custom URL).
-    private static let ownerKey = "ai.keyProvider"
+    private static let ownerKey = "ai.keyAnbieter"
 
     /// The provider the stored key was saved for, or nil for a legacy key saved before this tracking.
     static var ownerProvider: String? { UserDefaults.standard.string(forKey: ownerKey) }
@@ -120,22 +120,22 @@ enum AICoachError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noKey:
-            return "Add your own API key first to use the coach."
+            return "Hinterlege zuerst deinen eigenen API-Schlüssel, um den Coach zu nutzen."
         case .keySaveFailed:
-            return "Couldn't save the key to the Keychain. The key was not stored, so try again."
+            return "Schlüssel konnte nicht in der Keychain gespeichert werden. Bitte erneut versuchen."
         case .emptyQuestion:
-            return "Type a question for the coach."
+            return "Stelle dem Coach eine Frage."
         case .badKey:
-            return "That API key was rejected. Check the key and the provider you selected."
+            return "Dieser API-Schlüssel wurde abgelehnt. Prüfe Schlüssel und gewählten Anbieter."
         case .rateLimited:
-            return "The provider is rate-limiting requests right now. Wait a moment and try again."
+            return "Der Anbieter begrenzt gerade Anfragen. Warte kurz und versuche es erneut."
         case .server(let code, let detail):
-            let extra = detail.isEmpty ? "" : " - \(detail)"
-            return "The provider returned an error (\(code))\(extra)."
+            let extra = detail.isEmpty ? "" : " – \(detail)"
+            return "Der Anbieter meldete einen Fehler (\(code))\(extra)."
         case .network(let detail):
-            return "Network problem: \(detail). The coach is the only feature that needs the internet."
+            return "Netzwerkproblem: \(detail). Der Coach ist die einzige Funktion, die Internet braucht."
         case .decode:
-            return "Couldn't read the provider's reply. Try again."
+            return "Antwort des Anbieters konnte nicht gelesen werden. Bitte erneut versuchen."
         }
     }
 }
@@ -199,7 +199,7 @@ final class AICoachEngine: ObservableObject {
     private static let providerKey = "ai.provider"
     private static let modelKey = "ai.model"
     private static let consentKey = "ai.dataConsent"
-    private static let customConnectedKey = "ai.customConnected"
+    private static let customConnectedKey = "ai.customVerbunden"
     private static let onDeviceSignalsKey = "ai.includeOnDeviceSignals"
     /// UserDefaults key holding the user's EDITED system prompt. Absent (or blank) means "use the
     /// built-in default". Small text key, never a secret, so plain UserDefaults is fine. Read FRESH
@@ -207,26 +207,26 @@ final class AICoachEngine: ObservableObject {
     static let systemPromptKey = "ai.systemPrompt"
 
     /// The built-in system prompt that frames every request. Anonymous, frames the assistant only as a
-    /// coach. Exposed (read-only) so the UI's "Reset to default" can restore it and show it when nothing
+    /// coach. Exposed (read-only) so the UI's "Standard wiederherstellen" can restore it and show it when nothing
     /// custom is stored. Editing the live prompt overrides this via `systemPromptKey`.
     static let defaultSystemPrompt = """
-    You are an elite, supportive recovery and performance coach with a real training methodology. \
-    You may be given a summary of the user's own wearable data (charge 0-100, effort 0-100, rest 0-100, \
-    HRV, resting heart rate) and recent workouts. Charge is the daily recovery/readiness score, effort \
-    is the daily cardiovascular load score, and rest is the nightly sleep-quality score. \
-    Coach using autoregulation:
-    • Readiness → prescription: charge 67-100 = green light to build/push, higher effort is fine; \
-    34-66 = maintain, quality over volume, keep it controlled; 0-33 = active recovery only \
-    (Zone 2, mobility, extra sleep) and protect against accumulating effort debt.
-    • Workout optimisation: progressive overload, polarised ~80/20 intensity, space hard sessions, \
-    program deloads/periodisation, and treat sleep as the single biggest recovery lever.
-    • Always cite the user's ACTUAL numbers, give a concrete plan (today and the week ahead), and \
-    be specific, punchy and motivating - like a coach who knows them.
-    If no data is provided, coach generally and invite them to turn on data access for personalised \
-    advice. You are NOT a doctor - never diagnose; suggest a professional for genuine health concerns.
-    Format replies in simple Markdown, chat-sized: short paragraphs, **bold** for key numbers, \
-    bullet or numbered lists for plans, ### headings only when structure genuinely helps, and a \
-    small table only for a week-ahead plan. No code blocks.
+    Du bist ein erstklassiger, unterstützender Erholungs- und Leistungscoach mit klarer Trainingsmethodik. \
+    Du kannst eine Zusammenfassung der Wearable-Daten des Nutzers erhalten (Charge 0–100, Effort 0–100, Rest 0–100, \
+    HRV, Ruhepuls) und aktuelle Workouts. Charge ist der tägliche Erholungs-/Bereitschaftswert, Effort \
+    die kardiovaskuläre Belastung des Tages, Rest die Schlafqualität der Nacht. \
+    Coache mit Autoregulation:
+    • Bereitschaft → Vorgabe: Charge 67–100 = grünes Licht zum Aufbauen/Pushen, höhere Belastung ist ok; \
+    34–66 = halten, Qualität vor Umfang, kontrolliert bleiben; 0–33 = nur aktive Erholung \
+    (Zone 2, Mobilität, mehr Schlaf) und vor aufgestauter Belastungsschuld schützen.
+    • Workout-Optimierung: progressive Überlastung, polarisiertes ~80/20-Intensitätsverhältnis, Abstand zwischen harten Einheiten, \
+    Deloads/Periodisierung, Schlaf als größter Erholungshebel.
+    • Beziehe dich immer auf die TATSÄCHLICHEN Zahlen des Nutzers, gib einen konkreten Plan (heute und die Woche), und \
+    sei präzise, knackig und motivierend – wie ein Coach, der sie kennt.
+    Wenn keine Daten vorliegen, coache allgemein und lade ein, den Datenzugriff für personalisierte \
+    Tipps zu aktivieren. Du bist KEIN Arzt – stelle keine Diagnosen; bei echten Gesundheitsfragen an Fachpersonal verweisen.
+    Antworte IMMER auf Deutsch. Formatiere Antworten in einfachem Markdown, chat-tauglich: kurze Absätze, **fett** für wichtige Zahlen, \
+    Aufzählungen oder nummerierte Listen für Pläne, ### Überschriften nur wenn die Struktur wirklich hilft, und eine \
+    kleine Tabelle nur für einen Wochenplan. Keine Codeblöcke.
     """
 
     /// The system prompt actually sent, read FRESH from UserDefaults on every request so an edit in
@@ -262,7 +262,7 @@ final class AICoachEngine: ObservableObject {
         return !(stored ?? "").isEmpty && stored != Self.defaultSystemPrompt
     }
 
-    /// Restore the built-in system prompt by clearing the stored override.
+    /// Wiederherstellen the built-in system prompt by clearing the stored override.
     func resetSystemPrompt() {
         UserDefaults.standard.removeObject(forKey: Self.systemPromptKey)
         objectWillChange.send()
@@ -270,37 +270,37 @@ final class AICoachEngine: ObservableObject {
 
     /// Used in place of the metrics context when the user has NOT granted data access.
     private let noConsentNote = """
-    NOTE: The user has not granted access to their biometric data. Coach generally and encourage \
-    them to enable "Let the coach use my data" for guidance tailored to their real numbers.
+    HINWEIS: Der Nutzer hat keinen Zugriff auf biometrische Daten erteilt. Coache allgemein und ermutige, \
+    „Coach darf meine Daten nutzen“ zu aktivieren, damit Tipps zu den echten Zahlen passen.
     """
 
     init(repo: Repository, session: URLSession = .shared) {
         self.repo = repo
         self.session = session
 
-        // Restore persisted provider / model (falling back to sane defaults).
-        let storedProvider = UserDefaults.standard.string(forKey: Self.providerKey)
-            .flatMap(AIProvider.init(rawValue:)) ?? .openAI
-        self.provider = storedProvider
+        // Wiederherstellen persisted provider / model (falling back to sane defaults).
+        let storedAnbieter = UserDefaults.standard.string(forKey: Self.providerKey)
+            .flatMap(AIAnbieter.init(rawValue:)) ?? .openAI
+        self.provider = storedAnbieter
 
-        let storedModel = UserDefaults.standard.string(forKey: Self.modelKey)
+        let storedModell = UserDefaults.standard.string(forKey: Self.modelKey)
         // A persisted custom id is honoured even if it's not in the built-in list.
-        if let storedModel, !storedModel.isEmpty {
-            self.model = storedModel
+        if let storedModell, !storedModell.isEmpty {
+            self.model = storedModell
         } else {
-            self.model = storedProvider.defaultModel
+            self.model = storedAnbieter.defaultModell
         }
 
         // Seed the picker with the provider's built-in options; include any persisted custom id.
-        var seeded = storedProvider.modelOptions
-        if let storedModel, !storedModel.isEmpty, !seeded.contains(storedModel) {
-            seeded.insert(storedModel, at: 0)
+        var seeded = storedAnbieter.modelOptions
+        if let storedModell, !storedModell.isEmpty, !seeded.contains(storedModell) {
+            seeded.insert(storedModell, at: 0)
         }
-        self.availableModels = seeded
+        self.availableModells = seeded
 
         self.dataConsent = UserDefaults.standard.bool(forKey: Self.consentKey)
-        self.customBaseURL = UserDefaults.standard.string(forKey: AIProvider.customBaseURLKey) ?? ""
-        self.customConnected = UserDefaults.standard.bool(forKey: Self.customConnectedKey)
+        self.customBaseURL = UserDefaults.standard.string(forKey: AIAnbieter.customBaseURLKey) ?? ""
+        self.customVerbunden = UserDefaults.standard.bool(forKey: Self.customVerbundenKey)
         self.includeOnDeviceSignals = UserDefaults.standard.bool(forKey: Self.onDeviceSignalsKey)
     }
 
@@ -312,7 +312,7 @@ final class AICoachEngine: ObservableObject {
     /// True once the coach can actually send: a stored key for the cloud providers, or, for the
     /// Custom (local) provider, a committed base URL (a key is optional there, as local servers
     /// usually need none). Gates the setup card vs. the live chat.
-    var isConfigured: Bool { provider == .custom ? customConnected : hasKey }
+    var isConfigured: Bool { provider == .custom ? customVerbunden : hasKey }
 
     /// The key to send with a request: the stored key, or an empty string for the keyless Custom
     /// provider. `nil` means "not configured", the caller surfaces `.noKey`.
@@ -322,7 +322,7 @@ final class AICoachEngine: ObservableObject {
             // key (e.g. a cloud OpenAI/Anthropic secret) to another provider's endpoint, above all the
             // arbitrary user-typed Custom URL. A legacy key with no recorded owner is assumed to belong
             // to a cloud provider, so it is never auto-sent to Custom.
-            let owner = AIKeyStore.ownerProvider
+            let owner = AIKeyStore.ownerAnbieter
             if owner == provider.rawValue { return k }
             if owner == nil && provider != .custom { return k }
         }
@@ -335,22 +335,22 @@ final class AICoachEngine: ObservableObject {
         let url = customBaseURL.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !url.isEmpty else { return }
         errorText = nil
-        customConnected = true
+        customVerbunden = true
         // Pull the server's model list; if the user hasn't picked one yet, default to the first.
         Task {
-            await refreshModels()
+            await refreshModells()
             if model.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               let first = availableModels.first {
+               let first = availableModells.first {
                 model = first
             }
         }
     }
 
-    /// Disconnect entirely: forget any stored key and un-commit the Custom provider. The base URL is
+    /// Trennen entirely: forget any stored key and un-commit the Custom provider. The base URL is
     /// kept so reconnecting pre-fills it.
     func disconnect() {
         AIKeyStore.clear()
-        customConnected = false
+        customVerbunden = false
         objectWillChange.send()
     }
 
@@ -359,14 +359,14 @@ final class AICoachEngine: ObservableObject {
     /// model refresh (it would only hit `.noKey`).
     func setKey(_ key: String) {
         guard AIKeyStore.save(key, owner: provider.rawValue) else {
-            errorText = AICoachError.keySaveFailed.errorDescription
+            errorText = AICoachError.keySpeichernFailed.errorDescription
             objectWillChange.send()
             return
         }
         errorText = nil
         objectWillChange.send() // `hasKey` is computed; nudge SwiftUI to re-read it.
         // Pull the user's ACTUAL current models from the provider so the picker is never stale.
-        Task { await refreshModels() }
+        Task { await refreshModells() }
     }
 
     /// Forget the stored key.
@@ -378,26 +378,26 @@ final class AICoachEngine: ObservableObject {
     // MARK: Live model list
 
     /// Set a custom model id (any string). Adds it to the picker if it isn't already listed.
-    func setCustomModel(_ id: String) {
+    func setCustomModell(_ id: String) {
         let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        if !availableModels.contains(trimmed) {
-            availableModels.insert(trimmed, at: 0)
+        if !availableModells.contains(trimmed) {
+            availableModells.insert(trimmed, at: 0)
         }
         model = trimmed
     }
 
-    /// Test seam (DEBUG only): lets a test stand in for the live `fetchModels` network call so it can
+    /// Test seam (DEBUG only): lets a test stand in for the live `fetchModells` network call so it can
     /// control timing and which provider's ids come back. Production never sets this, so the real path
     /// below is byte-identical in release builds.
     #if DEBUG
-    var fetchModelsOverride: ((_ provider: AIProvider, _ key: String) async throws -> [String])?
+    var fetchModellsOverride: ((_ provider: AIAnbieter, _ key: String) async throws -> [String])?
     #endif
 
     /// Best-effort: GET the chosen provider's models endpoint with the saved key and merge the
-    /// returned ids into `availableModels`. Never crashes; failures land in `errorText` and leave
+    /// returned ids into `availableModells`. Nie crashes; failures land in `errorText` and leave
     /// the existing list intact. Requires a saved key.
-    func refreshModels() async {
+    func refreshModells() async {
         guard let key = resolvedKey else {
             errorText = AICoachError.noKey.errorDescription
             return
@@ -408,23 +408,23 @@ final class AICoachEngine: ObservableObject {
         // user can switch providers mid-flight (#873). We fetch this provider's ids, then re-check on
         // resume that it's still the live one, and merge against THIS same snapshot, so the guard and
         // the merge always use one consistent provider, never a stale/mixed list for the wrong one.
-        let capturedProvider = provider
+        let capturedAnbieter = provider
 
         do {
             let ids: [String]
             #if DEBUG
-            if let override = fetchModelsOverride {
-                ids = try await override(capturedProvider, key)
+            if let override = fetchModellsOverride {
+                ids = try await override(capturedAnbieter, key)
             } else {
-                ids = try await capturedProvider.client.fetchModels(key: key, session: session)
+                ids = try await capturedAnbieter.client.fetchModells(key: key, session: session)
             }
             #else
-            ids = try await capturedProvider.client.fetchModels(key: key, session: session)
+            ids = try await capturedAnbieter.client.fetchModells(key: key, session: session)
             #endif
 
             // The user switched providers while we were awaiting, so these ids belong to the old one.
             // Drop them rather than write a list for a provider that's no longer selected.
-            guard provider == capturedProvider else { return }
+            guard provider == capturedAnbieter else { return }
 
             guard !ids.isEmpty else {
                 errorText = AICoachError.decode.errorDescription
@@ -433,23 +433,23 @@ final class AICoachEngine: ObservableObject {
 
             // Merge: keep the captured provider's built-in options on top, append any newly-discovered
             // ids (sorted), and preserve a current custom selection if it isn't otherwise present.
-            let builtin = capturedProvider.modelOptions
+            let builtin = capturedAnbieter.modelOptions
             let discovered = Set(ids).subtracting(builtin).sorted()
             var merged = builtin + discovered
             if !merged.contains(model) { merged.insert(model, at: 0) }
-            availableModels = merged
+            availableModells = merged
         } catch {
             // A switch mid-flight makes any error moot for the old provider, so don't surface it.
-            guard provider == capturedProvider else { return }
+            guard provider == capturedAnbieter else { return }
             errorText = AICoachError.network(error.localizedDescription).errorDescription
             return
         }
     }
 
-    // MARK: Sending
+    // MARK: Sendening
 
-    /// Send a question: append it, build the metrics context, call the chosen provider with the
-    /// system prompt + context + running history, parse the reply, append it. Never throws/crashes;
+    /// Senden a question: append it, build the metrics context, call the chosen provider with the
+    /// system prompt + context + running history, parse the reply, append it. Nie throws/crashes;
     /// failures land in `errorText`.
     func send(_ userText: String) async {
         let trimmed = userText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -469,7 +469,7 @@ final class AICoachEngine: ObservableObject {
         let wire = wireMessages(context: context)
 
         do {
-            let reply = try await callProvider(key: key, messages: wire)
+            let reply = try await callAnbieter(key: key, messages: wire)
             let clean = reply.trimmingCharacters(in: .whitespacesAndNewlines)
             messages.append(ChatMessage(role: .assistant, text: clean.isEmpty ? "(no reply)" : clean))
         } catch let e as AICoachError {
@@ -490,14 +490,14 @@ final class AICoachEngine: ObservableObject {
 
         let context = await buildFullContext()
         let instruction = """
-        Based on the data above, give me TODAY'S coaching brief in three short parts: \
-        (1) my readiness in one line, citing charge, HRV and rest; \
-        (2) exactly what training to do today and what to avoid; \
-        (3) one specific thing to improve my charge. Be punchy and motivating.
+        Basierend auf den Daten oben, gib mir HEUTE einen Coaching-Briefing in drei kurzen Teilen: \
+        (1) meine Bereitschaft in einem Satz, mit Charge, HRV und Rest; \
+        (2) genau welches Training heute und was ich vermeiden soll; \
+        (3) eine konkrete Sache, um meine Charge zu verbessern. Knackig und motivierend, auf Deutsch.
         """
         let wire: [(role: ChatMessage.Role, content: String)] = [(.user, context + "\n\n---\n\n" + instruction)]
         do {
-            let reply = try await callProvider(key: key, messages: wire)
+            let reply = try await callAnbieter(key: key, messages: wire)
             let clean = reply.trimmingCharacters(in: .whitespacesAndNewlines)
             if !clean.isEmpty {
                 messages.append(ChatMessage(role: .assistant, text: "Today's brief\n\n" + clean))
@@ -527,7 +527,7 @@ final class AICoachEngine: ObservableObject {
     }
 
     /// One derived stress line for the coach context: the Baevsky Stress Index over TODAY's R-R, read
-    /// via the store exactly as `StressView` does (`storeHandle()` → `rrIntervals(deviceId:from:to:)`),
+    /// via the store exactly as `StressView` does (`storeHandle()` → `rrIntervalle(deviceId:from:to:)`),
     /// then summarised to a single number with `StressIndex.stressIndex(rr:)`. Returns nil when the
     /// store is unavailable or there are too few clean beats (the histogram needs >= 20), so the line is
     /// simply absent, never a fabricated value. Summary-only: the raw R-R never leaves the device.
@@ -536,7 +536,7 @@ final class AICoachEngine: ObservableObject {
         let from = Int(cal.startOfDay(for: Date()).timeIntervalSince1970)
         let to = Int(Date().timeIntervalSince1970)
         guard let store = await repo.storeHandle() else { return nil }
-        let rr = (try? await store.rrIntervals(
+        let rr = (try? await store.rrIntervalle(
             deviceId: repo.deviceId, from: from, to: to, limit: 200_000)) ?? []
         guard let si = StressIndex.stressIndex(rr: rr) else { return nil }
         return Self.stressIndexSummary(si: si)
@@ -549,7 +549,7 @@ final class AICoachEngine: ObservableObject {
     }
 
     /// A SUMMARY-ONLY block of the new on-device signals, the user's strongest n-of-1 correlations
-    /// (lag-aware EffectRanker) and a one-line roll-up of their Lab Book markers. Plain sentences, never
+    /// (lag-aware EffectRanker) and a one-line roll-up of their Laborbuch markers. Plain sentences, never
     /// raw readings: this rides the same text channel as the metrics summary, so the no-raw-egress posture
     /// holds. Gated by the caller on the second opt-in; returns "" when there's nothing worth adding.
     func onDeviceSignalsBlock() async -> String {
@@ -557,13 +557,13 @@ final class AICoachEngine: ObservableObject {
 
         // 1. Strongest behaviour→outcome associations (EffectRanker over the journal × Charge).
         let entries = await repo.journalEntries()
-        var byBehaviour: [String: Set<String>] = [:]
-        for e in entries where e.answeredYes { byBehaviour[e.question, default: []].insert(e.day) }
-        if !byBehaviour.isEmpty {
+        var byVerhalten: [String: Set<String>] = [:]
+        for e in entries where e.answeredYes { byVerhalten[e.question, default: []].insert(e.day) }
+        if !byVerhalten.isEmpty {
             let outcomeByDay = Dictionary(
                 repo.days.compactMap { d in d.recovery.map { (d.day, $0) } },
                 uniquingKeysWith: { _, last in last })
-            let ranked = EffectRanker.rank(behaviors: byBehaviour, outcomeByDay: outcomeByDay, outcome: "Charge")
+            let ranked = EffectRanker.rank(behaviors: byVerhalten, outcomeByDay: outcomeByDay, outcome: "Charge")
                 .filter { $0.effect.significant }
                 .prefix(3)
             if !ranked.isEmpty {
@@ -572,7 +572,7 @@ final class AICoachEngine: ObservableObject {
             }
         }
 
-        // 2. Lab Book markers roll-up (count + latest of a few, never the full history).
+        // 2. Laborbuch markers roll-up (count + latest of a few, never the full history).
         if let store = await repo.storeHandle() {
             var markerSummaries: [String] = []
             for category in LabMarkerCategory.allCases {
@@ -596,7 +596,7 @@ final class AICoachEngine: ObservableObject {
     }
 
     /// Dispatch to the user's chosen provider client.
-    private func callProvider(key: String,
+    private func callAnbieter(key: String,
                               messages: [(role: ChatMessage.Role, content: String)]) async throws -> String {
         try await provider.client.send(
             key: key,
@@ -608,7 +608,7 @@ final class AICoachEngine: ObservableObject {
     }
 
     /// Sliding window over the chat: the FIRST user turn (it carries the metrics context) plus the most
-    /// recent `maxHistoryMessages`, dropping the middle. Sending the whole growing history crowds out the
+    /// recent `maxHistoryMessages`, dropping the middle. Sendening the whole growing history crowds out the
     /// reply on small-context local servers (Ollama defaults to a 2048-token window, the Custom
     /// provider's main use case) and balloons token cost/latency on cloud providers. (parity with Android)
     private static let maxHistoryMessages = 10
@@ -640,7 +640,7 @@ final class AICoachEngine: ObservableObject {
 
     /// Build a compact plain-text summary of the user's recent data: last ~14 days of
     /// recovery/strain/sleep-hours/HRV/restingHR where present, plus 30-day averages, plus a few
-    /// recent workouts. Kept well under ~1500 tokens. If there's no data, it says so.
+    /// recent workouts. Kept well under ~1500 tokens. If there's keine Daten, it says so.
     func buildContext() -> String {
         let days = repo.days // oldest → newest
         var lines: [String] = ["USER BIOMETRIC SUMMARY (the user's own wearable data):"]
@@ -705,7 +705,7 @@ final class AICoachEngine: ObservableObject {
         var parts: [String] = [d.day + ":"]
         parts.append("charge " + (d.recovery.map { "\(Int($0.rounded()))" } ?? "—"))
         parts.append("effort " + (d.strain.map { String(format: "%.1f", $0) } ?? "—"))
-        parts.append("rest " + (d.totalSleepMin.map { String(format: "%.1fh", $0 / 60) } ?? "—"))
+        parts.append("rest " + (d.totalSchlafMin.map { String(format: "%.1fh", $0 / 60) } ?? "—"))
         parts.append("HRV " + (d.avgHrv.map { "\(Int($0.rounded()))ms" } ?? "—"))
         parts.append("RHR " + (d.restingHr.map { "\($0)bpm" } ?? "—"))
         return parts.joined(separator: ", ")
@@ -721,8 +721,8 @@ final class AICoachEngine: ObservableObject {
         return "\(Int((xs.reduce(0, +) / Double(xs.count)).rounded()))"
     }
 
-    private func avgSleepHours(_ days: [DailyMetric]) -> String {
-        let mins = days.compactMap { $0.totalSleepMin }
+    private func avgSchlafHours(_ days: [DailyMetric]) -> String {
+        let mins = days.compactMap { $0.totalSchlafMin }
         guard !mins.isEmpty else { return "—" }
         return String(format: "%.1f", (mins.reduce(0, +) / Double(mins.count)) / 60)
     }

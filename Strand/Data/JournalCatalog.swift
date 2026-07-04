@@ -175,7 +175,7 @@ final class JournalCatalogStore: ObservableObject {
     /// starter + custom questions are folded onto one canonical key (norm dedupe, #224); each carries
     /// the user's saved displayName / kind / group / sortIndex (a starter with no saved item gets its
     /// default group and `.bool`). Hidden items are dropped unless `includeHidden`. The `custom` flag
-    /// is preserved so the edit UI can offer "Delete" vs "Hide".
+    /// is preserved so the edit UI can offer "Löschen" vs "Hide".
     ///
     /// This is the display-side twin of `mergeCatalog(imported:custom:hidden:)`: same fold + dedupe,
     /// but returning the typed items instead of bare strings. `canonical` is always the verbatim key
@@ -327,11 +327,11 @@ enum JournalGroup: String, CaseIterable, Codable {
     var title: String {
         switch self {
         case .supplements: return String(localized: "Supplements")
-        case .nutrition:   return String(localized: "Nutrition")
+        case .nutrition:   return String(localized: "Ernährung")
         case .lifestyle:   return String(localized: "Lifestyle")
-        case .health:      return String(localized: "Health")
-        case .behaviour:   return String(localized: "Behaviour")
-        case .other:       return String(localized: "Other")
+        case .health:      return String(localized: "Gesundheit")
+        case .behaviour:   return String(localized: "Verhalten")
+        case .other:       return String(localized: "Sonstiges")
         }
     }
 }

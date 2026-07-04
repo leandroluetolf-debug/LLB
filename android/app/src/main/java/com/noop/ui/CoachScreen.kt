@@ -114,16 +114,16 @@ private fun CoachSetup(vm: CoachViewModel) {
             Text(
                 if (isCustom)
                     "Point the coach at any OpenAI-compatible server: a local model (Ollama, LM " +
-                        "Studio, llama.cpp) keeps everything on your device; an API key is optional."
+                        "Studio, llama.cpp) keeps everything on your device; an API-Schlüssel is optional."
                 else
-                    "Bring your own API key. It is stored encrypted on this device and only used to " +
+                    "Bring your own API-Schlüssel. It is stored encrypted on this device and only used to " +
                         "send your question plus a short summary of your metrics to the provider you pick.",
                 style = NoopType.subhead, color = Palette.textSecondary,
             )
 
             // Provider choice.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Overline("Provider")
+                Overline("Anbieter")
                 SegmentedPillControl(
                     items = AiProvider.entries,
                     selection = provider,
@@ -155,7 +155,7 @@ private fun CoachSetup(vm: CoachViewModel) {
             // Model dropdown + live-list refresh.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Overline("Model")
+                    Overline("Modell")
                     Spacer(Modifier.weight(1f))
                     RefreshModelsButton(
                         refreshing = refreshingModels,
@@ -194,7 +194,7 @@ private fun CoachSetup(vm: CoachViewModel) {
                 )
             } else {
                 CoachPrimaryButton(
-                    label = "Save key",
+                    label = "Speichern key",
                     enabled = keyInput.isNotBlank(),
                     onClick = { vm.saveKey(context, keyInput) },
                 )
@@ -227,7 +227,7 @@ private fun CoachChat(vm: CoachViewModel) {
                 Spacer(Modifier.weight(1f))
                 val disconnectInteraction = remember { MutableInteractionSource() }
                 Text(
-                    "Disconnect",
+                    "Trennen",
                     style = NoopType.caption,
                     color = Palette.textSecondary,
                     modifier = Modifier
@@ -235,7 +235,7 @@ private fun CoachChat(vm: CoachViewModel) {
                         .liquidPress(disconnectInteraction)
                         .clickable(interactionSource = disconnectInteraction, indication = null) { vm.disconnect(context) }
                         .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .semantics { contentDescription = "Disconnect provider" },
+                        .semantics { contentDescription = "Trennen provider" },
                 )
             }
         }
@@ -245,7 +245,7 @@ private fun CoachChat(vm: CoachViewModel) {
         NoopCard(padding = 14.dp, tint = Palette.chargeColor) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("Let the coach use my data", style = NoopType.subhead, color = Palette.textPrimary)
+                    Text("Coach darf meine Daten nutzen", style = NoopType.subhead, color = Palette.textPrimary)
                     Text(
                         if (consent) "On: your recovery, sleep, HRV and workouts are shared with the provider for tailored coaching."
                         else "Off: the coach answers generally and sends none of your metrics.",
@@ -354,15 +354,15 @@ private fun CoachInstructions(vm: CoachViewModel) {
                     .liquidPress(headerInteraction)
                     .clickable(interactionSource = headerInteraction, indication = null) { expanded = !expanded }
                     .semantics {
-                        contentDescription = if (expanded) "Collapse coach instructions" else "Edit coach instructions"
+                        contentDescription = if (expanded) "Collapse coach instructions" else "Bearbeiten coach instructions"
                     },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text("Coach instructions", style = NoopType.subhead, color = Palette.textPrimary)
                     Text(
-                        if (hasCustom) "Customised. Your edited instructions frame every reply."
-                        else "Edit how the coach thinks and talks. Takes effect on your next message.",
+                        if (hasCustom) "Anpassend. Your edited instructions frame every reply."
+                        else "Bearbeiten how the coach thinks and talks. Takes effect on your next message.",
                         style = NoopType.footnote, color = Palette.textTertiary,
                     )
                 }
@@ -393,7 +393,7 @@ private fun CoachInstructions(vm: CoachViewModel) {
                         enabled = hasCustom,
                     ) {
                         Text(
-                            "Reset to default",
+                            "Standard wiederherstellen",
                             style = NoopType.footnote,
                             color = if (hasCustom) Palette.accent else Palette.textTertiary,
                         )
@@ -473,7 +473,7 @@ private fun ThinkingBubble() {
 // MARK: - Suggested prompts
 
 private val SUGGESTED_PROMPTS = listOf(
-    "How's my recovery trending this week?",
+    "How's my recovery trending diese Woche?",
     "Should I train hard or take it easy today?",
     "Why might my HRV be low lately?",
     "How can I improve my sleep?",
@@ -527,7 +527,7 @@ private fun ModelDropdown(
                 .liquidPress(triggerInteraction)
                 .clickable(interactionSource = triggerInteraction, indication = null) { expanded = true }
                 .padding(horizontal = 14.dp, vertical = 12.dp)
-                .semantics { contentDescription = "Model: $selected. Tap to change." },
+                .semantics { contentDescription = "Modell: $selected. Tap to change." },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(selected, style = NoopType.body, color = Palette.textPrimary, modifier = Modifier.weight(1f))
@@ -620,7 +620,7 @@ private fun CustomModelDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", style = NoopType.subhead, color = Palette.textSecondary)
+                Text("Abbrechen", style = NoopType.subhead, color = Palette.textSecondary)
             }
         },
     )
@@ -685,7 +685,7 @@ private fun CoachKeyField(
         onValueChange = onValueChange,
         modifier = Modifier
             .fillMaxWidth()
-            .semantics { contentDescription = "API key (hidden)" },
+            .semantics { contentDescription = "API-Schlüssel (hidden)" },
         placeholder = { Text(placeholder, style = NoopType.body, color = Palette.textTertiary) },
         textStyle = NoopType.mono(13f),
         singleLine = true,
@@ -740,7 +740,7 @@ private fun SendButton(enabled: Boolean, sending: Boolean, onClick: () -> Unit) 
                         .clickable(interactionSource = interaction, indication = null, onClick = onClick)
                 else it
             }
-            .semantics { contentDescription = "Send message" },
+            .semantics { contentDescription = "Senden message" },
         contentAlignment = Alignment.Center,
     ) {
         if (sending) {

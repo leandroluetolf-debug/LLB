@@ -8,7 +8,7 @@ import StrandDesign
 // ring swells on the inhale and settles on the exhale to match the iOS Breathe orb scaled to the wrist.
 //
 // The phase pattern + durations are reimplemented from Strand/Screens/BreathingView.swift (the fixed-pace
-// "Breathe" trainer): three presets, inhale-then-exhale phases, one buzz on the inhale start and two on the
+// "Atmen" trainer): three presets, inhale-then-exhale phases, one buzz on the inhale start and two on the
 // exhale start. We do NOT link the iOS view (it depends on AppModel / LiveState / the strap haptic path that
 // the watch doesn't have); this is a standalone WatchKit reimplementation that uses StrandHaptic for the
 // wrist buzz instead of the strap motor.
@@ -198,7 +198,7 @@ struct WatchBreatheView: View {
                     .monospacedDigit()
                     .contentTransition(.numericText())
             } else {
-                Text("Breathe")
+                Text("Atmen")
                     .font(StrandFont.rounded(16, weight: .semibold))
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text("\(String(format: "%.1f", pace.bpm)) br/min")
@@ -217,8 +217,8 @@ struct WatchBreatheView: View {
 
     private var phaseWord: String {
         switch phase {
-        case .inhale: return String(localized: "Breathe in")
-        case .exhale: return String(localized: "Breathe out")
+        case .inhale: return String(localized: "Atmen in")
+        case .exhale: return String(localized: "Atmen out")
         }
     }
 
@@ -227,8 +227,8 @@ struct WatchBreatheView: View {
     private var phaseAccessibilityLabel: String {
         let secs = max(phaseRemaining, 0)
         switch phase {
-        case .inhale: return String(localized: "Breathe in for \(secs) seconds")
-        case .exhale: return String(localized: "Breathe out for \(secs) seconds")
+        case .inhale: return String(localized: "Atmen in for \(secs) seconds")
+        case .exhale: return String(localized: "Atmen out for \(secs) seconds")
         }
     }
 

@@ -3,7 +3,7 @@ import Foundation
 import StrandDesign
 import StrandAnalytics
 
-// RhythmView.swift — EXPERIMENTAL beat-to-beat regularity VISUALIZATION (v5 "Rhythm").
+// RhythmView.swift — EXPERIMENTAL beat-to-beat regularity VISUALIZATION (v5 "Rhythmus").
 //
 // Spec: docs/superpowers/specs/2026-06-19-v5-rhythm-screening-design.md (§6, §9, §11).
 //
@@ -34,9 +34,9 @@ public enum RhythmConsent {
     /// Bump on a material change to the experimental/non-diagnostic wording to re-prompt.
     public static let currentVersion = "1.0"
     /// `@AppStorage` key holding the accepted consent version ("" = never accepted).
-    public static let acceptedVersionKey = "noopRhythmConsentVersion"
+    public static let acceptedVersionKey = "noopRhythmusConsentVersion"
     /// `@AppStorage` key for the feature on/off flag (the `noopRhythmScreening` flag, default OFF).
-    public static let enabledKey = "noopRhythmScreening"
+    public static let enabledKey = "noopRhythmusScreening"
 
     /// True when the stored accepted version matches the current one.
     public static func isAccepted(_ storedVersion: String) -> Bool {
@@ -47,7 +47,7 @@ public enum RhythmConsent {
     /// own line (head + body), like `Terms.points`. No condition name, no diagnosis, no
     /// "consider a clinician" verdict — this is a visualization, not a screen.
     public static let points: [(String, String)] = [
-        (String(localized: "Experimental, and not a medical device"),
+        (String(localized: "Experimentell, and not a medical device"),
          String(localized: "This is an experimental wellness visualization of your beat-to-beat timing. It is NOT an ECG, and it cannot diagnose, detect, or rule out any heart condition.")),
         (String(localized: "It is a picture, not a verdict"),
          String(localized: "It shows the shape of your heartbeat timing and a plain-language description of how steady it looked. It does not tell you whether anything is right or wrong.")),
@@ -74,7 +74,7 @@ private struct RhythmDisclaimerNote: View {
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .accessibilityHidden(true)
-                Text("Experimental wellness visualization: not a diagnosis, not an ECG, and not a medical device. It cannot detect any heart condition. Beat-to-beat variation has many ordinary, benign causes. If you feel unwell or are worried, contact a qualified professional; in an emergency, your local emergency service. Everything is computed on your device.")
+                Text("Experimentell wellness visualization: not a diagnosis, not an ECG, and not a medical device. It cannot detect any heart condition. Beat-to-beat variation has many ordinary, benign causes. If you feel unwell or are worried, contact a qualified professional; in an emergency, your local emergency service. Everything is computed on your device.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -104,7 +104,7 @@ struct RhythmConsentGate: View {
 
             VStack(spacing: 0) {
                 VStack(spacing: 6) {
-                    Text("Before you turn on Rhythm")
+                    Text("Before you turn on Rhythmus")
                         .font(StrandFont.title1)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Text("An experimental picture of your beat-to-beat timing. Please read these first.")
@@ -157,7 +157,7 @@ struct RhythmConsentGate: View {
                     #endif
 
                     Button(action: onAccept) {
-                        Text("Turn on Rhythm")
+                        Text("Turn on Rhythmus")
                     }
                     .buttonStyle(.noopPrimary)
                     .disabled(!checked)
@@ -302,7 +302,7 @@ struct RhythmView: View {
 
     private var visualization: some View {
         ScreenScaffold(
-            title: "Rhythm",
+            title: "Rhythmus",
             subtitle: "An experimental picture of your beat-to-beat timing",
             // PERF: chart-heavy column (the Poincaré beat-to-beat scatter, the stats grid and the
             // methodology card). The LazyVStack path builds the off-screen cards — including the scatter
@@ -313,7 +313,7 @@ struct RhythmView: View {
             topBackground: liquidScaffoldSky(),
             trailing: { closeButton }
         ) {
-            SourceBadge("Experimental", tint: StrandPalette.restColor)
+            SourceBadge("Experimentell", tint: StrandPalette.restColor)
 
             if allPoints.isEmpty {
                 emptyState
@@ -336,7 +336,7 @@ struct RhythmView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close Rhythm")
+            .accessibilityLabel("Schließen Rhythmus")
         }
     }
 
@@ -463,7 +463,7 @@ struct RhythmView: View {
     private var emptyState: some View {
         DataPendingNote(
             title: "No clear reading yet",
-            message: "Rhythm only looks during quiet, still, resting windows, so it needs a calm night's worth of steady beats. Once there's a clean window, the scatter and its description show here.",
+            message: "Rhythmus only looks during quiet, still, resting windows, so it needs a calm night's worth of steady beats. Once there's a clean window, the scatter and its description show here.",
             symbol: "waveform.path"
         )
     }
@@ -521,9 +521,9 @@ struct RhythmView: View {
     private var confidenceText: LocalizedStringKey {
         let readable = night?.readableWindows ?? windows.filter { $0.label != .unreadable }.count
         switch headlineWindow?.confidence ?? .calibrating {
-        case .solid:       return "Solid"
+        case .solid:       return "Stabil"
         case .building:    return readable <= 1 ? "Building (1 window)" : "Building"
-        case .calibrating: return "Calibrating"
+        case .calibrating: return "Kalibriert"
         }
     }
 
@@ -542,7 +542,7 @@ struct RhythmView: View {
 }
 
 #if DEBUG
-#Preview("Rhythm — steady") {
+#Preview("Rhythmus — steady") {
     RhythmView(
         night: RhythmScreener.NightRhythmSummary(
             readableWindows: 6, steadyWindows: 6, occasionalWindows: 0,

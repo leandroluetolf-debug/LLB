@@ -111,7 +111,7 @@ struct WatchGlanceView: View {
     }
 
     /// The honesty line: how recent the synced scores are, straight from the shared contract so the
-    /// glance and the complication phrase it identically ("Today" / "Yesterday" / "2h ago"). When the
+    /// glance and the complication phrase it identically ("Heute" / "Gestern" / "2h ago"). When the
     /// snapshot is stale the rings above are already dashes, and this line carries the recency.
     private func asOf(_ snap: WatchScoreSnapshot) -> some View {
         let fresh = snap.freshnessText()
@@ -128,7 +128,7 @@ struct WatchGlanceView: View {
             Image(systemName: "iphone.gen3")
                 .font(.system(size: 28))
                 .foregroundStyle(StrandPalette.textTertiary)
-            Text("Open LLB on your iPhone to sync")
+            Text("Öffne LLB auf dem iPhone zum Synchronisieren")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .multilineTextAlignment(.center)

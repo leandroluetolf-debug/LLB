@@ -72,7 +72,7 @@ struct WorkoutsView: View {
     @State private var detail: WorkoutDetailTarget?
 
     /// A transient one-line note shown after a manual save / relabel for a sport that already has a
-    /// solid/building ActivityCost entry — "Sessions like this usually …" (#439). Auto-clears.
+    /// solid/building ActivityCost entry — "Einheiten like this usually …" (#439). Auto-clears.
     @State private var postLogNote: String?
 
     // MARK: - Filters + selection (#64)
@@ -125,7 +125,7 @@ struct WorkoutsView: View {
     var body: some View {
         ScreenScaffold(title: "Workouts", subtitle: "Every session, threaded together.",
                        onRefresh: { await repo.refresh() },
-                       // PERF: the column ends in the full "All Sessions" log (the breakdown grid, the
+                       // PERF: the column ends in the full "All Einheiten" log (the breakdown grid, the
                        // zones card, and a row-per-session table). On a large imported history the eager
                        // VStack built every section + the whole table up-front; the LazyVStack path (which
                        // is byte-identical layout) builds the off-screen sections/rows on demand instead.
@@ -136,7 +136,7 @@ struct WorkoutsView: View {
             if allRows.isEmpty {
                 VStack(alignment: .leading, spacing: NoopMetrics.space4) {
                     ComingSoon(what: loaded
-                        ? "No workouts yet. They come from your WHOOP and Apple Health history. Import in Data Sources to bring them in, or add one you tracked elsewhere."
+                        ? "No workouts yet. They come from your WHOOP and Apple Gesundheit history. Importieren in Datenquellen to bring them in, or add one you tracked elsewhere."
                         : "Loading your sessions…")
                     if loaded {
                         HStack(spacing: NoopMetrics.rowSpacing) { startLiveWorkoutButton; addWorkoutButton }
@@ -341,9 +341,9 @@ struct WorkoutsView: View {
 
     /// Common sports offered when re-labelling a detected bout (keeps the menu short and honest —
     /// the user can fine-tune via Edit afterwards).
-    private static let relabelSports = ["Running", "Walking", "Cycling", "Strength Training",
-                                        "Swimming", "Rowing", "Yoga", "HIIT",
-                                        "CrossFit", "Hiking", "Tennis"]
+    private static let relabelSports = ["Laufen", "Gehen", "Radfahren", "Krafttraining",
+                                        "Schwimmen", "Rudern", "Yoga", "HIIT",
+                                        "CrossFit", "Wandern", "Tennis"]
 
     // MARK: - Range control
 
@@ -502,7 +502,7 @@ struct WorkoutsView: View {
     /// place people instinctively look — instead of only from the Live screen. Starts the session and
     /// presents the in-exercise view directly (no cross-view auto-present race with LiveView's sheet).
     private var startLiveWorkoutButton: some View {
-        NoopButton(model.activeWorkout == nil ? "Start workout" : "View active workout",
+        NoopButton(model.activeWorkout == nil ? "Workout starten" : "View active workout",
                    systemImage: model.activeWorkout == nil ? "figure.run" : "timer",
                    kind: .primary) {
             // No active session → pick a named sport first (#519), then the sheet's onStart begins it
@@ -652,12 +652,12 @@ struct WorkoutsView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(String(localized: "Typical effort \(UnitFormatter.effortDisplay(avgStrain, scale: effortScale))"))
             } else {
-                // No strain data in the window — an empty vessel (posed, no fill) with a centred "No data",
+                // No strain data in the window — an empty vessel (posed, no fill) with a centred "Keine Daten",
                 // the honest liquid analogue of the old empty ring.
                 ZStack {
                     LiquidVessel(value: 0, tint: StrandPalette.effortColor, animated: false)
                         .frame(width: diameter, height: diameter)
-                    Text("No data")
+                    Text("Keine Daten")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .lineLimit(1).minimumScaleFactor(0.7).fixedSize()
@@ -665,7 +665,7 @@ struct WorkoutsView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(String(localized: "Typical effort, no data"))
+                .accessibilityLabel(String(localized: "Typical effort, keine Daten"))
             }
         }
     }
@@ -679,7 +679,7 @@ struct WorkoutsView: View {
                 .font(StrandFont.headline)
                 .foregroundStyle(StrandPalette.textPrimary)
             HStack(spacing: NoopMetrics.gap) {
-                heroCountStat(String(localized: "Sessions"), value: Double(rows.count),
+                heroCountStat(String(localized: "Einheiten"), value: Double(rows.count),
                               format: { "\(Int($0.rounded()))" }, tint: StrandPalette.effortColor)
                 heroStat(String(localized: "Active"), String(localized: "\(oneDecimal(totalTimeH))h"), tint: StrandPalette.textPrimary)
                 heroStat(String(localized: "Top sport"), modal.count > 0 ? "\(modal.count)×" : "—",
@@ -737,7 +737,7 @@ struct WorkoutsView: View {
                      value: String(localized: "\(oneDecimal(totalTimeH))h"),
                      caption: String(localized: "active"),
                      accent: StrandPalette.textPrimary)
-            StatTile(label: "Total Calories",
+            StatTile(label: "Total Kalorien",
                      value: grouped(totalKcal),
                      caption: "kcal",
                      accent: StrandPalette.metricAmber)
@@ -758,7 +758,7 @@ struct WorkoutsView: View {
 
     private func breakdownSection(groups: [SportGroup], rows: [WorkoutRow]) -> some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Activity Breakdown",
+            SectionHeader("Aktivität Breakdown",
                           overline: "By sport",
                           trailing: groups.count == 1
                               ? String(localized: "1 sport")
@@ -827,7 +827,7 @@ struct WorkoutsView: View {
         .frame(height: 8)
         .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(localized: "Heart-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z.minutes[$0 - 1] / max(z.totalMinutes, 0.001) * 100).rounded())) percent") }.joined(separator: ", "))"))
+        .accessibilityLabel(String(localized: "Herz-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z.minutes[$0 - 1] / max(z.totalMinutes, 0.001) * 100).rounded())) percent") }.joined(separator: ", "))"))
     }
 
     private func miniStat(_ label: String, _ value: String, tint: Color = StrandPalette.textPrimary) -> some View {
@@ -850,7 +850,7 @@ struct WorkoutsView: View {
                           overline: "Whoop import",
                           trailing: totalSessions == 1
                               ? String(localized: "\(z.sessionsWithZones) of 1 session")
-                              : String(localized: "\(z.sessionsWithZones) of \(totalSessions) sessions"))
+                              : String(localized: "\(z.sessionsWithZones) of \(totalEinheiten) sessions"))
             NoopCard(tint: StrandPalette.effortColor) {
                 VStack(alignment: .leading, spacing: 12) {
                     // Proportional stacked bar — same construction as SleepView's stage bar, with the
@@ -874,7 +874,7 @@ struct WorkoutsView: View {
                     .frame(height: 34)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(String(localized: "Heart-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z.minutes[$0 - 1] / z.totalMinutes * 100).rounded())) percent") }.joined(separator: ", "))"))
+                    .accessibilityLabel(String(localized: "Herz-rate zone split: \((1...5).map { String(localized: "zone \($0) \(Int((z.minutes[$0 - 1] / z.totalMinutes * 100).rounded())) percent") }.joined(separator: ", "))"))
                     Divider().overlay(StrandPalette.hairline)
                     // 5-up stat strip, identical rhythm to the sport cards' miniStat row.
                     HStack(spacing: 0) {
@@ -923,7 +923,7 @@ struct WorkoutsView: View {
     private func sessionsSection(rows: [WorkoutRow]) -> some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
             HStack(alignment: .firstTextBaseline) {
-                SectionHeader("All Sessions",
+                SectionHeader("All Einheiten",
                               overline: "Log",
                               trailing: String(localized: "\(rows.count) total"))
                 selectPill(rows: rows)
@@ -967,7 +967,7 @@ struct WorkoutsView: View {
                     if !selectionMode { selected.removeAll() }
                 }
             } label: {
-                Text(selectionMode ? String(localized: "Done") : String(localized: "Select"))
+                Text(selectionMode ? String(localized: "Fertig") : String(localized: "Select"))
                     .font(StrandFont.footnote)
                     .foregroundStyle(selectionMode ? StrandPalette.effortColor : StrandPalette.accent)
                     .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1002,14 +1002,14 @@ struct WorkoutsView: View {
                 selectionMode = false; selected.removeAll()
                 Task { await repo.bulkDeleteWorkouts(toDelete); await reload() }
             } label: {
-                Label(String(localized: "Delete (\(chosen.count))"), systemImage: "trash")
+                Label(String(localized: "Löschen (\(chosen.count))"), systemImage: "trash")
                     .font(StrandFont.subhead)
             }
             .disabled(chosen.isEmpty)
             .foregroundStyle(chosen.isEmpty ? StrandPalette.textTertiary : StrandPalette.metricRose)
 
             Spacer(minLength: 0)
-            Button(String(localized: "Cancel")) {
+            Button(String(localized: "Abbrechen")) {
                 withAnimation(.easeOut(duration: 0.15)) { selectionMode = false; selected.removeAll() }
             }
             .font(StrandFont.subhead)
@@ -1137,7 +1137,7 @@ struct WorkoutsView: View {
             }
             .frame(width: ColWidth.date, alignment: .leading)
 
-            // Sport ("detected" reads as "Activity")
+            // Sport ("detected" reads as "Aktivität")
             HStack(spacing: 7) {
                 Image(systemName: sportIcon(row.sport))
                     .font(.system(size: 12, weight: .medium))
@@ -1265,7 +1265,7 @@ struct WorkoutsView: View {
         .accessibilityLabel(compactRowAccessibilityLabel(row, selectable: selectable, isSelected: isSelected))
         .accessibilityAddTraits(.isButton)
         .accessibilityHint(selectionMode
-            ? (selectable ? String(localized: "Double-tap to select") : String(localized: "Imported history can't be merged"))
+            ? (selectable ? String(localized: "Double-tap to select") : String(localized: "Importiereniert history can't be merged"))
             : String(localized: "Opens workout detail"))
     }
 
@@ -1310,7 +1310,7 @@ struct WorkoutsView: View {
             : String(localized: "no Effort recorded")
         let base = String(localized: "\(WorkoutSource.displaySport(row.sport)), \(compactRowSubtitle(row)), \(effort)")
         guard selectionMode else { return base }
-        if !selectable { return String(localized: "\(base). Imported, can't be merged.") }
+        if !selectable { return String(localized: "\(base). Importiereniert, can't be merged.") }
         return isSelected ? String(localized: "\(base). Selected.") : String(localized: "\(base). Not selected.")
     }
 
@@ -1344,13 +1344,13 @@ struct WorkoutsView: View {
                     Button(sport) { relabel(row, to: sport) }
                 }
             }
-            Button("Edit details…") { editWorkout(row) }
+            Button("Bearbeiten details…") { editWorkout(row) }
             Divider()
             Button("Dismiss (not a workout)", role: .destructive) { dismiss(row) }
         case .manual:
-            Button("Edit…") { editWorkout(row) }
+            Button("Bearbeiten…") { editWorkout(row) }
             Divider()
-            Button("Delete", role: .destructive) { delete(row) }
+            Button("Löschen", role: .destructive) { delete(row) }
         case .whoop, .apple, .lifting, .activityFile:
             // Imported history is read-only; offer a copy-to-manual edit path that doesn't touch it.
             Button("Duplicate as manual…") { editWorkout(asManualCopy(row)) }
@@ -1388,7 +1388,7 @@ struct WorkoutsView: View {
         let (label, tint, a11y): (String, Color, String) = {
             switch WorkoutSource.classify(source) {
             case .whoop:    return (String(localized: "Whoop"), StrandPalette.accent, String(localized: "Source Whoop"))
-            case .apple:    return (String(localized: "Apple"), StrandPalette.metricCyan, String(localized: "Source Apple Health"))
+            case .apple:    return (String(localized: "Apple"), StrandPalette.metricCyan, String(localized: "Source Apple Gesundheit"))
             case .detected: return (String(localized: "Detected"), StrandPalette.metricPurple, String(localized: "Source on-device detected"))
             case .manual:   return (String(localized: "Manual"), StrandPalette.statusWarning, String(localized: "Source manual entry"))
             case .lifting:  return (String(localized: "Lifting"), StrandPalette.zone2, String(localized: "Source imported lifting log"))
@@ -1590,23 +1590,23 @@ private func previewWorkoutRows() -> [WorkoutRow] {
     let day = 86_400
     return [
         WorkoutRow(startTs: now - day * 0 - 3600, endTs: now - day * 0,
-                   sport: "Running", source: "whoop", durationS: 3600, energyKcal: 712,
+                   sport: "Laufen", source: "whoop", durationS: 3600, energyKcal: 712,
                    avgHr: 152, maxHr: 178, strain: 14.2, distanceM: 10_400,
                    zonesJSON: #"{"z1":12.5,"z2":28.0,"z3":33.5,"z4":18.0,"z5":6.0}"#, notes: nil),
         WorkoutRow(startTs: now - day * 1 - 2700, endTs: now - day * 1,
-                   sport: "Strength Training", source: "whoop", durationS: 2700, energyKcal: 388,
+                   sport: "Krafttraining", source: "whoop", durationS: 2700, energyKcal: 388,
                    avgHr: 118, maxHr: 156, strain: 9.4, distanceM: nil,
                    zonesJSON: nil, notes: nil),
         WorkoutRow(startTs: now - day * 2 - 1800, endTs: now - day * 2,
-                   sport: "Cycling", source: "apple_health", durationS: 1800, energyKcal: 240,
+                   sport: "Radfahren", source: "apple_health", durationS: 1800, energyKcal: 240,
                    avgHr: nil, maxHr: nil, strain: nil, distanceM: 12_800,
                    zonesJSON: nil, notes: nil),
         WorkoutRow(startTs: now - day * 3 - 1500, endTs: now - day * 3,
-                   sport: "Running", source: "apple_health", durationS: 1500, energyKcal: 310,
+                   sport: "Laufen", source: "apple_health", durationS: 1500, energyKcal: 310,
                    avgHr: nil, maxHr: nil, strain: nil, distanceM: 5_100,
                    zonesJSON: nil, notes: nil),
         WorkoutRow(startTs: now - day * 4 - 3300, endTs: now - day * 4,
-                   sport: "Cycling", source: "whoop", durationS: 3300, energyKcal: 540,
+                   sport: "Radfahren", source: "whoop", durationS: 3300, energyKcal: 540,
                    avgHr: 134, maxHr: 162, strain: 11.8, distanceM: 24_600,
                    // Android key shape on purpose — exercises the cross-platform parser.
                    zonesJSON: #"{"zone1":20.0,"zone2":35.0,"zone3":30.0,"zone4":10.0}"#, notes: nil),

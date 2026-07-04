@@ -7,7 +7,7 @@ import WhoopStore
 // MARK: - SleepView
 //
 // Whoop-sleep clarity on the locked Noop component system. Scannable in two seconds:
-//   1. HERO ChartCard "Last night" — the stage breakdown (Hypnogram if intervals
+//   1. HERO ChartCard "Letzte Nacht" — the stage breakdown (Hypnogram if intervals
 //      reconstruct from stagesJSON, else a clean proportional stacked stage bar),
 //      trailing = total asleep, footer = REM/Deep/Light/Awake each "Xh Ym · NN%".
 //   2. A uniform grid of fixed StatTiles, each with a sparkline and a "vs typical"
@@ -27,8 +27,8 @@ struct SleepView: View {
     @EnvironmentObject var repo: Repository
     // NOTE: SleepView itself deliberately does NOT observe `LiveState`. A connected strap publishes
     // at ~1 Hz; observing here would re-evaluate this heavy body on every tick. The only two live
-    // dependencies — the "going to sleep / awake" mark card (it appends to the strap log) and the
-    // "Syncing strap history…" note — each own their OWN `@EnvironmentObject var live` in a small
+    // dependencies — the "gehe schlafen / awake" mark card (it appends to the strap log) and the
+    // "Band-Verlauf wird synchronisiert…" note — each own their OWN `@EnvironmentObject var live` in a small
     // leaf below (mirrors the Today leaf-scoping pattern), so a tick refreshes only that leaf.
     @EnvironmentObject var intelligence: IntelligenceEngine
 
@@ -89,7 +89,7 @@ struct SleepView: View {
     /// its OWN separate session row (`userEdited = 1`) — never folded into the night's main sleep.
     @State private var addNap: AddNapSeed?
 
-    /// True while the hero's "why this is your main sleep" popover is open. The reason text comes
+    /// True while the hero's "warum das dein Hauptschlaf ist" popover is open. The reason text comes
     /// straight from the foundation `MainNightReason` for the displayed night's blocks — never
     /// re-derived here — so the explainer says exactly what the selector decided. (spec 2026-06-20 C1)
     @State private var showMainSleepWhy = false
@@ -113,7 +113,7 @@ struct SleepView: View {
         // synchronously, so the very first frame already shows content (no empty-state flash).
         let key = dataKey
         let resolved: SleepModel? = (key == modelKey) ? model : buildModel()
-        ScreenScaffold(title: "Sleep", subtitle: "Last night, read in two seconds.",
+        ScreenScaffold(title: "Schlaf", subtitle: "Letzte Nacht, read in two seconds.",
                        // PERF (scroll): lazy column — byte-identical layout (LazyVStack == eager VStack
                        // alignment/spacing/header), builds trailing trend/ledger cards on demand. Combined
                        // with dropping the top-level LiveState observation (the sleep-mark card + the
@@ -289,8 +289,8 @@ struct SleepView: View {
         // re-detected), so the suppression promise would be false for it. Only a DETECTED delete writes a
         // tombstone, so only it gets the "won't detect ... again" wording. (#65 banner honesty.)
         let message = banner.snapshot.session.userEdited
-            ? String(localized: "Sleep deleted.")
-            : String(localized: "Sleep deleted. LLB won't detect sleep between \(clockTime(banner.displayStart)) and \(clockTime(banner.windowEnd)) again.")
+            ? String(localized: "Schlaf deleted.")
+            : String(localized: "Schlaf deleted. LLB won't detect sleep between \(clockTime(banner.displayStart)) and \(clockTime(banner.windowEnd)) again.")
         HStack(alignment: .center, spacing: 10) {
             Image(systemName: "moon.zzz")
                 .font(.system(size: 14, weight: .semibold))
@@ -338,7 +338,7 @@ struct SleepView: View {
     private func restHero(_ model: SleepModel) -> some View {
         let score = model.performance.latest
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep performance", overline: "Last night", trailing: String(localized: "Rest"))
+            SectionHeader("Schlaf performance", overline: "Letzte Nacht", trailing: String(localized: "Rest"))
             // A subtle night atmosphere sits behind the sleep hero ONLY (the Rest world's whisper:
             // faint indigo wash + crescent moon over the near-black canvas, no glow), clipped to the
             // card. Replaces the now-flat ScenicHeroBackground here.
@@ -372,7 +372,7 @@ struct SleepView: View {
                     }
                     .padding(.top, NoopMetrics.space1)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Sleep performance \(Int(score.rounded())) of 100")
+                    .accessibilityLabel("Schlaf performance \(Int(score.rounded())) of 100")
                 } else {
                     // No 0–100 score for the night — lead with hours slept as a big rounded headline
                     // whose minutes tick up on appear (the same count-up the scored hero gets).
@@ -390,7 +390,7 @@ struct SleepView: View {
                     .padding(.vertical, NoopMetrics.space5)
                     .accessibilityElement(children: .combine)
                 }
-                SourceBadge(score != nil ? sleepScoreSource(model) : "On-device", tint: StrandPalette.restColor)
+                SourceBadge(score != nil ? sleepScoreSource(model) : "Auf dem Gerät", tint: StrandPalette.restColor)
             }
             .padding(NoopMetrics.cardInnerPadding + NoopMetrics.space1)
             .frame(maxWidth: .infinity)
@@ -415,13 +415,13 @@ struct SleepView: View {
         if let lastDay = repo.days.last?.day, repo.importedSleep[lastDay]?.performancePct != nil {
             return "Whoop"
         }
-        return "On-device"
+        return "Auf dem Gerät"
     }
 
     // MARK: - Provenance for the displayed night (COMPONENT 4, spec 2026-06-20)
 
     /// The REAL per-day merge winner for the DISPLAYED night's sleep numbers, as the same brand wording the
-    /// By-Day badge / Today / Intelligence use ("On-device" / "Whoop"). A WHOOP export covering the night's
+    /// By-Day badge / Today / Intelligence use ("Auf dem Gerät" / "Whoop"). A WHOOP export covering the night's
     /// wake-day wins the dashboard merge (imports win field-by-field, Repository.mergeDaily), so the badge
     /// says "Whoop"; otherwise the night was scored on-device by LLB. Keyed by the night's LOCAL wake-day
     /// (the `mergeSleep` / importer convention, sleep is filed under the day you woke), so a navigated past
@@ -429,10 +429,10 @@ struct SleepView: View {
     /// carries no sleep into `importedSleep`, so the sleep merge winner is only ever Whoop vs on-device. (C4)
     private func nightSource(_ night: Night) -> String {
         let wakeDay = Repository.localDayKey(Date(timeIntervalSince1970: TimeInterval(night.session.endTs)))
-        return repo.importedSleep[wakeDay] != nil ? String(localized: "Whoop") : String(localized: "On-device")
+        return repo.importedSleep[wakeDay] != nil ? String(localized: "Whoop") : String(localized: "Auf dem Gerät")
     }
 
-    // MARK: - 0b. SLEEP MARKS — tap to log "going to sleep" / "I'm awake" (#461, Phase 1)
+    // MARK: - 0b. SLEEP MARKS — tap to log "gehe schlafen" / "Ich bin wach" (#461, Phase 1)
     //
     // Extracted to the `SleepMarkCard` leaf at the foot of this file. It owns its OWN `@EnvironmentObject
     // var live` (it appends to the shareable strap log) + `repo`, plus the `lastMark` confirmation state,
@@ -605,8 +605,8 @@ struct SleepView: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(LiquidPressStyle())
-            .help("Edit nap times")
-            .accessibilityLabel(isEdited ? "Edit nap times (edited)" : "Edit nap times")
+            .help("Bearbeiten nap times")
+            .accessibilityLabel(isEdited ? "Bearbeiten nap times (edited)" : "Bearbeiten nap times")
         }
     }
 
@@ -765,7 +765,7 @@ struct SleepView: View {
         NoopCard(padding: NoopMetrics.cardInnerPadding, tint: StrandPalette.restColor) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
                 HStack(spacing: 0) {
-                    sleepTime(icon: "moon.zzz.fill", label: "Asleep", value: night.onsetText)
+                    sleepTime(icon: "moon.zzz.fill", label: "Schlafend", value: night.onsetText)
                     Spacer(minLength: 12)
                     Rectangle().fill(StrandPalette.hairline).frame(width: 1, height: 30)
                     Spacer(minLength: 12)
@@ -774,7 +774,7 @@ struct SleepView: View {
                     wakeEditButton(night)
                 }
                 .frame(maxWidth: .infinity)
-                // Provenance (C4) + the "why this is your main sleep" explainer (C1). The badge names the
+                // Provenance (C4) + the "warum das dein Hauptschlaf ist" explainer (C1). The badge names the
                 // REAL per-day merge winner; the info button reveals the foundation reason for the pick.
                 Divider().overlay(StrandPalette.hairline)
                 mainSleepFooter(night)
@@ -823,7 +823,7 @@ struct SleepView: View {
                 Image(systemName: "moon.stars.fill")
                     .foregroundStyle(StrandPalette.restColor)
                     .accessibilityHidden(true)
-                Text(napSuffix ? "About this nap" : "About your main sleep")
+                Text(napSuffix ? "Über this nap" : "Über your main sleep")
                     .font(StrandFont.subhead.weight(.semibold))
                     .foregroundStyle(StrandPalette.textPrimary)
             }
@@ -834,7 +834,7 @@ struct SleepView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             if napSuffix {
-                Text("Logged as a nap. Wrong? Tap Edit to adjust your sleep and wake times.")
+                Text("Logged as a nap. Wrong? Tap Bearbeiten to adjust your sleep and wake times.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -887,8 +887,8 @@ struct SleepView: View {
                     .foregroundStyle(StrandPalette.restColor)
             }
             .buttonStyle(LiquidPressStyle())
-            .help("Edit sleep times")
-            .accessibilityLabel(isEdited ? "Edit sleep times (edited)" : "Edit sleep times")
+            .help("Bearbeiten sleep times")
+            .accessibilityLabel(isEdited ? "Bearbeiten sleep times (edited)" : "Bearbeiten sleep times")
         }
     }
 
@@ -909,10 +909,10 @@ struct SleepView: View {
             .frame(height: 34)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Sleep stage breakdown: deep \(pct(s.deep, s.total)) percent, light \(pct(s.light, s.total)) percent, REM \(pct(s.rem, s.total)) percent, awake \(pct(s.awake, s.total)) percent")
+            .accessibilityLabel("Schlaf stage breakdown: deep \(pct(s.deep, s.total)) percent, light \(pct(s.light, s.total)) percent, REM \(pct(s.rem, s.total)) percent, awake \(pct(s.awake, s.total)) percent")
             HStack(spacing: 16) {
                 legend(.deep, String(localized: "Deep"))
-                legend(.light, String(localized: "Light"))
+                legend(.light, String(localized: "Hell"))
                 legend(.rem, String(localized: "REM"))
                 legend(.awake, String(localized: "Awake"))
             }
@@ -1046,7 +1046,7 @@ struct SleepView: View {
                     sparkColor: StrandPalette.sleepREM)
 
                 StatTile(
-                    label: "Respiratory",
+                    label: "Atmung",
                     value: rrValue(resp.latest),
                     caption: vsTypical(resp.latest, resp.typical, suffix: " rpm", decimals: 1),
                     accent: StrandPalette.metricPurple,
@@ -1054,7 +1054,7 @@ struct SleepView: View {
                     sparkColor: StrandPalette.metricPurple)
 
                 StatTile(
-                    label: "Sleep Debt",
+                    label: "Schlaf Debt",
                     value: debt.latest.map { durationText($0) } ?? "—",
                     caption: debtCaption(debt.latest),
                     accent: debtColor(debt.latest),
@@ -1075,7 +1075,7 @@ struct SleepView: View {
     private func sleepDebtLedger(_ model: SleepModel) -> some View {
         let ledger = model.sleepDebtLedger
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep-debt ledger", overline: "Last 14 nights",
+            SectionHeader("Schlaf-debt ledger", overline: "Last 14 nights",
                           trailing: String(localized: "running balance"))
             NoopCard(tint: StrandPalette.restColor) {
                 if ledger.nightCount == 0 {
@@ -1162,7 +1162,7 @@ struct SleepView: View {
         // Per-stage typical means are computed ONCE in the model build (each a full pass
         // over repo.days) and read here.
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Stages vs typical", overline: "Last night",
+            SectionHeader("Stages vs typical", overline: "Letzte Nacht",
                           trailing: String(localized: "hatch = typical"))
             NoopCard(tint: StrandPalette.restColor) {
                 VStack(alignment: .leading, spacing: NoopMetrics.space4) {
@@ -1170,7 +1170,7 @@ struct SleepView: View {
                     Divider().overlay(StrandPalette.hairline)
                     stageRow(stage: String(localized: "REM"),   last: s.rem,   typical: model.typicalRemMin,   nightTotal: s.total, color: StrandPalette.sleepREM)
                     Divider().overlay(StrandPalette.hairline)
-                    stageRow(stage: String(localized: "Light"), last: s.light, typical: model.typicalLightMin, nightTotal: s.total, color: StrandPalette.sleepLight)
+                    stageRow(stage: String(localized: "Hell"), last: s.light, typical: model.typicalLightMin, nightTotal: s.total, color: StrandPalette.sleepLight)
                 }
             }
         }
@@ -1265,7 +1265,7 @@ struct SleepView: View {
         let pts = model.trendPoints
         let avg = model.typicalTotalMin.map { $0 / 60.0 }
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Asleep duration", overline: "Trend", trailing: String(localized: "Last 30 days"))
+            SectionHeader("Schlafend duration", overline: "Trend", trailing: String(localized: "Last 30 days"))
             ChartCard(
                 title: "Hours asleep",
                 subtitle: String(localized: "Per night, trailing 30 days"),
@@ -1484,7 +1484,7 @@ struct SleepView: View {
     /// behaviour. Returns nil if the group decodes to no usable stages. (#170, #318, #518, #555, #561)
 
     /// The night's DISPLAYED onset (bedtime), aligned to the SAME fragment the pencil edit targets so the
-    /// shown "Asleep" time and the editor agree (#736). The bug: a night sometimes records a brief, all-awake
+    /// shown "Schlafend" time and the editor agree (#736). The bug: a night sometimes records a brief, all-awake
     /// pre-sleep stub (e.g. lying in bed scrolling at 21:41) as its own block. The gap-bridge folds it into
     /// the main-night group, so it became `group.first` and drove the shown bedtime, while the pencil edited
     /// the MAIN block (`mainNightSession`, which scores by sleep span/timing and skips the all-awake stub) —
@@ -1626,7 +1626,7 @@ struct SleepView: View {
     @ViewBuilder
     private func nightNavHeader(trailing: String) -> some View {
         let lastIndex = max(navDays.count - 1, 0)
-        let title: LocalizedStringKey = nightOffset == 0 ? "Last night"
+        let title: LocalizedStringKey = nightOffset == 0 ? "Letzte Nacht"
             : (nightOffset == 1 ? "1 night ago" : "\(nightOffset) nights ago")
         VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
             HStack(spacing: NoopMetrics.cardInnerSpacing) {
@@ -1639,7 +1639,7 @@ struct SleepView: View {
                 .disabled(nightOffset >= lastIndex)
                 .accessibilityLabel("Previous night")
 
-                SectionHeader(title, overline: "Sleep", trailing: trailing)
+                SectionHeader(title, overline: "Schlaf", trailing: trailing)
 
                 Button { if nightOffset > 0 { nightOffset -= 1 } } label: {
                     Image(systemName: "chevron.right")
@@ -1815,7 +1815,7 @@ struct SleepView: View {
         // SleepView (scroll-stutter isolation; identical output to the prior inline check).
         SleepSyncingNote()
         if repo.loaded {
-            ComingSoon(what: "No nights here yet. Import your WHOOP export in Data Sources to see every night, your sleep stages and trends straight away. Or open Intelligence to see last night computed from the strap after you wear it to bed.")
+            ComingSoon(what: "No nights here yet. Importieren your WHOOP export in Datenquellen to see every night, your sleep stages and trends straight away. Or open Intelligenz to see last night computed from the strap after you wear it to bed.")
         } else {
             ComingSoon(what: "Loading your sleep history…")
         }
@@ -2033,7 +2033,7 @@ struct SleepView: View {
 // the hero hypnogram, the stage chart, the metric grid or the trends. They render byte-for-byte what
 // the inline code did before the extraction (mirrors the Today leaf-scoping pattern).
 
-/// The "going to sleep / I'm awake" sleep-mark card (#461, Phase 1). Tapping logs a timestamped mark —
+/// The "gehe schlafen / Ich bin wach" sleep-mark card (#461, Phase 1). Tapping logs a timestamped mark —
 /// persisted to the `sleep_mark` metric series AND appended to the shareable strap log — then confirms
 /// with a haptic and a transient line. LOGGING ONLY: a mark never touches the sleep detector or the
 /// night boundaries. Owns `live` (it appends to the strap log) + `repo` (the metric-series write) and
@@ -2049,7 +2049,7 @@ private struct SleepMarkCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep marks", overline: "Tap to log", trailing: String(localized: "Phase 1"))
+            SectionHeader("Schlaf marks", overline: "Tap to log", trailing: String(localized: "Phase 1"))
             NoopCard(tint: StrandPalette.restColor) {
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                     Text("Tap when you're heading to bed or when you wake. Each tap is logged with the time. It doesn't change tonight's detected sleep.")
@@ -2061,9 +2061,9 @@ private struct SleepMarkCard: View {
                         // (sentence-case label, leading icon at 8pt, controlHeight=48, no glow).
                         NoopButton("Going to sleep", systemImage: "moon.zzz.fill",
                                    kind: .secondary, fullWidth: true) { logMark(.bedtime) }
-                            .accessibilityLabel("Log going to sleep")
+                            .accessibilityLabel("Log gehe schlafen")
 
-                        NoopButton("I'm awake", systemImage: "sun.max.fill",
+                        NoopButton("Ich bin wach", systemImage: "sun.max.fill",
                                    kind: .secondary, fullWidth: true) { logMark(.wake) }
                             .accessibilityLabel("Log waking up")
                     }
@@ -2098,7 +2098,7 @@ private struct SleepMarkCard: View {
     }
 }
 
-/// The "Syncing strap history…" note, shown only while a historical offload is running (#77). Owns the
+/// The "Band-Verlauf wird synchronisiert…" note, shown only while a historical offload is running (#77). Owns the
 /// `LiveState` observation so the chunk count ticks without re-rendering the rest of the Sleep screen.
 private struct SleepSyncingNote: View {
     @EnvironmentObject private var live: LiveState
@@ -2357,7 +2357,7 @@ private struct AddNapSeed: Identifiable {
 private struct SleepTimeEditor: View {
     let onSave: (Int, Int) async -> Void
     /// Optional destructive delete (#68). Non-nil for an existing main-sleep / nap edit (the editor then
-    /// shows a "Delete this sleep" button gated behind a confirmation); nil for the "Add a nap" sheet,
+    /// shows a "Löschen this sleep" button gated behind a confirmation); nil for the "Add a nap" sheet,
     /// which has nothing to delete yet.
     let onDelete: (() async -> Void)?
     private let title: LocalizedStringKey
@@ -2390,13 +2390,13 @@ private struct SleepTimeEditor: View {
     /// `title`/`blurb`/`bedLabel`/`wakeLabel` default to the edit-an-existing-night wording; the
     /// "Add a nap" caller (#508) overrides them. The save logic + day-derived wake are identical either
     /// way — adding a nap is just an edit whose "existing" window is a seed. `onDelete` (#68) is the
-    /// optional destructive action; `deleteLabel` lets the nap editor say "Delete this nap".
+    /// optional destructive action; `deleteLabel` lets the nap editor say "Löschen this nap".
     init(bedTs: Int, wakeTs: Int,
-         title: LocalizedStringKey = "Edit sleep times",
+         title: LocalizedStringKey = "Bearbeiten sleep times",
          blurb: LocalizedStringKey = "Correct when you went to bed and woke. Stages are re-derived from your data; the edit is kept through the next strap sync.",
-         bedLabel: LocalizedStringKey = "Asleep",
+         bedLabel: LocalizedStringKey = "Schlafend",
          wakeLabel: LocalizedStringKey = "Woke",
-         deleteLabel: LocalizedStringKey = "Delete this sleep",
+         deleteLabel: LocalizedStringKey = "Löschen this sleep",
          coverage: ClosedRange<Int>? = nil,
          suppressesReDetection: Bool = true,
          onSave: @escaping (Int, Int) async -> Void,
@@ -2483,11 +2483,11 @@ private struct SleepTimeEditor: View {
             }
 
             HStack(spacing: NoopMetrics.gap) {
-                Button("Cancel") { dismiss() }
+                Button("Abbrechen") { dismiss() }
                     .buttonStyle(.noopGhost)
                     .disabled(saving)
                 Spacer()
-                Button(saving ? "Saving…" : "Save") {
+                Button(saving ? "Saving…" : "Speichern") {
                     // #940 guard 2: a corrected window that no longer touches the night's recorded
                     // coverage has no data to stage from. Silently accepting it fabricated an
                     // all-awake phantom night; ask first.
@@ -2522,7 +2522,7 @@ private struct SleepTimeEditor: View {
         }
         // #940 guard 2's consent step. On-brand role-tagged .alert, same shape as the delete confirm.
         .alert("Move this sleep?", isPresented: $confirmingDisjoint) {
-            Button("Cancel", role: .cancel) { }
+            Button("Abbrechen", role: .cancel) { }
             Button("Move anyway") {
                 commit(start: Int(bed.timeIntervalSince1970),
                        end: Int(resolvedWake().timeIntervalSince1970))
@@ -2530,11 +2530,11 @@ private struct SleepTimeEditor: View {
         } message: {
             Text("This moves the night to a time with no recorded data. Stages can't be derived there, so it may show as empty until data covers it.")
         }
-        // On-brand destructive confirm — the same role-tagged .alert DevicesView uses for "Remove this
-        // device?", not a bare default. (#68 — Android parity: "Delete this sleep session?")
-        .alert("Delete this sleep session?", isPresented: $confirmingDelete) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        // On-brand destructive confirm — the same role-tagged .alert DevicesView uses for "Entfernen this
+        // device?", not a bare default. (#68 — Android parity: "Löschen this sleep session?")
+        .alert("Löschen this sleep session?", isPresented: $confirmingDelete) {
+            Button("Abbrechen", role: .cancel) { }
+            Button("Löschen", role: .destructive) {
                 saving = true
                 Task {
                     await onDelete?()
@@ -2545,8 +2545,8 @@ private struct SleepTimeEditor: View {
             // A detected night is tombstoned so it won't re-detect; a userEdited/nap row writes no
             // tombstone, so its copy drops that (false) promise. Mirrors the undo banner. (#65)
             Text(suppressesReDetection
-                 ? "Removes this recorded sleep and recomputes the day without it. LLB won't re-detect sleep in this window. You can undo for a few seconds after."
-                 : "Removes this sleep and recomputes the day without it. You can undo for a few seconds after.")
+                 ? "Entfernens this recorded sleep and recomputes the day without it. LLB won't re-detect sleep in this window. You can undo for a few seconds after."
+                 : "Entfernens this sleep and recomputes the day without it. You can undo for a few seconds after.")
         }
     }
 }
@@ -2554,7 +2554,7 @@ private struct SleepTimeEditor: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Sleep") {
+#Preview("Schlaf") {
     SleepView()
         .environmentObject(Repository.previewSleep())
         .environmentObject(LiveState())

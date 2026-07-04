@@ -75,9 +75,9 @@ fun SmartAlarmScreen(vm: AppViewModel) {
     // spacing unchanged (LazyColumn reproduces the eager `spacedBy(20.dp)`); only on-screen cards compose +
     // are accessibility-walked.
     LazyScreenScaffold(
-        // #766: "Alarms" because this screen now holds the phone Wake Window, the strap's firmware
+        // #766: "Wecker" because this screen now holds the phone Wake Window, the strap's firmware
         // wake-alarm (moved here from Automations), and the wind-down reminder, so the broader title fits.
-        title = "Alarms",
+        title = "Wecker",
         subtitle = "Your wake window, the strap wake-alarm, and the evening wind-down reminder, in one place.",
     ) {
         // The guaranteed-wake card always shows so the safety promise is the first thing read.
@@ -208,7 +208,7 @@ private fun StrapAlarmCard(vm: AppViewModel) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Filled.Alarm, contentDescription = null, tint = Palette.accent)
                     Spacer(Modifier.width(10.dp))
-                    Text("Strap wake-alarm", style = NoopType.title2, color = Palette.textPrimary)
+                    Text("Band wake-alarm", style = NoopType.title2, color = Palette.textPrimary)
                 }
             }
             // Truth-sync (#535): the WHOOP 4.0 alarm payload was captured from the official app and
@@ -216,7 +216,7 @@ private fun StrapAlarmCard(vm: AppViewModel) {
             // 4.0 path experimental. The 5/MG Experimental-gate branch below is deliberately untouched.
             ToggleRowLocal(
                 label = "Wake me with a strap buzz",
-                help = "Arms the strap to buzz at your wake time, even if LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.",
+                help = "Arms the strap to buzz at your wake time, even if LLB is closed. Sendens the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.",
                 checked = smartAlarm,
                 onChange = { vm.setSmartAlarmEnabled(it) },
             )
@@ -227,7 +227,7 @@ private fun StrapAlarmCard(vm: AppViewModel) {
                     Spacer(Modifier.weight(1f))
                     TimeChip(
                         minutes = alarmMinutes,
-                        accessibilityLabel = "Strap alarm wake time",
+                        accessibilityLabel = "Band alarm wake time",
                         onPicked = { vm.setSmartAlarmMinutes(it) },
                     )
                 }
@@ -247,8 +247,8 @@ private fun StrapAlarmCard(vm: AppViewModel) {
                 RowDividerLocal()
                 if (live.whoop5Detected && !experimentalOn) {
                     Text(
-                        "Your WHOOP 5/MG won't arm this until Experimental mode is on (Settings → " +
-                            "Experimental). Right now your wake time is saved but the strap is NOT armed.",
+                        "Your WHOOP 5/MG won't arm this until Experimentell mode is on (Einstellungen → " +
+                            "Experimentell). Right now your wake time is saved but the strap is NOT armed.",
                         style = NoopType.footnote, color = Palette.statusWarning,
                     )
                 } else if (live.whoop5Detected) {
@@ -267,7 +267,7 @@ private fun StrapAlarmCard(vm: AppViewModel) {
                         if (live.bonded)
                             // Truth-sync (#535): confirmed buzzing on a real WHOOP 4.0; byte-identical
                             // wording to the Swift SmartAlarmView.
-                            "Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss."
+                            "Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or LLB is closed. Sendens the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss."
                         else
                             "Connect your strap to arm this; it's set on the strap's own firmware alarm. Confirmed working on WHOOP 4.0; still experimental on 5.0 and MG. Keep a backup alarm for anything you truly can't miss.",
                         style = NoopType.footnote, color = Palette.textTertiary,

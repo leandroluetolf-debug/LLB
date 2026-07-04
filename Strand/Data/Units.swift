@@ -61,14 +61,14 @@ enum UnitPrefs {
     /// Whether the live-HR Live Activity (Lock Screen + Dynamic Island) may show, iOS only (#336).
     /// Defaults to ON. The user can turn it off in Notifications settings without digging into iOS
     /// Settings — `liveActivityEnabled()` reads it default-true so an unset key keeps the old behaviour.
-    static let liveActivityKey = "liveActivity.enabled"
+    static let liveActivityKey = "liveAktivität.enabled"
     static func liveActivityEnabled() -> Bool {
         UserDefaults.standard.object(forKey: liveActivityKey) == nil
             ? true : UserDefaults.standard.bool(forKey: liveActivityKey)
     }
 
     /// Resolve the stored raw values into a concrete temperature unit, applying the
-    /// "match the system" default when no explicit override is set.
+    /// "System folgen" default when no explicit override is set.
     static func resolveTemperature(system: UnitSystem, override raw: String) -> TemperatureUnit {
         if let explicit = TemperatureUnit(rawValue: raw) { return explicit }
         return system.temperatureMatching

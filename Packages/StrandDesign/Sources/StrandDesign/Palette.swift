@@ -457,7 +457,7 @@ public enum SleepStage: String, CaseIterable, Sendable {
     public var label: String {
         switch self {
         case .awake: return String(localized: "Awake", bundle: .module)
-        case .light: return String(localized: "Light", bundle: .module)
+        case .light: return String(localized: "Hell", bundle: .module)
         case .deep:  return String(localized: "Deep", bundle: .module)
         case .rem:   return "REM"
         }
@@ -540,7 +540,7 @@ extension Color {
                 LinearGradient(gradient: StrandPalette.strainGradient, startPoint: .leading, endPoint: .trailing)
                     .frame(height: 36).clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            swatchRow("Sleep stages", [
+            swatchRow("Schlaf stages", [
                 ("awake", StrandPalette.sleepAwake),
                 ("light", StrandPalette.sleepLight),
                 ("deep", StrandPalette.sleepDeep),

@@ -7,11 +7,11 @@ struct SupportView: View {
     @State private var selected = "BTC"
 
     var body: some View {
-        ScreenScaffold(title: "Support",
+        ScreenScaffold(title: "Hilfe",
                        subtitle: "\(ProjectInfo.appName) is free and always will be. If it's useful to you, you can chip in to help with development and testing costs. Totally optional.") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
-                    SectionHeader("Support the build", overline: "Optional")
+                    SectionHeader("Hilfe the build", overline: "Optional")
                     donateCard
                 }
                 .staggeredAppear(index: 0)
@@ -91,7 +91,7 @@ struct SupportView: View {
                         .frame(width: 28, height: 28)
                         .background(StrandPalette.metricRose.opacity(0.14), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .accessibilityHidden(true)
-                    Text("Support the build").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                    Text("Hilfe the build").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
                     Spacer()
                 }
                 Text("LLB is free and always will be, nothing is locked. It cost real money and a lot of unpaid hours to build, and there's a Windows app, an Android app and an iOS app I want to ship next. If it's useful to you and you want to help with the development and testing costs, even a few quid in crypto genuinely keeps it moving, and honestly it keeps me motivated to keep building.")
@@ -212,8 +212,8 @@ struct SupportModalOverlay: View {
                             .padding(12)
                     }
                     .buttonStyle(.plain)
-                    .help("Close")
-                    .accessibilityLabel("Close Support")
+                    .help("Schließen")
+                    .accessibilityLabel("Schließen Hilfe")
                 }
                 .shadow(color: Color.black.opacity(0.5), radius: 30, x: 0, y: 14)
         }

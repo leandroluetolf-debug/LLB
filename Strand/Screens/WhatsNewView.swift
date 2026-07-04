@@ -1,7 +1,7 @@
 import SwiftUI
 import StrandDesign
 
-/// "What's New" — a proper in-app changelog, shown automatically after an update and reachable any
+/// "Neuigkeiten" — a proper in-app changelog, shown automatically after an update and reachable any
 /// time from Settings. It also restates, up top, what LLB is and what to expect, so people who never
 /// open GitHub still understand the experimental footing and the WHOOP 5/MG status.
 struct WhatsNewView: View {
@@ -35,7 +35,7 @@ struct WhatsNewView: View {
             footer
         }
         // A fixed 560×640 is right for the macOS sheet window, but on iPhone it's wider than the
-        // screen, so the content (and the "Got it" button) ran off the right edge (#185). iOS fills
+        // screen, so the content (and the "Verstanden" button) ran off the right edge (#185). iOS fills
         // the presented sheet instead.
         #if os(macOS)
         .frame(width: 560, height: 640)
@@ -66,7 +66,7 @@ struct WhatsNewView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close")
+            .accessibilityLabel("Schließen")
         }
         .padding(20)
     }
@@ -126,7 +126,7 @@ struct WhatsNewView: View {
         HStack {
             Spacer()
             Button(action: onClose) {
-                Text("Got it").frame(minWidth: 120).padding(.vertical, 4)
+                Text("Verstanden").frame(minWidth: 120).padding(.vertical, 4)
             }
             .buttonStyle(.borderedProminent)
             .tint(StrandPalette.accent)

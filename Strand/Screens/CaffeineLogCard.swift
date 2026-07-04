@@ -2,7 +2,7 @@ import SwiftUI
 import StrandDesign
 
 /// Caffeine window (#526) — log a caffeine intake (time + OPTIONAL mg) and see a plain on-device
-/// "still active" hint. OPT-IN, manual-first: nothing shows until the user logs an intake, and the
+/// "noch aktiv" hint. OPT-IN, manual-first: nothing shows until the user logs an intake, and the
 /// estimate is clearly framed as a rough guide from a ~5–6 h half-life decay, never a measurement or a
 /// health claim. Reuses the journal logging patterns (UserDefaults-backed store, pill controls, NoopCard).
 ///
@@ -89,7 +89,7 @@ struct CaffeineLogCard: View {
     /// The bedtime + cutoff controls: a toggle, and (when on) a bedtime picker plus the derived "stop after"
     /// time. OFF by default — nothing here surfaces or nags until the user opts in. The cutoff time itself is
     /// computed from the dose-decay lead (`CaffeineDecay.cutoffMinutesSinceMidnight`), so it's never a magic
-    /// number and matches the "still active" math.
+    /// number and matches the "noch aktiv" math.
     @ViewBuilder private var cutoffSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -209,7 +209,7 @@ struct CaffeineLogCard: View {
 
     // MARK: - Active hint
 
-    /// The "caffeine still active" readout. Computed from the logged intakes via the decay model. Shows
+    /// The "caffeine noch aktiv" readout. Computed from the logged intakes via the decay model. Shows
     /// an mg estimate only when at least one active intake had a known amount; otherwise it's worded
     /// without a number (honest: we don't fabricate a dose). Renders a calm "all clear" line when nothing
     /// is active so the card always reads as live, never blank.
@@ -229,7 +229,7 @@ struct CaffeineLogCard: View {
         } else {
             Text(store.intakes.isEmpty
                  ? "No caffeine logged. Log an intake to see an estimate."
-                 : "Estimated mostly cleared. Nothing logged is likely still active.")
+                 : "Estimated mostly cleared. Nothing logged is likely noch aktiv.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -238,7 +238,7 @@ struct CaffeineLogCard: View {
 
     private func activeTitle(_ est: CaffeineActiveEstimate) -> String {
         if let mg = est.totalRemainingMg {
-            return String(localized: "About \(Int(mg.rounded())) mg may still be active")
+            return String(localized: "Über \(Int(mg.rounded())) mg may still be active")
         }
         return String(localized: "Caffeine may still be active")
     }
@@ -269,7 +269,7 @@ struct CaffeineLogCard: View {
     // MARK: - Logged list
 
     @ViewBuilder private var loggedList: some View {
-        Text("Logged today")
+        Text("Heute protokolliert")
             .font(StrandFont.caption)
             .foregroundStyle(StrandPalette.textTertiary)
         ForEach(store.intakes) { intake in
@@ -286,7 +286,7 @@ struct CaffeineLogCard: View {
                         .foregroundStyle(StrandPalette.statusCritical)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Remove caffeine intake at \(Self.timeFormatter.string(from: intake.at))")
+                .accessibilityLabel("Entfernen caffeine intake at \(Self.timeFormatter.string(from: intake.at))")
             }
         }
     }

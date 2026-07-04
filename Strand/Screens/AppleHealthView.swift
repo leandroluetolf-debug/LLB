@@ -192,7 +192,7 @@ struct AppleHealthView: View {
     }
 
     var body: some View {
-        ScreenScaffold(title: "Apple Health", subtitle: spanSubtitle.map { "\($0)" },
+        ScreenScaffold(title: "Apple Gesundheit", subtitle: spanSubtitle.map { "\($0)" },
                        onRefresh: { await repo.refresh() },
                        // PERF: chart-heavy column (the tile grid plus the heart / activity / body / sleep
                        // sections, each carrying its own sparklines + metric charts). The LazyVStack path
@@ -212,11 +212,11 @@ struct AppleHealthView: View {
                     // button to tap, so the empty-state copy must point at the file/Shortcuts path
                     // instead of telling the user to tap a control that isn't shown.
                     ComingSoon(what: health.auth == .entitlementMissing
-                               ? "Nothing here yet. This sideloaded install can't read Apple Health directly. Import a Health export .zip in Data Sources, or turn on Shortcuts Export to bring your strap data into Health."
-                               : "Nothing here yet. Tap Enable Apple Health above to read your data live, or import a Health export .zip in Data Sources.")
+                               ? "Nothing here yet. This sideloaded install can't read Apple Gesundheit directly. Importieren a Gesundheit export .zip in Datenquellen, or turn on Shortcuts Exportieren to bring your strap data into Gesundheit."
+                               : "Nothing here yet. Tap Enable Apple Gesundheit above to read your data live, or import a Gesundheit export .zip in Datenquellen.")
                 }
                 #else
-                ComingSoon(what: "Nothing imported yet. On an iPhone: Health app, tap your photo, Export All Health Data, then import the .zip here in Data Sources.")
+                ComingSoon(what: "Nichts importiert yet. On an iPhone: Gesundheit app, tap your photo, Exportieren All Gesundheit Daten, then import the .zip here in Datenquellen.")
                 #endif
             } else if !loaded {
                 loadingState
@@ -322,7 +322,7 @@ struct AppleHealthView: View {
         let rows = loaded ? windowedRows : appleRows
         guard let first = rows.first?.day, let last = rows.last?.day,
               let lo = date(first), let hi = date(last) else {
-            return String(localized: "Steps, heart, sleep, body composition and VO₂ max, read locally on \(Platform.deviceNounPhrase).")
+            return String(localized: "Schritte, heart, sleep, body composition and VO₂ max, read locally on \(Platform.deviceNounPhrase).")
         }
         let loS = Self.spanFormatter.string(from: lo)
         let hiS = Self.spanFormatter.string(from: hi)
@@ -353,7 +353,7 @@ struct AppleHealthView: View {
         NoopCard(tint: StrandPalette.metricCyan) {
             HStack(spacing: 10) {
                 ConnectionDot(tone: .accent, pulsing: true)
-                Text("Reading your Apple Health history…")
+                Text("Reading your Apple Gesundheit history…")
                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
             }
         }
@@ -362,9 +362,9 @@ struct AppleHealthView: View {
     // MARK: - Live Apple Health (iOS only)
     //
     // The opt-in entry point for the two-way HealthKitBridge. macOS has no HealthKit, so this whole
-    // card — and every `health.*` reference — is `#if os(iOS)`-gated. Tapping "Enable Apple Health"
+    // card — and every `health.*` reference — is `#if os(iOS)`-gated. Tapping "Enable Apple Gesundheit"
     // shows the system permission sheet (rationale strings ship in the iOS target's Info.plist), then
-    // runs the first read + write-back and refreshes this screen. Once authorized, a "Sync now"
+    // runs the first read + write-back and refreshes this screen. Once authorized, a "Jetzt synchronisieren"
     // control and last-synced/status line take its place.
     #if os(iOS)
     @ViewBuilder
@@ -378,40 +378,40 @@ struct AppleHealthView: View {
                         .frame(width: 30, height: 30)
                         .background(StrandPalette.metricCyan.opacity(0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                         .accessibilityHidden(true)
-                    Text("Apple Health (Live)")
+                    Text("Apple Gesundheit (Live)")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Spacer()
                     if health.auth == .authorized {
-                        StatePill(health.syncing ? "Syncing" : "Connected",
+                        StatePill(health.syncing ? "Syncing" : "Verbunden",
                                   tone: .positive, pulsing: health.syncing)
                     }
                 }
 
                 switch health.auth {
                 case .unavailable:
-                    Text("Apple Health isn't available on \(Platform.deviceNounPhrase).")
+                    Text("Apple Gesundheit isn't available on \(Platform.deviceNounPhrase).")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .entitlementMissing:
                     // #348 / #930: the sideload was re-signed WITHOUT the HealthKit entitlement (free
-                    // Apple IDs always lack it; some paid reseller certs do too), so "Enable Apple Health"
+                    // Apple IDs always lack it; some paid reseller certs do too), so "Enable Apple Gesundheit"
                     // can never work and the app can never appear under Settings › Health › Data Access
                     // & Devices. Give the honest path instead of impossible Settings instructions: bring
                     // data in via a file import or the HealthKit-free Shortcuts export.
-                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to enable, and LLB won't appear under Settings › Health.")
+                    Text("This install can't connect to Apple Gesundheit directly. It was signed with a profile that doesn't include Apple's Gesundheit permission, so there's nothing to enable, and LLB won't appear under Einstellungen › Gesundheit.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("To get your Apple Health data in anyway: import a Health export .zip in Data Sources, or turn on Shortcuts Export to feed your strap data into Health without the entitlement. (A build installed from the App Store or signed with a paid Apple Developer account connects directly.)")
+                    Text("To get your Apple Gesundheit data in anyway: import a Gesundheit export .zip in Datenquellen, or turn on Shortcuts Exportieren to feed your strap data into Gesundheit without the entitlement. (A build installed from the App Store or signed with a paid Apple Developer account connects directly.)")
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .unknown, .denied:
-                    Text("Read your heart rate, HRV, blood oxygen, respiratory rate, sleep, steps and energy straight from Apple Health, and write LLB's strap-derived metrics back. Everything stays on \(Platform.deviceNounPhrase).")
+                    Text("Read your heart rate, HRV, blood oxygen, respiratory rate, sleep, steps and energy straight from Apple Gesundheit, and write LLB's strap-derived metrics back. Everything stays on \(Platform.deviceNounPhrase).")
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -422,12 +422,12 @@ struct AppleHealthView: View {
                             await load()
                         }
                     } label: {
-                        Label("Enable Apple Health", systemImage: "heart.fill")
+                        Label("Enable Apple Gesundheit", systemImage: "heart.fill")
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(StrandPalette.metricCyan)
                     if health.auth == .denied {
-                        Text("If you don't see the prompt, enable LLB under Settings › Health › Data Access & Devices.")
+                        Text("If you don't see the prompt, enable LLB under Einstellungen › Gesundheit › Daten Access & Geräte.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -439,7 +439,7 @@ struct AppleHealthView: View {
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     } else {
-                        Text("Connected. Reading on launch and when you return to LLB.")
+                        Text("Verbunden. Reading on launch and when you return to LLB.")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     }
@@ -449,7 +449,7 @@ struct AppleHealthView: View {
                             await load()
                         }
                     } label: {
-                        Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
+                        Label("Jetzt synchronisieren", systemImage: "arrow.triangle.2.circlepath")
                     }
                     .buttonStyle(.bordered)
                     .tint(StrandPalette.metricCyan)
@@ -475,9 +475,9 @@ struct AppleHealthView: View {
             alignment: .leading,
             spacing: NoopMetrics.gap
         ) {
-            statTile(key: "steps", label: "Steps",
+            statTile(key: "steps", label: "Schritte",
                      accent: StrandPalette.metricCyan, fmt: { intString($0) })
-            statTile(key: "resting_hr", label: "Resting HR",
+            statTile(key: "resting_hr", label: "Ruhe-HF",
                      accent: StrandPalette.metricRose, unit: "bpm",
                      fmt: { "\(Int($0.rounded()))" })
             statTile(key: "hrv", label: "HRV",
@@ -486,16 +486,16 @@ struct AppleHealthView: View {
             statTile(key: "vo2max", label: "VO₂ Max",
                      accent: StrandPalette.accent, unit: "ml/kg",
                      fmt: { String(format: "%.1f", $0) })
-            statTile(key: "weight", label: "Weight",
+            statTile(key: "weight", label: "Gewicht",
                      accent: StrandPalette.accent,
                      fmt: { massLabel($0) })
-            statTile(key: "body_fat", label: "Body Fat",
+            statTile(key: "body_fat", label: "Körper Fat",
                      accent: StrandPalette.metricAmber, unit: "%",
                      fmt: { String(format: "%.1f", $0) })
             statTile(key: "lean_mass", label: "Lean Mass",
                      accent: StrandPalette.accent,
                      fmt: { massLabel($0) })
-            statTile(key: "asleep_min", label: "Asleep avg",
+            statTile(key: "asleep_min", label: "Schlafend avg",
                      accent: StrandPalette.metricPurple,
                      aggregate: .mean, fmt: { durationString($0) })
             workoutsTile
@@ -555,18 +555,18 @@ struct AppleHealthView: View {
 
     private var heartSection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Heart & Vitals", overline: "Cardiac",
+            SectionHeader("Herz & Vitals", overline: "Cardiac",
                           trailing: range.caption)
-            chartCard(title: "Resting heart rate", key: "resting_hr",
+            chartCard(title: "Ruhepuls", key: "resting_hr",
                       gradient: roseGradient, fallback: 40...80,
                       fmt: { "\(Int($0.rounded())) bpm" })
-            chartCard(title: "Heart rate variability", key: "hrv",
+            chartCard(title: "Herzfrequenzvariabilität", key: "hrv",
                       gradient: purpleGradient, fallback: 20...120,
                       fmt: { "\(Int($0.rounded())) ms" })
-            chartCard(title: "Blood oxygen", key: "spo2",
+            chartCard(title: "Sauerstoffsättigung", key: "spo2",
                       gradient: cyanGradient, fallback: 90...100,
                       fmt: { String(format: "%.1f%%", $0) })
-            chartCard(title: "Respiratory rate", key: "resp_rate",
+            chartCard(title: "Atemfrequenz", key: "resp_rate",
                       gradient: accentGradient, fallback: 10...22,
                       fmt: { String(format: "%.1f rpm", $0) })
         }
@@ -574,12 +574,12 @@ struct AppleHealthView: View {
 
     private var activitySection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Activity & Energy", overline: "Movement",
+            SectionHeader("Aktivität & Energy", overline: "Movement",
                           trailing: range.caption)
-            chartCard(title: "Steps", key: "steps",
+            chartCard(title: "Schritte", key: "steps",
                       gradient: cyanGradient, fallback: 0...12000,
                       fmt: { intString($0) })
-            chartCard(title: "Active energy", key: "active_kcal",
+            chartCard(title: "Aktive Energie", key: "active_kcal",
                       gradient: amberGradient, fallback: 0...1000,
                       fmt: { "\(intString($0)) kcal" })
         }
@@ -587,12 +587,12 @@ struct AppleHealthView: View {
 
     private var bodySection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Body Composition", overline: "Slow threads",
+            SectionHeader("Körper Composition", overline: "Slow threads",
                           trailing: range.caption)
-            chartCard(title: "Weight", key: "weight",
+            chartCard(title: "Gewicht", key: "weight",
                       gradient: accentGradient, fallback: 50...100,
                       fmt: { massLabel($0) })
-            chartCard(title: "Body fat", key: "body_fat",
+            chartCard(title: "Körper fat", key: "body_fat",
                       gradient: amberGradient, fallback: 8...35,
                       fmt: { String(format: "%.1f%%", $0) })
             chartCard(title: "Lean body mass", key: "lean_mass",
@@ -606,9 +606,9 @@ struct AppleHealthView: View {
 
     private var sleepSection: some View {
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep", overline: "Rest",
+            SectionHeader("Schlaf", overline: "Rest",
                           trailing: range.caption)
-            chartCard(title: "Asleep", key: "asleep_min",
+            chartCard(title: "Schlafend", key: "asleep_min",
                       gradient: purpleGradient, fallback: 240...600,
                       fmt: { durationString($0) })
         }
@@ -876,14 +876,14 @@ private func appleHealthPreviewData() -> AppleHealthView.PreviewData {
     return .init(rows: rows, workoutCount: 124, series: series)
 }
 
-#Preview("Apple Health — seeded") {
+#Preview("Apple Gesundheit — seeded") {
     AppleHealthView(previewData: appleHealthPreviewData())
         .environmentObject(Repository(deviceId: "preview"))
         .frame(width: 920, height: 980)
         .preferredColorScheme(.dark)
 }
 
-#Preview("Apple Health — empty") {
+#Preview("Apple Gesundheit — empty") {
     AppleHealthView(previewData: .init(rows: [], workoutCount: 0, series: [:]))
         .environmentObject(Repository(deviceId: "preview"))
         .frame(width: 920, height: 600)

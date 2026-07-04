@@ -62,7 +62,7 @@ final class NavRouter: ObservableObject {
     func openInsightsHub() { requestedDestination = .insightsHub }
     /// Open the Lab Book (private health-records logbook).
     func openLabBook() { requestedDestination = .labBook }
-    /// Open the "Your Data, Fused" multi-device record.
+    /// Open the "Deine Daten, vereint" multi-device record.
     func openFusedRecord() { requestedDestination = .fusedRecord }
     /// Open the experimental Rhythm visualization (self-gates on its own consent).
     func openRhythm() { requestedDestination = .rhythm }

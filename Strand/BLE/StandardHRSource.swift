@@ -272,7 +272,7 @@ extension StandardHRSource: @preconcurrency CBCentralManagerDelegate {
         let firstSight = seenPeripherals[id] == nil   // not seen before this scan
         seenPeripherals[id] = peripheral
         let advName = advertisementData[CBAdvertisementDataLocalNameKey] as? String
-        let name = advName ?? peripheral.name ?? "Heart Rate Strap"
+        let name = advName ?? peripheral.name ?? "Herzfrequenz Band"
         if firstSight { log("HR-strap: found \(name) (\(id)) rssi \(RSSI.intValue)") }
         let strap = DiscoveredStrap(id: id, name: name, rssi: RSSI.intValue)
         if let idx = discovered.firstIndex(where: { $0.id == id }) {

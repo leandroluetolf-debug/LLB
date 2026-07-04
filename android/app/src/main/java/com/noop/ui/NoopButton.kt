@@ -120,7 +120,7 @@ private fun appearanceFor(kind: NoopButtonKind): NoopButtonAppearance = when (ki
  * Reduce-Motion aware. Mirrors iOS `NoopButton`.
  *
  * ```
- * NoopButton(text = "Save changes", leadingIcon = Icons.Filled.Check, kind = NoopButtonKind.Primary, fullWidth = true) {
+ * NoopButton(text = "Speichern changes", leadingIcon = Icons.Filled.Check, kind = NoopButtonKind.Primary, fullWidth = true) {
  *     save()
  * }
  * ```

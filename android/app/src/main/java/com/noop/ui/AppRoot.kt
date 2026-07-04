@@ -105,7 +105,7 @@ import androidx.navigation.compose.rememberNavController
 //
 // The macOS app's sidebar holds many sections; on Android (mirroring the iOS RootTabView) we surface
 // them through a unified floating "glass" bottom bar (Today · Trends · Sleep · More) for the everyday
-// screens, with a "More" sheet that lists the full grouped set — so every destination is one tap away
+// screens, with a "Mehr" sheet that lists the full grouped set — so every destination is one tap away
 // without a global hamburger/drawer. Destinations are grouped exactly as the sidebar groups them.
 // Routes whose screens belong to later waves point at a ComingSoon placeholder so the app compiles today.
 
@@ -119,7 +119,7 @@ private enum class Destination(
     Today("today", R.string.nav_today, Icons.Filled.Home),
     Intelligence("intelligence", R.string.nav_intelligence, Icons.Filled.Psychology),
     // Optional, default-OFF (task #43): the Coupled view (WHOOP-style day read). Reached ONLY via the
-    // Today dashboard "Coupled view" card tap-through, so it is deliberately NOT in any [DrawerGroup].
+    // Today dashboard "Gekoppelte Ansicht" card tap-through, so it is deliberately NOT in any [DrawerGroup].
     CoupledView("coupled_view", R.string.nav_coupled_view, Icons.Filled.Hexagon),
 
     // Group: Live
@@ -153,7 +153,7 @@ private enum class Destination(
 
     // Group: System
     Automations("automations", R.string.nav_automations, Icons.Filled.Bolt),
-    // "Alarms" is the ONE alarm surface (#766): the phone-based Wake Window (light-sleep detection with a
+    // "Wecker" is the ONE alarm surface (#766): the phone-based Wake Window (light-sleep detection with a
     // guaranteed OS backup), the strap's own firmware wake-alarm, and the wind-down reminder, all in one
     // place. Previously "Wake Window" (#730), but the strap alarm moved in from Automations so the broader
     // name fits. Route id stays "smart_alarm" (display string only).
@@ -167,7 +167,7 @@ private enum class Destination(
     Settings("settings", R.string.nav_settings, Icons.Filled.Settings),
     TestCentre("test_centre", R.string.nav_test_centre, Icons.Filled.BugReport),
 
-    // The "More" tab: its own navigated page (mirroring the iOS More tab) that hosts the full
+    // The "Mehr" tab: its own navigated page (mirroring the iOS More tab) that hosts the full
     // grouped destination list. It is NOT itself in any [DrawerGroup] — it's the door to them.
     More("more", R.string.nav_more, Icons.Filled.MoreHoriz);
 
@@ -176,7 +176,7 @@ private enum class Destination(
         fun forRoute(route: String?): Destination =
             entries.firstOrNull {
                 // Match parameterised routes (e.g. "vital_detail/rhr" vs "vital_detail/{key}") by
-                // base path so the top-bar title resolves correctly on a detail screen, not "Today".
+                // base path so the top-bar title resolves correctly on a detail screen, not "Heute".
                 it.route == route || it.route.substringBefore('/') == route?.substringBefore('/')
             } ?: Today
     }
@@ -199,16 +199,16 @@ private data class DrawerGroup(
 // listed (they're bottom-bar tabs, exactly as on iOS). Android-only screens (Vital Signs, Wake Window,
 // Notifications, Devices) are slotted into the matching iOS group.
 private val drawerGroups: List<DrawerGroup> = listOf(
-    DrawerGroup("Insights", R.string.more_group_insights, listOf(
+    DrawerGroup("Einblicke", R.string.more_group_insights, listOf(
         Destination.InsightsHub, Destination.Intelligence, Destination.Coach,
         Destination.Insights, Destination.Explore, Destination.Compare,
     ), defaultExpanded = true),
-    DrawerGroup("Body", R.string.more_group_body, listOf(
+    DrawerGroup("Körper", R.string.more_group_body, listOf(
         Destination.Live, Destination.Workouts, Destination.Health, Destination.VitalSigns,
         Destination.LabBook, Destination.Stress, Destination.Breathe, Destination.Intervals,
         Destination.Rhythm,
     ), defaultExpanded = true),
-    DrawerGroup("Data", R.string.more_group_data, listOf(
+    DrawerGroup("Daten", R.string.more_group_data, listOf(
         Destination.FusedRecord, Destination.AppleHealth, Destination.DataSources,
         Destination.BackupSync, Destination.Devices,
     ), defaultExpanded = false),
@@ -255,7 +255,7 @@ internal object MoreSectionPrefs {
 /**
  * App shell: a single [Scaffold] with a floating [GlassBottomBar] (Today · Trends · Sleep · More)
  * driving one [NavHost], mirroring the iOS RootTabView. There is NO global toolbar and no nav drawer
- * — every screen self-titles via [ScreenScaffold], and the "More" sheet (opened from the bar) reaches
+ * — every screen self-titles via [ScreenScaffold], and the "Mehr" sheet (opened from the bar) reaches
  * every destination in [drawerGroups], so nothing is lost. A single [AppViewModel] is created here and
  * shared with every screen, so the BLE connection and cached metrics stay app-wide singletons.
  */
@@ -280,7 +280,7 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
             bottomBar = {
                 // One unified "glass" bar: four evenly-spaced tabs — Today · Trends · Sleep · More
                 // (matches the iOS FloatingTabBar). The quick-action "+" lives in the Today header's
-                // top-right (balancing the avatar), so the bar is clean tabs only. "More" navigates to
+                // top-right (balancing the avatar), so the bar is clean tabs only. "Mehr" navigates to
                 // its own page (mirroring the iOS More tab) that reaches every grouped destination, so no
                 // destination is lost without the drawer.
                 GlassBottomBar(
@@ -331,7 +331,7 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
                         onOpenSleep = { nav.navigateTopLevel(Destination.Sleep.route) },
                         // Optional Coupled view card (task #43): a normal push so back returns to Today.
                         onOpenCoupled = { nav.navigate(Destination.CoupledView.route) },
-                        // The "workout in progress" indicator: raise the one-shot the Live screen consumes to
+                        // The "Workout läuft" indicator: raise the one-shot the Live screen consumes to
                         // re-open the in-exercise overlay, then route to Live. One tap from Today (iOS parity).
                         onOpenActiveWorkout = {
                             viewModel.openActiveWorkout()
@@ -425,7 +425,7 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
                     SettingsScreen(viewModel, onOpenTestCentre = { nav.navigate(Destination.TestCentre.route) })
                 }
                 composable(Destination.TestCentre.route) { TestCentreScreen(viewModel) }
-                // The "More" page — the iOS More tab's twin: a navigated ScreenScaffold page hosting the
+                // The "Mehr" page — the iOS More tab's twin: a navigated ScreenScaffold page hosting the
                 // full grouped destination list (was a pull-up sheet). A row navigates top-level.
                 composable(Destination.More.route) {
                     MoreScreen(onNavigate = { nav.navigateTopLevel(it) })
@@ -541,7 +541,7 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
 
 // MARK: - More page
 //
-// The "More" tab's destination — a full navigated page (mirroring the iOS More tab's NavigationStack
+// The "Mehr" tab's destination — a full navigated page (mirroring the iOS More tab's NavigationStack
 // List), replacing the old pull-up ModalBottomSheet. It hosts the SAME grouped destinations
 // ([drawerGroups]) inside a [ScreenScaffold], with the exact section-header + row styling the sheet
 // used (uppercase [Overline] group labels, icon + label [NavigationDrawerItem] rows) — now with a
@@ -567,7 +567,7 @@ private fun MoreScreen(onNavigate: (String) -> Unit) {
         }
     }
     ScreenScaffold(
-        title = "More",
+        title = "Mehr",
         subtitle = "Everything else, one tap away",
     ) {
         // Mirror the iOS More page: each group is a tappable UPPERCASE overline header (with a disclosure
@@ -748,7 +748,7 @@ private fun GlassBottomBar(
                     label = stringResource(R.string.nav_more),
                     // Selected on the More page itself, and also kept lit whenever the current screen is
                     // one reached THROUGH More (i.e. not one of the bar's own three tabs) — so drilling
-                    // into any grouped destination still reads as "you're in More", never "nowhere".
+                    // into any grouped destination still reads as "you're in Mehr", never "nowhere".
                     active = current != Destination.Today && current != Destination.Trends &&
                         current != Destination.Sleep,
                     modifier = Modifier.weight(1f),
@@ -868,7 +868,7 @@ private fun NavHostController.navigateTopLevel(route: String) {
 }
 
 /**
- * Loader for the v5 "Your Data, Fused" screen: assembles today's [FusedRecord] off the repository via
+ * Loader for the v5 "Deine Daten, vereint" screen: assembles today's [FusedRecord] off the repository via
  * [AppViewModel.fusedRecordForToday] (the pure FusionResolver per metric) and hands the pure
  * [FusedRecordScreen] its read-model. Keeps the screen itself I/O-free + previewable. Re-loads on entry.
  */

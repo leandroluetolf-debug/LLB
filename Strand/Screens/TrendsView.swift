@@ -235,7 +235,7 @@ struct TrendsView: View {
                        topBackground: liquidScaffoldSky()) {
             if repo.days.isEmpty {
                 ComingSoon(what: repo.loaded
-                    ? "Trends need history to draw. Import your WHOOP export in Data Sources to see weeks, months and years instantly."
+                    ? "Trends need history to draw. Importieren your WHOOP export in Datenquellen to see weeks, months and years instantly."
                     : "Loading your history…")
             } else {
                 // Resolve each metric's window ONCE per body and pass the results
@@ -342,7 +342,7 @@ struct TrendsView: View {
                 if digest.isEmpty {
                     // This particular week had no readings — keep the chevrons above so the user can move on.
                     DataPendingNote(
-                        title: "No readings this week",
+                        title: "No readings diese Woche",
                         message: "Step to another week with the arrows above to see its review.")
                 } else {
                     WeeklyDigestContent(digest: digest, compact: true)
@@ -370,7 +370,7 @@ struct TrendsView: View {
                 Text(weekOffset == 0 ? String(localized: "This week") : weekOffsetLabel)
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("Week in review")
+                Text("Woche im Rückblick")
                     .strandOverline()
             }
             Spacer()
@@ -409,7 +409,7 @@ struct TrendsView: View {
         if chargeAvg != nil || effortAvg != nil || restAvg != nil {
             NoopCard(tint: StrandPalette.chargeColor) {
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
-                    SectionHeader("Week in review", overline: "Charge · Effort · Rest")
+                    SectionHeader("Woche im Rückblick", overline: "Charge · Effort · Rest")
                     if let v = chargeAvg {
                         pipScoreRow(label: "Charge", value: v, range: 0...100,
                                     tint: StrandPalette.chargeColor, frac: v / 100,
@@ -475,7 +475,7 @@ struct TrendsView: View {
     // MARK: Export trends report (#436)
 
     /// A footer entry that opens the shareable-report sheet. Flat WHOOP card with a blue accent
-    /// action — the icon, label and "Export" CTA all read in the accent (blue) world, no gold.
+    /// action — the icon, label and "Exportieren" CTA all read in the accent (blue) world, no gold.
     private var exportReportRow: some View {
         NoopCard(tint: StrandPalette.accent) {
             HStack(spacing: NoopMetrics.space3) {
@@ -484,7 +484,7 @@ struct TrendsView: View {
                     .foregroundStyle(StrandPalette.accent)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: NoopMetrics.space1) {
-                    Text("Export trends report").strandOverline()
+                    Text("Exportieren trends report").strandOverline()
                     Text("A shareable one-page PDF of recovery, sleep, HRV, resting HR and strain over a range, saved on your \(Platform.deviceNoun).")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
@@ -493,7 +493,7 @@ struct TrendsView: View {
                 Spacer(minLength: NoopMetrics.space2)
                 // The card's call-to-action — routed through the unified button system (secondary kind:
                 // a quiet raised capsule that reads as the card action, not the one primary on the page).
-                NoopButton("Export", systemImage: "square.and.arrow.up", kind: .secondary) {
+                NoopButton("Exportieren", systemImage: "square.and.arrow.up", kind: .secondary) {
                     showingReport = true
                 }
                 .fixedSize()
@@ -599,8 +599,8 @@ struct TrendsView: View {
                 // HRV / Resting HR are Charge sub-signals → the Charge (green) card world, each line
                 // keeping its established metric hue for legibility. Effort is the WHOOP blue strain world.
                 metricChart(
-                    title: "Heart rate variability", unit: "ms",
-                    accessibilityTitle: String(localized: "Heart rate variability"),
+                    title: "Herzfrequenzvariabilität", unit: "ms",
+                    accessibilityTitle: String(localized: "Herzfrequenzvariabilität"),
                     metricKey: "hrv",
                     points: hrvPts,
                     gradient: gradient(StrandPalette.metricPurple),
@@ -611,8 +611,8 @@ struct TrendsView: View {
                     fmt: { "\(Int($0.rounded()))" }
                 )
                 metricChart(
-                    title: "Resting heart rate", unit: "bpm",
-                    accessibilityTitle: String(localized: "Resting heart rate"),
+                    title: "Ruhepuls", unit: "bpm",
+                    accessibilityTitle: String(localized: "Ruhepuls"),
                     metricKey: "rhr",
                     points: rhrPts,
                     gradient: gradient(StrandPalette.metricRose),

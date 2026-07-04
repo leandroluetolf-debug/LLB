@@ -18,11 +18,11 @@ enum PuffinExperiment {
     /// official app sends; documented by judes.club + Asherlc/dofek). Kept distinct from the read-only
     /// probes above because it changes strap state, so it must be turned on explicitly and is still
     /// fully reversible. Driven only from `BLEManager.enableWhoop5DeepData()`. (#174)
-    static let deepDataKey = "noopWhoop5DeepData"
+    static let deepDataKey = "noopWhoop5DeepDaten"
 
     static var deepDataEnabled: Bool { UserDefaults.standard.bool(forKey: deepDataKey) }
 
-    /// Opt-in "Broadcast heart rate": writes the device-config flag `whoop_live_hr_in_adv_ind_pkt="1"`
+    /// Opt-in "Herzfrequenz senden": writes the device-config flag `whoop_live_hr_in_adv_ind_pkt="1"`
     /// so the strap advertises the standard Heart Rate Service (0x180D) + its live HR, pairable by a
     /// Garmin/Zwift/gym HR client. Reversible, default off; applied on each 5/MG connection and driven by
     /// `BLEManager.setBroadcastHr(_:)`. Mirrors the Android `PuffinExperiment.KEY_BROADCAST_HR`. (#181)
@@ -30,7 +30,7 @@ enum PuffinExperiment {
 
     static var broadcastHrEnabled: Bool { UserDefaults.standard.bool(forKey: broadcastHrKey) }
 
-    /// Opt-in "Continuous HRV capture": hold the dense realtime HR stream armed even with no Live screen
+    /// Opt-in "Durchgehende HRV-Erfassung": hold the dense realtime HR stream armed even with no Live screen
     /// open, so the strap banks beat-to-beat R-R intervals 24/7 for far better overnight HRV/recovery/
     /// sleep (vs the sparse history offload). Uses more battery (continuous HR streaming). Default OFF;
     /// applied on launch + each (re)bond and driven by `BLEManager.setKeepRealtimeForData(_:)`. Mirrors
@@ -39,7 +39,7 @@ enum PuffinExperiment {
 
     static var keepRealtimeForDataEnabled: Bool { UserDefaults.standard.bool(forKey: keepRealtimeForDataKey) }
 
-    /// Opt-in "Overnight only" refinement of Continuous HRV capture (#927): arm the dense realtime stream
+    /// Opt-in "Nur über Nacht" refinement of Continuous HRV capture (#927): arm the dense realtime stream
     /// only inside the nightly window (the reused quiet-hours window convention: minutes since local
     /// midnight, wrap-aware, 22:00 to 07:00 by default) instead of 24/7, roughly halving the battery
     /// cost. Composed with the base toggle so existing users need no migration: base on + this off reads
@@ -50,13 +50,13 @@ enum PuffinExperiment {
 
     static var continuousHrvOvernightOnlyEnabled: Bool { UserDefaults.standard.bool(forKey: continuousHrvOvernightOnlyKey) }
 
-    /// Opt-in "Experimental sleep staging (V2)": re-stage each detected night with `SleepStagerV2` — a
+    /// Opt-in "Experimentelle Schlafstadien (V2)": re-stage each detected night with `SleepStagerV2` — a
     /// transparent cardiorespiratory recipe (reimplemented from contributor PR #600) that recovers deep/REM
     /// better than the shipped V1 stager on its author's n=1 validation. Pure analysis switch: it changes
     /// ONLY which staging engine runs over an already-detected sleep window; sleep DETECTION, scoring and the
     /// default V1 path are all untouched. Default OFF. Read at the staging call site (Repository) to pick
     /// V1 vs V2. Mirrors the Android `PuffinExperiment.KEY_EXPERIMENTAL_SLEEP_V2`.
-    static let experimentalSleepV2Key = "noopExperimentalSleepV2"
+    static let experimentalSleepV2Key = "noopExperimentellSchlafV2"
 
     static var experimentalSleepV2Enabled: Bool { UserDefaults.standard.bool(forKey: experimentalSleepV2Key) }
 

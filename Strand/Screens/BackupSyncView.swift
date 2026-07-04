@@ -28,7 +28,7 @@ struct BackupSyncView: View {
     var body: some View {
         ScreenScaffold(
             title: "Backup & Sync",
-            subtitle: "Save a full backup to a folder you choose - point it at Google Drive, iCloud or Dropbox for off-device sync."
+            subtitle: "Speichern a full backup to a folder you choose - point it at Google Drive, iCloud or Dropbox for off-device sync."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                 folderCard
@@ -49,9 +49,9 @@ struct BackupSyncView: View {
             }
         }
         // Explicit in-app destructive confirmation BEFORE any overwrite (must-fix #2).
-        .alert("Restore this backup?", isPresented: $confirmRestore, presenting: pendingRestore) { snap in
+        .alert("Wiederherstellen this backup?", isPresented: $confirmRestore, presenting: pendingRestore) { snap in
             Button("Replace all data", role: .destructive) { runRestore(snap) }
-            Button("Cancel", role: .cancel) { pendingRestore = nil }
+            Button("Abbrechen", role: .cancel) { pendingRestore = nil }
         } message: { snap in
             // A hand-named file with no resolved date (timeMs 0) confirms by NAME, not "1 Jan 1970".
             Text(snap.timeMs > 0
@@ -110,12 +110,12 @@ struct BackupSyncView: View {
     private var restoreCard: some View {
         StrandCard(padding: 20) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Restore")
+                Text("Wiederherstellen")
                     .font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
                 Text("Replace this device's data with one of the backups in your folder. This overwrites current data, so back up first if you're unsure.")
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
-                NoopButton("Restore from a backup…", systemImage: "arrow.uturn.backward", kind: .secondary) {
+                NoopButton("Wiederherstellen from a backup…", systemImage: "arrow.uturn.backward", kind: .secondary) {
                     openRestorePicker()
                 }
                 .disabled(folderLabel == nil || busy)
@@ -142,7 +142,7 @@ struct BackupSyncView: View {
                 busy = false
                 alertTitle = ok ? String(localized: "Backed up") : String(localized: "Backup problem")
                 alertMessage = ok
-                    ? String(localized: "Saved a backup to your folder.")
+                    ? String(localized: "Speichernd a backup to your folder.")
                     : String(localized: "Backup failed - re-pick the folder and try again.")
                 showAlert = true
             }
@@ -173,12 +173,12 @@ struct BackupSyncView: View {
                 busy = false
                 switch result {
                 case .imported:
-                    alertTitle = String(localized: "Restored")
+                    alertTitle = String(localized: "Wiederherstellend")
                     alertMessage = String(localized: "Fully quit and reopen LLB to load it.")
                 case .failure(let m):
-                    alertTitle = String(localized: "Restore problem"); alertMessage = m
+                    alertTitle = String(localized: "Wiederherstellen problem"); alertMessage = m
                 case .cancelled, .exported:
-                    alertTitle = String(localized: "Restore problem"); alertMessage = String(localized: "Couldn't restore that backup.")
+                    alertTitle = String(localized: "Wiederherstellen problem"); alertMessage = String(localized: "Couldn't restore that backup.")
                 }
                 showAlert = true
             }
@@ -233,7 +233,7 @@ private struct RestorePickerSheet: View {
             .navigationTitle("Choose a backup")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { onChoose(nil) }
+                    Button("Abbrechen") { onChoose(nil) }
                 }
             }
         }
@@ -246,8 +246,8 @@ private struct RestorePickerSheet: View {
 
     /// VoiceOver label: reads the resolved date when we have one, else the filename (no epoch date).
     private func accessibilityLabel(_ snap: FolderBackup.Snapshot) -> String {
-        snap.timeMs > 0 ? String(localized: "Restore backup from \(absoluteTime(snap.timeMs))")
-                        : String(localized: "Restore backup \(snap.name)")
+        snap.timeMs > 0 ? String(localized: "Wiederherstellen backup from \(absoluteTime(snap.timeMs))")
+                        : String(localized: "Wiederherstellen backup \(snap.name)")
     }
 
     private func absoluteTime(_ ms: Int) -> String {

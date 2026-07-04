@@ -148,7 +148,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
     var showSportPicker by remember { mutableStateOf(false) }
     var showHrvSnapshot by remember { mutableStateOf(false) }
     // Live workout mode (#238): the full-screen in-exercise overlay. Normally opened at workout START
-    // (StartWorkoutSheet); this lets the Today "workout in progress" indicator re-open it for a session
+    // (StartWorkoutSheet); this lets the Today "Workout läuft" indicator re-open it for a session
     // already in flight by consuming the ViewModel's one-shot on appear (iOS parity:
     // LiveView.consumeActiveWorkoutRequest). Closing just hides it; the workout keeps recording.
     var showLiveWorkout by remember { mutableStateOf(false) }
@@ -200,7 +200,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
     }
 
     LazyScreenScaffold(
-        title = "Live Body Console",
+        title = "Live Körper Console",
         subtitle = "Current physiology, strap trust, and session controls",
         // LIQUID SKY BACKDROP (the pilot pattern — LiquidScreenSky.kt): the time-of-day liquid sky settles
         // behind the header + hero and the cards float over the flat canvas below. Reuses the shared
@@ -209,7 +209,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
         topBackground = if (showDayCycleBackground) { { LiquidScreenSky() } } else null,
     ) {
 
-        // Active band row (MW-6) — names the band the console is reading, with a "Manage devices"
+        // Active band row (MW-6) — names the band the console is reading, with a "Geräte verwalten"
         // affordance that opens the Devices screen. Additive; the connect/disconnect controls below are
         // untouched. Mirrors the iOS Live screen's active-band header + Manage-devices link.
         item {
@@ -411,7 +411,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
                     ),
                 ) {
                     Text(
-                        "Start workout", style = NoopType.captionNumber,
+                        "Workout starten", style = NoopType.captionNumber,
                         maxLines = 1, softWrap = false, overflow = TextOverflow.Clip,
                     )
                 }
@@ -484,7 +484,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
                 horizontalArrangement = Arrangement.spacedBy(Metrics.gap),
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Strap", style = NoopType.footnote, color = Palette.textSecondary)
+                Text("Band", style = NoopType.footnote, color = Palette.textSecondary)
                 SegmentedPillControl(
                     items = WhoopModel.entries.toList(),
                     selection = selectedModel,
@@ -511,7 +511,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
         item {
         Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap), modifier = Modifier.fillMaxWidth()) {
             // Compact, single-line labels: with three weight(1f) buttons in a row, the default
-            // body style + icon could wrap "Re-scan"/"Searching…" to two lines on narrow phones,
+            // body style + icon could wrap "Erneut scannen"/"Suche…" to two lines on narrow phones,
             // making one button taller than the others. captionNumber + maxLines=1 keeps the row
             // even. Connect disables while a scan is in flight so it can't be re-tapped mid-search.
             Button(
@@ -533,8 +533,8 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
                 )
                 Text(
                     when {
-                        live.scanning -> "Searching…"
-                        live.connected -> "Re-scan"
+                        live.scanning -> "Suche…"
+                        live.connected -> "Erneut scannen"
                         else -> "Connect"
                     },
                     style = NoopType.captionNumber,
@@ -594,7 +594,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
         }
         }
 
-        // Manual "Sync now" — kick a historical offload on demand instead of waiting for the 15-min
+        // Manual "Jetzt synchronisieren" — kick a historical offload on demand instead of waiting for the 15-min
         // periodic timer (#93). Only meaningful once bonded (the offload needs the command channel), and
         // disabled mid-session so a double-tap can't fight the in-flight offload — viewModel.syncNow()
         // also no-ops in that case, this is just the matching UI state. While syncing, the button shows
@@ -627,7 +627,7 @@ fun LiveScreen(viewModel: AppViewModel, onManageDevices: () -> Unit = {}) {
                     )
                 }
                 Text(
-                    if (live.backfilling) "Syncing…" else "Sync now",
+                    if (live.backfilling) "Syncing…" else "Jetzt synchronisieren",
                     style = NoopType.captionNumber,
                     maxLines = 1,
                     softWrap = false,
@@ -661,7 +661,7 @@ private fun MaxHrZoneCard(hrMax: Int, zone5Bpm: Int, coachingOn: Boolean) {
             Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
                 StatTile(
                     modifier = Modifier.weight(1f),
-                    label = "Max HR",
+                    label = "Max. HF",
                     value = "$hrMax bpm",
                     accent = Palette.textPrimary,
                 )
@@ -674,9 +674,9 @@ private fun MaxHrZoneCard(hrMax: Int, zone5Bpm: Int, coachingOn: Boolean) {
             }
             Text(
                 if (coachingOn)
-                    "Strap buzzes when you climb into Zone 5 (≥ $zone5Bpm bpm). Manage it in Automations → Haptic coaching."
+                    "Band buzzes when you climb into Zone 5 (≥ $zone5Bpm bpm). Manage it in Automationen → Haptic coaching."
                 else
-                    "Turn on HR-zone coaching in Automations for a wrist buzz when you reach Zone 5 (≥ $zone5Bpm bpm).",
+                    "Turn on HR-zone coaching in Automationen for a wrist buzz when you reach Zone 5 (≥ $zone5Bpm bpm).",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
                 modifier = Modifier.fillMaxWidth(),
@@ -686,7 +686,7 @@ private fun MaxHrZoneCard(hrMax: Int, zone5Bpm: Int, coachingOn: Boolean) {
 }
 
 /**
- * Active band row (MW-6): names the band whose live data the console is showing, with a "Manage devices"
+ * Active band row (MW-6): names the band whose live data the console is showing, with a "Geräte verwalten"
  * affordance that opens the Devices screen. Additive — it sits above the console header and never touches
  * the connect/disconnect controls. Mirrors the iOS Live screen's active-band header + Manage-devices link.
  */
@@ -705,7 +705,7 @@ private fun ActiveBandRow(name: String, onManageDevices: () -> Unit) {
                 Overline("Active band")
                 Text(name, style = NoopType.headline, color = Palette.textPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
-            // liquidPress: the "Manage devices" affordance settles inward on press (the iOS LiquidPressStyle
+            // liquidPress: the "Geräte verwalten" affordance settles inward on press (the iOS LiquidPressStyle
             // feel), the SAME interactionSource driving its clickable + the press response.
             val manageInteraction = remember { MutableInteractionSource() }
             Row(
@@ -718,10 +718,10 @@ private fun ActiveBandRow(name: String, onManageDevices: () -> Unit) {
                         indication = null,
                         onClick = onManageDevices,
                     )
-                    .semantics { contentDescription = "Manage devices" }
+                    .semantics { contentDescription = "Geräte verwalten" }
                     .padding(horizontal = 8.dp, vertical = 6.dp),
             ) {
-                Text("Manage devices", style = NoopType.subhead, color = Palette.accent)
+                Text("Geräte verwalten", style = NoopType.subhead, color = Palette.accent)
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
@@ -741,10 +741,10 @@ private fun ConsoleHeader(live: LiveState, activeConnection: Boolean) {
             val (label, tone) = when {
                 live.encryptedBond && live.backfilling -> "Bonded · syncing" to StrandTone.Accent
                 live.encryptedBond -> "Bonded" to StrandTone.Positive
-                live.bonded -> "Live HR (not fully paired)" to StrandTone.Warning
-                live.connected -> "Connected" to StrandTone.Warning
-                live.scanning -> "Searching…" to StrandTone.Warning
-                else -> "Disconnected" to StrandTone.Critical
+                live.bonded -> "Live-HF (not fully paired)" to StrandTone.Warning
+                live.connected -> "Verbunden" to StrandTone.Warning
+                live.scanning -> "Suche…" to StrandTone.Warning
+                else -> "Getrennt" to StrandTone.Critical
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -753,7 +753,7 @@ private fun ConsoleHeader(live: LiveState, activeConnection: Boolean) {
             ) {
                 StatePill(label, tone = tone, pulsing = live.bonded || live.scanning)
                 // Suppress the redundant rose "OFFLINE" badge while fully offline — the pill already
-                // reads "Disconnected" in critical/rose. Keep it for every informative state (FULL BOND
+                // reads "Getrennt" in critical/rose. Keep it for every informative state (FULL BOND
                 // / LIVE HR ONLY / CONNECTING / PAIRED). Gate matches exactly the "OFFLINE" branch.
                 if (showsModeBadge(live, activeConnection)) {
                     SourceBadge(connectionModeBadge(live, activeConnection), tint = connectionModeColor(live, activeConnection))
@@ -766,7 +766,7 @@ private fun ConsoleHeader(live: LiveState, activeConnection: Boolean) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
                 // Charging bolt next to the battery % when the strap reports it's charging (PR #568 reimpl).
                 HeaderStat(
-                    "Battery",
+                    "Akku",
                     live.batteryPct?.let { "${it.toInt()}%" } ?: "—",
                     charging = live.charging == true,
                 )
@@ -789,7 +789,7 @@ private fun HeaderStat(title: String, value: String, charging: Boolean = false) 
             if (charging) {
                 Icon(
                     Icons.Filled.Bolt,
-                    contentDescription = "Charging",
+                    contentDescription = "Lädt",
                     tint = Palette.statusPositive,
                     modifier = Modifier.size(14.dp),
                 )
@@ -846,7 +846,7 @@ private fun OfflineConnectCallout(scanning: Boolean, onConnect: () -> Unit) {
                     modifier = Modifier.size(18.dp).padding(end = 4.dp),
                 )
                 Text(
-                    if (scanning) "Searching…" else "Scan & Connect",
+                    if (scanning) "Suche…" else "Scan & Connect",
                     style = NoopType.captionNumber,
                     maxLines = 1,
                     softWrap = false,
@@ -866,7 +866,7 @@ private fun connectionModeBadge(live: LiveState, activeConnection: Boolean): Str
 }
 
 /** Whether to render the connection-mode badge. False exactly when the badge would read "OFFLINE" —
- *  the pill already says "Disconnected", so the duplicate rose badge is pure redundancy. */
+ *  the pill already says "Getrennt", so the duplicate rose badge is pure redundancy. */
 private fun showsModeBadge(live: LiveState, activeConnection: Boolean): Boolean =
     !(!activeConnection && !live.connected && !live.encryptedBond)
 
@@ -877,7 +877,7 @@ private fun connectionModeColor(live: LiveState, activeConnection: Boolean): Col
 }
 
 private fun lastSyncLabel(live: LiveState): String =
-    live.lastSyncAt?.let { relativeAgo(it) } ?: "Never"
+    live.lastSyncAt?.let { relativeAgo(it) } ?: "Nie"
 
 // MARK: - Body console (focal HR ring + live physiology)
 
@@ -926,7 +926,7 @@ private fun HeartReadout(live: LiveState, bpm: Int?, activeConnection: Boolean, 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Overline("Heart Rate")
+        Overline("Herzfrequenz")
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.6f)
@@ -1113,7 +1113,7 @@ private data class SignalTile(
 
 private fun signalTiles(live: LiveState, bpm: Int?, activeConnection: Boolean): List<SignalTile> = listOf(
     SignalTile(
-        "Heart rate",
+        "Herzfrequenz",
         bpm?.let { "$it bpm" } ?: "Missing",
         if (activeConnection) "Streaming now" else "No active stream",
         if (bpm == null) Palette.textTertiary else Palette.accent,
@@ -1129,7 +1129,7 @@ private fun signalTiles(live: LiveState, bpm: Int?, activeConnection: Boolean): 
         when {
             activeConnection && live.encryptedBond -> "Encrypted"
             activeConnection -> "Partial"
-            live.connected -> "Connected"
+            live.connected -> "Verbunden"
             else -> "Offline"
         },
         if (activeConnection && live.encryptedBond) "Controls unlocked" else "Standard HR is not a full bond",
@@ -1147,9 +1147,9 @@ private fun signalTiles(live: LiveState, bpm: Int?, activeConnection: Boolean): 
         if (live.backfilling) Palette.metricCyan else Palette.textSecondary,
     ),
     SignalTile(
-        "Battery",
-        live.batteryPct?.let { "${it.toInt()}%" } ?: "Unknown",
-        if (live.charging == true) "Charging" else "Last reported by strap",
+        "Akku",
+        live.batteryPct?.let { "${it.toInt()}%" } ?: "Unbekannt",
+        if (live.charging == true) "Lädt" else "Last reported by strap",
         batteryTint(live.batteryPct),
     ),
     // Wear is only trustworthy on a live link: `worn` defaults true and is only updated by
@@ -1157,7 +1157,7 @@ private fun signalTiles(live: LiveState, bpm: Int?, activeConnection: Boolean): 
     // on activeConnection (triage fix for PR#191, parity with the macOS Wear tile).
     SignalTile(
         "Wear state",
-        if (activeConnection) (if (live.worn) "On wrist" else "Off wrist") else "Unknown",
+        if (activeConnection) (if (live.worn) "On wrist" else "Off wrist") else "Unbekannt",
         if (activeConnection) (if (live.worn) "Eligible for live physiology" else "Wear the strap for scoring") else "Connect to read wear state",
         when {
             !activeConnection -> Palette.textTertiary
@@ -1183,7 +1183,7 @@ private fun SignalTrustTile(tile: SignalTile, modifier: Modifier = Modifier) {
 private fun signalTrustSummary(live: LiveState, activeConnection: Boolean): String = when {
     activeConnection && live.encryptedBond -> "Encrypted stream - deep controls and history sync available."
     activeConnection -> "Live heart rate is flowing; full strap controls need an encrypted bond."
-    live.connected -> "Connected, waiting for a streaming state."
+    live.connected -> "Verbunden, waiting for a streaming state."
     // The actionable "Scan and connect…" CTA now lives in the above-the-fold OfflineConnectCallout,
     // so this ring caption stays a calm empty-state descriptor rather than a competing CTA.
     else -> "Live heart rate appears here once a strap is connected."
@@ -1191,7 +1191,7 @@ private fun signalTrustSummary(live: LiveState, activeConnection: Boolean): Stri
 
 private fun connectionModeDetail(live: LiveState, activeConnection: Boolean): String = when {
     activeConnection && live.encryptedBond -> "Full strap stream is active."
-    activeConnection -> "Heart rate stream is active."
+    activeConnection -> "Herzfrequenz stream is active."
     live.connected -> "Radio connected, stream not yet trusted."
     else -> "No live stream."
 }

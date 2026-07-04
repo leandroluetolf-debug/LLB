@@ -10,7 +10,7 @@ import BackgroundTasks
 /// — and, when a raw 5/MG capture exists, copies that alongside — to the app's Documents directory under a
 /// `yyMMdd-HHmm` timestamped filename, once per day, with no UI. It exists so a reporter chasing an
 /// intermittent overnight fault gets a dated log waiting each morning instead of having to remember to hit
-/// "Save strap log" at the right moment.
+/// "Speichern strap log" at the right moment.
 ///
 /// HONEST about platform limits (the whole point of doing this carefully on Apple):
 /// - **macOS** — the app is usually running, so a foreground `DispatchSourceTimer` fires reliably at the
@@ -29,9 +29,9 @@ enum ScheduledDebugExport {
     // MARK: - Persisted settings (own keys; mirror Android `DebugExportSettings` + the WindDownNudge shape)
 
     private enum K {
-        static let enabled = "debugExport.enabled"          // master enable; default OFF
-        static let time = "debugExport.timeMinutes"         // minutes since local midnight; default 07:00
-        static let lastRun = "debugExport.lastRunDayKey"    // yyyy-MM-dd of the last completed drop (catch-up dedup)
+        static let enabled = "debugExportieren.enabled"          // master enable; default OFF
+        static let time = "debugExportieren.timeMinutes"         // minutes since local midnight; default 07:00
+        static let lastRun = "debugExportieren.lastRunDayKey"    // yyyy-MM-dd of the last completed drop (catch-up dedup)
     }
 
     /// 07:00 — a log waiting when you wake (matches Android's `DEFAULT_TIME`).
@@ -81,7 +81,7 @@ enum ScheduledDebugExport {
 
     /// User-initiated immediate export (the "Run now" button). Always writes, ignoring the daily dedup,
     /// so a tap produces a file there and then. The caller may pass the current raw 5/MG capture URL (from
-    /// `live.puffinCaptureURL`) so a scheduled drop carries the same matched pair the one-tap "Export raw +
+    /// `live.puffinCaptureURL`) so a scheduled drop carries the same matched pair the one-tap "Exportieren raw +
     /// log" does. Returns the written log file URL or nil if the body couldn't be written.
     @discardableResult
     static func runNow(captureURL: URL? = nil) -> URL? {
@@ -169,7 +169,7 @@ enum ScheduledDebugExport {
             return nil
         }
         // Best-effort: copy the supplied raw 5/MG capture alongside, so a "Run now" drop carries the same
-        // matched pair the one-tap "Export raw + log" does. The background timer path passes nil (no live
+        // matched pair the one-tap "Exportieren raw + log" does. The background timer path passes nil (no live
         // session), so it writes just the log — honest about what's available with no session open.
         if let capture = captureURL, FileManager.default.fileExists(atPath: capture.path) {
             let dest = docs.appendingPathComponent("llb-raw-capture-\(stamp).json")
