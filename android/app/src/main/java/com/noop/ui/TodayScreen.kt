@@ -1267,9 +1267,14 @@ fun TodayScreen(
         // destination, a dialog over Today. The Box lets the SectionHeader keep its trailing label while
         // the Edit control sits to its right.
         item {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = Metrics.space14),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Box(modifier = Modifier.weight(1f)) {
-                SectionHeader("Kennzahlen", overline = dayLabel, trailing = "14-day trend")
+                SectionHeader("Kennzahlen", overline = dayLabel, trailing = "14-Tage-Trend")
             }
             TextButton(
                 onClick = { showMetricsEditor = true },
@@ -1277,7 +1282,7 @@ fun TodayScreen(
             ) {
                 Icon(
                     Icons.Filled.Tune,
-                    contentDescription = "Bearbeiten Kennzahlen",
+                    contentDescription = "Kennzahlen bearbeiten",
                     modifier = Modifier.size(Metrics.iconSmall),
                 )
                 Spacer(Modifier.width(4.dp))
