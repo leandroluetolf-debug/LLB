@@ -37,141 +37,12 @@ object WorkoutEditing {
         }
     }
 
-    /**
-     * Sport-cell text in German. "detected" reads as a neutral "Aktivität". WHOOP sport names arrive as
-     * concatenated camelCase (e.g. "TraditionalStrengthTraining"); they are split and translated.
-     * Already-spaced English labels (imports) and known German aliases map to the same display name.
-     * Unknown free-text labels pass through. (#175)
-     */
-    fun displaySport(sport: String): String {
-        val key = sportKey(sport)
-        return GERMAN_SPORT[key] ?: spacedSportLabel(sport)
-    }
-
-    /** Split camelCase tokens ("TraditionalStrengthTraining" → "Traditional Strength Training"). */
-    private fun spacedSportLabel(sport: String): String {
-        if (sport == "detected") return "Aktivität"
-        if (sport.isEmpty() || sport.contains(" ")) return sport
-        val out = StringBuilder()
-        var prev: Char? = null
-        for (ch in sport) {
-            val p = prev
-            if (p != null && ch.isUpperCase() && !p.isUpperCase()) out.append(' ')
-            out.append(ch)
-            prev = ch
-        }
-        return out.toString()
-    }
-
     /** Fold a sport label to a comparable token (lowercase, no spaces/hyphens). */
     private fun normalizeSportToken(sport: String): String {
         if (sport == "detected") return "activity"
         val spaced = spacedSportLabel(sport)
         return spaced.lowercase().filter { !it.isWhitespace() && it != '-' }
     }
-
-    // MARK: - Dismissed detected bouts (durable across re-detection)
-
-    /**
-     * Read-time filter: a DETECTED row is hidden when it OVERLAPS any dismissed marker's
-     * [startTs, endTs] span. Span-overlap (not an exact-key match) survives the small startTs drift a
-     * bout's boundary can take as more HR arrives, matching the macOS dismissed-span semantics exactly.
-     * Imported / manual rows are never auto-hidden (the user deletes those outright). Half-open overlap
-     * test: `row.start < span.end && span.start < row.end`. (#107)
-     */
-    fun isDismissed(row: WorkoutRow, markers: List<DismissedWorkout>): Boolean =
-        classify(row.source) == WorkoutSource.DETECTED &&
-            markers.any { row.startTs < it.endTs && it.startTs < row.endTs }
-
-    /** The durable marker for a detected [row] (caller inserts it into `dismissedWorkout`). */
-    fun dismissedMarker(row: WorkoutRow): DismissedWorkout =
-        DismissedWorkout(deviceId = row.deviceId, startTs = row.startTs, endTs = row.endTs)
-
-    /**
-     * Filter dismissed detected bouts out of a loaded list. Centralised so every caller agrees,
-     * exactly like macOS Repository.workoutRows applies the span filter once.
-     */
-    fun filterDismissed(rows: List<WorkoutRow>, markers: List<DismissedWorkout>): List<WorkoutRow> {
-        if (markers.isEmpty()) return rows
-        return rows.filter { !isDismissed(it, markers) }
-    }
-
-    // MARK: - Cross-source dedup (#687)
-    //
-    // The SAME activity can land twice: once live, Bluetooth-tracked under the strap (rich — real HR
-    // trace, strain, zones, route), and once imported from Health Connect / Apple Health for the same
-    // window (thin — usually just duration + calories). They sit under different deviceIds/sources, so
-    // the workout list shows both as separate sessions. Collapse a pair that is clearly the same bout
-    // (overlapping time window + same sport) to a single richer entry. Mirrors macOS WorkoutSource
-    // dedupCrossSource bound-for-bound.
-
-    /**
-     * Normalised sport key for cross-source matching. Folds English, German and WHOOP camelCase labels
-     * of the same activity to one canonical English key ("Running" / "Laufen" / "running" → "running"),
-     * case- and space-insensitive. Unknown labels keep their folded form.
-     */
-    fun sportKey(sport: String): String {
-        val token = normalizeSportToken(sport)
-        return SPORT_ALIASES[token] ?: token
-    }
-
-    /** The set of [sportKey]s for the named catalogue (Running, Cycling, … Padel, Other). Used ONLY by the
-     *  TRACE path to decide whether a key is a known, non-PII catalogue sport. Mirrors Swift catalogSportKeys. */
-    private val catalogSportKeys: Set<String> =
-        com.noop.analytics.WorkoutSport.all.map { sportKey(it.name) }.toSet()
-
-    /** Canonical English key → German display label. */
-    private val GERMAN_SPORT: Map<String, String> = mapOf(
-        "activity" to "Aktivität",
-        "running" to "Laufen",
-        "walking" to "Gehen",
-        "hiking" to "Wandern",
-        "cycling" to "Radfahren",
-        "openwaterswim" to "Freiwasserschwimmen",
-        "rowing" to "Rudern",
-        "treadmillrun" to "Laufband",
-        "indoorcycle" to "Indoor-Rad",
-        "poolswim" to "Beckenschwimmen",
-        "rowmachine" to "Rudergerät",
-        "elliptical" to "Crosstrainer",
-        "strength" to "Kraft",
-        "strengthtraining" to "Krafttraining",
-        "traditionalstrengthtraining" to "Krafttraining",
-        "weightlifting" to "Gewichtheben",
-        "hiit" to "HIIT",
-        "yoga" to "Yoga",
-        "pilates" to "Pilates",
-        "boxing" to "Boxen",
-        "basketball" to "Basketball",
-        "soccer" to "Fußball",
-        "football" to "Fußball",
-        "baseball" to "Baseball",
-        "badminton" to "Badminton",
-        "tennis" to "Tennis",
-        "squash" to "Squash",
-        "racquetball" to "Racquetball",
-        "tabletennis" to "Tischtennis",
-        "volleyball" to "Volleyball",
-        "martialarts" to "Kampfsport",
-        "dancing" to "Tanzen",
-        "golf" to "Golf",
-        "climbing" to "Klettern",
-        "rockclimbing" to "Klettern",
-        "stretching" to "Dehnen",
-        "skiing" to "Skifahren",
-        "snowboarding" to "Snowboarden",
-        "other" to "Sonstiges",
-        "workout" to "Training",
-        "padel" to "Padel",
-        "pickleball" to "Pickleball",
-        "bowling" to "Bowling",
-        "treadmillwalk" to "Gehen (Laufband)",
-        "bodybuilding" to "Bodybuilding",
-        "cardio" to "Cardio",
-        "swimming" to "Schwimmen",
-        "crossfit" to "CrossFit",
-        "functionalfitness" to "Functional Fitness",
-    )
 
     /** Folded alias (EN/DE/camelCase) → canonical English key used by [sportKey] / [GERMAN_SPORT]. */
     private val SPORT_ALIASES: Map<String, String> = buildMap {
@@ -226,6 +97,135 @@ object WorkoutEditing {
         alias("crossfit")
         alias("functionalfitness")
     }
+
+    /** Canonical English key → German display label. */
+    private val GERMAN_SPORT: Map<String, String> = mapOf(
+        "activity" to "Aktivität",
+        "running" to "Laufen",
+        "walking" to "Gehen",
+        "hiking" to "Wandern",
+        "cycling" to "Radfahren",
+        "openwaterswim" to "Freiwasserschwimmen",
+        "rowing" to "Rudern",
+        "treadmillrun" to "Laufband",
+        "indoorcycle" to "Indoor-Rad",
+        "poolswim" to "Beckenschwimmen",
+        "rowmachine" to "Rudergerät",
+        "elliptical" to "Crosstrainer",
+        "strength" to "Kraft",
+        "strengthtraining" to "Krafttraining",
+        "traditionalstrengthtraining" to "Krafttraining",
+        "weightlifting" to "Gewichtheben",
+        "hiit" to "HIIT",
+        "yoga" to "Yoga",
+        "pilates" to "Pilates",
+        "boxing" to "Boxen",
+        "basketball" to "Basketball",
+        "soccer" to "Fußball",
+        "football" to "Fußball",
+        "baseball" to "Baseball",
+        "badminton" to "Badminton",
+        "tennis" to "Tennis",
+        "squash" to "Squash",
+        "racquetball" to "Racquetball",
+        "tabletennis" to "Tischtennis",
+        "volleyball" to "Volleyball",
+        "martialarts" to "Kampfsport",
+        "dancing" to "Tanzen",
+        "golf" to "Golf",
+        "climbing" to "Klettern",
+        "rockclimbing" to "Klettern",
+        "stretching" to "Dehnen",
+        "skiing" to "Skifahren",
+        "snowboarding" to "Snowboarden",
+        "other" to "Sonstiges",
+        "workout" to "Training",
+        "padel" to "Padel",
+        "pickleball" to "Pickleball",
+        "bowling" to "Bowling",
+        "treadmillwalk" to "Gehen (Laufband)",
+        "bodybuilding" to "Bodybuilding",
+        "cardio" to "Cardio",
+        "swimming" to "Schwimmen",
+        "crossfit" to "CrossFit",
+        "functionalfitness" to "Functional Fitness",
+    )
+
+    /**
+     * Normalised sport key for cross-source matching. Folds English, German and WHOOP camelCase labels
+     * of the same activity to one canonical English key ("Running" / "Laufen" / "running" → "running"),
+     * case- and space-insensitive. Unknown labels keep their folded form.
+     */
+    fun sportKey(sport: String): String {
+        val token = normalizeSportToken(sport)
+        return SPORT_ALIASES[token] ?: token
+    }
+
+    /** The set of [sportKey]s for the named catalogue (Running, Cycling, … Padel, Other). Used ONLY by the
+     *  TRACE path to decide whether a key is a known, non-PII catalogue sport. Mirrors Swift catalogSportKeys. */
+    private val catalogSportKeys: Set<String> =
+        com.noop.analytics.WorkoutSport.all.map { sportKey(it.name) }.toSet()
+
+    /**
+     * Sport-cell text in German. "detected" reads as a neutral "Aktivität". WHOOP sport names arrive as
+     * concatenated camelCase (e.g. "TraditionalStrengthTraining"); they are split and translated.
+     * Already-spaced English labels (imports) and known German aliases map to the same display name.
+     * Unknown free-text labels pass through. (#175)
+     */
+    fun displaySport(sport: String): String {
+        val key = sportKey(sport)
+        return GERMAN_SPORT[key] ?: spacedSportLabel(sport)
+    }
+
+    /** Split camelCase tokens ("TraditionalStrengthTraining" → "Traditional Strength Training"). */
+    private fun spacedSportLabel(sport: String): String {
+        if (sport == "detected") return "Aktivität"
+        if (sport.isEmpty() || sport.contains(" ")) return sport
+        val out = StringBuilder()
+        var prev: Char? = null
+        for (ch in sport) {
+            val p = prev
+            if (p != null && ch.isUpperCase() && !p.isUpperCase()) out.append(' ')
+            out.append(ch)
+            prev = ch
+        }
+        return out.toString()
+    }
+
+    // MARK: - Dismissed detected bouts (durable across re-detection)
+
+    /**
+     * Read-time filter: a DETECTED row is hidden when it OVERLAPS any dismissed marker's
+     * [startTs, endTs] span. Span-overlap (not an exact-key match) survives the small startTs drift a
+     * bout's boundary can take as more HR arrives, matching the macOS dismissed-span semantics exactly.
+     * Imported / manual rows are never auto-hidden (the user deletes those outright). Half-open overlap
+     * test: `row.start < span.end && span.start < row.end`. (#107)
+     */
+    fun isDismissed(row: WorkoutRow, markers: List<DismissedWorkout>): Boolean =
+        classify(row.source) == WorkoutSource.DETECTED &&
+            markers.any { row.startTs < it.endTs && it.startTs < row.endTs }
+
+    /** The durable marker for a detected [row] (caller inserts it into `dismissedWorkout`). */
+    fun dismissedMarker(row: WorkoutRow): DismissedWorkout =
+        DismissedWorkout(deviceId = row.deviceId, startTs = row.startTs, endTs = row.endTs)
+
+    /**
+     * Filter dismissed detected bouts out of a loaded list. Centralised so every caller agrees,
+     * exactly like macOS Repository.workoutRows applies the span filter once.
+     */
+    fun filterDismissed(rows: List<WorkoutRow>, markers: List<DismissedWorkout>): List<WorkoutRow> {
+        if (markers.isEmpty()) return rows
+        return rows.filter { !isDismissed(it, markers) }
+    }
+
+    // MARK: - Cross-source dedup (#687)
+    //
+    // The SAME activity can land twice: once live, Bluetooth-tracked under the strap (rich — real HR
+    // trace, strain, zones, route), and once imported from Health Connect / Apple Health for the same
+    // window (thin — usually just duration + calories). They sit under different deviceIds/sources, so
+    // the workout list shows both as separate sessions. Collapse a pair that is clearly the same bout
+    // (overlapping time window + same sport) to a single richer entry. Mirrors macOS WorkoutSource
+    // dedupCrossSource bound-for-bound.
 
     /**
      * PRIVACY (TRACE PATH ONLY): a redaction-safe sport key for the Workouts test-mode trace. [sportKey]
