@@ -60,6 +60,7 @@ android/app/release/
 *.aab
 *.keystore
 *.jks
+!android/signing/llb-upload.jks
 
 # ── IDE / editor ────────────────────────────────────────────────
 .idea/
@@ -77,6 +78,7 @@ secrets.*
 android/local.properties
 android/keystore.properties
 android/noop-release.jks
+# LLB stable upload key lives in android/signing/ and is committed (see that folder).
 
 # ── Personal data — NEVER publish (real WHOOP/Apple Health exports) ──
 Fixtures/

@@ -15,9 +15,10 @@ local.properties
 .idea/
 .DS_Store
 
-# Keystores / signing
+# Keystores / signing (LLB upload key in signing/ is committed on purpose for stable updates)
 *.jks
 *.keystore
+!signing/llb-upload.jks
 
 # NDK
 .cxx/

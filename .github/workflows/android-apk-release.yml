@@ -41,7 +41,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build full release APK
-        run: ./gradlew assembleFullRelease --no-daemon
+        # Fixed keystore in android/signing/ → same cert every run (installs as update).
+        # versionCode = 300 + run_number so each publish is strictly newer than the last.
+        run: |
+          VERSION_CODE=$((300 + ${{ github.run_number }}))
+          ./gradlew assembleFullRelease --no-daemon \
+            -PllbVersionCode="$VERSION_CODE" \
+            -PllbVersionName="8.0.1-llb.${{ github.run_number }}"
 
       - name: Stage LLB.apk
         run: |
@@ -74,6 +80,8 @@ jobs:
             3. If Play Protect warns, choose **Install anyway**.
 
             Package id: `com.llb.app` — installs **next to** the official NOOP app with its own data.
+
+            Signed with the stable LLB upload key: reinstalling this APK is an **update** and keeps your on-device data.
 
             Built automatically from `main` (commit `${{ github.sha }}`).
           files: dist/LLB.apk

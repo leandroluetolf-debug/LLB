@@ -6,12 +6,15 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-// Optional release signing. Credentials live in `keystore.properties` (git-ignored, never
-// committed); when it's absent — clones, CI without secrets — release falls back to the debug
-// key so `assembleRelease` always produces an installable APK. See docs/BUILD.md.
-val keystorePropsFile = rootProject.file("keystore.properties")
+// Release signing. Prefer the stable LLB upload key (android/signing/) so every CI/local
+// release APK shares one certificate and installs as an update (app data kept). Fall back to
+// a root keystore.properties if present, else the Android debug key.
+val keystorePropsFile = sequenceOf(
+    rootProject.file("signing/keystore.properties"),
+    rootProject.file("keystore.properties"),
+).firstOrNull { it.exists() }
 val keystoreProps = Properties().apply {
-    if (keystorePropsFile.exists()) keystorePropsFile.inputStream().use { load(it) }
+    keystorePropsFile?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -22,8 +25,9 @@ android {
         applicationId = "com.llb.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 257
-        versionName = "8.0.1"
+        // CI passes -PllbVersionCode=<n> so each published APK is a newer update.
+        versionCode = (findProperty("llbVersionCode") as String?)?.toIntOrNull() ?: 300
+        versionName = (findProperty("llbVersionName") as String?) ?: "8.0.1-llb"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -33,7 +37,7 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystorePropsFile.exists()) {
+            if (keystorePropsFile != null) {
                 storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
                 storePassword = keystoreProps.getProperty("storePassword")
                 keyAlias = keystoreProps.getProperty("keyAlias")
@@ -59,9 +63,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Real release key when keystore.properties is present; otherwise the debug key,
-            // so a fresh clone can still build an installable release APK.
-            signingConfig = if (keystorePropsFile.exists())
+            // Stable LLB upload key when present; otherwise debug (local-only fallback).
+            signingConfig = if (keystorePropsFile != null)
                 signingConfigs.getByName("release")
             else
                 signingConfigs.getByName("debug")
