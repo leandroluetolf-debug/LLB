@@ -214,19 +214,33 @@ fun LineChart(
     // the 0-21 scale) pass their axis formatter so the label can't leak the stored scale as a bare
     // unconverted number. Default null keeps every other caller byte-identical.
     formatValue: ((Double) -> String)? = null,
+    // Optional ISO day key per plotted point — shown in the selection label when scrubbing.
+    dates: List<String>? = null,
+    // Fires whenever the selected point changes (-1 = cleared).
+    onSelectedIndexChange: ((Int) -> Unit)? = null,
 ) {
     val cleanValues = remember(values) { values.filter { it.isFinite() } }
     var selectedIndex by remember(cleanValues) { mutableIntStateOf(-1) }
+    androidx.compose.runtime.LaunchedEffect(cleanValues) {
+        selectedIndex = -1
+        onSelectedIndexChange?.invoke(-1)
+    }
+    fun notifySelection(idx: Int) {
+        selectedIndex = idx
+        onSelectedIndexChange?.invoke(idx)
+    }
     val interactiveModifier = if (selectionEnabled) {
         Modifier
             .pointerInput(cleanValues) {
                 detectTapGestures(
                     onTap = { offset ->
                         if (cleanValues.size >= 2 && size.width > 0) {
-                            selectedIndex = nearestIndexForX(
-                                count = cleanValues.size,
-                                width = size.width.toFloat(),
-                                x = offset.x,
+                            notifySelection(
+                                nearestIndexForX(
+                                    count = cleanValues.size,
+                                    width = size.width.toFloat(),
+                                    x = offset.x,
+                                ),
                             )
                         }
                     },
@@ -238,18 +252,22 @@ fun LineChart(
                         detectHorizontalDragGestures(
                             onDragStart = { start ->
                                 if (cleanValues.size < 2 || size.width <= 0f) return@detectHorizontalDragGestures
-                                selectedIndex = nearestIndexForX(
-                                    count = cleanValues.size,
-                                    width = size.width.toFloat(),
-                                    x = start.x,
+                                notifySelection(
+                                    nearestIndexForX(
+                                        count = cleanValues.size,
+                                        width = size.width.toFloat(),
+                                        x = start.x,
+                                    ),
                                 )
                             },
                             onHorizontalDrag = { change, _ ->
                                 if (cleanValues.size < 2 || size.width <= 0f) return@detectHorizontalDragGestures
-                                selectedIndex = nearestIndexForX(
-                                    count = cleanValues.size,
-                                    width = size.width.toFloat(),
-                                    x = change.position.x,
+                                notifySelection(
+                                    nearestIndexForX(
+                                        count = cleanValues.size,
+                                        width = size.width.toFloat(),
+                                        x = change.position.x,
+                                    ),
                                 )
                                 change.consume()
                             },
@@ -368,7 +386,12 @@ fun LineChart(
                             drawCircle(color = Palette.surfaceBase.copy(alpha = StrandAlpha.chartShadow), radius = 9f, center = p)
                             drawCircle(color = color, radius = 4.5f, center = p)
                             drawContext.canvas.nativeCanvas.apply {
-                                val label = lineChartSelectionLabel(cleanValues[selectedIndex], formatValue)
+                                val dateLabel = dates?.getOrNull(selectedIndex)?.let(::lineChartDateLabel)
+                                val label = lineChartSelectionLabel(
+                                    cleanValues[selectedIndex],
+                                    formatValue,
+                                    dateLabel,
+                                )
                                 drawText(label, 8f, 32f, markerPaint)
                             }
                         }
@@ -438,10 +461,22 @@ private fun nearestIndexForX(count: Int, width: Float, x: Float): Int {
     return raw.coerceIn(0, count - 1)
 }
 
-/** The tap/drag pinpoint label: the caller's display formatter when supplied (#463), else the raw
- *  near-integer-collapsing default. Split out so the fallback choice is JVM-testable. */
-internal fun lineChartSelectionLabel(value: Double, formatValue: ((Double) -> String)?): String =
-    formatValue?.invoke(value) ?: formatLineValue(value)
+/** The tap/drag pinpoint label: optional date + the caller's display formatter when supplied (#463). */
+internal fun lineChartSelectionLabel(
+    value: Double,
+    formatValue: ((Double) -> String)?,
+    dateLabel: String? = null,
+): String {
+    val valueStr = formatValue?.invoke(value) ?: formatLineValue(value)
+    return if (dateLabel != null) "$dateLabel · $valueStr" else valueStr
+}
+
+/** ISO yyyy-MM-dd → "d. MMM yyyy" for chart scrub labels. */
+internal fun lineChartDateLabel(dayKey: String): String =
+    runCatching {
+        java.time.LocalDate.parse(dayKey)
+            .format(java.time.format.DateTimeFormatter.ofPattern("d. MMM yyyy", java.util.Locale.GERMAN))
+    }.getOrDefault(dayKey)
 
 private fun formatLineValue(value: Double): String {
     if (!value.isFinite()) return "-"

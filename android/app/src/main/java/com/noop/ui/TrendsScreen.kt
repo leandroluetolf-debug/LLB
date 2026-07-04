@@ -144,7 +144,7 @@ fun TrendsScreen(vm: AppViewModel) {
 
     LazyScreenScaffold(
         title = "Trends",
-        subtitle = "The thread of you over time.",
+        subtitle = "Dein Verlauf über die Zeit.",
         // LIQUID SKY BACKDROP (the pilot pattern — LiquidScreenSky.kt): the time-of-day liquid sky settles
         // into the theme canvas behind the header + top rows, full-bleed via the scaffold's topBackground
         // plumbing. Static (LiquidSkyStatic, inside the helper) — never an animated sky behind a scrolling
@@ -240,10 +240,10 @@ fun TrendsScreen(vm: AppViewModel) {
                 // mirrors the iOS hero's `valueRange: 0...106`.
                 chartHeadroom = 0.06f,
                 footer = listOf(
-                    "Avg" to (recAvg?.let { "${it.roundToInt()}" } ?: EM_DASH),
-                    "Peak" to (recovery.values.maxOrNull()?.let { "${it.roundToInt()}" } ?: EM_DASH),
-                    "Low" to (recovery.values.minOrNull()?.let { "${it.roundToInt()}" } ?: EM_DASH),
-                    "Days" to "${recovery.values.size}",
+                    "Ø" to (recAvg?.let { "${it.roundToInt()}" } ?: EM_DASH),
+                    "Hoch" to (recovery.values.maxOrNull()?.let { "${it.roundToInt()}" } ?: EM_DASH),
+                    "Tief" to (recovery.values.minOrNull()?.let { "${it.roundToInt()}" } ?: EM_DASH),
+                    "Tage" to "${recovery.values.size}",
                 ),
             )
         }
@@ -256,7 +256,7 @@ fun TrendsScreen(vm: AppViewModel) {
                 modifier = Modifier.staggeredAppear(index = 4),
                 verticalArrangement = Arrangement.spacedBy(Metrics.gap),
             ) {
-                SectionHeader("Daily signals", overline = "Trends")
+                SectionHeader("Tägliche Signale", overline = "Trends")
                 MetricTrendCard(
                     title = "Herzfrequenzvariabilität", unit = "ms",
                     color = Palette.metricPurple,
@@ -357,8 +357,8 @@ private fun WeeklyDigestNav(
         WeekNavBar(weekOffset = weekOffset, minWeekOffset = minWeekOffset, onStep = onStep)
         if (digest.isEmpty) {
             DataPendingNote(
-                title = "No readings diese Woche",
-                body = "Step to another week with the arrows above to see its review.",
+                title = "Keine Messungen diese Woche",
+                body = "Mit den Pfeilen oben zu einer anderen Woche wechseln.",
             )
         } else {
             NoopCard { WeeklyDigestContent(digest = digest, compact = true) }
@@ -375,9 +375,9 @@ private fun WeekNavBar(weekOffset: Int, minWeekOffset: Int, onStep: (Int) -> Uni
     val atOldest = weekOffset <= minWeekOffset
     val atNewest = weekOffset >= 0
     val label = when {
-        weekOffset == 0 -> "This week"
-        weekOffset == -1 -> "Last week"
-        else -> "${-weekOffset} weeks ago"
+        weekOffset == 0 -> "Diese Woche"
+        weekOffset == -1 -> "Letzte Woche"
+        else -> "Vor ${-weekOffset} Wochen"
     }
     // liquidPress on the two week-step chevrons (the screen's tappable controls): each settles inward on
     // press, wired to the SAME interactionSource the IconButton uses for its own ripple, matching the pilot.
@@ -395,7 +395,7 @@ private fun WeekNavBar(weekOffset: Int, minWeekOffset: Int, onStep: (Int) -> Uni
         ) {
             Icon(
                 Icons.Filled.ChevronLeft,
-                contentDescription = "Previous week",
+                contentDescription = "Vorherige Woche",
                 tint = if (atOldest) Palette.textTertiary else Palette.accent,
             )
         }
@@ -416,7 +416,7 @@ private fun WeekNavBar(weekOffset: Int, minWeekOffset: Int, onStep: (Int) -> Uni
         ) {
             Icon(
                 Icons.Filled.ChevronRight,
-                contentDescription = "Next week",
+                contentDescription = "Nächste Woche",
                 tint = if (atNewest) Palette.textTertiary else Palette.accent,
             )
         }
@@ -508,15 +508,15 @@ private fun PipScoreRow(
 
 /** W(7) / M(30) / 3M(90) / 6M(180) / 1Y(365) / ALL. */
 private enum class TrendsRange(val days: Int?, val label: String, val longName: String) {
-    Week(7, "W", "week"),
-    Month(30, "M", "month"),
-    Quarter(90, "3M", "3 months"),
-    Half(180, "6M", "6 months"),
-    Year(365, "1Y", "year"),
-    All(null, "ALL", "all history");
+    Week(7, "W", "7 Tage"),
+    Month(30, "M", "30 Tage"),
+    Quarter(90, "3M", "3 Monate"),
+    Half(180, "6M", "6 Monate"),
+    Year(365, "1J", "1 Jahr"),
+    All(null, "ALL", "gesamte Historie");
 
-    /** "Trailing 90 days" / "All history" , the card/range subtitle. */
-    val subtitle: String get() = days?.let { "Trailing $it days" } ?: "All history"
+    /** "Letzte 90 Tage" / "Gesamte Historie" — Untertitel der Karte/Zeitraumwahl. */
+    val subtitle: String get() = days?.let { "Letzte $it Tage" } ?: "Gesamte Historie"
 
     /** This range plus every LARGER range, ascending , the auto-expand search order. */
     val widening: List<TrendsRange>
@@ -595,9 +595,9 @@ private fun windowPoints(
 
 /** Caption text, mirroring TrendsView.caption(count:eff:). */
 private fun caption(count: Int, eff: TrendsRange, selected: TrendsRange): String {
-    val unit = if (count == 1) "reading" else "readings"
+    val unit = if (count == 1) "Messung" else "Messungen"
     return if (eff != selected) {
-        "$count $unit · sparse , widened to ${eff.longName}"
+        "$count $unit · wenig Daten, erweitert auf ${eff.longName}"
     } else {
         "$count $unit · ${selected.longName}"
     }
@@ -637,6 +637,18 @@ private fun ChartCard(
     liquidHero: Boolean = false,
     headlineValue: Double? = null,
 ) {
+    var selectedIndex by remember(values, dates) { mutableIntStateOf(-1) }
+    val headerReadout = when {
+        selectedIndex >= 0 && selectedIndex < values.size -> buildString {
+            dates.getOrNull(selectedIndex)?.let {
+                append(lineChartDateLabel(it))
+                append(" · ")
+            }
+            append(formatY(values[selectedIndex]))
+        }
+        trailing != null -> trailing
+        else -> null
+    }
     // The card body — one composable reused by both the classic and the liquid-hero container so the
     // header / chart / footer layout is byte-identical between them; only the surface + the header readout
     // treatment differ.
@@ -655,9 +667,9 @@ private fun ChartCard(
                     // average, the value counting up over it (white, tabular, soft shadow, hit-transparent).
                     // Same value + charge tint as the plain readout it replaces — the chart stays crisp.
                     HeadlineVessel(value = headlineValue, tint = Palette.recoveryColor(headlineValue))
-                } else if (trailing != null) {
+                } else if (headerReadout != null) {
                     // Neutral 15pt readout (matches iOS TrendsView) , not the 22sp tinted figure.
-                    Text(trailing, style = NoopType.bodyNumber, color = Palette.textPrimary)
+                    Text(headerReadout, style = NoopType.bodyNumber, color = Palette.textPrimary)
                 }
             }
 
@@ -672,6 +684,7 @@ private fun ChartCard(
                     tipColor = tipColor,
                     formatY = formatY,
                     headroom = chartHeadroom,
+                    onSelectedIndexChange = { selectedIndex = it },
                 )
             } else {
                 SparsePlaceholder()
@@ -759,6 +772,7 @@ private fun ChartWithAxes(
     tipColor: Color = color,
     // See ChartCard.chartHeadroom , fraction of the plot left empty above the peak.
     headroom: Float = 0f,
+    onSelectedIndexChange: (Int) -> Unit = {},
 ) {
     val maxV = values.max()
     val avgV = values.average()
@@ -801,6 +815,8 @@ private fun ChartWithAxes(
                         // #463: the pinpoint label goes through the SAME formatter as the axis column,
                         // so a tapped Effort day can't print the stored 0-100 value beside a 0-21 axis.
                         formatValue = formatY,
+                        dates = dates,
+                        onSelectedIndexChange = onSelectedIndexChange,
                     )
                     GlowEndCap(values = values, tipColor = tipColor)
                 }
@@ -826,7 +842,7 @@ private fun ChartWithAxes(
 /** ISO "yyyy-MM-dd" → "d MMM"; falls back to the raw string (or "" when null) if it doesn't parse. */
 private fun prettyAxisDate(day: String?): String =
     day?.let {
-        runCatching { LocalDate.parse(it).format(DateTimeFormatter.ofPattern("d MMM", Locale.US)) }
+        runCatching { LocalDate.parse(it).format(DateTimeFormatter.ofPattern("d. MMM", Locale.GERMAN)) }
             .getOrDefault(it)
     }.orEmpty()
 
@@ -857,9 +873,7 @@ private fun MetricTrendCard(
         higherIsBetter = higherIsBetter,
         changeFmt = fmt,
         footer = listOf(
-            // Plain "Mean" to match the bare Min/Max columns; the unit moves into the value
-            // (e.g. "58 ms") so uppercasing can't render a shouty "MEAN MS".
-            "Mean" to (avg?.let { "${fmt(it)} $unit" } ?: EM_DASH),
+            "Ø" to (avg?.let { "${fmt(it)} $unit" } ?: EM_DASH),
             "Min" to (resolved.values.minOrNull()?.let { fmt(it) } ?: EM_DASH),
             "Max" to (resolved.values.maxOrNull()?.let { fmt(it) } ?: EM_DASH),
         ),
@@ -917,14 +931,14 @@ private fun RecoveryHistoryCard(days: List<DailyMetric>, range: TrendsRange) {
         days.takeLast(span).mapNotNull { it.recovery }
     }
     val title = if (range == TrendsRange.All && days.size > 365) {
-        "Charge , all history"
+        "Charge — gesamte Historie"
     } else {
-        "Charge , past year"
+        "Charge — letztes Jahr"
     }
 
     NoopCard(tint = Palette.chargeColor) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(title, overline = "Calendar", trailing = "${recovery.size} days")
+            SectionHeader(title, overline = "Kalender", trailing = "${recovery.size} Tage")
             if (recovery.size >= 2) {
                 BarChart(
                     values = recovery,
@@ -936,8 +950,7 @@ private fun RecoveryHistoryCard(days: List<DailyMetric>, range: TrendsRange) {
             }
             HorizontalDivider(color = Palette.hairline)
             Text(
-                "Each bar is one day's Charge score, low to high. The 53-week calendar " +
-                    "heat-grid is part of the desktop app.",
+                "Jeder Balken ist der Charge-Wert eines Tages. Die 53-Wochen-Heatmap gibt es in der Desktop-App.",
                 style = NoopType.footnote,
                 color = Palette.textTertiary,
             )
@@ -987,7 +1000,7 @@ private fun SparsePlaceholder(height: Dp = Metrics.chartHeight) {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            "Not enough data for this window.",
+            "Zu wenig Daten für diesen Zeitraum.",
             style = NoopType.subhead,
             color = Palette.textTertiary,
             textAlign = TextAlign.Center,
@@ -998,9 +1011,8 @@ private fun SparsePlaceholder(height: Dp = Metrics.chartHeight) {
 @Composable
 private fun EmptyTrends() {
     DataPendingNote(
-        title = "Trends need history to draw",
-        body = "Trends need history to draw. Importieren your WHOOP export in Datenquellen " +
-            "to see weeks, months and years instantly.",
+        title = "Trends brauchen Historie",
+        body = "Importiere deinen WHOOP-Export unter Datenquellen, um Wochen, Monate und Jahre sofort zu sehen.",
     )
 }
 

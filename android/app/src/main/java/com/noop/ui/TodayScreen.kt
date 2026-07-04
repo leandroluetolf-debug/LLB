@@ -546,19 +546,26 @@ fun TodayScreen(
     var carriedSleepDismissed by remember {
         mutableStateOf(TodayCardDismissal.isDismissed(context, CARD_CARRIED_SLEEP))
     }
-    var needsStrapDismissed by remember {
-        mutableStateOf(TodayCardDismissal.isDismissed(context, CARD_NEEDS_STRAP))
+    // Clear any legacy persisted dismiss of the needs-strap card (now session-only).
+    LaunchedEffect(Unit) {
+        TodayCardDismissal.setDismissed(context, CARD_NEEDS_STRAP, false)
     }
+    var needsStrapDismissed by remember { mutableStateOf(false) }
     // Dismiss a Today info-card INTO the inbox: persist its flag, hide it, and post a restorable
     // `.dismissedCard` update carrying the card id. Mirrors the iOS `dismissTodayCard`.
+    // CARD_NEEDS_STRAP is intentionally excluded — it reappears on every app start and is only
+    // hidden for the current session via [needsStrapDismissed].
     val dismissTodayCard: (String, String, String) -> Unit = { id, title, message ->
+        if (id == CARD_NEEDS_STRAP) {
+            needsStrapDismissed = true
+            return@Unit
+        }
         TodayCardDismissal.setDismissed(context, id, true)
         when (id) {
             CARD_SCORES_BUILDING -> scoresBuildingDismissed = true
             CARD_NEW_HERE -> newHereDismissed = true
             CARD_CALIBRATING -> calibratingDismissed = true
             CARD_CARRIED_SLEEP -> carriedSleepDismissed = true
-            CARD_NEEDS_STRAP -> needsStrapDismissed = true
         }
         updateStore?.post(
             UpdateItem(
@@ -580,7 +587,6 @@ fun TodayScreen(
                 CARD_NEW_HERE -> newHereDismissed = false
                 CARD_CALIBRATING -> calibratingDismissed = false
                 CARD_CARRIED_SLEEP -> carriedSleepDismissed = false
-                CARD_NEEDS_STRAP -> needsStrapDismissed = false
             }
             updateStore.restoreRequest = null
         }

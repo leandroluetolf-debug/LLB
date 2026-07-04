@@ -165,8 +165,8 @@ class WeeklyDigestTest {
         assertFalse(d.focalPoints.isEmpty())
         val top = d.focalPoints[0]
         assertTrue(top, top.contains("Charge"))
-        assertTrue(top, top.contains("up"))
-        assertTrue(top, top.contains("good sign"))
+        assertTrue(top, top.contains("gestiegen"))
+        assertTrue(top, top.contains("gutes Zeichen"))
     }
 
     @Test fun restingHrRiseReadsAsWorthALook() {
@@ -175,8 +175,8 @@ class WeeklyDigestTest {
         for (day in 1..7) rhr[fmt(day)] = 52.0
         val d = WeeklyDigestEngine.build(mapOf(WeeklyMetric.RHR to rhr), "2026-06-13")
         val line = d.focalPoints.firstOrNull() ?: ""
-        assertTrue(line, line.contains("Resting HR"))
-        assertTrue(line, line.contains("worth a look"))
+        assertTrue(line, line.contains("Ruhepuls"))
+        assertTrue(line, line.contains("einen Blick wert"))
     }
 
     @Test fun steadyWeekGivesCalmLine() {
@@ -187,7 +187,7 @@ class WeeklyDigestTest {
             "2026-06-13",
         )
         assertEquals(1, d.focalPoints.size)
-        assertTrue(d.focalPoints[0], d.focalPoints[0].lowercase().contains("steady"))
+        assertTrue(d.focalPoints[0], d.focalPoints[0].lowercase().contains("ruhige"))
     }
 
     @Test fun sparseWeekSaysTooEarlyNotSteady() {
@@ -202,9 +202,9 @@ class WeeklyDigestTest {
         assertEquals(2, d.summary(WeeklyMetric.CHARGE)!!.thisWeek.n)   // sparse current week
         assertEquals(1, d.focalPoints.size)
         val line = d.focalPoints[0]
-        assertTrue(line, line.contains("too early"))
-        assertTrue(line, line.contains("2 days"))
-        assertFalse(line, line.lowercase().contains("steady"))
+        assertTrue(line, line.contains("zu früh"))
+        assertTrue(line, line.contains("2 Tage"))
+        assertFalse(line, line.lowercase().contains("ruhige"))
     }
 
     @Test fun sparsePreviousWeekSaysRoughNotSteady() {
@@ -222,11 +222,11 @@ class WeeklyDigestTest {
         assertEquals(2, d.summary(WeeklyMetric.CHARGE)!!.weekOverWeek.previous.n) // sparse previous week
         assertEquals(1, d.focalPoints.size)
         val line = d.focalPoints[0]
-        assertTrue(line, line.contains("Last week"))
-        assertTrue(line, line.contains("rough"))
-        assertTrue(line, line.contains("2 days"))
-        assertFalse(line, line.lowercase().contains("steady"))
-        assertFalse(line, line.contains("too early"))
+        assertTrue(line, line.contains("Letzte Woche"))
+        assertTrue(line, line.contains("grob"))
+        assertTrue(line, line.contains("2 Tage"))
+        assertFalse(line, line.lowercase().contains("ruhige"))
+        assertFalse(line, line.contains("zu früh"))
     }
 
     // MARK: - Rough-comparison flag (chips must not imply confidence on a sparse side)

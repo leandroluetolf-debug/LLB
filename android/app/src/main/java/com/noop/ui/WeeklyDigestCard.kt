@@ -169,11 +169,11 @@ fun WeeklyDigestContent(digest: WeeklyDigest, compact: Boolean = false) {
                 Text(weekRangeLabel(digest), style = NoopType.title2, color = Palette.textPrimary)
             }
             Text(
-                "${digest.daysWithData}/7 days",
+                "${digest.daysWithData}/7 Tage",
                 style = NoopType.footnote,
                 color = Palette.textSecondary,
                 modifier = Modifier.semantics {
-                    contentDescription = "${digest.daysWithData} of 7 days had data diese Woche"
+                    contentDescription = "${digest.daysWithData} von 7 Tagen mit Daten diese Woche"
                 },
             )
         }
@@ -199,14 +199,14 @@ fun WeeklyDigestContent(digest: WeeklyDigest, compact: Boolean = false) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 digest.sleepConsistencySD?.let { sd ->
                     Text(
-                        "Schlaf steadiness: Rest varied ±${fmt1(sd)} pts night to night.",
+                        "Schlaf-Stabilität: Rest schwankte nachts um ±${fmt1(sd)} Pkt.",
                         style = NoopType.footnote,
                         color = Palette.textTertiary,
                     )
                 }
                 Text(digest.balance.sentence, style = NoopType.footnote, color = Palette.textTertiary)
                 Text(
-                    "Informational only, not medical advice.",
+                    "Nur zur Information, kein medizinischer Rat.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
                 )
