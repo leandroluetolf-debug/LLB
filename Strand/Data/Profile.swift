@@ -40,7 +40,7 @@ final class ProfileStore: ObservableObject {
 
     // ── Profile picture (optional, on-device only) ──────────────────────────────────────────────
     /// The user's chosen profile photo as JPEG bytes, or nil for the default SF-Symbol fallback.
-    /// LOCAL-ONLY — like every other field here it lives in UserDefaults on this device; NOOP is
+    /// LOCAL-ONLY — like every other field here it lives in UserDefaults on this device; LLB is
     /// fully offline so this is never uploaded anywhere. Always set via ``setAvatar(_:)`` (which
     /// downscales) rather than written directly, so the persisted blob stays small (~256px).
     @Published var avatarImageData: Data? {

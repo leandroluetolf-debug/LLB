@@ -39,7 +39,7 @@ public struct LabMarkerRow: Equatable, Codable, Sendable {
     public var unit: String
     public var source: String
     public var note: String?
-    /// User-entered reference range, shown back verbatim. NOOP ships none.
+    /// User-entered reference range, shown back verbatim. LLB ships none.
     public var referenceText: String?
 
     public init(

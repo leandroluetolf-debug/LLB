@@ -8,9 +8,9 @@ import ZIPFoundation
 /// (shared via the iOS Files app), a `.zip` of it, or the bare `<user_id>.db`. The
 /// health metrics live in `DataBase/<user_id>/de/<user_id>.db` as one row per sample
 /// with a JSON `value` column; this importer opens that file **read-only** and folds
-/// the daily-rollup tables and the per-session `sleep` table into NOOP's shapes.
+/// the daily-rollup tables and the per-session `sleep` table into LLB's shapes.
 ///
-/// This is **parse-only**: it never touches NOOP's own store, only the foreign file
+/// This is **parse-only**: it never touches LLB's own store, only the foreign file
 /// the user already owns. No Bluetooth, no Xiaomi cloud, no account.
 ///
 /// The table/field mapping and sleep-stage reconstruction are **re-derived** from the
@@ -20,7 +20,7 @@ public struct XiaomiBandImporter {
 
     public init() {}
 
-    // Day-rollup tables, keyed by NOOP day. (`goal_day` is intentionally skipped —
+    // Day-rollup tables, keyed by LLB day. (`goal_day` is intentionally skipped —
     // it carries targets, not measurements.)
     static let dayTables = [
         "steps_day", "calories_day", "heart_rate_day", "sleep_day",

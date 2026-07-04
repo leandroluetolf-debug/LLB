@@ -6,7 +6,7 @@ import XCTest
 /// These pin the byte-level encoding against the publicly-documented protocol (judes.club's
 /// frame-builder + Asherlc/dofek's APK decompilation). The golden `enable_r22_packets` frame below was
 /// produced independently from judes.club's `setConfigPayload`/`command` algorithm and confirmed to match
-/// what NOOP's own `puffinCommandFrame` emits — so a regression in either the framing or the flag table
+/// what LLB's own `puffinCommandFrame` emits — so a regression in either the framing or the flag table
 /// will fail here, with no hardware needed.
 final class Whoop5ConfigTests: XCTestCase {
 
@@ -31,7 +31,7 @@ final class Whoop5ConfigTests: XCTestCase {
         XCTAssertEqual(hex(frame), expected)
     }
 
-    /// The built frame must round-trip through NOOP's own 5.0 frame verifier (CRC16 header + CRC32 tail),
+    /// The built frame must round-trip through LLB's own 5.0 frame verifier (CRC16 header + CRC32 tail),
     /// proving the strap-side integrity checks would accept it.
     func testEnableR22PacketsFrameVerifies() {
         let frame = Whoop5Config.frame(flag: Whoop5Config.Flag("enable_r22_packets", 0x32), seq: 7)

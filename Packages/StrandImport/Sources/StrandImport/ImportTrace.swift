@@ -97,7 +97,7 @@ public enum ImportTrace {
     }
 
     /// The failing-file-sample lines: a REDACTED, capped peek at the start of the input that failed to
-    /// parse at all (e.g. a header NOOP did not recognise, a wrong-format file). `rawSample` is raw bytes
+    /// parse at all (e.g. a header LLB did not recognise, a wrong-format file). `rawSample` is raw bytes
     /// decoded to text upstream; it is masked here (every value-like run is replaced, only structural
     /// punctuation + recognised header tokens survive) and hard-capped to `maxSampleChars`, so no raw
     /// health value or identifier can ride along. Returns [] when there is nothing to sample.

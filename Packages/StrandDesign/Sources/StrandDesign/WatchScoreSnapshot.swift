@@ -21,7 +21,7 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
     /// `nil` and the watch shows a cal marker rather than a number.
     public var chargeCalibrating: Bool
 
-    /// Effort (strain) on NOOP's 0 to 100 axis. `nil` when there is no usable HR window for the day.
+    /// Effort (strain) on LLB's 0 to 100 axis. `nil` when there is no usable HR window for the day.
     public var effort: Double?
     /// True when Effort is still calibrating. `effort` is `nil` while this is true.
     public var effortCalibrating: Bool
@@ -75,7 +75,7 @@ public struct WatchScoreSnapshot: Codable, Equatable, Sendable {
     // reads the last known value immediately.
 
     /// The shared app group both the watch app and its complication read the snapshot from.
-    public static let appGroupId = "group.com.noopapp.noop"
+    public static let appGroupId = "group.com.llb.app"
     /// The UserDefaults key the latest snapshot is stored under in the shared app group.
     public static let storageKey = "latestWatchSnapshot"
 

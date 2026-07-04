@@ -33,7 +33,7 @@ final class WatchSessionBridge: NSObject, ObservableObject {
     /// (~50/day for complication updates), so `pushLatest` never sends more often than this, and only
     /// when the headline values actually changed. BOTH checks must pass; see `shouldPush`.
     static let minPushInterval: TimeInterval = 30 * 60
-    /// Whether a watch is currently paired + has the NOOP watch app installed + is reachable enough to
+    /// Whether a watch is currently paired + has the LLB watch app installed + is reachable enough to
     /// receive context. Application context still queues for delivery when the watch is briefly away, so
     /// this is informational, not a gate on sending.
     @Published private(set) var isWatchReachable = false
@@ -159,7 +159,7 @@ final class WatchSessionBridge: NSObject, ObservableObject {
         // shows a cal marker, not a dash that looks like an outage. We treat "no number for the anchor
         // day" as calibrating only when there is at least some day data to calibrate FROM. With no day
         // at all (a fresh, never-synced phone) the flags stay false and the watch shows its neutral
-        // "open NOOP on your iPhone" empty state instead of implying calibration is underway.
+        // "open LLB on your iPhone" empty state instead of implying calibration is underway.
         let hasAnyDay = day != nil
         let charge = day?.recovery
         let effort = day?.strain

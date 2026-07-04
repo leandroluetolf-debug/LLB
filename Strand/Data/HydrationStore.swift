@@ -204,7 +204,7 @@ extension Repository {
     }
 
     /// Today's hydration goal (ml) from the profile sex + today's Effort score. Pure math in
-    /// `HydrationGoal`; this just feeds it the live inputs (today's `strain` is NOOP's 0–100 Effort).
+    /// `HydrationGoal`; this just feeds it the live inputs (today's `strain` is LLB's 0–100 Effort).
     func hydrationGoalML(profileSex: String) -> Int {
         HydrationGoal.dailyGoalML(sex: profileSex, effort: today?.strain)
     }

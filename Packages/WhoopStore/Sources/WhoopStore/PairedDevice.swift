@@ -56,7 +56,7 @@ public enum SourceKind: String, Sendable, CaseIterable {
     /// An EXPERIMENTAL live Oura Ring (gen 3/4/5) source over the ring's own clean-room BLE protocol
     /// (OuraProtocol package). Owns its OWN central/GATT, never the WHOOP path. Surfaces only the ring's
     /// decoded raw signals + open HRV/sleep-phase tags (capabilities {hr, hrv, spo2, skinTemp, sleep});
-    /// NOOP computes its own Charge/Rest and never reads Oura's encrypted readiness/sleep scores. When a
+    /// LLB computes its own Charge/Rest and never reads Oura's encrypted readiness/sleep scores. When a
     /// signal can't be read it stays "-" (Huami precedent), never faked. Additive (no DB migration): only
     /// the experimental add-device wizard's Oura path writes it.
     case oura

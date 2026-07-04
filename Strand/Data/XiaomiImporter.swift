@@ -20,7 +20,7 @@ enum XiaomiImporter {
         let result = try ImportCoordinator().importXiaomiBand(from: url)
 
         // Day rollups → DailyMetric. The Mi Fitness export has no HRV / recovery /
-        // respiration, so those stay nil and NOOP derives what it can locally.
+        // respiration, so those stay nil and LLB derives what it can locally.
         var metrics: [DailyMetric] = []
         for d in result.days {
             metrics.append(DailyMetric(

@@ -256,7 +256,7 @@ struct TrendsView: View {
                         // only when NO week in history has data. Past weeks render in the same format.
                         weeklyDigestNav
                             .staggeredAppear(index: 0)
-                        // The Charge / Effort / Rest trio, presented in NOOP's pip language.
+                        // The Charge / Effort / Rest trio, presented in LLB's pip language.
                         weekInReview(charge: recovery, effort: strain, rest: rest)
                             .staggeredAppear(index: 1)
                         rangeBar(recovery: recovery)
@@ -396,7 +396,7 @@ struct TrendsView: View {
 
     // MARK: Week in Review — the Charge / Effort / Rest trio in pip language
 
-    /// The three daily scores as NOOP pip rows over the resolved window: Charge (recovery, 0–100),
+    /// The three daily scores as LLB pip rows over the resolved window: Charge (recovery, 0–100),
     /// Effort (strain, shown on the WHOOP 0–21 scale per the unit toggle) and Rest (sleep_performance
     /// composite, 0–100 — the same metric the Today Rest score shows, #732). Each value ticks up via
     /// `CountUpText`; the segmented `PipBar` cascades on appear. Self-

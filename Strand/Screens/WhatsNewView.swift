@@ -2,7 +2,7 @@ import SwiftUI
 import StrandDesign
 
 /// "What's New" — a proper in-app changelog, shown automatically after an update and reachable any
-/// time from Settings. It also restates, up top, what NOOP is and what to expect, so people who never
+/// time from Settings. It also restates, up top, what LLB is and what to expect, so people who never
 /// open GitHub still understand the experimental footing and the WHOOP 5/MG status.
 struct WhatsNewView: View {
     let onClose: () -> Void
@@ -53,7 +53,7 @@ struct WhatsNewView: View {
                 Text("WHAT'S NEW").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textTertiary)
-                Text("NOOP \(AppChangelog.currentVersion)")
+                Text("LLB \(AppChangelog.currentVersion)")
                     .font(StrandFont.rounded(26, weight: .bold))
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text("Release notes").font(StrandFont.caption)

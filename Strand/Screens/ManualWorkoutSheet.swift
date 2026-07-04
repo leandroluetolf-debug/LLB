@@ -113,7 +113,7 @@ struct ManualWorkoutSheet: View {
     //
     // A searchable PICKER over the shared WorkoutCatalog (the same named-sport list the live tracker
     // uses, incl. Padel) with a free-text FALLBACK: the text field IS the value, so an unusual sport
-    // NOOP doesn't enumerate still saves exactly as typed (#519). Typing filters the catalogue
+    // LLB doesn't enumerate still saves exactly as typed (#519). Typing filters the catalogue
     // beneath the field; tapping a match fills it; the list collapses on a settled / off-catalogue
     // entry so the short form isn't permanently covered. Mirrors Android WorkoutsScreen.SportPickerField.
 
@@ -331,7 +331,7 @@ struct StartWorkoutSheet: View {
         self.onStart = onStart
         self.heading = title ?? String(localized: "Start a workout")
         self.explainer = subtitle
-            ?? String(localized: "Pick a sport. NOOP records HR, peak, average and effort from the live feed.")
+            ?? String(localized: "Pick a sport. LLB records HR, peak, average and effort from the live feed.")
         self.actionVerb = actionVerb ?? String(localized: "Start")
     }
 

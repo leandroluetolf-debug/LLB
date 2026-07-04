@@ -30,7 +30,7 @@ enum WhoopImporter {
                 restingHr: c.restingHeartRate.map { Int($0.rounded()) },
                 avgHrv: c.hrvMs,
                 recovery: c.recoveryScore,
-                // WHOOP Day Strain (0–21) → NOOP's 0–100 Effort axis at the store boundary.
+                // WHOOP Day Strain (0–21) → LLB's 0–100 Effort axis at the store boundary.
                 strain: WhoopExportImporter.effortFromImportedDayStrain(c.dayStrain),
                 exerciseCount: nil,
                 spo2Pct: c.bloodOxygenPct,

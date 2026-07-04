@@ -17,7 +17,7 @@ import Foundation
 public enum FusionSource: String, Equatable, Sendable, CaseIterable, Codable {
     /// Imported WHOOP record (CSV/zip export under the strap's `deviceId`, e.g. "my-whoop").
     case whoopImport = "my-whoop"
-    /// NOOP-computed score derived on-device from the raw strap streams (the "$deviceId-noop" sibling).
+    /// LLB-computed score derived on-device from the raw strap streams (the "$deviceId-noop" sibling).
     case noopComputed = "my-whoop-noop"
     /// Apple Health aggregate of a declared-compatible quantity.
     case appleHealth = "apple-health"
@@ -34,7 +34,7 @@ public enum FusionSource: String, Equatable, Sendable, CaseIterable, Codable {
     public var displayName: String {
         switch self {
         case .whoopImport:   return "WHOOP"
-        case .noopComputed:  return "NOOP"
+        case .noopComputed:  return "LLB"
         case .appleHealth:   return "Apple Health"
         case .healthConnect: return "Health Connect"
         case .xiaomiBand:    return "Mi Band"

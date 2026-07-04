@@ -14,7 +14,7 @@ import Foundation
 //
 // NON-CLINICAL (spec §"Non-clinical / legal framing"): this type holds ONLY values
 // the user entered themselves. `referenceText` is the user's own report text shown
-// back verbatim — NOOP never ships a reference range and never asserts normality.
+// back verbatim — LLB never ships a reference range and never asserts normality.
 // Nothing here tests, reads, or interprets a result.
 //
 // Pure value type, DB-free and I/O-free (mirrors `ImportModels` style) so it can be
@@ -58,7 +58,7 @@ public struct LabMarker: Sendable, Equatable, Codable {
     /// Optional user-entered free-text note for this reading.
     public var note: String?
     /// Optional reference range, shown back VERBATIM as the user typed it from their
-    /// own report. NOOP never computes or ships a range (spec §"Non-clinical").
+    /// own report. LLB never computes or ships a range (spec §"Non-clinical").
     public var referenceText: String?
 
     public init(

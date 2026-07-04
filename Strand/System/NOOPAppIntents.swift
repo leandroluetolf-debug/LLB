@@ -6,18 +6,18 @@ import AppIntents
 /// These reach the LIVE, bonded `AppModel` via `AppModel.shared`. Constructing a fresh `AppModel()`
 /// from an intent would be wrong: it would start a second BLEManager + a duplicate 15-min analysis
 /// loop and could never buzz (the haptic command is gated on the live bonded peripheral). The
-/// `weak` shared accessor lets an intent fired while NOOP is closed fail with a clear "open NOOP"
+/// `weak` shared accessor lets an intent fired while LLB is closed fail with a clear "open LLB"
 /// message instead of silently no-op'ing on a dead instance. (#42 idea-mining; macOS 13+ supports
 /// AppIntents — no new entitlement or Info.plist key required.)
 
 @available(macOS 13.0, *)
-enum NOOPIntentError: Error, CustomLocalizedStringResourceConvertible {
+enum LLBIntentError: Error, CustomLocalizedStringResourceConvertible {
     case notRunning
     case notConnected
     var localizedStringResource: LocalizedStringResource {
         switch self {
-        case .notRunning:   return "Open NOOP first so it can reach your strap."
-        case .notConnected: return "Connect your WHOOP strap in NOOP, then try again."
+        case .notRunning:   return "Open LLB first so it can reach your strap."
+        case .notConnected: return "Connect your WHOOP strap in LLB, then try again."
         }
     }
 }
@@ -30,8 +30,8 @@ struct BuzzStrapIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        guard let model = AppModel.shared else { throw NOOPIntentError.notRunning }
-        guard model.live.bonded else { throw NOOPIntentError.notConnected }
+        guard let model = AppModel.shared else { throw LLBIntentError.notRunning }
+        guard model.live.bonded else { throw LLBIntentError.notConnected }
         // #921: a bare RUN_HAPTICS_PATTERN write from a shortcut could be silently ignored by a
         // WHOOP 4.0; the one-shot routine sends the confirmed pattern + RUN_ALARM sequence, acked.
         model.buzzStrapOnce()
@@ -48,7 +48,7 @@ struct MarkMomentIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         // markMoment() records regardless of bond (the confirming buzz no-ops when unbonded).
-        guard let model = AppModel.shared else { throw NOOPIntentError.notRunning }
+        guard let model = AppModel.shared else { throw LLBIntentError.notRunning }
         model.markMoment()
         return .result()
     }

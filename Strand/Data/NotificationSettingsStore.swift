@@ -59,7 +59,7 @@ enum NotifCategory: String, CaseIterable, Identifiable {
 
 // MARK: - App model
 
-/// An installed, notification-capable app NOOP can mirror to the wrist.
+/// An installed, notification-capable app LLB can mirror to the wrist.
 struct NotifApp: Identifiable {
     let id: String          // resolved bundle id — also the persistence key
     let name: String

@@ -24,7 +24,7 @@ final class RejectedHistoryTests: XCTestCase {
     private let whoop5V18Hex =
         "aa01740001003fb12f1280733d8401b69f266a66460066025a0265020000000000007b0a8d656463ff0012163cf6a439bf2924fd3ed763fe3e3200aa000000000000000000f7000901f10b0007010c020c00000000000000000000000000000000000000000000000100656f1e1e0000009d61a7c00000003e862817"
 
-    // A real WHOOP 5/MG type-47 v26 record — the high-rate PPG waveform buffer NOOP stores by design.
+    // A real WHOOP 5/MG type-47 v26 record — the high-rate PPG waveform buffer LLB stores by design.
     private let whoop5V26Hex =
         "aa015000010035412f1a80ad418401f0a3266aae470100c3c5050068faccfa8dfb46fc8bfd4cfebafedafe6dff56ffd5fffbff37ff6afce5f9d7f8dffa5efc98fddbfe5afe84fe15ff5cff405fb33c50080101006cb67c17"
 

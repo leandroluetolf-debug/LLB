@@ -39,7 +39,7 @@ public struct ActivityFile: Sendable, Equatable {
     public var start: Date
     /// Activity end (UTC) — the latest trackpoint/record time. Falls back to `start`.
     public var end: Date
-    /// Brand/sport label as the file named it (e.g. "running", "Biking"). Normalized to a NOOP sport
+    /// Brand/sport label as the file named it (e.g. "running", "Biking"). Normalized to a LLB sport
     /// string by the app layer; `nil` → a neutral "Activity".
     public var sport: String?
     /// Total distance in metres, when present (a file summary value, else summed from the track).
@@ -346,7 +346,7 @@ public enum ActivityFileImporter {
     // MARK: - App-layer mapping helpers (shared so Swift + Kotlin agree)
 
     /// The sport name the imported workout is filed under. A file's free-text/enum sport is mapped to a
-    /// NOOP-style Title-Cased label; an unknown/absent sport becomes the neutral "Activity" (we never
+    /// LLB-style Title-Cased label; an unknown/absent sport becomes the neutral "Activity" (we never
     /// claim a sport the file didn't state). Keep parity with the Kotlin `workoutSport`.
     public static func workoutSport(from raw: String?) -> String {
         guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {

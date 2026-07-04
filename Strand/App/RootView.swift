@@ -29,7 +29,6 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
     case automation = "Automations"
     case smartAlarm = "Smart Alarm"
     case settings = "Settings"
-    case support = "Support"
     case testCentre = "Test Centre"
 
     var id: String { rawValue }
@@ -68,7 +67,6 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
         // The case name and rawValue stay `smartAlarm`/"Smart Alarm" as the in-memory nav identifier only.
         case .smartAlarm: return "Alarms"
         case .settings: return "Settings"
-        case .support: return "Support"
         case .testCentre: return "Test Centre"
         }
     }
@@ -109,7 +107,6 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
         // Mirrors the `titleKey` remap above (#766): the row reads "Alarms", not the raw "Smart Alarm".
         case .smartAlarm: return String(localized: "Alarms")
         case .settings: return String(localized: "Settings")
-        case .support: return String(localized: "Support")
         case .testCentre: return String(localized: "Test Centre")
         }
     }
@@ -143,7 +140,6 @@ enum NavItem: String, CaseIterable, Identifiable, Hashable {
         case .automation: return "wand.and.stars"
         case .smartAlarm: return "alarm.fill"
         case .settings: return "gearshape.fill"
-        case .support: return "heart.fill"
         case .testCentre: return "stethoscope"
         }
     }
@@ -178,7 +174,7 @@ struct NavGroup: Identifiable {
         ]),
         NavGroup(title: "Data & App", id: "data_app", items: [
             .devices, .dataSources, .appleHealth, .xiaomi, .backupSync, .fusedRecord,
-            .notifications, .automation, .smartAlarm, .settings, .support, .testCentre,
+            .notifications, .automation, .smartAlarm, .settings, .testCentre,
         ]),
     ]
 
@@ -394,9 +390,9 @@ struct RootView: View {
     private var brand: some View {
         HStack(spacing: 8) {
             // In-app logo: the open recovery-ring mark so the wordmark reads as a true lockup
-            // (README logo system — mark + "NOOP"). Flat gold gradient, low glow per the v3 restraint.
+            // (README logo system — mark + "LLB"). Flat gold gradient, low glow per the v3 restraint.
             BrandMark(size: 22)
-            Text("NOOP")
+            Text("LLB")
                 .font(StrandFont.rounded(20, weight: .bold))
                 .foregroundStyle(StrandPalette.textPrimary)
             Spacer()
@@ -437,7 +433,6 @@ struct RootView: View {
         case .automation: AutomationsView()
         case .smartAlarm: SmartAlarmView()
         case .settings: settingsDetail
-        case .support: SupportView()
         case .testCentre: TestCentreView()
         }
     }
@@ -480,7 +475,7 @@ struct RootView: View {
     }
 }
 
-/// The NOOP logo mark — an **open recovery ring** (~80% arc, round caps, starting at 12 o'clock)
+/// The LLB logo mark — an **open recovery ring** (~80% arc, round caps, starting at 12 o'clock)
 /// with a **solid centre core dot** ("on-device core"), per the README logo system. Rendered in the
 /// gold gradient and kept deliberately flat / low-glow for the v3 Titanium & Gold restraint. Drawn
 /// purely from design tokens so it tracks the palette. Sized to optically x-height-match the wordmark.

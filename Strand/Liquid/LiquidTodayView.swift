@@ -1,5 +1,5 @@
 //  LiquidTodayView.swift
-//  NOOP · Liquid design language — the Today screen, rebuilt in the liquid finish.
+//  LLB · Liquid design language — the Today screen, rebuilt in the liquid finish.
 //
 //  This is the FULL Today, re-created faithfully from the locked mockup
 //  (scratchpad/liquid-metal-home.html): sky title + record/add/battery controls,
@@ -38,7 +38,6 @@ struct LiquidTodayView: View {
     @State private var guideSection: ScoreSection?
     @State private var showCustomise = false
     @State private var showSettings = false
-    @State private var showSupport = false
     @State private var synthesisExpanded = false
 
     // day navigation (0 = today, 1 = yesterday, …)
@@ -243,14 +242,6 @@ struct LiquidTodayView: View {
                     .liquidSheetDoneChrome { showSettings = false }
             }
         }
-        // The heart → the (optional) Support sheet: NOOP is free forever, donations just help it keep moving.
-        .sheet(isPresented: $showSupport) {
-            NavigationStack {
-                SupportView()
-                    .background(StrandPalette.surfaceBase.ignoresSafeArea())
-                    .liquidSheetDoneChrome { showSupport = false }
-            }
-        }
         #if os(macOS)
         // Hide the mac window toolbar's vibrant material so the full-bleed day-of-sky reads dark + edge-to-edge
         // at the top instead of the white scroll-under-titlebar wash.
@@ -334,16 +325,6 @@ struct LiquidTodayView: View {
                 }
                 Spacer(minLength: 8)
                 HStack(spacing: 8) {
-                    // Support / donate — a tap opens the (optional) support sheet. NOOP is free forever.
-                    Button { showSupport = true } label: {
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 19, weight: .semibold))
-                            .foregroundStyle(StrandPalette.chargeColor)
-                            .frame(width: 34, height: 34)
-                            .shadow(color: .black.opacity(0.3), radius: 6, y: 1)
-                    }
-                    .buttonStyle(LiquidPressStyle())
-                    .accessibilityLabel("Support NOOP. It's free; donations are optional and help development.")
                     // Profile pic (the one set in Settings) → opens Settings, matching the classic Today.
                     Button { showSettings = true } label: {
                         ProfileAvatarView(imageData: profile.avatarImageData, size: 34)
@@ -355,7 +336,7 @@ struct LiquidTodayView: View {
                     LiquidBatteryButton()
                 }
             }
-            // Subtle NOOP wordmark in the sky between header and hero. Perfectly centred (a letter row has
+            // Subtle LLB wordmark in the sky between header and hero. Perfectly centred (a letter row has
             // no trailing tracking gap the way `Text(...).tracking()` does), with a tap easter egg.
             LiquidWordmark()
                 .padding(.top, 30)
@@ -936,9 +917,9 @@ private struct PullOffsetKey: PreferenceKey {
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
 }
 
-// MARK: - NOOP wordmark (centred, with a tap easter egg)
+// MARK: - LLB wordmark (centred, with a tap easter egg)
 
-/// The subtle NOOP wordmark. Built as a row of letters (not `Text(...).tracking()`, which adds a
+/// The subtle LLB wordmark. Built as a row of letters (not `Text(...).tracking()`, which adds a
 /// trailing gap after the last glyph and pushes the word off-centre), so it sits DEAD centre. Tap it
 /// for a little easter egg: it plays one of several random one-shot animations — wiggle, shake, flip,
 /// spin, bounce, or a jelly squash — with a light haptic.
@@ -952,7 +933,7 @@ private struct LiquidWordmark: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            ForEach(Array("NOOP".enumerated()), id: \.offset) { _, ch in
+            ForEach(Array("LLB".enumerated()), id: \.offset) { _, ch in
                 Text(String(ch))
                     .font(StrandFont.rounded(16, weight: .bold))
                     .foregroundStyle(.white.opacity(0.5))

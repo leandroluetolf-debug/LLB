@@ -1,0 +1,84 @@
+# Build an installable LLB APK and publish it as a GitHub Release asset.
+# Stable download URL (updates on every push to main):
+#   https://github.com/leandroluetolf-debug/LLB/releases/download/android-latest/LLB.apk
+#
+# No custom keystore required: release falls back to the Android debug key when
+# keystore.properties is absent (see android/app/build.gradle.kts).
+name: Android APK Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk-release
+  cancel-in-progress: true
+
+jobs:
+  release-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build full release APK
+        run: ./gradlew assembleFullRelease --no-daemon
+
+      - name: Stage LLB.apk
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          APK="$(find app/build/outputs/apk -type f -name '*.apk' | head -n 1)"
+          if [ -z "$APK" ]; then
+            echo "No APK found under app/build/outputs/apk"
+            find app/build/outputs -type f || true
+            exit 1
+          fi
+          cp "$APK" "$GITHUB_WORKSPACE/dist/LLB.apk"
+          ls -lh "$GITHUB_WORKSPACE/dist/LLB.apk"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: LLB Android
+          body: |
+            ## LLB for Android
+
+            Tap **LLB.apk** below (or use the direct link) to download and install.
+
+            **Direct link:** https://github.com/leandroluetolf-debug/LLB/releases/download/android-latest/LLB.apk
+
+            ### Install
+            1. Open the link on your Android phone.
+            2. Allow install from unknown sources if asked.
+            3. If Play Protect warns, choose **Install anyway**.
+
+            Package id: `com.llb.app` — installs **next to** the official NOOP app with its own data.
+
+            Built automatically from `main` (commit `${{ github.sha }}`).
+          files: dist/LLB.apk
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

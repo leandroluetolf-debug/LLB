@@ -401,7 +401,7 @@ struct AppleHealthView: View {
                     // can never work and the app can never appear under Settings › Health › Data Access
                     // & Devices. Give the honest path instead of impossible Settings instructions: bring
                     // data in via a file import or the HealthKit-free Shortcuts export.
-                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to enable, and NOOP won't appear under Settings › Health.")
+                    Text("This install can't connect to Apple Health directly. It was signed with a profile that doesn't include Apple's Health permission, so there's nothing to enable, and LLB won't appear under Settings › Health.")
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -411,7 +411,7 @@ struct AppleHealthView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                 case .unknown, .denied:
-                    Text("Read your heart rate, HRV, blood oxygen, respiratory rate, sleep, steps and energy straight from Apple Health, and write NOOP's strap-derived metrics back. Everything stays on \(Platform.deviceNounPhrase).")
+                    Text("Read your heart rate, HRV, blood oxygen, respiratory rate, sleep, steps and energy straight from Apple Health, and write LLB's strap-derived metrics back. Everything stays on \(Platform.deviceNounPhrase).")
                         .font(StrandFont.caption)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -427,7 +427,7 @@ struct AppleHealthView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(StrandPalette.metricCyan)
                     if health.auth == .denied {
-                        Text("If you don't see the prompt, enable NOOP under Settings › Health › Data Access & Devices.")
+                        Text("If you don't see the prompt, enable LLB under Settings › Health › Data Access & Devices.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -439,7 +439,7 @@ struct AppleHealthView: View {
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     } else {
-                        Text("Connected. Reading on launch and when you return to NOOP.")
+                        Text("Connected. Reading on launch and when you return to LLB.")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     }

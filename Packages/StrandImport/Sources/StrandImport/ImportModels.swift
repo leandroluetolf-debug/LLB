@@ -9,7 +9,7 @@ public enum DataSourceKind: String, Sendable, Codable, Equatable, CaseIterable {
     case whoopExport
     /// Xiaomi Smart Band (Mi Band) — imported from the Mi Fitness iOS app's
     /// on-device SQLite store (`DataBase/<user_id>/de/<user_id>.db`). Account-free,
-    /// fully offline: NOOP reads the file the user already owns.
+    /// fully offline: LLB reads the file the user already owns.
     case xiaomiBand
     /// Oura Ring — the user's own Account data export (JSON), imported from the file
     /// Oura hands them. Sleep periods + daily readiness/activity → daily metrics + sleep
@@ -313,7 +313,7 @@ public struct WhoopJournalRow: Sendable, Equatable {
 
 // MARK: - Xiaomi Smart Band (Mi Fitness export)
 
-/// The canonical sleep stages NOOP recognises from the Mi Fitness `sleep` table's
+/// The canonical sleep stages LLB recognises from the Mi Fitness `sleep` table's
 /// per-segment `state` codes. Verified against a real Mi Band 10 export:
 /// `1 = awake, 2 = light, 3 = deep, 4 = REM, 5 = awake-in-bed`.
 public enum XiaomiSleepStage: String, Sendable, Equatable, CaseIterable {
@@ -502,7 +502,7 @@ public struct WearableSleepStageInterval: Sendable, Equatable {
     }
 }
 
-/// One sleep session imported from a wearable export. Durations are MINUTES (as NOOP's
+/// One sleep session imported from a wearable export. Durations are MINUTES (as LLB's
 /// `DailyMetric` / sleep model use). A field is nil when the export didn't carry it — never
 /// fabricated. `stages` is empty when the export gave only a duration breakdown (Oura).
 public struct WearableSleepSession: Sendable, Equatable {
@@ -558,7 +558,7 @@ public struct WearableSleepSession: Sendable, Equatable {
 /// string (`YYYY-MM-DD`). Every metric is optional — a day only carries what the export recorded.
 ///
 /// HONEST DATA: `readinessScore` (Oura) is THEIR score, kept for reference only — it is NEVER shown
-/// as NOOP's Charge. NOOP recomputes its own scores downstream from the raw inputs (RHR / HRV /
+/// as LLB's Charge. LLB recomputes its own scores downstream from the raw inputs (RHR / HRV /
 /// sleep) that are present, exactly as it does for any imported source.
 public struct WearableDailyRow: Sendable, Equatable {
     public var day: String
@@ -586,7 +586,7 @@ public struct WearableDailyRow: Sendable, Equatable {
     public var awakeMin: Double?
     public var efficiencyPct: Double?
 
-    // The brand's OWN reference scores — stored under reference keys, never NOOP Charge/Effort/Rest.
+    // The brand's OWN reference scores — stored under reference keys, never LLB Charge/Effort/Rest.
     public var readinessScore: Int?   // Oura daily readiness (reference)
     public var sleepScore: Int?       // brand sleep score (reference)
 

@@ -6,7 +6,7 @@ import Foundation
 // INDEPENDENT implementation of a publicly documented method (wrist skin-temperature cycle tracking,
 // e.g. PMC11294004, and the broader biphasic-ovulatory-shift literature): skin temperature runs roughly
 // 0.3–0.5 °C HIGHER in the luteal phase than the follicular phase, with a nadir around ovulation,
-// mirrored by a luteal RESTING-HR RISE and a luteal HRV (RMSSD) DROP. NOOP re-derives this from the
+// mirrored by a luteal RESTING-HR RISE and a luteal HRV (RMSSD) DROP. LLB re-derives this from the
 // user's OWN banked nightly signals against their OWN baseline — it reproduces no competitor's model.
 //
 // WELLNESS / AWARENESS ONLY — APPROXIMATE. This is NOT contraception, NOT a fertility/ovulation predictor,

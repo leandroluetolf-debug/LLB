@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  NOOP is fully on-device. No cloud backup or device-transfer of the local WHOOP
+  LLB is fully on-device. No cloud backup or device-transfer of the local WHOOP
   database / preferences — exclude everything from both Auto Backup and D2D transfer.
 -->
 <data-extraction-rules>

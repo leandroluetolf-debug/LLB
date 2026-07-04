@@ -11,7 +11,7 @@ import OuraProtocol
 ///
 /// This is a real transport (it replaced an earlier honest dead-end probe): it decodes the ring's OWN
 /// raw signals + open event tags (HR / IBI / HRV / SpO2 / temp / sleep-phase / battery), persists them
-/// under the ring's `deviceId`, and lets NOOP compute its own Charge/Rest from those streams exactly like
+/// under the ring's `deviceId`, and lets LLB compute its own Charge/Rest from those streams exactly like
 /// a WHOOP day. It NEVER reads or surfaces Oura's encrypted readiness/sleep scores (honest-data
 /// invariant), and when a signal can't be read it stays at "-", never a fabricated value (Huami precedent).
 ///
@@ -74,7 +74,7 @@ public final class OuraLiveSource: NSObject, ObservableObject {
     @Published public private(set) var discovered: [DiscoveredRing] = []
     @Published public private(set) var scanning: Bool = false
     @Published public private(set) var batteryPct: Int? = nil
-    /// Set to an HONEST explanation string when the ring needs a pairing/key handshake NOOP can't complete
+    /// Set to an HONEST explanation string when the ring needs a pairing/key handshake LLB can't complete
     /// (no install key, or the ring is in factory reset, or the key was rejected). nil otherwise. The UI
     /// surfaces this instead of a fake reading. Cleared on stop/disconnect.
     @Published public private(set) var needsPairing: String? = nil
@@ -506,7 +506,7 @@ public final class OuraLiveSource: NSObject, ObservableObject {
         }
         pendingInstallKey = key
         adoptPhase = .installingKey
-        log("Oura: installing NOOP's key on the reset ring")
+        log("Oura: installing LLB's key on the reset ring")
         write([cmd])
     }
 
@@ -695,7 +695,7 @@ public final class OuraLiveSource: NSObject, ObservableObject {
         case installFailed(String)
     }
 
-    /// Record + log the honest "this ring needs a pairing handshake NOOP can't complete" outcome (once),
+    /// Record + log the honest "this ring needs a pairing handshake LLB can't complete" outcome (once),
     /// and drop the link so no half-authenticated session lingers. We never fabricate a reading. Also marks
     /// `adoptPhase = .failed` so an in-flight adopt's Adopting step lands on a REACHABLE honest Failed state
     /// (file-import + Advanced-key fallbacks), and clears any in-flight install key WITHOUT persisting it (a
@@ -719,11 +719,11 @@ public final class OuraLiveSource: NSObject, ObservableObject {
         let detail: String
         switch reason {
         case .factoryResetOrNoKey:
-            detail = "NOOP needs the ring's install key to read it live, and that pairing handshake isn't set up yet."
+            detail = "LLB needs the ring's install key to read it live, and that pairing handshake isn't set up yet."
         case .authFailed(let status):
             detail = "The ring rejected the pairing handshake (status \(status.rawValue))."
         case .installFailed(let why):
-            detail = "NOOP couldn't take over this ring (\(why))."
+            detail = "LLB couldn't take over this ring (\(why))."
         }
         let recovery = " The ring isn't bricked: re-pair it in the Oura app to recover it."
         let msg = detail + " Live data isn't available - export from the Oura app and import the file instead." + recovery

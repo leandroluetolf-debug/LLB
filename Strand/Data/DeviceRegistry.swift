@@ -56,7 +56,7 @@ final class DeviceRegistry: ObservableObject {
         reload()
     }
 
-    /// Archive (remove) a device: NOOP stops connecting to it, but its recorded data is kept. If the
+    /// Archive (remove) a device: LLB stops connecting to it, but its recorded data is kept. If the
     /// archived device was the active one, `activeDeviceId` is left as-is here — the caller decides the
     /// next active device (or leaves none active) and calls `setActive` explicitly.
     func archive(_ id: String) {
@@ -90,7 +90,7 @@ final class DeviceRegistry: ObservableObject {
     }
 
     /// Adopt (or clear, when nil) the stable BLE identity for a device — the
-    /// CBPeripheral.identifier.uuidString on iOS/Mac. Lets NOOP tell physical straps apart and map a
+    /// CBPeripheral.identifier.uuidString on iOS/Mac. Lets LLB tell physical straps apart and map a
     /// connected peripheral back to its registry row. Refreshes the published list. Best-effort.
     func setPeripheralId(_ id: String, peripheralId: String?) {
         try? store.setPeripheralId(id, peripheralId: peripheralId)

@@ -116,7 +116,7 @@ final class Backfiller {
     private(set) var lastAckedTrim: UInt32?
 
     /// Distinct historical layout versions logged this session. Unlike `loggedUnmappedVersions` (which
-    /// only fires for layouts NOOP can't decode), this surfaces the layout on a HEALTHY sync too, so a
+    /// only fires for layouts LLB can't decode), this surfaces the layout on a HEALTHY sync too, so a
     /// shared strap log always reveals what the strap emits (v18/v24/v25/v26). Mirrors the Android
     /// Backfiller (PR #241, ryanbr); reset per session in `begin`.
     private var loggedLayoutVersions: Set<Int> = []
@@ -279,11 +279,11 @@ final class Backfiller {
     }
 
     /// #773: the recovery-hint line for a corrupt future-dated strap RTC. Names the cause plainly (the
-    /// strap's clock, not a NOOP bug) and gives the fix (charge + reconnect re-syncs the RTC). Byte-identical
+    /// strap's clock, not a LLB bug) and gives the fix (charge + reconnect re-syncs the RTC). Byte-identical
     /// to the Android twin. No em-dash (project rule).
     nonisolated static func futureRtcLine(endUnix: Int, wallNowUnix: Int) -> String {
         let aheadDays = max(0, (endUnix - wallNowUnix)) / 86_400
-        return "Backfill: the strap reported a record dated about \(aheadDays) day(s) in the FUTURE - its clock (RTC) is corrupt, not a NOOP problem. Those records can't be filed onto the right day. Fully charge the strap to 100% and reconnect so it re-syncs its clock; if it persists, forget and re-pair the strap."
+        return "Backfill: the strap reported a record dated about \(aheadDays) day(s) in the FUTURE - its clock (RTC) is corrupt, not a LLB problem. Those records can't be filed onto the right day. Fully charge the strap to 100% and reconnect so it re-syncs its clock; if it persists, forget and re-pair the strap."
     }
 
     /// Commit one HISTORY_END chunk: (persist decoded → enqueueRaw when present) → setCursor → ackTrim.
@@ -308,7 +308,7 @@ final class Backfiller {
         // #773: corrupt future-RTC detection. A HISTORY_END carries the strap's own clock; a genuine offload
         // is always PAST-dated (it's banked history), so an end dated days into the future can only be a
         // corrupt strap RTC. Surface it ONCE per session with a recovery hint so the cause (the strap clock,
-        // not a NOOP bug) is named and the fix (charge + reconnect re-syncs the RTC) is given. Observability
+        // not a LLB bug) is named and the fix (charge + reconnect re-syncs the RTC) is given. Observability
         // only - the ack still proceeds and the #547 ingest gate already keeps the bad-dated rows out of the
         // DB. The 0xFFFFFFFF sentinel above is a different state (it isn't a real date), so skip it here.
         if trim != 0xFFFFFFFF, !loggedFutureRtc {
@@ -347,7 +347,7 @@ final class Backfiller {
             }.value
             let parsed = d.parsed
             // Observability (PR #241): log which layout this strap emits on a HEALTHY sync too — the
-            // unmapped-version path below only fires for layouts NOOP can't decode, so a normal log
+            // unmapped-version path below only fires for layouts LLB can't decode, so a normal log
             // never revealed v18/v24/v25/v26. Once per distinct layout this session.
             if let v = parsed.lazy.compactMap({ $0.parsed["hist_version"]?.intValue }).first,
                loggedLayoutVersions.insert(v).inserted {
@@ -380,14 +380,14 @@ final class Backfiller {
                       p.parsed["ppg_waveform"] == nil,
                       !loggedUnmappedVersions.contains(v) else { continue }
                 loggedUnmappedVersions.insert(v)
-                log?("Historical records use firmware layout v\(v), which NOOP doesn't decode yet — no motion data, so sleep can't be computed from the strap. Please report this (issue #30).")
+                log?("Historical records use firmware layout v\(v), which LLB doesn't decode yet — no motion data, so sleep can't be computed from the strap. Please report this (issue #30).")
             }
             let decoded = d.decoded
             // #547: surface a bad-clock strap. extractHistoricalStreams DROPPED any record whose own unix
             // timestamp was implausible (far-past / bogus-2027 / future-dated) before it could pollute the
             // DB. Log it (once it's accrued at least one this session, on the first chunk that sees it) so
             // the user's strap log explains why a clock-broken strap banks fewer rows than expected — this
-            // is the strap's clock, not a NOOP decode bug. Observability only; the gate already did the work.
+            // is the strap's clock, not a LLB decode bug. Observability only; the gate already did the work.
             if decoded.droppedImplausible > 0 {
                 let wasZero = sessionDroppedImplausible == 0
                 sessionDroppedImplausible += decoded.droppedImplausible

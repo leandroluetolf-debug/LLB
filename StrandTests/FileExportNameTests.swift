@@ -21,8 +21,8 @@ final class FileExportNameTests: XCTestCase {
 
     func testTimestampedNameStillTwoArg() {
         // The old 2-arg form must keep compiling for the existing strap-log/raw-capture callers.
-        let n = FileExport.timestampedName("noop-strap-log", ext: "txt")
-        XCTAssertTrue(n.hasPrefix("noop-strap-log-"))
+        let n = FileExport.timestampedName("llb-strap-log", ext: "txt")
+        XCTAssertTrue(n.hasPrefix("llb-strap-log-"))
         XCTAssertTrue(n.hasSuffix(".txt"))
     }
 }

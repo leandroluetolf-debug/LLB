@@ -1,5 +1,5 @@
 //  LiquidCore.swift
-//  NOOP · Liquid design language (experimental redesign)
+//  LLB · Liquid design language (experimental redesign)
 //
 //  The physics + motion foundation shared by every liquid element. Ported from the
 //  HTML design prototype: a spring-damped surface that stays level with the world

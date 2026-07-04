@@ -29,12 +29,12 @@ object DemoSeeder {
 
     private const val WHOOP = "my-whoop"
     private const val APPLE = "apple-health"
-    // The NOOP-COMPUTED strap source ("<strap>-noop") the IntelligenceEngine persists its derived weekly
+    // The LLB-COMPUTED strap source ("<strap>-noop") the IntelligenceEngine persists its derived weekly
     // scores under (fitness_age / vo2max_est / vitality / body_age). The Health screen reads these from this
     // source verbatim (HealthScreen.COMPUTED_SOURCE), and the Today "Your cards" + Trends resolve them off
     // it too — so the demo MUST seed them here, not under the imported "my-whoop" source, or those surfaces
     // read empty ("No Data") while the rest of the demo is full. Mirrors the real engine's write target.
-    private const val WHOOP_NOOP = "$WHOOP-noop"
+    private const val WHOOP_LLB = "$WHOOP-noop"
     private const val DAYS = 120
 
     /** Effort rescale factor: the old 0–21 strain scale → the new 0–100 Effort scale (100/21). */
@@ -253,17 +253,17 @@ object DemoSeeder {
             val date = startDay.plusDays(i.toLong())
             if (date.dayOfWeek.value != 6) continue // 6 = Saturday
             val day = date.toString()
-            // Seed under the NOOP-COMPUTED source (WHOOP_NOOP), exactly where the IntelligenceEngine writes
+            // Seed under the LLB-COMPUTED source (WHOOP_LLB), exactly where the IntelligenceEngine writes
             // these derived weekly scores in the real app — so the Health screen (reads COMPUTED_SOURCE), the
             // Today "Your cards" Fitness age / Vitality cards and Trends all resolve them in the demo instead
             // of showing "No Data". Trends ~42 → ~34 (younger) for Fitness age; vitality climbs ~55 → ~80.
-            series.add(MetricSeriesRow(WHOOP_NOOP, day, "fitness_age",
+            series.add(MetricSeriesRow(WHOOP_LLB, day, "fitness_age",
                 round1((fitnessAge + gauss(rng, 0.0, 0.3)).coerceIn(34.0, 44.0))))
-            series.add(MetricSeriesRow(WHOOP_NOOP, day, "vo2max_est",
+            series.add(MetricSeriesRow(WHOOP_LLB, day, "vo2max_est",
                 round1((vo2 + gauss(rng, 0.0, 0.4)).coerceIn(42.0, 52.0))))
-            series.add(MetricSeriesRow(WHOOP_NOOP, day, "vitality",
+            series.add(MetricSeriesRow(WHOOP_LLB, day, "vitality",
                 round1((vitality + gauss(rng, 0.0, 1.0)).coerceIn(40.0, 80.0))))
-            series.add(MetricSeriesRow(WHOOP_NOOP, day, "body_age",
+            series.add(MetricSeriesRow(WHOOP_LLB, day, "body_age",
                 round1((bodyAgeDemo + gauss(rng, 0.0, 0.3)).coerceIn(30.0, 45.0))))
             fitnessAge -= 0.75 // ~6 yr younger across the 8 seeded Saturdays
             vo2 += 0.75

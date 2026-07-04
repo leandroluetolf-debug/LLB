@@ -3,7 +3,7 @@ import UserNotifications
 
 /// Surfaces the illness early-warning as a macOS user notification when the banner transitions
 /// from clear to raised — today it is silent unless the window is open (the menu-bar extra keeps
-/// NOOP alive). Rate-limited to once per local calendar day; the in-app banner stays the live
+/// LLB alive). Rate-limited to once per local calendar day; the in-app banner stays the live
 /// surface. On-device only; the summary is APPROXIMATE — informational, not a diagnosis.
 enum IllnessNotifier {
     private static let lastDayKey = "behavior.illnessLastNotifiedDay"

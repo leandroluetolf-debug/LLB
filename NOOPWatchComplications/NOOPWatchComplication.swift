@@ -2,7 +2,7 @@ import WidgetKit
 import SwiftUI
 import StrandDesign
 
-// MARK: - NOOP watch-face complication
+// MARK: - LLB watch-face complication
 //
 // The headline feature of M3: Charge (recovery) on the wrist. The iPhone is the brain
 // (M1 computes Charge / Effort / Rest with confidence + provenance); this complication ONLY
@@ -11,7 +11,7 @@ import StrandDesign
 //
 // The honesty rule carries through from M1: a CALIBRATING score has a nil number plus its
 // Calibrating flag set, and we render a dash with a subtle "cal" marker, never a fabricated
-// number. When there is no snapshot at all we show a NEUTRAL placeholder (a dash + the NOOP
+// number. When there is no snapshot at all we show a NEUTRAL placeholder (a dash + the LLB
 // glyph), not a zero, so an empty face never reads as "your Charge is 0".
 //
 // Families: accessoryCircular (ring + number), accessoryCorner, accessoryInline (text), and
@@ -22,7 +22,7 @@ import StrandDesign
 // We read the app group directly here rather than depending on a loader symbol from the bridge
 // lane, so this extension only needs the shared `WatchScoreSnapshot` type from StrandDesign. The
 // suite + key match the cross-lane contract: the phone-side bridge writes the latest snapshot to
-// `group.com.noopapp.noop` under `latestWatchSnapshot`, and the watch app + this complication read
+// `group.com.llb.app` under `latestWatchSnapshot`, and the watch app + this complication read
 // it. The suite name is read from the extension's own Info.plist (AppGroupIdentifier) so it lives
 // in one place, with the canonical group as a fallback.
 
@@ -135,7 +135,7 @@ private enum ScoreReadout {
 
 // MARK: - The complication view
 
-struct NOOPChargeView: View {
+struct LLBChargeView: View {
     @Environment(\.widgetFamily) private var family
     let entry: ChargeEntry
 
@@ -210,7 +210,7 @@ struct NOOPChargeView: View {
 
     // MARK: accessoryCircular — a ring + the Charge number
     //
-    // The clean NOOP ring, scaled to the watch face. WidgetKit tints accessory complications with the
+    // The clean LLB ring, scaled to the watch face. WidgetKit tints accessory complications with the
     // face's vibrant colour by default; we use a Gauge so the system renders a crisp circular ring,
     // and tint it to the Charge colour where we have a real value. A small "cal" marker replaces the
     // number when Charge is calibrating.
@@ -279,14 +279,14 @@ struct NOOPChargeView: View {
             }
             return String(localized: "Charge · cal")
         case .missing:
-            return noSnapshot ? String(localized: "Open NOOP") : String(localized: "Charge")
+            return noSnapshot ? String(localized: "Open LLB") : String(localized: "Charge")
         }
     }
 
     // MARK: accessoryInline — a single line of text along the top of the face
 
     private var inlineText: String {
-        if noSnapshot { return String(localized: "NOOP · open on iPhone") }
+        if noSnapshot { return String(localized: "LLB · open on iPhone") }
         // When the snapshot has aged out we never print the old number; we say it is stale and how old.
         if isStale {
             let fresh = freshness ?? String(localized: "old")
@@ -314,7 +314,7 @@ struct NOOPChargeView: View {
 
     // MARK: accessoryRectangular — a compact card showing all three scores
     //
-    // The richest family: a small NOOP header line plus the Charge / Effort / Rest triplet, each a
+    // The richest family: a small LLB header line plus the Charge / Effort / Rest triplet, each a
     // number (or a dash + cal marker) over its label. This is the only place all three scores live, so
     // it doubles as the "everything at a glance" face.
 
@@ -322,7 +322,7 @@ struct NOOPChargeView: View {
         VStack(alignment: .leading, spacing: 3) {
             // Header: the wordmark + the snapshot age (or a sync hint when empty).
             HStack(spacing: 4) {
-                Text("NOOP")
+                Text("LLB")
                     .font(StrandFont.rounded(11, weight: .bold))
                     .tracking(0.5)
                     .foregroundStyle(StrandPalette.textSecondary)
@@ -411,21 +411,21 @@ struct NOOPChargeView: View {
         // is a dash plainly so it is never mistaken for "still calibrating".
         if isStale {
             let fresh = freshness ?? String(localized: "a while ago")
-            return String(localized: "Charge out of date, last synced \(fresh). Open NOOP on iPhone.")
+            return String(localized: "Charge out of date, last synced \(fresh). Open LLB on iPhone.")
         }
         switch charge {
         case .value(let v):    return String(localized: "Charge \(v) out of 100")
         case .calibrating:     return String(localized: "Charge calibrating, needs more data")
-        case .missing:         return noSnapshot ? String(localized: "No data, open NOOP on iPhone")
+        case .missing:         return noSnapshot ? String(localized: "No data, open LLB on iPhone")
                                                  : String(localized: "Charge unavailable")
         }
     }
 
     private var accessibilityRectangular: String {
-        if noSnapshot { return String(localized: "NOOP. No data yet, open NOOP on your iPhone to sync.") }
+        if noSnapshot { return String(localized: "LLB. No data yet, open LLB on your iPhone to sync.") }
         if isStale {
             let fresh = freshness ?? String(localized: "a while ago")
-            return String(localized: "NOOP. Scores out of date, last synced \(fresh). Open NOOP on iPhone to refresh.")
+            return String(localized: "LLB. Scores out of date, last synced \(fresh). Open LLB on iPhone to refresh.")
         }
         func phrase(_ label: String, _ r: ScoreReadout) -> String {
             switch r {
@@ -437,7 +437,7 @@ struct NOOPChargeView: View {
         let chargePhrase = phrase(String(localized: "Charge"), charge)
         let effortPhrase = phrase(String(localized: "Effort"), effort)
         let restPhrase = phrase(String(localized: "Rest"), rest)
-        return String(localized: "NOOP. \(chargePhrase), \(effortPhrase), \(restPhrase).")
+        return String(localized: "LLB. \(chargePhrase), \(effortPhrase), \(restPhrase).")
     }
 
     // Snapshot recency now comes straight from the shared contract (`freshnessText` / `isStale` on
@@ -447,15 +447,15 @@ struct NOOPChargeView: View {
 
 // MARK: - Widget declaration
 
-struct NOOPChargeComplication: Widget {
-    let kind = "NOOPChargeComplication"
+struct LLBChargeComplication: Widget {
+    let kind = "LLBChargeComplication"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: ChargeProvider()) { entry in
-            NOOPChargeView(entry: entry)
+            LLBChargeView(entry: entry)
                 .containerBackground(StrandPalette.surfaceBase, for: .widget)
         }
-        .configurationDisplayName("NOOP Charge")
+        .configurationDisplayName("LLB Charge")
         .description("Your Charge (recovery) on the watch face, with Effort and Rest in the rectangular card.")
         .supportedFamilies([
             .accessoryCircular,

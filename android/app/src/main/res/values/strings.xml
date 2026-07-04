@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NOOP</string>
+    <string name="app_name">LLB</string>
     <string name="widget_description">Today\'s Rest, Charge and Effort, with live heart rate and strap battery at a glance.</string>
-    <string name="widget_error">NOOP widget couldn\'t draw — it will recover on the next update.</string>
+    <string name="widget_error">LLB widget couldn\'t draw — it will recover on the next update.</string>
 
     <!-- Navigation: bottom-bar tabs, the More page rows, and the top-bar screen titles. These are the
          localized display labels for the Destination enum; the underlying route ids stay English and

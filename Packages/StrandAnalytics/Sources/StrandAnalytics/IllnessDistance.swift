@@ -19,7 +19,7 @@ import Foundation
 // coordinated move, not two. D is in "standard-deviation-equivalent" units, so a threshold of 2.5 is
 // comparable to the existing per-signal z≈2 gate but accounts for the joint structure.
 //
-// HONEST GATING preserved: this distance is only one input. We keep NOOP's existing rules layered on top:
+// HONEST GATING preserved: this distance is only one input. We keep LLB's existing rules layered on top:
 //   • fires only when D > distanceThreshold AND at least minDeviatingFeatures features are themselves
 //     deviating ILLNESS-WARD (a large D driven by one signal pointing the WELLNESS way must not fire), and
 //   • the caller still applies the same confounder suppression (alcohol / travel / etc.) afterwards.

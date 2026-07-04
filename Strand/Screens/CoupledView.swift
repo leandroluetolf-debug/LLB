@@ -8,7 +8,7 @@ import Foundation
 //
 // An optional, default-OFF day view that reads like the classic coupled home: one screen, three numbers,
 // Recovery % / Day Strain on 0–21 / Sleep, for users who came across from another band and want the old
-// glance back. NOOP's Today stays the default and is untouched.
+// glance back. LLB's Today stays the default and is untouched.
 //
 // DISPLAY-ONLY, like the #268 Effort-scale toggle. This screen invents no score and stores nothing: it
 // reads the SAME values Today already computes (recovery / Rest composite / Effort strain / readiness) and
@@ -63,7 +63,7 @@ struct CoupledView: View {
     /// dimmed ring + the "Last night · <date>" stamp so an old number is never passed off as new (#543/#779).
     private var isCarryingRecovery: Bool { day?.recovery == nil && carriedRecoveryDay?.recovery != nil }
 
-    /// Effort strain on NOOP's 0–100 axis for the day (stored row; no live recompute here, this is a
+    /// Effort strain on LLB's 0–100 axis for the day (stored row; no live recompute here, this is a
     /// glance screen, not the primary Today hero). nil when the day has no scored Effort.
     private var strain100: Double? { day?.strain }
 
@@ -462,10 +462,10 @@ struct CoupledView: View {
 
     // The brief quotes the footer with the brand word, but the hard legal / anonymity rule ("the word
     // never appears in a shipped UI string") wins over the illustrative copy: this keeps the exact intent
-    // (a coupled read of NOOP's OWN scores, same data, different lens) without the branding word. The
+    // (a coupled read of LLB's OWN scores, same data, different lens) without the branding word. The
     // matching Android caption is byte-identical.
     private var footerCaption: some View {
-        Text("A classic one-glance read of NOOP's own scores. Same data, different lens.")
+        Text("A classic one-glance read of LLB's own scores. Same data, different lens.")
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textTertiary)
             .fixedSize(horizontal: false, vertical: true)

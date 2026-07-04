@@ -11,8 +11,8 @@ import StrandImport
 /// Settings → Backup & restore → "Export CSV…": serialize the merged "my-whoop" ∪ "my-whoop-noop"
 /// history (imported wins per day — exactly what the dashboards show; Apple Health rows are
 /// deliberately EXCLUDED so a re-import can't mis-attribute them as WHOOP data) into WHOOP's
-/// 4-CSV zip via StrandImport.WhoopCsvExporter. The zip re-imports into NOOP on Mac (Data Sources →
-/// WHOOP Export) and on Android. On-device computed rows are marked "noop (APPROXIMATE)" in the
+/// 4-CSV zip via StrandImport.WhoopCsvExporter. The zip re-imports into LLB on Mac (Data Sources →
+/// WHOOP Export) and on Android. On-device computed rows are marked "llb (APPROXIMATE)" in the
 /// Source column both importers ignore; the .sqlite backup remains the lossless restore path.
 ///
 /// Self-contained: it reads through the store handle and reconstructs Repository's merge precedence
@@ -82,7 +82,7 @@ enum CsvExport {
                 // real WHOOP import always wins and the strap-only user still exports a full history.
                 var byDay: [String: DailyMetric] = [:]
                 var sourceByDay: [String: String] = [:]
-                for d in computed { byDay[d.day] = d; sourceByDay[d.day] = "noop (APPROXIMATE)" }
+                for d in computed { byDay[d.day] = d; sourceByDay[d.day] = "llb (APPROXIMATE)" }
                 for d in imported { byDay[d.day] = d; sourceByDay[d.day] = "import" }
                 let days = byDay.values.sorted { $0.day < $1.day }
 
@@ -99,12 +99,12 @@ enum CsvExport {
                 // #715: keep EVERY session, naps and main nights each export as their own sleeps.csv row.
                 // Imported still wins per end-day. Shared, unit-tested grouping (WhoopStore.SleepMerge) replaces
                 // the per-day dict that silently dropped a second same-day session.
-                for s in compSleep { sleepSource[s.startTs] = "noop (APPROXIMATE)" }
+                for s in compSleep { sleepSource[s.startTs] = "llb (APPROXIMATE)" }
                 for s in impSleep { sleepSource[s.startTs] = "import" }
                 let sleeps = SleepMerge.merge(imported: impSleep, computed: compSleep, endDay: endDay)
 
                 // Workouts: imported WHOOP ∪ on-device detected. Apple-Health workouts are intentionally
-                // omitted (read only the two NOOP sources), matching the cycles/sleep exclusion.
+                // omitted (read only the two LLB sources), matching the cycles/sleep exclusion.
                 // Dedup by (startTs, sport), imported (deviceId) first so it wins. The same session can
                 // exist under both ids (e.g. a reimported export + BLE re-detection), which double-counted
                 // it in the CSV and inflated totals on reimport. (PR #97 review, tigercraft4.)
@@ -125,7 +125,7 @@ enum CsvExport {
                     ("workouts.csv",
                      Data(WhoopCsvExporter.workoutsCSV(workouts, sourceLabel: { workoutSource($0, computedId: computedId) }).utf8)),
                     ("journal_entries.csv", Data(WhoopCsvExporter.journalCSV(journal).utf8)),
-                    ("noop_metric_series.json", WhoopCsvExporter.metricSeriesJSON(sidecar)),
+                    ("llb_metric_series.json", WhoopCsvExporter.metricSeriesJSON(sidecar)),
                 ]
                 // Deflate to a temp path off main; the cheap atomic swap into the user's chosen destination
                 // stays on main (it needs the panel/picker result).
@@ -138,7 +138,7 @@ enum CsvExport {
             #if os(macOS)
             // Save panel — DataBackup.runExport precedent (NSSavePanel + .zip content type).
             let panel = NSSavePanel()
-            panel.title = String(localized: "Export NOOP data as CSV")
+            panel.title = String(localized: "Export LLB data as CSV")
             panel.nameFieldStringValue = name
             panel.allowedContentTypes = [.zip]
             panel.canCreateDirectories = true
@@ -179,7 +179,7 @@ enum CsvExport {
     /// sport "detected".
     private static func workoutSource(_ w: WorkoutRow, computedId: String) -> String {
         if w.source == "manual" { return "manual" }
-        if w.source == computedId || w.sport == "detected" { return "noop (APPROXIMATE)" }
+        if w.source == computedId || w.sport == "detected" { return "llb (APPROXIMATE)" }
         return "import"
     }
 
@@ -187,6 +187,6 @@ enum CsvExport {
     // called from `run`, which already is.
     @MainActor
     private static func defaultName() -> String {
-        "noop-export-\(Repository.localDayKey(Date())).zip"
+        "llb-export-\(Repository.localDayKey(Date())).zip"
     }
 }

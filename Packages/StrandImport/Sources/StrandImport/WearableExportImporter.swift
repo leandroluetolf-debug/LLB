@@ -5,8 +5,8 @@ import ZIPFoundation
 //
 // A sibling to the wave-1 `ActivityFileImporter` (GPX/TCX/FIT workouts). Where that imports a single
 // activity FILE, this imports the WELLNESS export each of these brands lets the user download of their
-// own account — fully offline, no cloud API, no login. NOOP ingests the file the user already owns and
-// maps it onto NOOP's DAILY metrics + sleep sessions (NOT workouts — workouts stay wave-1's lane).
+// own account — fully offline, no cloud API, no login. LLB ingests the file the user already owns and
+// maps it onto LLB's DAILY metrics + sleep sessions (NOT workouts — workouts stay wave-1's lane).
 //
 //   • Oura   — the Account → Export Data JSON: sleep periods (stages/durations/HRV/RHR/breath),
 //              daily readiness (RHR, temperature deviation, score), daily activity (steps/calories).
@@ -17,7 +17,7 @@ import ZIPFoundation
 //
 // HONEST DATA: only fields the export actually carries are written; unknown stays nil. A brand's OWN
 // score (Oura "readiness", any "sleep score") is stored under a REFERENCE key only — it is NEVER
-// surfaced as NOOP's Charge/Effort/Rest. NOOP recomputes its own scores downstream from the raw
+// surfaced as LLB's Charge/Effort/Rest. LLB recomputes its own scores downstream from the raw
 // RHR/HRV/sleep inputs, exactly as for any imported source. Every imported row is tagged with the
 // brand's source id ("oura-import" / "fitbit-import" / "garmin-import").
 //
@@ -27,7 +27,7 @@ import ZIPFoundation
 // Int(Double)), and per-collection counts are capped so a crafted export can't OOM us.
 //
 // LICENSE: the file shapes are DOCUMENTED format facts (Oura account export, Fitbit Takeout, Garmin
-// GDPR wellness). No GPL/AGPL code is copied — this is NOOP's own clean implementation.
+// GDPR wellness). No GPL/AGPL code is copied — this is LLB's own clean implementation.
 
 public struct WearableExportImporter {
 
@@ -67,7 +67,7 @@ public struct WearableExportImporter {
 
         if days.isEmpty && sleeps.isEmpty {
             // A lone Oura `heartrate.csv` is a raw HR-sample file, not a daily summary, so it carries no
-            // recovery/sleep/HRV NOOP can map. Say so plainly and point at the right file (#857) instead of
+            // recovery/sleep/HRV LLB can map. Say so plainly and point at the right file (#857) instead of
             // a brand-generic "no usable data".
             if brand == .oura, Self.onlyHeartRateCSV(files) {
                 throw ImportError.emptyExport(

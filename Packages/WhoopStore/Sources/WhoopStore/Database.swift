@@ -302,7 +302,7 @@ extension WhoopStore {
         }
 
         // v16: stable per-strap identity for multi-WHOOP support. `peripheralId` holds the BLE
-        // CBPeripheral.identifier.uuidString (iOS/Mac) so NOOP can tell physical straps apart and
+        // CBPeripheral.identifier.uuidString (iOS/Mac) so LLB can tell physical straps apart and
         // map a connected peripheral back to its registry row. Additive + nullable: the seeded
         // 'my-whoop' row keeps peripheralId NULL (it still connects to "any WHOOP" today; it adopts
         // its peripheral id later). New straps get id "whoop-<peripheralId>". Old readers that don't
@@ -319,7 +319,7 @@ extension WhoopStore {
         // no existing row touched, so an old reader is unaffected.
         //
         // NON-CLINICAL: holds ONLY user-entered values + an OPTIONAL user-entered `referenceText`
-        // (their own report's range, shown back verbatim). NOOP ships no reference-range tables and
+        // (their own report's range, shown back verbatim). LLB ships no reference-range tables and
         // never asserts normality.
         //
         // `id` is a client-generated stable identifier (so a single reading can be edited/deleted by id

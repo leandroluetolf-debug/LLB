@@ -8,9 +8,9 @@ import WhoopStore
 
 // MARK: - Lab Book (Health Records pillar — v5)
 //
-// "Your own logbook." NOOP gives you a private place to KEEP the numbers you already
+// "Your own logbook." LLB gives you a private place to KEEP the numbers you already
 // get from your doctor or pharmacy — bloods, blood pressure, body measurements — and
-// SEE them next to your wearable signals, entirely on this device. NOOP never tests
+// SEE them next to your wearable signals, entirely on this device. LLB never tests
 // you, never reads a result for you, and never tells you what a number means medically.
 // (Spec: docs/superpowers/specs/2026-06-19-v5-health-records-design.md.)
 //
@@ -23,7 +23,7 @@ import WhoopStore
 // Pearson idiom + restrained copy as CompareView's pairCard.
 //
 // NON-CLINICAL (load-bearing, spec §"Non-clinical / legal framing"): no word here
-// asserts a clinical judgement — never "abnormal/high/low/normal" as NOOP's own
+// asserts a clinical judgement — never "abnormal/high/low/normal" as LLB's own
 // statement; any reference range shown is EXACTLY what the user typed from their own
 // report; correlation copy says "association, not a medical finding". The full
 // disclaimer shows on the screen and (Wave 3) links to the consolidated About & Legal.
@@ -134,7 +134,7 @@ struct LabBookView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("What Lab Book is (and isn't)")
                 }
-                Text("It's a notebook, not a lab. NOOP lines up the numbers you enter. It doesn't test, read, or judge them. Not medical advice.")
+                Text("It's a notebook, not a lab. LLB lines up the numbers you enter. It doesn't test, read, or judge them. Not medical advice.")
                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
                 Button {
@@ -398,7 +398,7 @@ struct LabBookView: View {
 
     private var disclaimerNote: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Lab Book is a private notebook, not a medical service. NOOP stores and lines up the numbers you enter. It doesn't test, read, diagnose, or advise. Your records never leave \(Platform.deviceNounPhrase); there's no account or cloud, so it isn't \"HIPAA-covered.\" Always rely on your doctor or pharmacist to interpret results.")
+            Text("Lab Book is a private notebook, not a medical service. LLB stores and lines up the numbers you enter. It doesn't test, read, diagnose, or advise. Your records never leave \(Platform.deviceNounPhrase); there's no account or cloud, so it isn't \"HIPAA-covered.\" Always rely on your doctor or pharmacist to interpret results.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -604,7 +604,7 @@ private struct MarkerDetailView: View {
                 trendSection
                 if !numericReadings.isEmpty { compareSection }
                 historySection
-                Text("These are your own numbers shown back to you. NOOP doesn't decide whether any value is normal, high or low.")
+                Text("These are your own numbers shown back to you. LLB doesn't decide whether any value is normal, high or low.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -700,7 +700,7 @@ private struct MarkerDetailView: View {
                     }
 
                     if signal == nil {
-                        Text("Pick a wearable signal (resting HR, HRV, sleep, Charge, weight…) to line it up against this marker. NOOP averages the signal over the \(window.phrase) before each reading.")
+                        Text("Pick a wearable signal (resting HR, HRV, sleep, Charge, weight…) to line it up against this marker. LLB averages the signal over the \(window.phrase) before each reading.")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -752,8 +752,8 @@ private struct MarkerDetailView: View {
             Text(n == 0
                  ? "No overlap yet between this marker and \(signal?.title.lowercased() ?? String(localized: "that signal")). Log a few more readings (and keep wearing your strap)."
                  : (n == 1
-                    ? "1 reading lines up so far, not enough to read a trend yet (NOOP waits for \(LabBookSignals.floor))."
-                    : "\(n) readings line up so far, not enough to read a trend yet (NOOP waits for \(LabBookSignals.floor))."))
+                    ? "1 reading lines up so far, not enough to read a trend yet (LLB waits for \(LabBookSignals.floor))."
+                    : "\(n) readings line up so far, not enough to read a trend yet (LLB waits for \(LabBookSignals.floor))."))
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -982,10 +982,10 @@ private struct LabBookDisclaimerView: View {
     var body: some View {
         ScreenScaffold(title: "About Lab Book", subtitle: "A private notebook, not a medical service.") {
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-                bullet(String(localized: "NOOP stores and lines up the numbers you enter yourself. It does not test you, read your results, give medical advice, or diagnose anything."))
+                bullet(String(localized: "LLB stores and lines up the numbers you enter yourself. It does not test you, read your results, give medical advice, or diagnose anything."))
                 bullet(String(localized: "Anything you see here (including any side-by-side trend) is your own information shown back to you. It's an association, never a cause, and never a medical finding."))
-                bullet(String(localized: "NOOP never decides whether a value is \"normal,\" \"high,\" or \"low.\" Any reference range shown is exactly what you typed from your own report."))
-                bullet(String(localized: "Your records never leave \(Platform.deviceNounPhrase). There's no account, no cloud, no NOOP server. Because NOOP is an independent app you run yourself (not a healthcare provider), it isn't \"HIPAA-covered,\" and that protection doesn't apply here; the safety comes from the data being local-only and yours."))
+                bullet(String(localized: "LLB never decides whether a value is \"normal,\" \"high,\" or \"low.\" Any reference range shown is exactly what you typed from your own report."))
+                bullet(String(localized: "Your records never leave \(Platform.deviceNounPhrase). There's no account, no cloud, no LLB server. Because LLB is an independent app you run yourself (not a healthcare provider), it isn't \"HIPAA-covered,\" and that protection doesn't apply here; the safety comes from the data being local-only and yours."))
                 bullet(String(localized: "Always rely on your doctor, pharmacist, or a qualified professional to interpret results and make decisions. If a number worries you, talk to them, not to an app."))
                 Button("Got it") { dismiss() }
                     .buttonStyle(.noopPrimary)

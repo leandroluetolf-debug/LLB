@@ -3,7 +3,7 @@
     <!-- German (de). App name stays untranslated (brand). Nav terms mirror the iOS German pass where
          one exists, so the two platforms read the same. -->
     <string name="widget_description">Erholung, Ladung und Belastung von heute, mit Live-Herzfrequenz und Band-Akku auf einen Blick.</string>
-    <string name="widget_error">Das NOOP-Widget konnte nicht gezeichnet werden. Es erholt sich beim nächsten Update.</string>
+    <string name="widget_error">Das LLB-Widget konnte nicht gezeichnet werden. Es erholt sich beim nächsten Update.</string>
 
     <string name="nav_today">Heute</string>
     <string name="nav_intelligence">Intelligenz</string>

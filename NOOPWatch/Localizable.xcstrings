@@ -923,36 +923,36 @@
         }
       }
     },
-    "Open NOOP on your iPhone to sync": {
+    "Open LLB on your iPhone to sync": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open NOOP on your iPhone to sync"
+            "value": "Open LLB on your iPhone to sync"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abre NOOP en tu iPhone para sincronizar"
+            "value": "Abre LLB en tu iPhone para sincronizar"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apri NOOP sul tuo iPhone per sincronizzare"
+            "value": "Apri LLB sul tuo iPhone per sincronizzare"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 iPhone 上打开 NOOP 以同步"
+            "value": "在 iPhone 上打开 LLB 以同步"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "在你的 iPhone 上打開 NOOP 以同步"
+            "value": "在你的 iPhone 上打開 LLB 以同步"
           }
         }
       }

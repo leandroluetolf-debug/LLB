@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - BrandMark — the NOOP logo mark (Titanium & Gold)
+// MARK: - BrandMark — the LLB logo mark (Titanium & Gold)
 //
 // The app's identity glyph, rendered natively for use as a hero on onboarding,
 // "about", and empty states. Per the design handoff ("Engraved" app-icon
@@ -15,7 +15,7 @@ import SwiftUI
 //
 // Gold-on-navy, matching the app icon (the maintainer's brand direction, 2026-06-15).
 //
-// It reads as the "O" in NOOP and as a small echo of the hero recovery ring.
+// It reads as the "O" in LLB and as a small echo of the hero recovery ring.
 // CLEAN and flat by design: no bloom, no shadow, no glow — the titanium does the
 // depth via its gradient + sheen, the gold ring does the accent. Everything is
 // driven off a single `size`, so the mark stays crisp from a 28pt list avatar up
@@ -51,7 +51,7 @@ public struct BrandMark: View {
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("NOOP"))
+        .accessibilityLabel(Text("LLB"))
         .accessibilityAddTraits(.isImage)
     }
 

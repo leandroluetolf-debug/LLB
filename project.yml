@@ -1,6 +1,6 @@
 name: Strand
 options:
-  bundleIdPrefix: com.noopapp
+  bundleIdPrefix: com.llb
   deploymentTarget:
     macOS: "13.0"
   createIntermediateGroups: true
@@ -27,7 +27,7 @@ settings:
     # extension. Referenced as $(APP_GROUP_ID) by both targets' entitlements and Info.plist, and read
     # at runtime via the AppGroupIdentifier Info.plist key (WidgetSnapshot.suiteName) so the value is
     # never hard-coded in Swift. Change it in this one place when building under your own Apple ID.
-    APP_GROUP_ID: group.com.noopapp.noop
+    APP_GROUP_ID: group.com.llb.app
     # Build for both Apple Silicon and Intel so the release runs on every Mac.
     ARCHS: "$(ARCHS_STANDARD)"
   configs:
@@ -79,14 +79,14 @@ targets:
     info:
       path: Strand/Resources/Info.plist
       properties:
-        CFBundleName: NOOP
-        CFBundleDisplayName: NOOP
+        CFBundleName: LLB
+        CFBundleDisplayName: LLB
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "198"
         LSMinimumSystemVersion: "13.0"
         LSApplicationCategoryType: public.app-category.healthcare-fitness
-        NSBluetoothAlwaysUsageDescription: "NOOP connects directly to your WHOOP strap over Bluetooth to read heart rate, R-R intervals, battery, and sensor data locally on your Mac. Nothing leaves your device."
-        NSLocationWhenInUseUsageDescription: "NOOP records your route during an outdoor workout to show distance, pace, and a map. The route stays on your device. Nothing leaves it."
+        NSBluetoothAlwaysUsageDescription: "LLB connects directly to your WHOOP strap over Bluetooth to read heart rate, R-R intervals, battery, and sensor data locally on your Mac. Nothing leaves your device."
+        NSLocationWhenInUseUsageDescription: "LLB records your route during an outdoor workout to show distance, pace, and a map. The route stays on your device. Nothing leaves it."
         # The AI Coach's "Custom (OpenAI-compatible)" provider talks to a LOCAL LLM server over plain
         # HTTP on loopback (Ollama / LM Studio / llama.cpp at http://localhost:…). ATS blocks cleartext
         # by default; NSAllowsLocalNetworking exempts loopback/.local/unqualified hosts ONLY — public
@@ -106,10 +106,10 @@ targets:
         com.apple.security.network.client: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop
-        PRODUCT_NAME: NOOP
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.app
+        PRODUCT_NAME: LLB
         # Pin the Swift module name so `@testable import Strand` resolves even though PRODUCT_NAME is
-        # NOOP — the test target and shared sources refer to the app module as `Strand`.
+        # LLB — the test target and shared sources refer to the app module as `Strand`.
         PRODUCT_MODULE_NAME: Strand
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: NO
@@ -140,14 +140,14 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.strandtests
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.strandtests
         # Host the unit tests in the app so `@testable import Strand` links against the real app module.
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NOOP.app/Contents/MacOS/NOOP"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/LLB.app/Contents/MacOS/LLB"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
   # ---------------------------------------------------------------------------
   # iOS app target (community build-from-source; never distributed via the App
-  # Store — NOOP stays anonymous). Reuses the five shared packages + most of the
+  # Store — LLB stays anonymous). Reuses the five shared packages + most of the
   # macOS app's Strand/ sources; the macOS-only scene/menu-bar/notification files
   # are excluded, and the iOS app shell + HealthKit + widgets/intents live under
   # StrandiOS/. See docs/IOS.md.
@@ -183,8 +183,8 @@ targets:
     info:
       path: StrandiOS/Resources/Info.plist
       properties:
-        CFBundleName: NOOP
-        CFBundleDisplayName: NOOP
+        CFBundleName: LLB
+        CFBundleDisplayName: LLB
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         # Surfaces APP_GROUP_ID to runtime (WidgetSnapshot.suiteName) so the App Group id isn't
@@ -226,11 +226,11 @@ targets:
         # ScheduledDebugExport.bgTaskIdentifier EXACTLY and be registered at launch (StrandiOSApp.init);
         # otherwise iOS refuses to schedule or deliver the background drop.
         BGTaskSchedulerPermittedIdentifiers:
-          - com.noopapp.noop.debugexport
-        NSBluetoothAlwaysUsageDescription: "NOOP connects directly to your WHOOP strap over Bluetooth to read heart rate, R-R intervals, battery, and sensor data locally on your iPhone. Nothing leaves your device."
-        NSLocationWhenInUseUsageDescription: "NOOP records your route during an outdoor workout to show distance, pace, and a map, and keeps recording while the screen is off. The route stays on your device. Nothing leaves it."
-        NSHealthShareUsageDescription: "NOOP reads your own Apple Health data on-device to compute recovery, strain, and sleep. Nothing leaves your device."
-        NSHealthUpdateUsageDescription: "NOOP writes the metrics it computes from your strap back into Apple Health, on-device and only when you allow it."
+          - com.llb.app.debugexport
+        NSBluetoothAlwaysUsageDescription: "LLB connects directly to your WHOOP strap over Bluetooth to read heart rate, R-R intervals, battery, and sensor data locally on your iPhone. Nothing leaves your device."
+        NSLocationWhenInUseUsageDescription: "LLB records your route during an outdoor workout to show distance, pace, and a map, and keeps recording while the screen is off. The route stays on your device. Nothing leaves it."
+        NSHealthShareUsageDescription: "LLB reads your own Apple Health data on-device to compute recovery, strain, and sleep. Nothing leaves your device."
+        NSHealthUpdateUsageDescription: "LLB writes the metrics it computes from your strap back into Apple Health, on-device and only when you allow it."
         # #187: the opt-in AI Coach's "Custom (OpenAI-compatible)" provider can point at a LOCAL LLM on
         # the LAN (Ollama / LM Studio at http://192.168.x.x:11434). ATS blocks cleartext by default;
         # NSAllowsLocalNetworking exempts loopback/.local/private-LAN hosts ONLY — public HTTPS endpoints
@@ -251,8 +251,8 @@ targets:
           - $(APP_GROUP_ID)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop
-        PRODUCT_NAME: NOOP
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.app
+        PRODUCT_NAME: LLB
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Ship every *.appiconset (not just the primary AppIcon) so the alternate "AppIcon-Navy"
         # set is compiled into the bundle and is available to UIApplication.setAlternateIconName.
@@ -269,7 +269,7 @@ targets:
       - package: MarkdownUI
       - package: ZIPFoundation
       - target: NOOPiOSWidgets
-      # Embed the watchOS app so the iPhone app carries it (NOOP.app/Watch/NOOPWatch.app). A watch app
+      # Embed the watchOS app so the iPhone app carries it (LLB.app/Watch/NOOPWatch.app). A watch app
       # installs by riding inside its iOS companion; without this it would never reach a paired watch.
       # Build-from-source delivers it for certain; sideload install of the embedded watch app under a free
       # Apple ID is unproven (an Apple limitation), so the docs steer watch users to a source build for now.
@@ -290,7 +290,7 @@ targets:
     info:
       path: StrandiOSWidgets/Info.plist
       properties:
-        CFBundleDisplayName: NOOP
+        CFBundleDisplayName: LLB
         # Version keys MUST live here in the generated-Info.plist properties — NOT hand-edited into the
         # file — because xcodegen regenerates StrandiOSWidgets/Info.plist on every `xcodegen generate`
         # (which every release runs for the version bump) and would otherwise rewrite them to its
@@ -310,7 +310,7 @@ targets:
           - $(APP_GROUP_ID)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.app.widgets
         PRODUCT_NAME: NOOPWidgets
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -340,8 +340,8 @@ targets:
     info:
       path: NOOPWatch/Info.plist
       properties:
-        CFBundleName: NOOP
-        CFBundleDisplayName: NOOP
+        CFBundleName: LLB
+        CFBundleDisplayName: LLB
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         # Surfaces APP_GROUP_ID to runtime (WatchScoreStore.suiteName) so the App Group id isn't
@@ -350,9 +350,9 @@ targets:
         # Modern single-target watchOS app — no separate WatchKit extension.
         WKApplication: true
         # Pairs this watch app to the iPhone companion (must match NOOPiOS PRODUCT_BUNDLE_IDENTIFIER).
-        WKCompanionAppBundleIdentifier: com.noopapp.noop
-        NSHealthShareUsageDescription: "NOOP reads your heart rate from the Watch sensor to show a live readout on your wrist. It stays on your device."
-        NSHealthUpdateUsageDescription: "NOOP records a basic workout session on your Watch for a higher-fidelity heart rate. The session stays on your device."
+        WKCompanionAppBundleIdentifier: com.llb.app
+        NSHealthShareUsageDescription: "LLB reads your heart rate from the Watch sensor to show a live readout on your wrist. It stays on your device."
+        NSHealthUpdateUsageDescription: "LLB records a basic workout session on your Watch for a higher-fidelity heart rate. The session stays on your device."
     entitlements:
       path: NOOPWatch/NOOPWatch.entitlements
       properties:
@@ -362,13 +362,13 @@ targets:
           - $(APP_GROUP_ID)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop.watch
-        # The bundle FILE is NOOPWatch.app so it doesn't collide with the iPhone app's NOOP.app when it is
-        # embedded at NOOP.app/Watch/NOOPWatch.app. The user still sees "NOOP" on the wrist via the
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.app.watch
+        # The bundle FILE is NOOPWatch.app so it doesn't collide with the iPhone app's LLB.app when it is
+        # embedded at LLB.app/Watch/NOOPWatch.app. The user still sees "LLB" on the wrist via the
         # CFBundleName / CFBundleDisplayName above.
         PRODUCT_NAME: NOOPWatch
         GENERATE_INFOPLIST_FILE: NO
-        # The watch app icon (NOOPWatch/Assets.xcassets/AppIcon.appiconset — the NOOP mark, watchOS single-size).
+        # The watch app icon (NOOPWatch/Assets.xcassets/AppIcon.appiconset — the LLB mark, watchOS single-size).
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # watchOS family.
         TARGETED_DEVICE_FAMILY: "4"
@@ -396,7 +396,7 @@ targets:
     info:
       path: NOOPWatchComplications/Info.plist
       properties:
-        CFBundleDisplayName: NOOP
+        CFBundleDisplayName: LLB
         # Version keys live here as generated-plist properties so xcodegen keeps them lockstep with the
         # parent watch app on every regenerate (mirrors the NOOPiOSWidgets rationale, #416).
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
@@ -412,7 +412,7 @@ targets:
           - $(APP_GROUP_ID)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop.watch.complications
+        PRODUCT_BUNDLE_IDENTIFIER: com.llb.app.watch.complications
         PRODUCT_NAME: NOOPWatchComplications
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "4"

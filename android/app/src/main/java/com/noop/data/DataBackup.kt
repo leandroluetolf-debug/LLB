@@ -13,7 +13,7 @@ import java.util.zip.ZipOutputStream
 /**
  * Whole-store EXPORT / IMPORT for device migration.
  *
- * NOOP keeps everything on-device in a single Room/SQLite file ([WhoopDatabase.DB_NAME]).
+ * LLB keeps everything on-device in a single Room/SQLite file ([WhoopDatabase.DB_NAME]).
  * Moving to a new phone therefore means moving exactly that one file. There is no cloud,
  * no account, nothing leaves the device except through these two explicit, user-driven
  * file operations (a SAF document the user picks).
@@ -49,7 +49,7 @@ object DataBackup {
 
     /** Outcome of an [importFrom] call. On success the app must be restarted. */
     sealed interface ImportResult {
-        /** The new database is in place; tell the user to relaunch NOOP. */
+        /** The new database is in place; tell the user to relaunch LLB. */
         data object NeedsRestart : ImportResult
 
         /** Import failed and the original database is untouched. */
@@ -108,7 +108,7 @@ object DataBackup {
         try {
             val read = resolver.openInputStream(uri)?.use { readFully(it, header) }
                 ?: return ImportResult.Failed("Could not open the chosen file.")
-            if (read < 4) return ImportResult.Failed("That file is not a NOOP backup.")
+            if (read < 4) return ImportResult.Failed("That file is not a LLB backup.")
         } catch (e: IOException) {
             return ImportResult.Failed("Could not read the chosen file: ${e.message}")
         }
@@ -126,7 +126,7 @@ object DataBackup {
                     "The backup archive doesn't contain a database file."
                 )
                 StageResult.NOT_A_BACKUP -> return ImportResult.Failed(
-                    "That file is not a NOOP backup - it doesn't look like a .noopbak archive or a SQLite database."
+                    "That file is not a LLB backup - it doesn't look like a .noopbak archive or a SQLite database."
                 )
                 else -> error("unreachable stage result $staged")
             }
@@ -138,11 +138,11 @@ object DataBackup {
         // 3. Validate the extracted file is a real SQLite database (magic-byte check).
         if (!isValidSqliteHeader(tempSqlite)) {
             tempSqlite.delete()
-            return ImportResult.Failed("The backup archive doesn't contain a valid NOOP database.")
+            return ImportResult.Failed("The backup archive doesn't contain a valid LLB database.")
         }
 
         // 3b. Origin check (parity with the Apple side's GRDB-origin rejection). The SQLite magic
-        //     passes for ANY SQLite file: a GRDB (Mac/iOS NOOP) backup or some other app's database
+        //     passes for ANY SQLite file: a GRDB (Mac/iOS LLB) backup or some other app's database
         //     would otherwise sail through and REPLACE the live Room store, stranding the user. Read
         //     the backup's table names READ-ONLY and reject anything that isn't a Room (this-app)
         //     backup but still holds real data. Empty/pre-migration files fall through to Room's
@@ -152,8 +152,8 @@ object DataBackup {
             BackupOrigin.MAC ->
                 return rejectForeign(
                     tempSqlite,
-                    "This isn't a NOOP backup from this app. It looks like a backup from the Mac or " +
-                        "iOS NOOP app (it carries that platform's migration bookkeeping). Restoring it here " +
+                    "This isn't a LLB backup from this app. It looks like a backup from the Mac or " +
+                        "iOS LLB app (it carries that platform's migration bookkeeping). Restoring it here " +
                         "would strand your store. To move your history across platforms, export the " +
                         "WHOOP-format CSV on the other device (Settings → Export data) and import that here.",
                 )
@@ -161,8 +161,8 @@ object DataBackup {
                 if (holdsData(backupTables)) {
                     return rejectForeign(
                         tempSqlite,
-                        "This isn't a NOOP backup from this app. It's missing the database bookkeeping a " +
-                            "NOOP backup carries (it looks like another app's database). Restoring it would " +
+                        "This isn't a LLB backup from this app. It's missing the database bookkeeping a " +
+                            "LLB backup carries (it looks like another app's database). Restoring it would " +
                             "strand your store.",
                     )
                 }
@@ -295,7 +295,7 @@ object DataBackup {
 
     // ── Origin validation (parity with the Apple GRDB-origin rejection) ─────────
 
-    /** Which platform produced a NOOP backup, judged by its migrator's bookkeeping table. */
+    /** Which platform produced a LLB backup, judged by its migrator's bookkeeping table. */
     enum class BackupOrigin { MAC, ANDROID, UNKNOWN }
 
     /**

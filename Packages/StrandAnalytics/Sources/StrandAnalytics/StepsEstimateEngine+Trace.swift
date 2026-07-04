@@ -3,7 +3,7 @@ import WhoopProtocol
 
 // StepsEstimateEngine+Trace.swift - the Steps test-mode diagnostic traces.
 //
-// Two pure, side-effect-free twins for the two ways NOOP produces a step number:
+// Two pure, side-effect-free twins for the two ways LLB produces a step number:
 //
 //  1. calibrationTrace(...) - the WHOOP-4 motion-volume path. Reports each calibration day's motion VOLUME
 //     and phone reference count, then the fitted (or manual) calibration state (k / sampleDays / confidence

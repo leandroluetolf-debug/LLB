@@ -7,6 +7,6 @@ import SwiftUI
 @main
 struct NOOPWatchComplicationBundle: WidgetBundle {
     var body: some Widget {
-        NOOPChargeComplication()
+        LLBChargeComplication()
     }
 }

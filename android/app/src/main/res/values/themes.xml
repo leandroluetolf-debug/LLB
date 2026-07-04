@@ -14,7 +14,7 @@
       #578). The light/dark system-bar ICON tint stays runtime-driven by NoopTheme via
       isAppearanceLightStatusBars in Theme.kt — do not re-add windowLight*Bar here.
     -->
-    <style name="Theme.NOOP" parent="@android:style/Theme.Material.NoActionBar">
+    <style name="Theme.LLB" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/surface_base</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

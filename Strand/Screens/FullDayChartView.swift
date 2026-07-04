@@ -332,7 +332,7 @@ struct FullDayChartView: View {
 
     /// #175: map the band's 0-3 sleep_state code to its word. A bucket-averaged fractional value (when
     /// zoomed out) is rounded to the nearest code — honest for a readout label; the track itself plots the
-    /// numeric code. This names the BAND's own reported state, never a stage NOOP derives.
+    /// numeric code. This names the BAND's own reported state, never a stage LLB derives.
     static func bandStateLabel(_ v: Double) -> String {
         switch Int(v.rounded()) {
         case 0: return String(localized: "wake")

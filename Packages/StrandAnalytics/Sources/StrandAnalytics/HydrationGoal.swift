@@ -13,7 +13,7 @@ import Foundation
 //     sexBaseline : male 3700, female 2700, unspecified/other 3200 ml
 //     effortBump  : clamp(round(effort/100 · 700), 0…700); 0 when no Effort is available
 //
-// `effort` is the day's Effort/strain score on NOOP's native 0…100 scale (the value stored as
+// `effort` is the day's Effort/strain score on LLB's native 0…100 scale (the value stored as
 // `DailyMetric.strain`). The bump is intentionally modest (≤ 0.7 L) so a hard day nudges the target up
 // without ever turning the guide into a hard rule.
 public enum HydrationGoal {

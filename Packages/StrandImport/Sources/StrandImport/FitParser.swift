@@ -38,7 +38,7 @@ import Foundation
 // message types (device_info, event, hrv, monitoring, etc.). Those are skipped gracefully, never fatal.
 //
 // Conceptually adapted from the public FIT spec and the structure of roznet/FitFileParser,
-// FitnessKit/FitDataProtocol (MIT) and muktihari/fit (BSD); NOOP's own clean implementation — no
+// FitnessKit/FitDataProtocol (MIT) and muktihari/fit (BSD); LLB's own clean implementation — no
 // upstream code vendored.
 //
 // SECURITY: every read is bounds-checked against the buffer. Field/record counts are capped. A

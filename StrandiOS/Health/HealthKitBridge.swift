@@ -8,7 +8,7 @@ import StrandImport
 ///
 /// iOS has HealthKit (macOS does not), so the iOS target can do far more than parse a static export:
 /// it reads the user's own Health data live and maps it onto the **same** `WhoopStore` rows the
-/// macOS importer produces (under the `apple-health` source id), and it writes NOOP-computed metrics
+/// macOS importer produces (under the `apple-health` source id), and it writes LLB-computed metrics
 /// back into Apple Health. Everything stays on-device and strictly opt-in.
 @MainActor
 final class HealthKitBridge: ObservableObject {
@@ -35,9 +35,9 @@ final class HealthKitBridge: ObservableObject {
     private let repo: Repository
     /// Source id imported HealthKit data lands under (matches `AppModel.appleDeviceId`).
     private let appleDeviceId: String
-    /// NOOP's own strap-derived source id, read back when writing into Health.
+    /// LLB's own strap-derived source id, read back when writing into Health.
     private let noopDeviceId: String
-    /// NOOP's on-device COMPUTED daily scores (recovery/HRV/RHR/SpO₂/resp) live under the sibling
+    /// LLB's on-device COMPUTED daily scores (recovery/HRV/RHR/SpO₂/resp) live under the sibling
     /// `deviceId + "-noop"` id — mirrors `Repository.computedDeviceId` / `IntelligenceEngine.computedId`.
     /// `writeBack` must read this, not the raw import id: a Bluetooth-only WHOOP user has no imported
     /// `noopDeviceId` daily row, so those metrics exist ONLY here.
@@ -269,7 +269,7 @@ final class HealthKitBridge: ObservableObject {
     // MARK: - Read → store
 
     /// Pull the last `days` of Apple Health into the on-device store under the `apple-health` source,
-    /// then write NOOP's own computed metrics back into Health. Safe to call repeatedly (idempotent
+    /// then write LLB's own computed metrics back into Health. Safe to call repeatedly (idempotent
     /// upserts keyed by day).
     func sync(days: Int = 30) async {
         guard auth == .authorized, !syncing else { return }
@@ -389,7 +389,7 @@ final class HealthKitBridge: ObservableObject {
         // Workouts the user logged in Apple Health (Apple Watch rings, gym apps, etc.). macOS already
         // imports these from a static Health export and Android reads them from Health Connect; iOS now
         // reads them live on-device too, so the platforms reach parity. ON-DEVICE ONLY: this is a plain
-        // HealthKit read of workouts NOOP did NOT author, never any cloud/3rd-party API. (#835)
+        // HealthKit read of workouts LLB did NOT author, never any cloud/3rd-party API. (#835)
         let workoutRows = await collectWorkouts(start: start, end: end)
 
         // Persist all the apple-health rows AND write back, advancing lastSync only when the WHOLE
@@ -410,9 +410,9 @@ final class HealthKitBridge: ObservableObject {
         }
     }
 
-    // MARK: - Write back (NOOP → Health)
+    // MARK: - Write back (LLB → Health)
 
-    /// Write NOOP's strap-derived daily metrics (resting HR, HRV, SpO₂, respiratory rate) into Apple
+    /// Write LLB's strap-derived daily metrics (resting HR, HRV, SpO₂, respiratory rate) into Apple
     /// Health so they appear across the user's Health ecosystem.
     ///
     /// Dedup model: each emitted sample carries a deterministic `HKMetadataKeyExternalUUID` derived
@@ -428,7 +428,7 @@ final class HealthKitBridge: ObservableObject {
         let to = HealthKitBridge.dayString(Date())
         guard let fromDate = cal.date(byAdding: .day, value: -days, to: Date()) else { return }
         let from = HealthKitBridge.dayString(fromDate)
-        // Read NOOP's COMPUTED dailies (deviceId + "-noop"), which is the only place a strap-only
+        // Read LLB's COMPUTED dailies (deviceId + "-noop"), which is the only place a strap-only
         // user's recovery/HRV/RHR/SpO₂/resp lives, then union with any imported `noopDeviceId` rows so
         // a user who ALSO imported a WHOOP export still gets the imported values. Imported overrides
         // computed per day, matching the dashboard's source precedence.
@@ -495,7 +495,7 @@ final class HealthKitBridge: ObservableObject {
         var asleepMin: Double?; var deepMin: Double?; var remMin: Double?; var coreMin: Double?
     }
 
-    /// Excludes NOOP's own write-back samples from reads, so the two-way sync never reads its own
+    /// Excludes LLB's own write-back samples from reads, so the two-way sync never reads its own
     /// output back in as "apple-health" data — which would make the strap and "Apple Health" plot the
     /// same line for a strap-only user, and bias the apple-health average for someone who also has a
     /// watch. `HKSource.default()` is this app's own source. (Reimplemented from @vulnix0x4's PR #375.)
@@ -572,7 +572,7 @@ final class HealthKitBridge: ObservableObject {
 
     /// Read the workouts the user logged in Apple Health over `[start, end)` and map each to a
     /// `WorkoutRow` under the apple-health source. ON-DEVICE ONLY: a straight HealthKit `HKWorkout` query,
-    /// no cloud or third-party API. NOOP-authored workouts are excluded (the same `notNoopAuthored`
+    /// no cloud or third-party API. LLB-authored workouts are excluded (the same `notNoopAuthored`
     /// predicate the metric reads use) so our own write-back never re-imports as "Apple Health". Mirrors
     /// the macOS export importer and the Android Health Connect importer, which already ingest workouts,
     /// closing the iOS gap. The upsert is idempotent on (deviceId, startTs), so re-running a sync window
@@ -616,7 +616,7 @@ final class HealthKitBridge: ObservableObject {
     /// source filters treat an iOS-read workout exactly like a macOS-imported one.
     static let appleWorkoutSource = "apple-health"
 
-    /// Map an `HKWorkoutActivityType` to NOOP's human sport label. Strength training routes to the
+    /// Map an `HKWorkoutActivityType` to LLB's human sport label. Strength training routes to the
     /// shared lifting sport so a gym session lands in the Lifting lane; anything we don't name explicitly
     /// falls back to a generic "Workout" rather than an opaque numeric type.
     private static func sportName(_ type: HKWorkoutActivityType) -> String {

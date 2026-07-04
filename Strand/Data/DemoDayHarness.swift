@@ -22,7 +22,7 @@ struct DemoDayFrame {
     let hour: Int
     let greeting: String
     let readiness: String
-    let effort: Double      // NOOP 0–100 Effort axis
+    let effort: Double      // LLB 0–100 Effort axis
     let hrvMs: Int
     let rhrBpm: Int
     let stress0to3: Int

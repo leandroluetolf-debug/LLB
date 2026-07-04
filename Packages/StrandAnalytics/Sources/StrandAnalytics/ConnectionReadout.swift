@@ -46,7 +46,7 @@ public enum ConnectionTrace {
 
     /// The firmware-layout line for a HEALTHY sync: which historical record layout the strap emits
     /// (v18/v24/v25/v26). Surfaced once per distinct version so the connection report always reveals the
-    /// firmware the strap hands over, not only when NOOP cannot decode it.
+    /// firmware the strap hands over, not only when LLB cannot decode it.
     public static func firmwareLine(version: Int, decodable: Bool) -> String {
         "firmware layout=v\(version) \(decodable ? "decodable" : "UNMAPPED (no motion/HR decoded)")"
     }

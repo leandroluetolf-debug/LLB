@@ -10,7 +10,7 @@ import Foundation
 //     5.14 (women). (The BMI-variant coefficients that circulate from a 2019 secondary source were NOT
 //     reliably confirmable against the original and are deliberately NOT used here.)
 //   • Physical-activity index: HUNT1 PA-Q (Kurtze 2008), frequency×intensity×duration ∈ [0, 15];
-//     NOOP has no questionnaire, so it RECONSTRUCTS each factor from measured weekly signals.
+//     LLB has no questionnaire, so it RECONSTRUCTS each factor from measured weekly signals.
 //   • Fitness Age: invert the SAME Nes equation self-consistently — the normative curve is the Nes
 //     model at population-reference resting HR and PA-index. The body term (waist) appears in both the
 //     user's estimate and the normative curve, so it CANCELS: Fitness Age depends only on how the
@@ -105,7 +105,7 @@ public enum FitnessAgeEngine {
         return frequency * intensity * duration
     }
 
-    /// PA-index (0–15) from NOOP's measured weekly load — the UNIVERSAL path the orchestrator uses
+    /// PA-index (0–15) from LLB's measured weekly load — the UNIVERSAL path the orchestrator uses
     /// (works on any device, since `strain` is computed from HR alone; HR-zone minutes only exist for
     /// CSV-importers). `strain` (0–100, TRIMP-based) already integrates intensity × duration, so we map
     /// the mean active-day strain straight to the HUNT intensity×duration PRODUCT (0–3) and multiply by

@@ -9,9 +9,9 @@ import Foundation
 // Per the Health Records design spec (2026-06-19-v5-health-records-design.md,
 // §"New" and §"Non-clinical / legal framing"):
 //   - This ships NO reference-range tables. `referenceTextHint` is a neutral
-//     placeholder prompting the user to copy the range FROM THEIR OWN REPORT — NOOP
+//     placeholder prompting the user to copy the range FROM THEIR OWN REPORT — LLB
 //     never defines, computes, or asserts a normal range.
-//   - `higherIsBetter` is intentionally `nil` for every entry: NOOP makes no value
+//   - `higherIsBetter` is intentionally `nil` for every entry: LLB makes no value
 //     judgement about a marker's direction. The field exists only so a future
 //     descriptive sparkline could phrase a trend, never a clinical verdict.
 //   - The catalog is NOT a gate: a user can always add a custom marker (free name +
@@ -37,7 +37,7 @@ public struct MarkerDefinition: Sendable, Equatable, Codable {
     /// report. NOT a shipped reference range (see file header). `nil` where a range
     /// makes no sense (e.g. body measurements, notes).
     public let referenceTextHint: String?
-    /// Direction hint — ALWAYS `nil` (NOOP makes no value judgement). Present only as
+    /// Direction hint — ALWAYS `nil` (LLB makes no value judgement). Present only as
     /// a deliberate, documented placeholder so no caller infers a default of `true`.
     public let higherIsBetter: Bool?
 
@@ -65,7 +65,7 @@ public struct MarkerDefinition: Sendable, Equatable, Codable {
 public enum MarkerCatalog {
 
     /// A neutral hint shown in the range field — the user copies their own report's
-    /// range here; NOOP ships none.
+    /// range here; LLB ships none.
     private static let fromReport = "From your own report (optional)"
 
     /// ~30 common markers across the categories. Order is the suggested picker order.

@@ -21,7 +21,7 @@ object LogExport {
     /**
      * A short `yyMMdd-HHmm` wall-clock stamp for export filenames (#510 — maddognik's protocol RE), so
      * a reporter who shares several strap logs / raw captures in a row gets sortable, non-colliding
-     * files (e.g. `noop-strap-log-260617-1042.txt`). Locale-independent (US/POSIX) so the stamp is
+     * files (e.g. `llb-strap-log-260617-1042.txt`). Locale-independent (US/POSIX) so the stamp is
      * stable on every device. Matches the Swift `FileExport.timestamp()`.
      */
     fun timestamp(): String =
@@ -31,7 +31,7 @@ object LogExport {
     /**
      * A full `YYYYMMDD-HHMMSS` wall-clock stamp for the SCHEDULED daily auto-export (#510, maddognik), so
      * a day-after-day run drops sortable, second-precise, non-colliding files:
-     * `noop-straplog-20260617-070000.txt` (and the raw `.bin` alongside). Distinct from [timestamp]
+     * `llb-straplog-20260617-070000.txt` (and the raw `.bin` alongside). Distinct from [timestamp]
      * (minute-precision, for interactive shares) because the scheduler can fire twice in the same minute
      * across a reschedule and we never want one auto-export to clobber another. Locale-independent so the
      * stamp is identical on every device. Injectable epoch purely for the unit test.
@@ -40,8 +40,8 @@ object LogExport {
         java.text.SimpleDateFormat("yyyyMMdd-HHmmss", java.util.Locale.US).format(nowMs)
 
     /** The scheduled-export filenames, kept together so the formatter + extensions live in one place. */
-    fun strapLogFilename(nowMs: Long = System.currentTimeMillis()) = "noop-straplog-${exportStamp(nowMs)}.txt"
-    fun rawCaptureFilename(nowMs: Long = System.currentTimeMillis()) = "noop-straplog-${exportStamp(nowMs)}.bin"
+    fun strapLogFilename(nowMs: Long = System.currentTimeMillis()) = "llb-straplog-${exportStamp(nowMs)}.txt"
+    fun rawCaptureFilename(nowMs: Long = System.currentTimeMillis()) = "llb-straplog-${exportStamp(nowMs)}.bin"
 
     /**
      * Profile-tagged, self-describing bundle filename: `noop-<profile>-<platform>-v<version>-<yyMMdd-HHmm>.zip`
@@ -127,7 +127,7 @@ object LogExport {
             val out = arrayListOf<File>()
 
             val header = buildString {
-                appendLine("NOOP strap log (scheduled debug export)")
+                appendLine("LLB strap log (scheduled debug export)")
                 appendLine("App:     ${BuildConfig.VERSION_NAME} (${BuildConfig.TIER})")
                 for (line in com.noop.testcentre.AndroidDiagnostics.summaryLines(context)) appendLine(line)
                 appendLine("─".repeat(40))
@@ -166,7 +166,7 @@ object LogExport {
         // background export has a current source even when the live BLE client is gone.
         mirrorToRollingBuffer(logText)
         val header = buildString {
-            appendLine("NOOP strap log")
+            appendLine("LLB strap log")
             appendLine("App:     ${BuildConfig.VERSION_NAME} (${BuildConfig.TIER})")
             for (line in com.noop.testcentre.AndroidDiagnostics.summaryLines(context)) appendLine(line)
             appendLine("─".repeat(40))
@@ -179,7 +179,7 @@ object LogExport {
         val crashSection = if (crash != null) "\n\n${"─".repeat(40)}\nLast crash:\n$crash" else ""
 
         val dir = File(context.cacheDir, "logs").apply { mkdirs() }
-        val file = File(dir, "noop-strap-log-${timestamp()}.txt")
+        val file = File(dir, "llb-strap-log-${timestamp()}.txt")
         file.writeText(header + "\n" + body + crashSection)
         return file
     }
@@ -194,12 +194,12 @@ object LogExport {
         val prev = File(context.filesDir, "${com.noop.ble.WhoopBleClient.WHOOP5_CAPTURE_FILE}.1")
         if (!main.exists() && !prev.exists()) return null
         val header = buildString {
-            appendLine("# NOOP 5/MG raw backfill capture (JSONL; one frame per line)")
+            appendLine("# LLB 5/MG raw backfill capture (JSONL; one frame per line)")
             appendLine("# App: ${BuildConfig.VERSION_NAME} (${BuildConfig.TIER}) · Android ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT}) · ${Build.MANUFACTURER} ${Build.MODEL}")
             appendLine("# NOTE: contains raw biometric frames (heart rate, R-R, skin temp, motion) and the strap's console text. Share only if you're comfortable with that.")
         }
         val dir = File(context.cacheDir, "logs").apply { mkdirs() }
-        val out = File(dir, "noop-raw-capture-${timestamp()}.jsonl")
+        val out = File(dir, "llb-raw-capture-${timestamp()}.jsonl")
         out.outputStream().bufferedWriter().use { w ->
             w.write(header)
             // Oldest first: previous generation (if rotated), then the live file.
@@ -217,7 +217,7 @@ object LogExport {
             val send = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_STREAM, fileUri(context, file))
-                putExtra(Intent.EXTRA_SUBJECT, "NOOP strap log")
+                putExtra(Intent.EXTRA_SUBJECT, "LLB strap log")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             context.startActivity(Intent.createChooser(send, "Share strap log"))
@@ -259,7 +259,7 @@ object LogExport {
             val send = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_STREAM, fileUri(context, out))
-                putExtra(Intent.EXTRA_SUBJECT, "NOOP 5/MG protocol capture")
+                putExtra(Intent.EXTRA_SUBJECT, "LLB 5/MG protocol capture")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             context.startActivity(Intent.createChooser(send, "Share 5/MG capture"))
@@ -285,7 +285,7 @@ object LogExport {
             } else {
                 entries.add(0, "raw-capture.jsonl" to capture.readBytes())
             }
-            val name = "noop-export-${timestamp()}.zip"
+            val name = "llb-export-${timestamp()}.zip"
             exportBundle(context, entries, name)
         }.onFailure {
             Toast.makeText(context, "Couldn't export the pair: ${it.message}", Toast.LENGTH_LONG).show()

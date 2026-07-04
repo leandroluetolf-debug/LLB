@@ -63,7 +63,7 @@ struct SettingsView: View {
     @AppStorage(UnitPrefs.systemKey) private var unitSystemRaw = UnitSystem.metric.rawValue
     @AppStorage(UnitPrefs.temperatureKey) private var temperatureRaw = ""
     // Effort display scale (#268). Display-only — Effort stays stored 0–100, this only chooses whether
-    // it's shown on NOOP's 0–100 axis or WHOOP's 0–21 Day Strain axis.
+    // it's shown on LLB's 0–100 axis or WHOOP's 0–21 Day Strain axis.
     @AppStorage(UnitPrefs.effortScaleKey) private var effortScaleRaw = EffortScale.hundred.rawValue
     // Live-HR Live Activity (Lock Screen + Dynamic Island), iOS only (#336). Default on.
     @AppStorage(UnitPrefs.liveActivityKey) private var liveActivityEnabled = true
@@ -135,7 +135,7 @@ struct SettingsView: View {
     /// "How your scores work" explainer sheet, reachable any time from About.
     @State private var showScoringGuide = false
 
-    /// "How NOOP works" primer sheet (the four-section explainability primer), reachable any
+    /// "How LLB works" primer sheet (the four-section explainability primer), reachable any
     /// time from About — covers how sleep is sorted, how scores + calibration work, what
     /// recording means, and where the provenance badges come from.
     @State private var showHowNoopWorks = false
@@ -167,7 +167,7 @@ struct SettingsView: View {
 
     var body: some View {
         ScreenScaffold(title: "Settings",
-                       subtitle: "Your numbers, your strap, and how NOOP works. All on \(Platform.deviceNounPhrase).",
+                       subtitle: "Your numbers, your strap, and how LLB works. All on \(Platform.deviceNounPhrase).",
                        // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends / Devices:
                        // a fixed, full-bleed time-of-day sky behind the scroll content (it does not scroll).
                        // Settings' own frosted cards sit on the dark canvas below the sky band, unchanged.
@@ -239,13 +239,13 @@ struct SettingsView: View {
     // MARK: - Profile photo (optional, on-device)
 
     /// Set / change / remove an optional profile picture. PhotosUI's `PhotosPicker` works on both
-    /// iOS 16+ and macOS 13+ (NOOP's floor), so the same control serves both platforms — no
-    /// availability gating needed. The photo is stored only on this device (NOOP is fully offline).
+    /// iOS 16+ and macOS 13+ (LLB's floor), so the same control serves both platforms — no
+    /// availability gating needed. The photo is stored only on this device (LLB is fully offline).
     private var profilePhotoCard: some View {
         SettingsSection(
             icon: "person.crop.circle",
             title: "Profile photo",
-            blurb: "Optional. Add a photo for the avatar in the top-left. Stored only on \(Platform.deviceNounPhrase). NOOP is offline, so it's never uploaded."
+            blurb: "Optional. Add a photo for the avatar in the top-left. Stored only on \(Platform.deviceNounPhrase). LLB is offline, so it's never uploaded."
         ) {
             HStack(spacing: 16) {
                 ProfileAvatarView(imageData: profile.avatarImageData, size: 64)
@@ -389,13 +389,13 @@ struct SettingsView: View {
                             .accessibilityLabel("Step calibration, \(String(format: "%.1f", profile.stepTicksPerStep)) counter ticks per step")
                     }
                 }
-                Text("Counter ticks per step. Leave at 1.0 unless your steps run high. On a WHOOP 5/MG they can run very high (10× or more), so this goes up to 30. Walk a known 1,000 steps and divide NOOP's count by the real count to get your value.")
+                Text("Counter ticks per step. Leave at 1.0 unless your steps run high. On a WHOOP 5/MG they can run very high (10× or more), so this goes up to 30. Walk a known 1,000 steps and divide LLB's count by the real count to get your value.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
                 rowDivider
                 // Tap-through to the WHOOP 4.0 steps-ESTIMATE calibration (a SEPARATE thing from the
-                // 5/MG @57 counter divisor above): a 4.0 sends no step count, so NOOP estimates steps
+                // 5/MG @57 counter divisor above): a 4.0 sends no step count, so LLB estimates steps
                 // from motion and calibrates that to the phone. The sheet explains it, shows the fit +
                 // a recent estimated-vs-phone comparison, and offers a manual coefficient.
                 Button {
@@ -416,7 +416,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("Steps estimate calibration. \(stepsCalibrationSummary). Opens the calibration screen.")
-                Text("For a WHOOP 4.0, which sends no step count: NOOP estimates steps from motion, calibrated to your phone. Tap to see how close it is and adjust it.")
+                Text("For a WHOOP 4.0, which sends no step count: LLB estimates steps from motion, calibrated to your phone. Tap to see how close it is and adjust it.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -575,7 +575,7 @@ struct SettingsView: View {
     // MARK: - Units
 
     /// Imperial/Metric display toggle + a separate temperature override. Display-only — nothing stored
-    /// changes, NOOP keeps everything in SI and converts at the point of display.
+    /// changes, LLB keeps everything in SI and converts at the point of display.
     private var unitsCard: some View {
         SettingsSection(
             icon: "ruler",
@@ -608,7 +608,7 @@ struct SettingsView: View {
                     .accessibilityLabel("Temperature unit")
                 }
                 rowDivider
-                // Effort scale (#268) — show NOOP's native 0–100 Effort or WHOOP's 0–21 Day Strain axis.
+                // Effort scale (#268) — show LLB's native 0–100 Effort or WHOOP's 0–21 Day Strain axis.
                 // Display-only; the stored value never changes, so a flip just re-labels every Effort read-out.
                 FormRow(label: "Effort scale") {
                     Picker("Effort scale", selection: $effortScaleRaw) {
@@ -648,7 +648,7 @@ struct SettingsView: View {
                     .accessibilityLabel("Theme")
                 }
                 FormRow(label: "Chart colours") {
-                    // Default = NOOP's clean metric ramps; Classic = the throwback red→amber→green
+                    // Default = LLB's clean metric ramps; Classic = the throwback red→amber→green
                     // readiness scale (cool→hot zones, green→red stress). Both schemes.
                     Picker("Chart colours", selection: $chartStyleRaw) {
                         ForEach(ChartStyle.allCases) { style in
@@ -721,7 +721,7 @@ struct SettingsView: View {
         SettingsSection(
             icon: "antenna.radiowaves.left.and.right",
             title: "Strap",
-            blurb: "NOOP pairs directly with your WHOOP over Bluetooth: no WHOOP app, no cloud."
+            blurb: "LLB pairs directly with your WHOOP over Bluetooth: no WHOOP app, no cloud."
         ) {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
@@ -759,7 +759,7 @@ struct SettingsView: View {
                         .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
                     Button("Save…") {
                         FileExport.exportText(live.exportableLogText(),
-                                              suggestedName: FileExport.timestampedName("noop-strap-log", ext: "txt"))
+                                              suggestedName: FileExport.timestampedName("llb-strap-log", ext: "txt"))
                     }
                     .buttonStyle(.plain).font(StrandFont.mono).foregroundStyle(StrandPalette.accent)
                 }
@@ -779,7 +779,7 @@ struct SettingsView: View {
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
                 .onChangeCompat(of: continuousHrvEnabled) { on in model.ble.setKeepRealtimeForData(on) }
-                Text("Keeps the detailed beat-to-beat heart-rate stream running all day and night, not just while a live screen is open, so NOOP captures much more for overnight HRV, recovery and sleep. Uses more battery: your strap streams heart rate continuously while connected.")
+                Text("Keeps the detailed beat-to-beat heart-rate stream running all day and night, not just while a live screen is open, so LLB captures much more for overnight HRV, recovery and sleep. Uses more battery: your strap streams heart rate continuously while connected.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -931,7 +931,7 @@ struct SettingsView: View {
             await model.repo.refresh()
         }
         backupAlertTitle = String(localized: "Charge baseline recalibrating")
-        backupAlertMessage = String(localized: "NOOP will re-learn your baseline from tonight's data onward. Your history is kept, and it takes a few nights to settle.")
+        backupAlertMessage = String(localized: "LLB will re-learn your baseline from tonight's data onward. Your history is kept, and it takes a few nights to settle.")
         showBackupAlert = true
     }
 
@@ -999,7 +999,7 @@ struct SettingsView: View {
                 .tint(StrandPalette.accent)
                 .accessibilityHint("Offers to save a workout when it spots sustained elevated heart rate")
 
-                Text("After a sync, NOOP looks over your recent heart rate for a sustained, raised stretch that looks like exercise and offers to save it. It only ever suggests. Nothing is saved until you tap Save, and you can dismiss any suggestion. Deliberately conservative, so the odd workout may be missed. On \(Platform.deviceNounPhrase) only.")
+                Text("After a sync, LLB looks over your recent heart rate for a sustained, raised stretch that looks like exercise and offers to save it. It only ever suggests. Nothing is saved until you tap Save, and you can dismiss any suggestion. Deliberately conservative, so the odd workout may be missed. On \(Platform.deviceNounPhrase) only.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1069,7 +1069,7 @@ struct SettingsView: View {
         SettingsSection(
             icon: "bed.double.fill",
             title: "Experimental · Sleep staging",
-            blurb: "How NOOP splits a night into light / deep / REM. This is a separate, opt-in recipe. Your default staging is unchanged unless you turn it on."
+            blurb: "How LLB splits a night into light / deep / REM. This is a separate, opt-in recipe. Your default staging is unchanged unless you turn it on."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
                 Toggle(isOn: $experimentalSleepV2Enabled) {
@@ -1105,7 +1105,7 @@ struct SettingsView: View {
         return String(localized: "Deep data (R22) needs an iPhone or Android. A Mac can't form the encrypted bond a 5/MG requires.")
         #else
         if !live.encryptedBond {
-            return String(localized: "Needs the full encrypted bond: close the official WHOOP app and pair the strap to NOOP first (a live-HR-only link can't carry the unlock).")
+            return String(localized: "Needs the full encrypted bond: close the official WHOOP app and pair the strap to LLB first (a live-HR-only link can't carry the unlock).")
         }
         return live.worn
             ? String(localized: "Wear the strap, tap once, then let it sync and share your strap log.")
@@ -1127,7 +1127,7 @@ struct SettingsView: View {
                 }
                 .toggleStyle(.switch)
                 .tint(StrandPalette.accent)
-                Text("On a 5/MG connection NOOP will send a puffin realtime-stream request after the handshake, and log what comes back. If you have a 5/MG strap, turning this on and sharing your strap log helps map the protocol. No effect on WHOOP 4.0.")
+                Text("On a 5/MG connection LLB will send a puffin realtime-stream request after the handshake, and log what comes back. If you have a 5/MG strap, turning this on and sharing your strap log helps map the protocol. No effect on WHOOP 4.0.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1258,18 +1258,18 @@ struct SettingsView: View {
 
     // MARK: - Diagnostics (every model)
 
-    /// Raw-sensor CSV export — a read-only diagnostic over the decoded streams NOOP already stores
+    /// Raw-sensor CSV export — a read-only diagnostic over the decoded streams LLB already stores
     /// (HR, R-R, motion, steps, PPG-HR, SpO₂, skin temp, resp, events). Split out of the 5/MG card so it
     /// stays visible on EVERY model (#22): a WHOOP 4.0 owner still needs this to share decoded data.
     private var rawSensorDiagnosticsCard: some View {
         SettingsSection(
             icon: "doc.text.magnifyingglass",
             title: "Diagnostics",
-            blurb: "A read-only export of the decoded sensor streams NOOP already stores. Works on any strap. Nothing is written to your device, and nothing is uploaded."
+            blurb: "A read-only export of the decoded sensor streams LLB already stores. Works on any strap. Nothing is written to your device, and nothing is uploaded."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
                 // MARK: Export raw sensor data (CSV) — a read-only diagnostic over the decoded streams
-                // NOOP already stores (HR, R-R, motion, steps, PPG-HR, SpO₂, skin temp, resp, events).
+                // LLB already stores (HR, R-R, motion, steps, PPG-HR, SpO₂, skin temp, resp, events).
                 Button {
                     exportRawSensorCSV()
                 } label: {
@@ -1310,7 +1310,7 @@ struct SettingsView: View {
     /// Daily auto-export of the strap log (#510 — parity with Android's DebugExportScheduler). Opt-in,
     /// default OFF: a toggle + a time-of-day picker + a "Run now". Honest about iOS background timing —
     /// the macOS drop is reliable (the app is usually running), the iOS one fires when iOS next wakes
-    /// NOOP near the chosen time, never guaranteed to the minute.
+    /// LLB near the chosen time, never guaranteed to the minute.
     @ViewBuilder private var scheduledExportControls: some View {
         Toggle(isOn: $debugExportOn) {
             Text("Daily auto-export of the strap log")
@@ -1346,9 +1346,9 @@ struct SettingsView: View {
     /// Honest caption — the drop location plus the platform-specific timing reality.
     private var debugExportCaption: String {
         #if os(iOS)
-        return String(localized: "Writes a timestamped copy of your strap log to NOOP's folder in the Files app, once a day. Handy for a bug report without remembering to grab it. On iPhone it fires when iOS next wakes NOOP near your chosen time, not guaranteed to the minute (keep NOOP open overnight for the best chance). Everything stays on \(Platform.deviceNounPhrase); nothing is uploaded.")
+        return String(localized: "Writes a timestamped copy of your strap log to LLB's folder in the Files app, once a day. Handy for a bug report without remembering to grab it. On iPhone it fires when iOS next wakes LLB near your chosen time, not guaranteed to the minute (keep LLB open overnight for the best chance). Everything stays on \(Platform.deviceNounPhrase); nothing is uploaded.")
         #else
-        return String(localized: "Writes a timestamped copy of your strap log to your Documents folder, once a day. Handy for a bug report without remembering to grab it. On Mac it runs while NOOP is open (and catches up on launch if the time passed while it was closed). Everything stays on \(Platform.deviceNounPhrase); nothing is uploaded.")
+        return String(localized: "Writes a timestamped copy of your strap log to your Documents folder, once a day. Handy for a bug report without remembering to grab it. On Mac it runs while LLB is open (and catches up on launch if the time passed while it was closed). Everything stays on \(Platform.deviceNounPhrase); nothing is uploaded.")
         #endif
     }
 
@@ -1379,7 +1379,7 @@ struct SettingsView: View {
         if let url {
             backupAlertTitle = String(localized: "Strap log exported")
             #if os(iOS)
-            backupAlertMessage = String(localized: "Saved \(url.lastPathComponent) to NOOP's folder in the Files app.")
+            backupAlertMessage = String(localized: "Saved \(url.lastPathComponent) to LLB's folder in the Files app.")
             #else
             backupAlertMessage = String(localized: "Saved \(url.lastPathComponent) to your Documents folder.")
             #endif
@@ -1447,7 +1447,7 @@ struct SettingsView: View {
         model.ble.flushPuffinCaptures()
         guard let src = live.puffinCaptureURL else { return }
         // Suggest a friendly, timestamped name so a reporter saving several captures gets sortable,
-        // non-colliding files (#510) — e.g. noop-raw-capture-260617-1042.json.
+        // non-colliding files (#510) — e.g. llb-raw-capture-260617-1042.json.
         let suggested = FileExport.timestampedName("noop-raw-capture", ext: "json")
         #if os(macOS)
         let panel = NSSavePanel()
@@ -1483,8 +1483,8 @@ struct SettingsView: View {
         }
         let stamp = FileExport.timestamp()
         FileExport.exportPair(
-            file: capture, fileSuggestedName: "noop-raw-capture-\(stamp).json",
-            text: live.exportableLogText(), textSuggestedName: "noop-strap-log-\(stamp).txt")
+            file: capture, fileSuggestedName: "llb-raw-capture-\(stamp).json",
+            text: live.exportableLogText(), textSuggestedName: "llb-strap-log-\(stamp).txt")
     }
 
     #if os(macOS)
@@ -1500,7 +1500,7 @@ struct SettingsView: View {
         SettingsSection(
             icon: "externaldrive.fill",
             title: "Backup & restore",
-            blurb: "Move all your NOOP data to another machine. Export saves everything (history, sleeps, workouts, settings) to a single file you can copy across; import replaces \(Platform.deviceNounPhrase)'s data with a backup."
+            blurb: "Move all your LLB data to another machine. Export saves everything (history, sleeps, workouts, settings) to a single file you can copy across; import replaces \(Platform.deviceNounPhrase)'s data with a backup."
         ) {
             VStack(alignment: .leading, spacing: NoopMetrics.space4) {
                 // Three labelled buttons must share a narrow iPhone row without wrapping mid-word
@@ -1549,7 +1549,7 @@ struct SettingsView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                         .font(.system(size: 13))
                         .accessibilityHidden(true)
-                    Text("Importing overwrites everything currently on \(Platform.deviceNounPhrase). Your old data is kept in a side file just in case. NOOP needs a relaunch for an import to take effect. Export CSV writes a WHOOP-format zip of your days, sleeps, workouts and journal that re-imports into NOOP on Mac, iPhone, or Android. On-device computed rows are marked APPROXIMATE in its Source column; the full backup stays the lossless restore path.")
+                    Text("Importing overwrites everything currently on \(Platform.deviceNounPhrase). Your old data is kept in a side file just in case. LLB needs a relaunch for an import to take effect. Export CSV writes a WHOOP-format zip of your days, sleeps, workouts and journal that re-imports into LLB on Mac, iPhone, or Android. On-device computed rows are marked APPROXIMATE in its Source column; the full backup stays the lossless restore path.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1620,7 +1620,7 @@ struct SettingsView: View {
                 return
             case .exported(let url):
                 backupAlertTitle = String(localized: "CSV exported")
-                backupAlertMessage = String(localized: "Saved to \(url.lastPathComponent). The zip re-imports into NOOP (Data Sources → WHOOP Export) on any Mac, iPhone, or Android device.")
+                backupAlertMessage = String(localized: "Saved to \(url.lastPathComponent). The zip re-imports into LLB (Data Sources → WHOOP Export) on any Mac, iPhone, or Android device.")
                 showBackupAlert = true
             case .failure(let message):
                 backupAlertTitle = String(localized: "Export problem")
@@ -1642,7 +1642,7 @@ struct SettingsView: View {
             showBackupAlert = true
         case .imported:
             backupAlertTitle = String(localized: "Backup imported")
-            backupAlertMessage = String(localized: "Your data has been restored. Quit and reopen NOOP for it to take effect.")
+            backupAlertMessage = String(localized: "Your data has been restored. Quit and reopen LLB for it to take effect.")
             showBackupAlert = true
         case .failure(let message):
             backupAlertTitle = String(localized: "Backup problem")
@@ -1665,11 +1665,11 @@ struct SettingsView: View {
         SettingsSection(
             icon: "info.circle.fill",
             title: "About",
-            blurb: "NOOP: all your data, none of the cloud."
+            blurb: "LLB: all your data, none of the cloud."
         ) {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 10) {
-                    Text("NOOP")
+                    Text("LLB")
                         .font(StrandFont.title2)
                         .foregroundStyle(StrandPalette.textPrimary)
                     StatePill("v\(bundleVersionString)", tone: .neutral, showsDot: false)
@@ -1679,7 +1679,7 @@ struct SettingsView: View {
                     }
                 }
 
-                // How NOOP works — the plain-English primer: how sleep is sorted, how scores +
+                // How LLB works — the plain-English primer: how sleep is sorted, how scores +
                 // calibration work, what recording means, and where the provenance badges come
                 // from. The "?" entry point to the four-section explainability primer.
                 Button {
@@ -1690,7 +1690,7 @@ struct SettingsView: View {
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("How NOOP works")
+                            Text("How LLB works")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
                             Text("Sleep sorting, scores, recording, and where your numbers come from.")
@@ -1707,7 +1707,7 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(LiquidPressStyle())
-                .accessibilityLabel("How NOOP works")
+                .accessibilityLabel("How LLB works")
 
                 // How your scores work — the honest explainer for Charge / Effort / Rest and the
                 // confidence labels. Always reachable here, mirroring the "What's new" affordance.
@@ -1738,7 +1738,7 @@ struct SettingsView: View {
                 .buttonStyle(LiquidPressStyle())
                 .accessibilityLabel("How your scores work")
 
-                // About Apple Watch data: the honest capability/confidence page for running NOOP off
+                // About Apple Watch data: the honest capability/confidence page for running LLB off
                 // just an Apple Watch (what it's great at, where it's lighter than a strap, why recovery
                 // calibrates, the SpO₂ caveat). Its primary action opens the watch setup + Health
                 // permission flow. Renders the same on macOS and iOS (pure reference content); the setup
@@ -1754,7 +1754,7 @@ struct SettingsView: View {
                             Text("About Apple Watch data")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
-                            Text("Use NOOP with just an Apple Watch. What it's great at, and where it's lighter than a strap.")
+                            Text("Use LLB with just an Apple Watch. What it's great at, and where it's lighter than a strap.")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.textTertiary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1784,7 +1784,7 @@ struct SettingsView: View {
                             Text("Storage")
                                 .font(StrandFont.body)
                                 .foregroundStyle(StrandPalette.textPrimary)
-                            Text("Where NOOP's on-device space is going, and a one-tap clean-up.")
+                            Text("Where LLB's on-device space is going, and a one-tap clean-up.")
                                 .font(StrandFont.footnote)
                                 .foregroundStyle(StrandPalette.textTertiary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1879,7 +1879,7 @@ struct SettingsView: View {
                         .foregroundStyle(StrandPalette.textTertiary)
                 }
 
-                // Project home — NOOP's code, releases, issues and wiki live on GitHub
+                // Project home — LLB's code, releases, issues and wiki live on GitHub
                 // (canonical; noop.fans is kept as a mirror).
                 Link(destination: URL(string: "https://github.com/NoopApp/noop")!) {
                     HStack(spacing: 10) {
@@ -1931,7 +1931,7 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel("Mirror at noop dot fans, a fallback if GitHub is down")
 
-                Text("A standalone companion for your WHOOP. Everything stays on this device: your history, your live stream, your numbers. Nothing is uploaded. NOOP is an independent, experimental project, not the WHOOP app.")
+                Text("A standalone companion for your WHOOP. Everything stays on this device: your history, your live stream, your numbers. Nothing is uploaded. LLB is an independent, experimental project, not the WHOOP app.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -1942,7 +1942,7 @@ struct SettingsView: View {
                         .foregroundStyle(StrandPalette.statusWarning)
                         .font(.system(size: 13))
                         .accessibilityHidden(true)
-                    Text("NOOP is not a medical device. It is for informational and personal-insight purposes only and is not intended to diagnose, treat, cure or prevent any condition. Talk to a clinician for medical advice.")
+                    Text("LLB is not a medical device. It is for informational and personal-insight purposes only and is not intended to diagnose, treat, cure or prevent any condition. Talk to a clinician for medical advice.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -2020,7 +2020,7 @@ struct SettingsView: View {
         .accessibilityLabel("Diagnostics")
     }
 
-    /// Calm, honest "what to expect running NOOP on iPhone" callout — sideloading reality, re-sign
+    /// Calm, honest "what to expect running LLB on iPhone" callout — sideloading reality, re-sign
     /// cadence, the unlock-after-reboot (#222) note, background-BLE limits, and beta-iOS caveat. Surfaces
     /// the live sideload-cert expiry when we can read it, with a gentle warning under ~3 days.
     private var iphoneExpectations: some View {
@@ -2031,14 +2031,14 @@ struct SettingsView: View {
                 Image(systemName: "iphone.gen3")
                     .foregroundStyle(StrandPalette.accent)
                     .accessibilityHidden(true)
-                Text("Using NOOP on iPhone")
+                Text("Using LLB on iPhone")
                     .font(StrandFont.subhead.weight(.semibold))
                     .foregroundStyle(StrandPalette.textPrimary)
             }
 
             iphoneExpectationLine(String(localized: "This is a sideloaded build, installed outside the App Store. It needs re-signing periodically: roughly every 7 days on a free Apple ID, about a year on a paid developer account."))
-            iphoneExpectationLine(String(localized: "After your iPhone reboots, unlock it once. Until you do, iOS keeps NOOP's files locked (Data Protection), so new history can't be written or synced."))
-            iphoneExpectationLine(String(localized: "Background Bluetooth has OS limits: iOS may pause NOOP when it's not in the foreground, so keep it open while syncing a fresh strap."))
+            iphoneExpectationLine(String(localized: "After your iPhone reboots, unlock it once. Until you do, iOS keeps LLB's files locked (Data Protection), so new history can't be written or synced."))
+            iphoneExpectationLine(String(localized: "Background Bluetooth has OS limits: iOS may pause LLB when it's not in the foreground, so keep it open while syncing a fresh strap."))
             iphoneExpectationLine(String(localized: "On a beta version of iOS, things can break that work on the release build."))
 
             if let days = expiry {
@@ -2117,7 +2117,7 @@ enum SettingsDisclosureDefaults {
 /// section card itself (the cards it wraps keep their own `SettingsSection` chrome). It's just a
 /// header row + a default-collapsed reveal, modelled on the Test Centre "Advanced" group. Nothing is
 /// removed: collapsed simply means the wrapped sections aren't drawn until the row is tapped open.
-/// A custom header (not SwiftUI's `DisclosureGroup`) is used so it matches NOOP's near-black
+/// A custom header (not SwiftUI's `DisclosureGroup`) is used so it matches LLB's near-black
 /// instrument look, which the system control's tint and inset don't.
 private struct SettingsDisclosureGroup<Content: View>: View {
     let title: LocalizedStringKey
@@ -2166,7 +2166,7 @@ private struct SettingsDisclosureGroup<Content: View>: View {
 // MARK: - Section card
 
 /// A grouped settings card: a "Settings" overline + icon + title header, an explanatory blurb,
-/// then content. A faint accent-blue wash anchors the card to NOOP's neutral chrome (WHOOP skin).
+/// then content. A faint accent-blue wash anchors the card to LLB's neutral chrome (WHOOP skin).
 private struct SettingsSection<Content: View>: View {
     let icon: String
     let title: LocalizedStringKey
@@ -2402,11 +2402,11 @@ struct StepsCalibrationSheet: View {
                 Label("How this works", systemImage: "figure.walk.motion")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("NOOP estimates your steps from your WHOOP's motion, calibrated to your phone's step count. It's an estimate, not a step counter. A WHOOP 4.0 doesn't transmit steps.")
+                Text("LLB estimates your steps from your WHOOP's motion, calibrated to your phone's step count. It's an estimate, not a step counter. A WHOOP 4.0 doesn't transmit steps.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("On the days your phone also counted steps, NOOP learns how much your motion maps to steps, then applies that to the strap-only days. The more matching days it has, the more it trusts the estimate.")
+                Text("On the days your phone also counted steps, LLB learns how much your motion maps to steps, then applies that to the strap-only days. The more matching days it has, the more it trusts the estimate.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -2423,11 +2423,11 @@ struct StepsCalibrationSheet: View {
                 Label("No motion synced yet", systemImage: "antenna.radiowaves.left.and.right.slash")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text("We're not seeing any motion from your strap yet. Steps are estimated from your WHOOP's banked motion history, so your strap needs to sync that history before NOOP has anything to count.")
+                Text("We're not seeing any motion from your strap yet. Steps are estimated from your WHOOP's banked motion history, so your strap needs to sync that history before LLB has anything to count.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Open NOOP near your strap and let it catch up (a full history sync can take a while on first run). Once a day or two of motion lands, your step estimate and the calibration below will start to fill in.")
+                Text("Open LLB near your strap and let it catch up (a full history sync can take a while on first run). Once a day or two of motion lands, your step estimate and the calibration below will start to fill in.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -2478,7 +2478,7 @@ struct StepsCalibrationSheet: View {
                         .headline)
                         .font(StrandFont.bodyNumber)
                         .foregroundStyle(StrandPalette.accent)
-                    Text("These are the days where your phone also counted steps, so NOOP can learn how your motion maps to steps. Or set the coefficient manually below.")
+                    Text("These are the days where your phone also counted steps, so LLB can learn how your motion maps to steps. Or set the coefficient manually below.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -2494,7 +2494,7 @@ struct StepsCalibrationSheet: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Estimated vs your phone").strandOverline()
                 if comparison.isEmpty {
-                    Text("No days yet where both NOOP and your phone counted steps. Once your phone logs a few days alongside the strap, they'll appear here so you can see how close the estimate is.")
+                    Text("No days yet where both LLB and your phone counted steps. Once your phone logs a few days alongside the strap, they'll appear here so you can see how close the estimate is.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)

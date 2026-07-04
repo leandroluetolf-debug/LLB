@@ -2,7 +2,7 @@ import XCTest
 @testable import WhoopProtocol
 
 /// WHOOP 4.0 **v25** historical layout (issue #30). v25 is the firmware layout some 4.0 straps emit
-/// that NOOP couldn't decode — "no motion data, so sleep can't be computed." These are three REAL v25
+/// that LLB couldn't decode — "no motion data, so sleep can't be computed." These are three REAL v25
 /// records captured on app v1.92+ (faklei), where the strap log dumps the full 84-byte record. The
 /// layout was reverse-engineered from 45 such records: `unix` @11 (u32 LE) and the DSP gravity vector
 /// at @73/75/77 as 3×i16 LE / 16384 (|gravity| ≈ 1 g). HR is not stored per-second in v25 (PPG-derived),

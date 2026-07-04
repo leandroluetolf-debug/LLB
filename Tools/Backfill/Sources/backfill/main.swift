@@ -10,7 +10,7 @@ import WhoopStore
 let home = FileManager.default.homeDirectoryForCurrentUser.path
 let env = ProcessInfo.processInfo.environment
 let dbPath = env["NOOP_DB_PATH"]
-    ?? "\(home)/Library/Containers/com.noopapp.noop/Data/Library/Application Support/OpenWhoop/whoop.sqlite"
+    ?? "\(home)/Library/Containers/com.llb.app/Data/Library/Application Support/OpenWhoop/whoop.sqlite"
 func exportURL(from key: String) -> URL? {
     guard let path = env[key]?.trimmingCharacters(in: .whitespacesAndNewlines), !path.isEmpty else { return nil }
     return URL(fileURLWithPath: path)

@@ -5,8 +5,8 @@ final class DatabasePathResolverTests: XCTestCase {
     func testPersonalBundleIsNotADefaultCandidate() {
         let candidates = DatabasePathResolver.candidates(home: "/Users/example")
 
-        XCTAssertTrue(candidates.contains("/Users/example/Library/Containers/com.noopapp.noop/Data/Library/Application Support/OpenWhoop/whoop.sqlite"))
-        XCTAssertFalse(candidates.contains { $0.contains("com.noopapp.noop.personal") })
+        XCTAssertTrue(candidates.contains("/Users/example/Library/Containers/com.llb.app/Data/Library/Application Support/OpenWhoop/whoop.sqlite"))
+        XCTAssertFalse(candidates.contains { $0.contains("com.llb.app.personal") })
     }
 
     func testCustomBundleIDIsExplicitOptIn() {
@@ -16,7 +16,7 @@ final class DatabasePathResolverTests: XCTestCase {
             candidates.first,
             "/Users/example/Library/Containers/com.example.noop/Data/Library/Application Support/OpenWhoop/whoop.sqlite"
         )
-        XCTAssertTrue(candidates.contains("/Users/example/Library/Containers/com.noopapp.noop/Data/Library/Application Support/OpenWhoop/whoop.sqlite"))
+        XCTAssertTrue(candidates.contains("/Users/example/Library/Containers/com.llb.app/Data/Library/Application Support/OpenWhoop/whoop.sqlite"))
     }
 
     func testExplicitPathMustExist() throws {

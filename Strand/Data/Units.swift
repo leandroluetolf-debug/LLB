@@ -2,13 +2,13 @@ import Foundation
 
 // MARK: - Unit system preference
 //
-// NOOP stores EVERYTHING in SI (km, kg, cm, °C) — the importers normalise on the way in, so this is a
+// LLB stores EVERYTHING in SI (km, kg, cm, °C) — the importers normalise on the way in, so this is a
 // purely cosmetic, display-only layer. There is no data migration and nothing on disk changes when the
 // user flips this. We keep one Metric/Imperial switch for length+mass with a SEPARATE temperature
 // override, because plenty of people think in kg/cm but still read body temperature in °F (and vice
 // versa). Default is Metric — most of the world, and it matches what we store.
 //
-// Persisted via @AppStorage (UserDefaults), the same mechanism every other macOS NOOP preference uses.
+// Persisted via @AppStorage (UserDefaults), the same mechanism every other macOS LLB preference uses.
 // The Android side mirrors this exactly in Units.kt + NoopPrefs.
 
 /// The length+mass unit system. Temperature has its own override (see `UnitPrefs.temperature`).
@@ -29,11 +29,11 @@ enum TemperatureUnit: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-/// How the Effort score is displayed (#268). NOOP's Effort is stored 0–100 (StrainScorer.maxStrain = 100);
+/// How the Effort score is displayed (#268). LLB's Effort is stored 0–100 (StrainScorer.maxStrain = 100);
 /// people coming from WHOOP often think in its 0–21 Day Strain axis, so this purely cosmetic toggle lets
-/// the SAME stored value be shown on either scale. Default is NOOP's own 0–100 — the data never changes.
+/// the SAME stored value be shown on either scale. Default is LLB's own 0–100 — the data never changes.
 enum EffortScale: String, CaseIterable, Identifiable {
-    /// NOOP's native 0–100 axis (the stored value, one decimal).
+    /// LLB's native 0–100 axis (the stored value, one decimal).
     case hundred
     /// WHOOP's 0–21 Day Strain axis — the stored 0–100 value rescaled down for display only.
     case whoop
@@ -47,7 +47,7 @@ enum UnitPrefs {
     /// Temperature override. Empty string = "match the length/mass system" (the default).
     static let temperatureKey = "units.temperature"
     /// Effort display scale (#268). Stored raw is an `EffortScale` rawValue; an unset/unknown value
-    /// resolves to `.hundred` (NOOP's native axis). Mirrored on Android by NoopPrefs("effort.scale").
+    /// resolves to `.hundred` (LLB's native axis). Mirrored on Android by NoopPrefs("effort.scale").
     static let effortScaleKey = "effort.scale"
 
     /// Display factor for the #268 Effort scale: the stored 0-100 value multiplied by this renders on
@@ -74,7 +74,7 @@ enum UnitPrefs {
         return system.temperatureMatching
     }
 
-    /// Resolve the stored Effort-scale raw value, defaulting to NOOP's native 0–100 axis.
+    /// Resolve the stored Effort-scale raw value, defaulting to LLB's native 0–100 axis.
     static func resolveEffortScale(_ raw: String) -> EffortScale {
         EffortScale(rawValue: raw) ?? .hundred
     }
@@ -207,7 +207,7 @@ enum UnitFormatter {
 
     // MARK: Effort scale (stored 0–100 — #268)
 
-    /// NOOP stores Effort 0–100 (StrainScorer.maxStrain = 100). WHOOP's Day Strain axis is 0–21, and
+    /// LLB stores Effort 0–100 (StrainScorer.maxStrain = 100). WHOOP's Day Strain axis is 0–21, and
     /// the import boundary rescales by 100/21 (WhoopExportImporter.dayStrainToEffortScale), so the exact
     /// inverse for a display-only 0–100 → 0–21 conversion is ×21/100. Kept byte-identical to that factor
     /// and to the Android `UnitFormatter.EFFORT_SCALE_FACTOR`. A wrong factor is pinned by the formatter tests.

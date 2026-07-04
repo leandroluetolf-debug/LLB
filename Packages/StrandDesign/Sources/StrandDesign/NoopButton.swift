@@ -103,7 +103,7 @@ private struct NoopButtonBackground: View {
 
 // MARK: - ButtonStyle (adopt on any existing Button)
 
-/// Apply the NOOP button look to ANY `Button` — e.g. a role/`Menu` button you can't
+/// Apply the LLB button look to ANY `Button` — e.g. a role/`Menu` button you can't
 /// replace with `NoopButton`. Honours Reduce Motion: the press scale drops to a dim-only
 /// state. Pixel-identical to `NoopButton` since both share `NoopButtonMetrics`/appearance.
 public struct NoopButtonStyle: ButtonStyle {

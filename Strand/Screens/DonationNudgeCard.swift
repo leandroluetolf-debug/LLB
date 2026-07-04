@@ -3,9 +3,9 @@ import StrandDesign
 
 // MARK: - Donation nudge (Today screen)
 //
-// A small, dismissible card that asks — at most once every 12 hours — whether NOOP is
+// A small, dismissible card that asks — at most once every 12 hours — whether LLB is
 // proving useful, and makes the honest economic case for a donation: a WHOOP membership
-// costs $300–480 a year, NOOP is free and built by one person, and almost nobody donates.
+// costs $300–480 a year, LLB is free and built by one person, and almost nobody donates.
 //
 // Deliberately a CARD in the Today flow, not a modal: it never blocks anything, never
 // interrupts, and carries a permanent opt-out. The stats line is baked in at release time
@@ -59,12 +59,12 @@ struct DonationNudgeCard: View {
                         Image(systemName: "heart.circle.fill")
                             .font(.system(size: 18))
                             .foregroundStyle(StrandPalette.accent)
-                        Text("Enjoying NOOP?")
+                        Text("Enjoying LLB?")
                             .font(StrandFont.headline)
                             .foregroundStyle(StrandPalette.textPrimary)
                         Spacer()
                     }
-                    Text("A WHOOP membership runs $300-480 a year, for life. NOOP does this for free: one person, no servers, no subscription.")
+                    Text("A WHOOP membership runs $300-480 a year, for life. LLB does this for free: one person, no servers, no subscription.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)

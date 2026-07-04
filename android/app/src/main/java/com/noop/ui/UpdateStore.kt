@@ -267,8 +267,8 @@ class UpdateStore private constructor(private val prefs: SharedPreferences) {
         post(
             UpdateItem(
                 kind = UpdateKind.WHATS_NEW,
-                title = if (title.isEmpty()) "What's new in NOOP $version" else title,
-                message = "NOOP $version is here — tap to read what's new.",
+                title = if (title.isEmpty()) "What's new in LLB $version" else title,
+                message = "LLB $version is here — tap to read what's new.",
             ),
         )
     }

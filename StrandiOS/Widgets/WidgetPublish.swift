@@ -51,7 +51,7 @@ extension WidgetSnapshot {
             batteryPct: model.live.batteryPct.map { Int($0.rounded()) },
             bonded: model.live.bonded,
             updated: Date(),
-            // Effort is stored on NOOP's 0–100 axis (the same value the Today Effort tile reads), so it
+            // Effort is stored on LLB's 0–100 axis (the same value the Today Effort tile reads), so it
             // publishes as a whole number without the WHOOP-0–21 toggle the main app applies — the widget
             // extension can't reach UnitFormatter/UnitPrefs, and 0–100 is the default scale.
             effort: day?.strain.map { Int($0.rounded()) },

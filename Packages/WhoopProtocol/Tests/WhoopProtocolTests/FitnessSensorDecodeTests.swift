@@ -1,7 +1,7 @@
 import XCTest
 @testable import WhoopProtocol
 
-/// Spec-deterministic decode contract for the three standard fitness-sensor profiles NOOP reads live
+/// Spec-deterministic decode contract for the three standard fitness-sensor profiles LLB reads live
 /// alongside HR — RSC (0x2A53), CSC (0x2A5B), CPS (0x2A63). Fixtures are built BYTE-BY-BYTE from the
 /// Bluetooth SIG service specs (not real captures), so each asserts the exact flag→field mapping and the
 /// fixed-point→unit scaling. The cumulative-counter profiles (CSC/CPS) additionally test the pure

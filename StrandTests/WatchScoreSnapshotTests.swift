@@ -101,7 +101,7 @@ final class WatchScoreSnapshotTests: XCTestCase {
 
     func testStorageContractMatchesWatchSideExpectation() {
         // The cross-lane contract: app group + key are fixed strings both sides hard-agree on.
-        XCTAssertEqual(WatchScoreSnapshot.appGroupId, "group.com.noopapp.noop")
+        XCTAssertEqual(WatchScoreSnapshot.appGroupId, "group.com.llb.app")
         XCTAssertEqual(WatchScoreSnapshot.storageKey, "latestWatchSnapshot")
     }
 }

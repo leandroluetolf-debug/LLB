@@ -3,7 +3,7 @@ import XCTest
 
 /// Spec-deterministic FTMS field-decode contract. Fixtures are built BYTE-BY-BYTE from the Bluetooth
 /// SIG Fitness Machine Service field tables (not a real capture), so each asserts the exact flag→field
-/// mapping and the fixed-point→unit scaling for the fields NOOP surfaces (speed, cadence, power,
+/// mapping and the fixed-point→unit scaling for the fields LLB surfaces (speed, cadence, power,
 /// distance, total energy, heart rate, elapsed time). Pure decode → headless `swift test`.
 final class FTMSDecodeTests: XCTestCase {
 

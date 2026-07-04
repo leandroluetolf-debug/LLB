@@ -1,5 +1,5 @@
 //  LiquidSky.swift
-//  NOOP · Liquid design language
+//  LLB · Liquid design language
 //
 //  The time-of-day sky: a gradient that flows continuously through the day's
 //  keyframes, a quiet starfield, and two subtle sheets of light. No objects,

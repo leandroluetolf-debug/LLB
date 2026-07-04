@@ -63,7 +63,7 @@ public struct LocalAccessConfiguration: Equatable, Sendable {
 }
 
 public enum DatabasePathResolver {
-    public static let productionBundleID = "com.noopapp.noop"
+    public static let productionBundleID = "com.llb.app"
 
     public static func resolve(configuration: LocalAccessConfiguration) throws -> String {
         let fm = FileManager.default

@@ -2,7 +2,7 @@ import SwiftUI
 import MarkdownUI
 import StrandDesign
 
-/// Coach, the one feature in NOOP that talks to the network.
+/// Coach, the one feature in LLB that talks to the network.
 ///
 /// It is strictly opt-in and bring-your-own-key: the user pastes their own OpenAI
 /// or Anthropic API key (stored in the macOS Keychain by `AICoachEngine`), and only

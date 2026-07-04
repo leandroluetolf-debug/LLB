@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Fitbit Google-Takeout JSON parser
 //
 // Google Takeout → Fitbit → JSON. The per-day files this lane reads (documented Takeout / Fitbit
-// Web-API shapes; NOOP's own clean parser):
+// Web-API shapes; LLB's own clean parser):
 //
 //   sleep-YYYY-MM-DD.json          — an array of sleep logs. Each: dateOfSleep, startTime, endTime
 //                                    (local ISO, no offset), minutesAsleep, minutesAwake, efficiency,

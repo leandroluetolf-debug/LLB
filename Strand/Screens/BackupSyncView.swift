@@ -88,7 +88,7 @@ struct BackupSyncView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Daily auto-backup")
                             .font(StrandFont.body).foregroundStyle(StrandPalette.textPrimary)
-                        Text("Backs up to your folder about once a day and keeps the latest \(FolderBackup.keepCount). On this platform it runs when you next open NOOP.")
+                        Text("Backs up to your folder about once a day and keeps the latest \(FolderBackup.keepCount). On this platform it runs when you next open LLB.")
                             .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -153,7 +153,7 @@ struct BackupSyncView: View {
         snapshots = FolderBackup.listSnapshots()
         if snapshots.isEmpty {
             alertTitle = String(localized: "No backups found")
-            alertMessage = String(localized: "There are no NOOP backups in your folder yet. Use Back up now first.")
+            alertMessage = String(localized: "There are no LLB backups in your folder yet. Use Back up now first.")
             showAlert = true
         } else {
             showRestoreSheet = true
@@ -174,7 +174,7 @@ struct BackupSyncView: View {
                 switch result {
                 case .imported:
                     alertTitle = String(localized: "Restored")
-                    alertMessage = String(localized: "Fully quit and reopen NOOP to load it.")
+                    alertMessage = String(localized: "Fully quit and reopen LLB to load it.")
                 case .failure(let m):
                     alertTitle = String(localized: "Restore problem"); alertMessage = m
                 case .cancelled, .exported:

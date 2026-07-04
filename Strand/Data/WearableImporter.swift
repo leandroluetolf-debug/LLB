@@ -8,8 +8,8 @@ import StrandImport
 /// immediately as its own source distinct from WHOOP.
 ///
 /// HONEST DATA: only fields the export carried are written. The brand's OWN scores (Oura readiness,
-/// any sleep score) are stored under REFERENCE metric keys only — never as NOOP's Charge/Effort/Rest.
-/// NOOP recomputes its own scores downstream from the imported raw RHR / HRV / sleep, exactly as it
+/// any sleep score) are stored under REFERENCE metric keys only — never as LLB's Charge/Effort/Rest.
+/// LLB recomputes its own scores downstream from the imported raw RHR / HRV / sleep, exactly as it
 /// does for every other imported source. Fully offline — the parse never touches the network.
 enum WearableImporter {
 
@@ -22,7 +22,7 @@ enum WearableImporter {
         let result = try ImportCoordinator().importWearableExport(from: url)
         let deviceId = result.brand.sourceId
 
-        // Day rollups → DailyMetric. HRV/recovery/respiration that the export lacks stay nil; NOOP
+        // Day rollups → DailyMetric. HRV/recovery/respiration that the export lacks stay nil; LLB
         // derives what it can locally. A brand's reference scores never populate `recovery`/`strain`.
         var metrics: [DailyMetric] = []
         for d in result.days {
@@ -72,7 +72,7 @@ enum WearableImporter {
 
         // Generic metric series — every scalar keyed for the Metric Explorer + correlations. The brand's
         // own scores go under clearly-labelled reference keys (e.g. "ref_readiness_score"), so they're
-        // browseable but never mistaken for a NOOP score.
+        // browseable but never mistaken for a LLB score.
         var points: [MetricPoint] = []
         func add(_ day: String, _ key: String, _ v: Double?) {
             if let v { points.append(MetricPoint(day: day, key: key, value: v)) }
@@ -92,7 +92,7 @@ enum WearableImporter {
             add(d.day, "sleep_deep_min", d.deepMin)
             add(d.day, "sleep_light_min", d.lightMin)
             add(d.day, "sleep_rem_min", d.remMin)
-            // Reference-only: the brand's own scores, never a NOOP Charge/Effort/Rest input.
+            // Reference-only: the brand's own scores, never a LLB Charge/Effort/Rest input.
             add(d.day, "ref_readiness_score", d.readinessScore.map(Double.init))
             add(d.day, "ref_sleep_score", d.sleepScore.map(Double.init))
         }

@@ -22,7 +22,7 @@ import BackgroundTasks
 ///   point registers the handler id below via `register(perform:)`; if it isn't registered/permitted yet,
 ///   `submit` fails gracefully and the in-app "Run now" + the macOS path still work.)
 ///
-/// Opt-in, default OFF — like every NOOP automation. Everything is on-device; nothing is sent anywhere.
+/// Opt-in, default OFF — like every LLB automation. Everything is on-device; nothing is sent anywhere.
 @MainActor
 enum ScheduledDebugExport {
 
@@ -40,7 +40,7 @@ enum ScheduledDebugExport {
 
     /// iOS BGTask identifier. Must also appear in the iOS target's `BGTaskSchedulerPermittedIdentifiers`
     /// (Info.plist) and be registered at launch for `submit` to succeed — wired in the app entry point.
-    static let bgTaskIdentifier = "com.noopapp.noop.debugexport"
+    static let bgTaskIdentifier = "com.llb.app.debugexport"
 
     static var isEnabled: Bool { UserDefaults.standard.bool(forKey: K.enabled) }
 
@@ -151,7 +151,7 @@ enum ScheduledDebugExport {
 
     // MARK: - The export itself
 
-    /// Write the durable strap-log tail to `Documents/noop-strap-log-<yyMMdd-HHmm>.txt`, and (when the
+    /// Write the durable strap-log tail to `Documents/llb-strap-log-<yyMMdd-HHmm>.txt`, and (when the
     /// caller supplies one) copy the raw 5/MG capture beside it. Reuses the already-shipped writers (the
     /// durable tail from `LiveState`, the timestamped naming from `FileExport`) so a scheduled drop reads
     /// the same as a manual share. `markDay` records today so the daily dedup/catch-up doesn't
@@ -162,7 +162,7 @@ enum ScheduledDebugExport {
             return nil
         }
         let stamp = FileExport.timestamp()
-        let logURL = docs.appendingPathComponent("noop-strap-log-\(stamp).txt")
+        let logURL = docs.appendingPathComponent("llb-strap-log-\(stamp).txt")
         do {
             try LiveState.scheduledExportText().write(to: logURL, atomically: true, encoding: .utf8)
         } catch {
@@ -172,7 +172,7 @@ enum ScheduledDebugExport {
         // matched pair the one-tap "Export raw + log" does. The background timer path passes nil (no live
         // session), so it writes just the log — honest about what's available with no session open.
         if let capture = captureURL, FileManager.default.fileExists(atPath: capture.path) {
-            let dest = docs.appendingPathComponent("noop-raw-capture-\(stamp).json")
+            let dest = docs.appendingPathComponent("llb-raw-capture-\(stamp).json")
             try? FileManager.default.copyItem(at: capture, to: dest)
         }
         if markDay {

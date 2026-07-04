@@ -79,7 +79,7 @@ struct IOSDiagnostics {
 
     /// macOS: true when the Mac is on AC power, false on battery, nil off macOS. Net-new env (spec 3.4).
     var macOnAC: Bool? = nil
-    /// macOS: best-effort "is this a signed plus notarized build". NOOP's macOS build is intentionally
+    /// macOS: best-effort "is this a signed plus notarized build". LLB's macOS build is intentionally
     /// unsigned/un-notarized for anonymity, so this is expected false; we report it honestly. nil off macOS.
     var macSigned: Bool? = nil
     /// macOS: whether the App Sandbox is in effect (the AI-Coach network-entitlement gate). nil off macOS.
@@ -215,7 +215,7 @@ struct IOSDiagnostics {
         return false
     }
 
-    /// Honest signing/notarization probe. NOOP's macOS build ships unsigned for anonymity, so this is
+    /// Honest signing/notarization probe. LLB's macOS build ships unsigned for anonymity, so this is
     /// expected to be false; we report what is true rather than claim a state we can't verify.
     private static func isSignedAndNotarized() -> Bool {
         // No code signature on an unsigned build: validity fails, so we report a truthful "no".

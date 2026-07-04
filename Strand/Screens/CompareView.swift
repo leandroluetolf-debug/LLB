@@ -12,7 +12,7 @@ import WhoopStore
 // chart (each metric min–max scaled to 0–1 within the window so different units
 // share an axis). Below, every pair of selected metrics gets a live Pearson-r
 // correlation readout with a plain-English conclusion. Pure read-side: each
-// metric loads from repo.resolvedSeries (freshest-wins across imported / NOOP-computed /
+// metric loads from repo.resolvedSeries (freshest-wins across imported / LLB-computed /
 // compatible Apple Health, PR#196); everything else is derived in-view.
 
 // yyyy-MM-dd → Date, fixed UTC / en_US_POSIX (per task spec).

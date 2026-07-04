@@ -9,7 +9,7 @@ import StrandAnalytics
 // metric it shows the BEST-sourced value, a provenance pill naming the source, the plain published
 // reason from MetricArbitrationPolicy ("counts directly" / "best stager"), and the inline agreement
 // state from FusionResolver (agree / minor delta / conflict). When two sources disagree it offers a
-// conflict-compare sheet that lists EVERY source's value side by side and which one NOOP is using and
+// conflict-compare sheet that lists EVERY source's value side by side and which one LLB is using and
 // why — it NEVER silently merges or averages.
 //
 // SELF-CONTAINED: the view takes a fully-resolved `FusedRecord` via init (the Repository adapter that
@@ -184,7 +184,7 @@ struct FusedRecordView: View {
 
     /// The pillar's standing non-clinical line (umbrella §4.1). Kept inline + plain — wellness only.
     private var disclaimerNote: some View {
-        Text("NOOP picks the best-sourced number and shows you where each came from. It's for wellness and curiosity. It doesn't diagnose or replace medical advice.")
+        Text("LLB picks the best-sourced number and shows you where each came from. It's for wellness and curiosity. It doesn't diagnose or replace medical advice.")
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textTertiary)
             .fixedSize(horizontal: false, vertical: true)
@@ -312,8 +312,8 @@ private struct FusedMetricRowView: View {
 
 // MARK: - Conflict-compare sheet
 
-/// A small read-only sheet: every source's value for the metric, side by side, with the one NOOP is
-/// using marked and its trust reason named. NOOP never adjudicates which is "correct" — it shows the
+/// A small read-only sheet: every source's value for the metric, side by side, with the one LLB is
+/// using marked and its trust reason named. LLB never adjudicates which is "correct" — it shows the
 /// spread and explains its best-signal pick. Transparency, not diagnosis.
 private struct ConflictCompareSheet: View {
     let row: FusedRow
@@ -322,7 +322,7 @@ private struct ConflictCompareSheet: View {
     private var point: FusedMetricPoint { row.point }
 
     var body: some View {
-        ScreenScaffold(title: LocalizedStringKey(row.label), subtitle: "Your bands report different numbers. Here's every source, and the one NOOP is using.") {
+        ScreenScaffold(title: LocalizedStringKey(row.label), subtitle: "Your bands report different numbers. Here's every source, and the one LLB is using.") {
             VStack(alignment: .leading, spacing: NoopMetrics.gap) {
                 NoopCard {
                     VStack(spacing: 0) {
@@ -346,7 +346,7 @@ private struct ConflictCompareSheet: View {
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.accent)
                             .accessibilityHidden(true)
-                        Text("NOOP shows the \(winner.source.displayName) reading because it \(winner.reason) for this metric: a higher-trust source here, not a verdict that the others are wrong.")
+                        Text("LLB shows the \(winner.source.displayName) reading because it \(winner.reason) for this metric: a higher-trust source here, not a verdict that the others are wrong.")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)

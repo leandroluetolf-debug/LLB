@@ -13,16 +13,16 @@ import Foundation
 //                        `deleted`, where a `deleted` period is skipped). Oura gives stage DURATIONS, not
 //                        a per-segment hypnogram, so the session carries the breakdown without a stage
 //                        timeline (we never fake one).
-//   daily_readiness    : day, score (Oura's OWN readiness, REFERENCE only, never NOOP Charge),
+//   daily_readiness    : day, score (Oura's OWN readiness, REFERENCE only, never LLB Charge),
 //                        temperature_deviation (°C from baseline), contributors.resting_heart_rate.
 //   daily_activity     : day, steps, active_calories, total_calories, equivalent_walking_distance (m).
 //   daily_sleep        : day, score (sleep score, reference only).
 //   daily_spo2         : day, spo2_percentage.average (%); note the value is NESTED under that key, not
 //                        a flat number (verified against the real schema).
-//   vo2max             : day, vo2_max (mL/kg/min); feeds NOOP's Fitness Age, alongside Apple Health's.
+//   vo2max             : day, vo2_max (mL/kg/min); feeds LLB's Fitness Age, alongside Apple Health's.
 //
 // The MANY other files in a real export (bloodglucose, contraception, medication, ring config, raw
-// heart-rate / temperature sample streams, etc.) are health types NOOP doesn't model: they are skipped
+// heart-rate / temperature sample streams, etc.) are health types LLB doesn't model: they are skipped
 // gracefully, since an unknown category or column is ignored, never an error.
 //
 // Some exports nest each category as `{ "data": [ ... ] }`; we accept both `[...]` and `{data:[...]}`.
@@ -118,7 +118,7 @@ enum OuraExportParser {
                 byDay[key] = row
             }
 
-            // VO2max → mL/kg/min (Oura key is `vo2_max`). Feeds NOOP's Fitness Age, same as Apple Health.
+            // VO2max → mL/kg/min (Oura key is `vo2_max`). Feeds LLB's Fitness Age, same as Apple Health.
             for v in categoryArray(root, "vo2max") ?? categoryArray(root, "vo2_max") ?? [] {
                 guard let key = WearableJSON.str(v, "day") else { continue }
                 var row = day(key)
@@ -170,7 +170,7 @@ enum OuraExportParser {
     //   average/lowest resting hr    : bpm (lowest is the night's sleeping floor).
     //   average hrv                  : rMSSD ms.
     //   respiratory rate             : breaths/min.
-    //   readiness/sleep score        : Oura's OWN scores, REFERENCE only (never NOOP Charge).
+    //   readiness/sleep score        : Oura's OWN scores, REFERENCE only (never LLB Charge).
     //   temperature deviation        : degrees C from baseline.
     //   steps / activity (active) burn / total burn : daily activity.
     //

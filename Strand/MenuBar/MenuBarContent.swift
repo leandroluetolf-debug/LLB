@@ -3,7 +3,7 @@ import Foundation
 import StrandDesign
 import WhoopStore
 
-// MARK: - Menu-Bar Extra (NOOP)
+// MARK: - Menu-Bar Extra (LLB)
 //
 // A glanceable presence in the macOS menu bar. The label shows a tiny heart-dot
 // tinted by the current HR zone plus the live HR (or "—" when not streaming).
@@ -146,7 +146,7 @@ public struct MenuBarContent: View {
     private var header: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("NOOP")
+                Text("LLB")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text("ALL YOUR DATA · NONE OF THE CLOUD")

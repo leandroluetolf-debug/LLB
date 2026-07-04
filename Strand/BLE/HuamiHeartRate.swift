@@ -2,7 +2,7 @@ import Foundation
 
 /// Pure parser for the Huami / Zepp (Amazfit, Mi Band) custom heart-rate notification.
 ///
-/// CLEAN-ROOM. This is NOOP's own implementation written from PUBLICLY DOCUMENTED protocol FACTS about
+/// CLEAN-ROOM. This is LLB's own implementation written from PUBLICLY DOCUMENTED protocol FACTS about
 /// the Huami family (the GATT layout is documented in several open projects — we reuse only the FACTS:
 /// service/characteristic UUIDs and the on-wire byte layout — and write our own code). No GPL/AGPL code
 /// is copied.

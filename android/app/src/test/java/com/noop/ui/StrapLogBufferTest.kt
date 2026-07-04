@@ -104,8 +104,8 @@ class StrapLogBufferTest {
     fun scheduledFilenamesUseStampAndCorrectExtensions() {
         val now = 1_700_000_000_000L
         val stamp = LogExport.exportStamp(now)
-        assertEquals("noop-straplog-$stamp.txt", LogExport.strapLogFilename(now))
-        assertEquals("noop-straplog-$stamp.bin", LogExport.rawCaptureFilename(now))
+        assertEquals("llb-straplog-$stamp.txt", LogExport.strapLogFilename(now))
+        assertEquals("llb-straplog-$stamp.bin", LogExport.rawCaptureFilename(now))
     }
 
     @Test

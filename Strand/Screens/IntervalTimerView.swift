@@ -293,7 +293,7 @@ struct IntervalTimerView: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
 
-                // Slim total-session progress as the NOOP signature segmented bar — it cascades up as the
+                // Slim total-session progress as the LLB signature segmented bar — it cascades up as the
                 // session advances, tinted to the Effort world. Flat, crisp, no glow.
                 PipBar(value: sessionProgress, range: 0...1, segments: 28,
                        tint: StrandPalette.effortColor, height: 10)

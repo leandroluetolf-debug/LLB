@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.dp
 
 // Donation nudge (Today screen) — mirror of macOS/iOS `DonationNudgeCard`.
 //
-// A small, dismissible card that asks — at most once every 12 hours — whether NOOP is
+// A small, dismissible card that asks — at most once every 12 hours — whether LLB is
 // proving useful, and makes the honest economic case for a donation: a WHOOP membership
-// costs $300–480 a year, NOOP is free and built by one person, and almost nobody donates.
+// costs $300–480 a year, LLB is free and built by one person, and almost nobody donates.
 //
 // Deliberately a CARD in the Today flow, not a dialog: never blocks anything, never
 // interrupts, and carries a permanent opt-out. The stats line is baked in at release time
@@ -96,10 +96,10 @@ fun DonationNudgeCard() {
                     tint = Palette.accent, modifier = Modifier.size(18.dp),
                 )
                 Spacer(Modifier.size(8.dp))
-                Text("Enjoying NOOP?", style = NoopType.headline, color = Palette.textPrimary)
+                Text("Enjoying LLB?", style = NoopType.headline, color = Palette.textPrimary)
             }
             Text(
-                "A WHOOP membership runs $300-480 a year, for life. NOOP does this for free - " +
+                "A WHOOP membership runs $300-480 a year, for life. LLB does this for free - " +
                     "one person, no servers, no subscription.",
                 style = NoopType.footnote, color = Palette.textSecondary,
             )

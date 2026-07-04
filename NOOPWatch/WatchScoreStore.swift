@@ -14,7 +14,7 @@ import StrandDesign
 //
 // The published `snapshot` is what the glance binds to. It starts from whatever was last persisted to the
 // App Group (so a relaunch shows the last-known scores immediately, with an honest "as of" age) and is
-// nil only on a truly fresh install, which the glance renders as the "open NOOP on your iPhone" state.
+// nil only on a truly fresh install, which the glance renders as the "open LLB on your iPhone" state.
 final class WatchScoreStore: NSObject, ObservableObject, WCSessionDelegate {
 
     /// The latest snapshot the watch knows about. nil = nothing has ever synced (fresh install).

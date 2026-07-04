@@ -82,7 +82,7 @@ final class LiveActivityController {
     }
 
     func end() async {
-        // End every NOOP Live Activity, not just our cached handle — covers a straggler from a prior
+        // End every LLB Live Activity, not just our cached handle — covers a straggler from a prior
         // session we never re-adopted (#341) and any rare duplicate. Iterating the live list is the
         // only way to reach activities this controller instance never started.
         for act in Activity<NOOPActivityAttributes>.activities {

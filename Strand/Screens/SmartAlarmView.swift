@@ -99,7 +99,7 @@ struct SmartAlarmView: View {
                     Text("The strap alarm is a silent buzz, not a sound")
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
-                    Text("The wake-alarm above buzzes your wrist from the strap's own firmware. It can't sound a loud alarm. We also schedule a backup notification at your wake time, but a sideloaded app can't sound a guaranteed wake on this device (that needs a critical-alert permission this build doesn't have), so Focus or silent mode can still mute it. Keep your phone's built-in Clock alarm as your real backup. NOOP's phone-based smart wake (light-sleep detection) is available on the Android app.")
+                    Text("The wake-alarm above buzzes your wrist from the strap's own firmware. It can't sound a loud alarm. We also schedule a backup notification at your wake time, but a sideloaded app can't sound a guaranteed wake on this device (that needs a critical-alert permission this build doesn't have), so Focus or silent mode can still mute it. Keep your phone's built-in Clock alarm as your real backup. LLB's phone-based smart wake (light-sleep detection) is available on the Android app.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -111,7 +111,7 @@ struct SmartAlarmView: View {
     // MARK: - Strap silent wake-alarm (#766, moved here from Automations)
 
     // The strap's own firmware alarm: a silent wrist buzz at the chosen time, armed over BLE so it fires
-    // even if the phone is asleep or NOOP is closed. Lifted verbatim (behaviour intact) out of
+    // even if the phone is asleep or LLB is closed. Lifted verbatim (behaviour intact) out of
     // AutomationsView.alarmCard so users stop conflating it with the wind-down reminder below.
     private var strapAlarmCard: some View {
         StrandCard(padding: 20, tint: behavior.smartAlarmEnabled ? StrandPalette.accent : nil) {
@@ -133,7 +133,7 @@ struct SmartAlarmView: View {
                         Text("Wake me with a strap buzz")
                             .font(StrandFont.body)
                             .foregroundStyle(StrandPalette.textPrimary)
-                        Text("Arms the strap to buzz at your wake time, even if NOOP is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
+                        Text("Arms the strap to buzz at your wake time, even if LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -179,7 +179,7 @@ struct SmartAlarmView: View {
                             .foregroundStyle(StrandPalette.textTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
-                        Text("Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or NOOP is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
+                        Text("Armed on the strap itself, so it can buzz at your wake time even if your phone is asleep or LLB is closed. Sends the exact alarm command the official app sends, confirmed buzzing on a real WHOOP 4.0 (community wire capture + on-device test, #535). Keep a backup alarm for anything you truly can't miss.")
                             .font(StrandFont.footnote)
                             .foregroundStyle(StrandPalette.textTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)

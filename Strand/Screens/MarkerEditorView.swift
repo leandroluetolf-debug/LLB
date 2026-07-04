@@ -12,7 +12,7 @@ import WhoopStore
 // name + unit), then: value (numeric, the marker's canonical unit prefilled, a unit
 // switcher where sensible e.g. mmol/L↔mg/dL with the conversion shown transparently),
 // date/time taken, an optional note, and an OPTIONAL "reference range from my report"
-// free-text — NEVER a NOOP-shipped range. Blood pressure is a PAIRED marker (systolic +
+// free-text — NEVER a LLB-shipped range. Blood pressure is a PAIRED marker (systolic +
 // diastolic entered together, stored as two keys) so it reads naturally.
 //
 // On save it hands the caller `[LabMarkerRow]` drafts (one row, or two for BP) under the
@@ -20,7 +20,7 @@ import WhoopStore
 // SELF-CONTAINED: no AppModel/Settings edits; the sheet owns all its state.
 //
 // NON-CLINICAL: this only captures what the user types. The reference field is theirs,
-// shown back verbatim — NOOP defines no ranges and asserts no normality.
+// shown back verbatim — LLB defines no ranges and asserts no normality.
 
 struct MarkerEditorView: View {
     /// Persist the validated draft row(s). Async so the caller can write + refresh.
@@ -256,7 +256,7 @@ struct MarkerEditorView: View {
                             .overlay(inputShape.strokeBorder(StrandPalette.hairline, lineWidth: 1))
                             .accessibilityLabel("Reference range from your own report, optional")
                     }
-                    Text("NOOP never fills this in. It only shows back exactly what you type from your own report.")
+                    Text("LLB never fills this in. It only shows back exactly what you type from your own report.")
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)

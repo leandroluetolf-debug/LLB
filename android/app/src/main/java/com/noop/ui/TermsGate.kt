@@ -37,15 +37,15 @@ object Terms {
     /** Plain-English summary of TERMS.md §1–§6 — kept identical to the macOS `Terms.points`. */
     val points: List<Pair<String, String>> = listOf(
         "Independent: not affiliated with WHOOP" to
-            "NOOP is an unofficial project: not affiliated with, endorsed by, or sponsored by WHOOP, Inc. \"WHOOP\" is their trademark, used only to name the hardware NOOP works with.",
-        "Using NOOP may breach WHOOP's Terms of Service" to
+            "LLB is an unofficial project: not affiliated with, endorsed by, or sponsored by WHOOP, Inc. \"WHOOP\" is their trademark, used only to name the hardware LLB works with.",
+        "Using LLB may breach WHOOP's Terms of Service" to
             "Use it only with a device you own, to read your own data. Whether to use it (and any effect on your WHOOP account, subscription, device, or warranty) is your decision, and your risk alone.",
         "Experimental: at your own risk" to
-            "NOOP talks to your strap's firmware over an unofficial, independently-mapped protocol. There is a residual risk to the device, its data, and its connection to official services. You assume that risk.",
+            "LLB talks to your strap's firmware over an unofficial, independently-mapped protocol. There is a residual risk to the device, its data, and its connection to official services. You assume that risk.",
         "Not a medical device, not medical advice" to
-            "Every metric is an unvalidated approximation. Don't use NOOP to diagnose, treat, or make any health decision. Always consult a qualified professional.",
+            "Every metric is an unvalidated approximation. Don't use LLB to diagnose, treat, or make any health decision. Always consult a qualified professional.",
         "No warranty; liability limited" to
-            "NOOP is free and provided \"as is\", with no warranty. Liability is limited to the maximum extent the law that applies to you allows, and nothing here removes protections your local law won't let us remove.",
+            "LLB is free and provided \"as is\", with no warranty. Liability is limited to the maximum extent the law that applies to you allows, and nothing here removes protections your local law won't let us remove.",
     )
 }
 
@@ -61,7 +61,7 @@ fun TermsGateScreen(onAccept: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(), color = Palette.surfaceBase) {
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp)) {
             Spacer(Modifier.height(40.dp))
-            Text("Before you use NOOP", style = NoopType.title1, color = Palette.textPrimary)
+            Text("Before you use LLB", style = NoopType.title1, color = Palette.textPrimary)
             Spacer(Modifier.height(4.dp))
             Text(
                 "Please read and accept the points below.",
@@ -80,7 +80,7 @@ fun TermsGateScreen(onAccept: () -> Unit) {
                     }
                 }
                 Text(
-                    "The full terms are in TERMS.md, shipped with NOOP. This is not legal advice.",
+                    "The full terms are in TERMS.md, shipped with LLB. This is not legal advice.",
                     style = NoopType.footnote, color = Palette.textTertiary,
                 )
             }
@@ -94,7 +94,7 @@ fun TermsGateScreen(onAccept: () -> Unit) {
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "I have read and accept these terms, and I'm using NOOP with my own device and my own data, at my own risk.",
+                    "I have read and accept these terms, and I'm using LLB with my own device and my own data, at my own risk.",
                     style = NoopType.footnote, color = Palette.textPrimary,
                     modifier = Modifier.padding(top = 14.dp),
                 )

@@ -5,7 +5,7 @@ import Charts   // Swift Charts isn't used by the watch app; the ChartProxy shim
 
 // MARK: - iOS-17 / macOS-14 deprecation shims
 //
-// NOOP ships a split deployment target — the iOS app targets iOS 17 but the
+// LLB ships a split deployment target — the iOS app targets iOS 17 but the
 // macOS app targets macOS 13 — and the Strand/ + StrandDesign sources compile
 // into BOTH. The two-parameter `onChange(of:initial:_:)` and the optional
 // `ChartProxy.plotFrame` arrived in iOS 17 / macOS 14 and deprecated their
@@ -16,7 +16,7 @@ import Charts   // Swift Charts isn't used by the watch app; the ChartProxy shim
 // call site. Behaviour is identical to a direct `.onChange` / `plotAreaFrame`.
 
 public extension View {
-    /// macOS-13-safe `onChange` that hands the closure the new value. Every NOOP
+    /// macOS-13-safe `onChange` that hands the closure the new value. Every LLB
     /// call site reads only the new value, so a single-parameter shim keeps the
     /// existing closures byte-for-byte unchanged (no `_,` rewrite needed).
     @ViewBuilder

@@ -137,7 +137,7 @@ struct LiveWorkoutView: View {
     }
 
     /// The accumulating Effort, on the same layered StrainGauge the rest of the app uses — the live
-    /// `liveStrain` is on NOOP's 0–100 Effort axis. The gauge renders on the user's selected Effort
+    /// `liveStrain` is on LLB's 0–100 Effort axis. The gauge renders on the user's selected Effort
     /// scale (#313): 0–100 native, or rescaled to WHOOP's 0–21, matching the rest of the app's
     /// read-outs (mirrors TodayView's effort hero). Display-only — the captured value stays 0–100.
     private var effortGauge: some View {

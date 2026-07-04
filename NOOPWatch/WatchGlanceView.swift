@@ -3,10 +3,10 @@ import StrandDesign
 
 // MARK: - WatchGlanceView — the watch app's single primary screen
 //
-// The Apple-Fitness-x-WHOOP look scaled to the wrist: the three NOOP rings (Charge / Effort / Rest) with
+// The Apple-Fitness-x-WHOOP look scaled to the wrist: the three LLB rings (Charge / Effort / Rest) with
 // their numbers in SF-Rounded, each honouring confidence (a calibrating score shows a dash plus a small
 // "cal" marker, NEVER a fabricated number), a live heart-rate readout from the watch's own sensor, and a
-// one-line sleep summary. When nothing has synced yet we show a friendly "open NOOP on your iPhone" state,
+// one-line sleep summary. When nothing has synced yet we show a friendly "open LLB on your iPhone" state,
 // and we always label the scores with the snapshot's age ("as of 2h ago") rather than implying they are live.
 struct WatchGlanceView: View {
     @EnvironmentObject private var store: WatchScoreStore
@@ -128,7 +128,7 @@ struct WatchGlanceView: View {
             Image(systemName: "iphone.gen3")
                 .font(.system(size: 28))
                 .foregroundStyle(StrandPalette.textTertiary)
-            Text("Open NOOP on your iPhone to sync")
+            Text("Open LLB on your iPhone to sync")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .multilineTextAlignment(.center)
@@ -142,7 +142,7 @@ struct WatchGlanceView: View {
     // ageString helper was retired with that move.
 }
 
-// MARK: - ScoreRing — one clean NOOP ring scaled for the wrist
+// MARK: - ScoreRing — one clean LLB ring scaled for the wrist
 //
 // Wraps the shared GlowRing (the flat, crisp Apple-Fitness-x-WHOOP arc) so the watch matches the phone's
 // rings exactly. A calibrating score draws an EMPTY track with a dash centre and a small "cal" marker

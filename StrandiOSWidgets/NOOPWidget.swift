@@ -3,33 +3,33 @@ import SwiftUI
 import StrandDesign
 
 /// Timeline entry backed by the latest `WidgetSnapshot` the app published into the App Group.
-struct NOOPEntry: TimelineEntry {
+struct LLBEntry: TimelineEntry {
     let date: Date
     let snapshot: WidgetSnapshot
 }
 
-struct NOOPProvider: TimelineProvider {
-    func placeholder(in context: Context) -> NOOPEntry {
-        NOOPEntry(date: Date(), snapshot: .placeholder)
+struct LLBProvider: TimelineProvider {
+    func placeholder(in context: Context) -> LLBEntry {
+        LLBEntry(date: Date(), snapshot: .placeholder)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (NOOPEntry) -> Void) {
-        completion(NOOPEntry(date: Date(), snapshot: WidgetSnapshot.load() ?? .placeholder))
+    func getSnapshot(in context: Context, completion: @escaping (LLBEntry) -> Void) {
+        completion(LLBEntry(date: Date(), snapshot: WidgetSnapshot.load() ?? .placeholder))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<NOOPEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<LLBEntry>) -> Void) {
         let snap = WidgetSnapshot.load() ?? .placeholder
         // Refresh roughly every 15 minutes; the app also forces a reload when it publishes fresh data.
         let next = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
-        completion(Timeline(entries: [NOOPEntry(date: Date(), snapshot: snap)], policy: .after(next)))
+        completion(Timeline(entries: [LLBEntry(date: Date(), snapshot: snap)], policy: .after(next)))
     }
 }
 
 /// The glanceable widget — the iOS analogue of the macOS menu-bar extra. Recovery, live/last HR,
 /// and strap battery.
-struct NOOPWidgetView: View {
+struct LLBWidgetView: View {
     @Environment(\.widgetFamily) private var family
-    let entry: NOOPEntry
+    let entry: LLBEntry
 
     private var snap: WidgetSnapshot { entry.snapshot }
 
@@ -69,7 +69,7 @@ struct NOOPWidgetView: View {
         var parts: [String] = []
         if let r = snap.recovery { parts.append("Charge \(r)%") }
         if let b = snap.bpm { parts.append("\(b) bpm") }
-        return parts.isEmpty ? "NOOP" : parts.joined(separator: " · ")
+        return parts.isEmpty ? "LLB" : parts.joined(separator: " · ")
     }
 
     private var recoveryGauge: some View {
@@ -98,7 +98,7 @@ struct NOOPWidgetView: View {
     private var home: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("NOOP").font(.system(size: 13, weight: .bold))
+                Text("LLB").font(.system(size: 13, weight: .bold))
                     .foregroundStyle(StrandPalette.textSecondary)
                 Spacer()
                 Circle().fill(snap.bonded ? StrandPalette.statusPositive : StrandPalette.statusCritical)
@@ -133,7 +133,7 @@ struct NOOPWidgetView: View {
     private var large: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("NOOP").font(.system(size: 13, weight: .bold))
+                Text("LLB").font(.system(size: 13, weight: .bold))
                     .foregroundStyle(StrandPalette.textSecondary)
                 Spacer()
                 Circle().fill(snap.bonded ? StrandPalette.statusPositive : StrandPalette.statusCritical)
@@ -183,21 +183,21 @@ struct NOOPWidgetView: View {
     }
 }
 
-struct NOOPWidget: Widget {
-    let kind = "NOOPWidget"
+struct LLBWidget: Widget {
+    let kind = "LLBWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: NOOPProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: LLBProvider()) { entry in
             if #available(iOS 17.0, *) {
-                NOOPWidgetView(entry: entry)
+                LLBWidgetView(entry: entry)
                     .containerBackground(StrandPalette.surfaceBase, for: .widget)
             } else {
-                NOOPWidgetView(entry: entry)
+                LLBWidgetView(entry: entry)
                     .padding()
                     .background(StrandPalette.surfaceBase)
             }
         }
-        .configurationDisplayName("NOOP Charge")
+        .configurationDisplayName("LLB Charge")
         .description("Charge, Effort, Rest, HRV, resting and live heart rate, and strap battery at a glance.")
         .supportedFamilies([
             .systemSmall, .systemMedium, .systemLarge,

@@ -17,7 +17,7 @@ import UniformTypeIdentifiers
 // compact Today header and the large Settings row reuse the same view. Pure presentation — it's
 // handed the stored JPEG bytes (`ProfileStore.avatarImageData`); it never touches storage.
 //
-// LOCAL-ONLY: the photo lives in UserDefaults on this device and is never uploaded (NOOP is
+// LOCAL-ONLY: the photo lives in UserDefaults on this device and is never uploaded (LLB is
 // fully offline). This view just draws whatever bytes it's given.
 
 struct ProfileAvatarView: View {
@@ -44,7 +44,7 @@ struct ProfileAvatarView: View {
                 // A faint hairline ring so the photo edge reads cleanly on any card/canvas.
                 .overlay(Circle().strokeBorder(StrandPalette.hairline, lineWidth: 1))
         } else {
-            // Fallback: the NOOP loop BrandMark (the green ring + white core) instead of a generic
+            // Fallback: the LLB loop BrandMark (the green ring + white core) instead of a generic
             // person glyph — the default avatar is now on-brand. BrandMark is intrinsically square and
             // sized off a single edge length, so it fills the same `size` footprint a photo / the old
             // symbol did, keeping the header and Settings layouts unchanged.

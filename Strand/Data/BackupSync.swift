@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 /// Backup & Sync (folder destination) - the Apple twin of the Android `BackupSync`. Writes the full
 /// `.noopbak` snapshot (the existing `DataBackup` format) into a user-chosen folder, on demand and as
 /// an on-launch daily catch-up. Point that folder at a Google Drive / iCloud / Dropbox client and you
-/// get automatic off-device backup with no in-app cloud account - NOOP only writes a local file; the
+/// get automatic off-device backup with no in-app cloud account - LLB only writes a local file; the
 /// sync client does the upload.
 ///
 /// `BackupSync` holds only the PURE, unit-tested filename / selection logic (no I/O, no state) so it is
@@ -54,7 +54,7 @@ enum BackupSync {
 
     /// Any `.noopbak` file, whatever it's named. The RESTORE list uses this (not `isSnapshot`) so a
     /// hand-named backup like `noop-backup-2026-06-30.noopbak` still shows (#852). Case-insensitive on
-    /// the extension so `.NOOPBAK` copied off another device still counts. Prune/latest stay strict on
+    /// the extension so `.LLBBAK` copied off another device still counts. Prune/latest stay strict on
     /// `isSnapshot`, so a non-canonical name is listed for restore but never auto-deleted.
     static func isBackupFile(_ name: String) -> Bool {
         name.lowercased().hasSuffix(suffix)
@@ -264,7 +264,7 @@ enum FolderBackup {
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.prompt = String(localized: "Choose")
-        panel.message = String(localized: "Choose a folder for NOOP backups (for example a Google Drive or iCloud folder).")
+        panel.message = String(localized: "Choose a folder for LLB backups (for example a Google Drive or iCloud folder).")
         guard panel.runModal() == .OK, let url = panel.url else { return nil }
         saveFolder(url)
         return url

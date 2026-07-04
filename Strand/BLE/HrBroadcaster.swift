@@ -2,16 +2,16 @@ import Foundation
 import Combine
 import CoreBluetooth
 
-/// Re-broadcasts NOOP's LIVE heart rate back OUT as a standard Bluetooth Heart Rate peripheral, so a
-/// gym treadmill, Zwift, Peloton, a bike computer, or any fitness app can read the WHOOP HR that NOOP
+/// Re-broadcasts LLB's LIVE heart rate back OUT as a standard Bluetooth Heart Rate peripheral, so a
+/// gym treadmill, Zwift, Peloton, a bike computer, or any fitness app can read the WHOOP HR that LLB
 /// is already receiving off the strap. It runs a `CBPeripheralManager` that advertises the standard
 /// Heart Rate Service (0x180D) and notifies the Heart Rate Measurement characteristic (0x2A37) with the
-/// SIG-spec flags + bpm encoding whenever NOOP has a fresh live HR sample.
+/// SIG-spec flags + bpm encoding whenever LLB has a fresh live HR sample.
 ///
 /// OFFLINE, OPT-IN, ADDITIVE
 /// -------------------------
 /// This is LOCAL Bluetooth only — nothing leaves the device to any cloud or server. It just re-shares
-/// the strap's HR to nearby gym kit over a standard BLE profile, which fits NOOP's offline ethos. It is
+/// the strap's HR to nearby gym kit over a standard BLE profile, which fits LLB's offline ethos. It is
 /// OFF by default and only ever runs when the user flips the "Broadcast heart rate" toggle in Data
 /// Sources (persisted at ``defaultsKey``).
 ///
@@ -26,7 +26,7 @@ public final class HrBroadcaster: NSObject, ObservableObject {
 
     /// Shared with the Data Sources toggle via `@AppStorage(HrBroadcaster.defaultsKey)`. Deliberately a
     /// DISTINCT key from `PuffinExperiment.broadcastHrKey` — that one makes the WHOOP *strap* advertise
-    /// its own HR via a firmware device-config; THIS one makes the NOOP *app* act as the HR peripheral.
+    /// its own HR via a firmware device-config; THIS one makes the LLB *app* act as the HR peripheral.
     /// Default OFF (a bare `UserDefaults.bool` read is false when unset).
     public static let defaultsKey = "noopHrPeripheral"
 
@@ -63,7 +63,7 @@ public final class HrBroadcaster: NSObject, ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     /// Diagnostic sink for the broadcast lifecycle, wired (when the composition root chooses to) to the
-    /// SAME exportable strap log the WHOOP path uses, so a tester whose gym kit can't see NOOP has a
+    /// SAME exportable strap log the WHOOP path uses, so a tester whose gym kit can't see LLB has a
     /// record of whether we advertised, who subscribed, and why the radio refused. Every line is prefixed
     /// "HR-out: " so it's distinguishable from the WHOOP and HR-strap lines. Privacy-safe: statuses and a
     /// subscriber COUNT only, never a central's address or any health value. Default no-op keeps the
@@ -148,7 +148,7 @@ public final class HrBroadcaster: NSObject, ObservableObject {
     /// Layout (matches `StandardHeartRate.parse`, the inverse): a flags byte followed by the HR value.
     ///   - flags bit0 = 0 → the HR value is a single u8 byte (emitted for any bpm < 256);
     ///   - flags bit0 = 1 → the HR value is u16 little-endian (only needed for an out-of-range bpm >= 256).
-    /// We never set bit3 (Energy Expended) or bit4 (R-R) — NOOP broadcasts a plain instantaneous HR. The
+    /// We never set bit3 (Energy Expended) or bit4 (R-R) — LLB broadcasts a plain instantaneous HR. The
     /// bpm is clamped to a non-negative 16-bit range so a stray value can never overflow the encoding.
     public static func measurement(bpm: Int) -> [UInt8] {
         let clamped = max(0, min(bpm, 0xFFFF))
@@ -181,7 +181,7 @@ public final class HrBroadcaster: NSObject, ObservableObject {
         if !manager.isAdvertising {
             manager.startAdvertising([
                 CBAdvertisementDataServiceUUIDsKey: [Self.heartRateService],
-                CBAdvertisementDataLocalNameKey: "NOOP HR",
+                CBAdvertisementDataLocalNameKey: "LLB HR",
             ])
             log("HR-out: advertising 0x180D heart-rate service")
         }
@@ -204,7 +204,7 @@ extension HrBroadcaster: @preconcurrency CBPeripheralManagerDelegate {
             log("HR-out: Bluetooth is off, cannot broadcast")
         case .unauthorized:
             advertising = false
-            statusNote = "NOOP needs Bluetooth permission to broadcast your heart rate."
+            statusNote = "LLB needs Bluetooth permission to broadcast your heart rate."
             log("HR-out: Bluetooth permission not granted, cannot broadcast")
         case .unsupported:
             advertising = false

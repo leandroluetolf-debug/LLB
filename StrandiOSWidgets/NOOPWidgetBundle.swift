@@ -3,9 +3,9 @@ import SwiftUI
 
 /// The widget extension entry point. Bundles the glanceable widget and the live-HR Live Activity.
 @main
-struct NOOPWidgetBundle: WidgetBundle {
+struct LLBWidgetBundle: WidgetBundle {
     var body: some Widget {
-        NOOPWidget()
+        LLBWidget()
         NOOPLiveActivity()
     }
 }

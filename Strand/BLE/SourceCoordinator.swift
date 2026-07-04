@@ -341,7 +341,7 @@ final class SourceCoordinator: ObservableObject {
 
     /// Start the EXPERIMENTAL Oura source (Oura Ring gen 3/4/5) for `id`, driven by the clean-room
     /// `OuraProtocol.OuraDriver`. Decoded raw signals (HR / IBI / HRV / SpO2 / temp / sleep-phase / battery)
-    /// ride the SAME `LiveState` + persist channels as the other sources, so NOOP scores the Oura day with
+    /// ride the SAME `LiveState` + persist channels as the other sources, so LLB scores the Oura day with
     /// its OWN Charge/Rest exactly like a WHOOP day, while Oura's encrypted readiness/sleep scores are never
     /// read or surfaced. The ring generation is recovered from the registry row's `model` string via
     /// `OuraRingGen.from(model:)`; the 16-byte install key is read from the Keychain via `OuraKeyStore`
@@ -364,7 +364,7 @@ final class SourceCoordinator: ObservableObject {
             log: straplog,
             onBattery: { [live] pct in live.setBattery(Double(pct)) },
             adoptIntent: adoptIntent)
-        if adoptIntent { straplog("Oura: adopt consent granted - this session may install NOOP's key") }
+        if adoptIntent { straplog("Oura: adopt consent granted - this session may install LLB's key") }
         if let pid = peripheralId(for: id), let uuid = UUID(uuidString: pid) {
             source.connect(uuid)
         } else {

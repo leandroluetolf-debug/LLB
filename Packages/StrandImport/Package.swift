@@ -19,7 +19,7 @@ let package = Package(
             "WhoopProtocol", "WhoopStore",
             .product(name: "ZIPFoundation", package: "ZIPFoundation"),
             // Read-only access to a *foreign* SQLite file (the Mi Fitness export);
-            // never opens NOOP's own store. Already in the tree via WhoopStore.
+            // never opens LLB's own store. Already in the tree via WhoopStore.
             .product(name: "GRDB", package: "GRDB.swift"),
         ]),
         .testTarget(name: "StrandImportTests", dependencies: [

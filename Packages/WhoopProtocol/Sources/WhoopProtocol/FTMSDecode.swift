@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - FTMS (Fitness Machine Service, 0x1826) pure decoders
 //
-// Spec-deterministic field parsing for the four FTMS machine-data characteristics NOOP reads live:
+// Spec-deterministic field parsing for the four FTMS machine-data characteristics LLB reads live:
 //   • Treadmill Data        0x2ACD
 //   • Cross Trainer Data    0x2ACE
 //   • Rower Data            0x2AD1
@@ -23,7 +23,7 @@ import Foundation
 // existing biometric stream decoders. The app-target `FTMSSource` (CoreBluetooth glue) calls in here.
 //
 // Reference: Bluetooth SIG "Fitness Machine Service" 1.0 (FTMS_v1.0) and "GATT Specification
-// Supplement" characteristic field tables. NOOP's own clean re-implementation of the public spec.
+// Supplement" characteristic field tables. LLB's own clean re-implementation of the public spec.
 
 /// The kind of FTMS machine, identified by which machine-data characteristic it streams.
 public enum FTMSMachineKind: String, Sendable, Equatable, Codable {

@@ -11,7 +11,7 @@ import Foundation
 // Trust tiers (lower = more trusted), grounded in what a device MEASURES vs ESTIMATES (spec §1):
 //   0 — Direct dedicated sensor for this metric (WHOOP R-R for HRV; a wrist band's pedometer for
 //       steps; chest/PPG strap for avg/max/resting HR; ring/strap temp for skin temp).
-//   1 — Derived on-device from raw by NOOP (computed recovery/strain/sleep from strap streams).
+//   1 — Derived on-device from raw by LLB (computed recovery/strain/sleep from strap streams).
 //   2 — Phone aggregate (Apple Health / Health Connect) of a declared-compatible quantity.
 //   3 — Estimate / proxy (a strap's STEP estimate; a calories estimate).
 //
@@ -100,13 +100,13 @@ public enum MetricArbitrationPolicy {
             case .appleHealth:   return 0   // phone pedometer — counts directly
             case .healthConnect: return 0
             case .whoopImport:   return 3   // strap step estimate is a last resort
-            case .noopComputed:  return 3   // NOOP step estimate from motion
+            case .noopComputed:  return 3   // LLB step estimate from motion
             case .nutritionCsv:  return 3
             case .localCache:    return 3
             }
 
         case .sleep:
-            // The best STAGER wins: imported WHOOP stages > NOOP-computed stages > phone sleep buckets.
+            // The best STAGER wins: imported WHOOP stages > LLB-computed stages > phone sleep buckets.
             switch source {
             case .whoopImport:   return 0
             case .noopComputed:  return 1
@@ -144,7 +144,7 @@ public enum MetricArbitrationPolicy {
     }
 
     /// Stable tiebreak WITHIN a tier (lower wins). Mirrors the existing precedence baked into
-    /// `sourceCandidates`: imported WHOOP first, then NOOP-computed, then phone (Apple before Health
+    /// `sourceCandidates`: imported WHOOP first, then LLB-computed, then phone (Apple before Health
     /// Connect, matching the #443 ordering), then a dedicated band, then single-source, then cache.
     /// Used only when two sources land on the SAME tier, so the resolver stays deterministic.
     public static func sourcePriority(_ source: FusionSource) -> Int {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Time-of-Day Atmosphere (NOOP identity backdrop)
+// MARK: - Time-of-Day Atmosphere (LLB identity backdrop)
 //
 // A *whisper* behind content — never decoration, never the old gaudy Canvas starfield.
 // Apple-Weather restraint dialled WAY down: every atmosphere layer sits at opacity <= 0.16,

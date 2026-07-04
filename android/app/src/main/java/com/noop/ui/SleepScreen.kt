@@ -271,7 +271,7 @@ fun SleepScreen(
             ) {
                 Text("Good morning!", style = NoopType.title2, color = Palette.textPrimary)
                 Text(
-                    "Your night data is in. Logging how you felt helps NOOP learn what drives your best recovery.",
+                    "Your night data is in. Logging how you felt helps LLB learn what drives your best recovery.",
                     style = NoopType.subhead,
                     color = Palette.textSecondary,
                 )
@@ -590,7 +590,7 @@ private fun SleepMarkCard(onMark: (SleepMarkType) -> Unit) {
 
 /**
  * #65: the transient UNDO strip after a suppressing sleep delete. A Rest-tinted card stating the window
- * NOOP won't re-detect + a real Undo button. The banner auto-clears after ~7s (the caller's keyed
+ * LLB won't re-detect + a real Undo button. The banner auto-clears after ~7s (the caller's keyed
  * LaunchedEffect); Undo restores the deleted row into its ORIGINAL namespace and lifts the tombstone.
  * Mirrors the macOS SleepView.sleepUndoBanner (role-alert-ish, explicit Undo label).
  */
@@ -606,7 +606,7 @@ private fun SleepUndoBanner(session: SleepSession, onUndo: () -> Unit) {
     val message = if (session.userEdited) {
         "Sleep deleted."
     } else {
-        "Sleep deleted. NOOP won't detect sleep between $startText and $endText again."
+        "Sleep deleted. LLB won't detect sleep between $startText and $endText again."
     }
     NoopCard(tint = Palette.restColor) {
         Row(
@@ -645,7 +645,7 @@ private val LIQUID_HERO_RADIUS: Dp = 26.dp
 // the screen-level liquid sky (the scaffold's topBackground), carrying — when the night has a 0–100
 // sleep-performance score — a [LiquidVessel] filled to score/100 in the Rest colour with the number counting
 // up over it (the Today HeroScoreVessel idiom). No score → the big count-up hours-slept headline. A
-// [SourceBadge] states whether the score is WHOOP's imported figure or NOOP's on-device estimate. The
+// [SourceBadge] states whether the score is WHOOP's imported figure or LLB's on-device estimate. The
 // figures, fraction math and Rest tint are UNCHANGED from the BevelGauge this replaced — presentation-only.
 
 @Composable
@@ -744,7 +744,7 @@ private fun sleepScoreWord(score: Double): String = when {
 }
 
 /**
- * Whether the night's sleep-performance score is WHOOP's own imported figure or NOOP's on-device
+ * Whether the night's sleep-performance score is WHOOP's own imported figure or LLB's on-device
  * approximation — so the hero is honest about provenance, like Today's badges. Mirrors the macOS
  * SleepView.sleepScoreSource.
  */
@@ -808,7 +808,7 @@ private fun Hero(
                 trailing = durationText(s.asleep),
                 tint = Palette.restColor,
                 footer = {
-                    // WHOOP-style stage rows in the NOOP pip language: swatch + UPPERCASE stage +
+                    // WHOOP-style stage rows in the LLB pip language: swatch + UPPERCASE stage +
                     // coloured % + a segmented PipBar of the share-of-night + right-aligned duration.
                     // Same minutes/percentages the old "label · value" footer carried — no new numbers.
                     // Mirrors the macOS SleepView.stageBreakdownRows. (PipBar)
@@ -1146,7 +1146,7 @@ private fun NapRow(
 /**
  * The four WHOOP-style stage rows that replace the old "label · value" footer grid, read like WHOOP's
  * sleep detail: a colour swatch, the UPPERCASE stage name, the share-of-night % in the stage colour, a
- * segmented [PipBar] (the NOOP signature) tinted in the stage colour, and the right-aligned duration.
+ * segmented [PipBar] (the LLB signature) tinted in the stage colour, and the right-aligned duration.
  * Same data as the prior footer (rem / deep / light / awake over total) — no new numbers. Mirrors the
  * macOS SleepView.stageBreakdownRows. (PipBar)
  */
@@ -1858,7 +1858,7 @@ private fun NightNavHeader(
                     if (session.userEdited) {
                         "Removes this sleep and recomputes the day without it. You can undo for a few seconds after."
                     } else {
-                        "Removes this recorded sleep and recomputes the day without it. NOOP won't re-detect sleep in this window. You can undo for a few seconds after."
+                        "Removes this recorded sleep and recomputes the day without it. LLB won't re-detect sleep in this window. You can undo for a few seconds after."
                     },
                     style = NoopType.subhead,
                 )

@@ -50,7 +50,7 @@ enum StorePaths {
     /// other platforms keep the plain Application Support directory.
     private static func macOSProductionContainerAppSupport(defaultingTo appSupport: URL) -> URL {
         #if os(macOS)
-        let productionBundleID = "com.noopapp.noop"
+        let productionBundleID = "com.llb.app"
         guard Bundle.main.bundleIdentifier == productionBundleID else { return appSupport }
 
         let containerSegment = "/Library/Containers/\(productionBundleID)/Data/"

@@ -10,7 +10,7 @@ import Foundation
 // (Calories, DistanceMeters) so the workout's energy/distance come from the file's own figures when
 // present, and fall back to the track otherwise.
 //
-// Conceptually adapted from the structure of FitnessKit/TcxDataProtocol (MIT); NOOP's own clean
+// Conceptually adapted from the structure of FitnessKit/TcxDataProtocol (MIT); LLB's own clean
 // implementation on Foundation `XMLParser`, with the same XXE / entity-expansion / count guards as the
 // GPX parser.
 

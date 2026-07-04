@@ -18,7 +18,7 @@ enum FileExport {
 
     /// A short `yyMMdd-HHmm` wall-clock stamp for export filenames (#510 — maddognik's protocol RE),
     /// so a reporter who saves several strap logs / raw captures in a row gets sortable, non-colliding
-    /// files (e.g. `noop-strap-log-260617-1042.txt`) instead of repeatedly overwriting one name.
+    /// files (e.g. `llb-strap-log-260617-1042.txt`) instead of repeatedly overwriting one name.
     /// Locale-independent (POSIX) so the stamp is stable on every machine.
     static func timestamp(_ date: Date = Date()) -> String {
         let f = DateFormatter()
@@ -28,7 +28,7 @@ enum FileExport {
     }
 
     /// Compose a timestamped suggested filename — `<prefix>-<yyMMdd-HHmm>.<ext>`
-    /// (e.g. `timestampedName("noop-strap-log", ext: "txt")` → `noop-strap-log-260617-1042.txt`).
+    /// (e.g. `timestampedName("llb-strap-log", ext: "txt")` → `llb-strap-log-260617-1042.txt`).
     static func timestampedName(_ prefix: String, ext: String) -> String {
         "\(prefix)-\(timestamp()).\(ext)"
     }
@@ -100,7 +100,7 @@ enum FileExport {
         if FileManager.default.fileExists(atPath: src.path), let fileData = try? Data(contentsOf: src) {
             entries.insert(BundleEntry(name: fileSuggestedName, data: fileData), at: 0)
         }
-        let zipName = timestampedName("noop-export", ext: "zip")
+        let zipName = timestampedName("llb-export", ext: "zip")
         _ = exportBundle(entries: entries, suggestedName: zipName)
     }
 

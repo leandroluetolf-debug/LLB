@@ -3,7 +3,7 @@ import XCTest
 
 /// #547 — the type-47 ingest timestamp gate. A bad-clock strap (pikapik's WHOOP 4.0, repeated
 /// trim=0xFFFFFFFF) emits records whose own unix decodes to scattered garbage: far-past (2024/2029),
-/// a bogus 2027=1827642881, and FUTURE dates. NOOP used to trust them verbatim, so one ~12h polluted
+/// a bogus 2027=1827642881, and FUTURE dates. LLB used to trust them verbatim, so one ~12h polluted
 /// block was re-attributed to every day-window and a future row surfaced as the Today "last night"
 /// carry-over. `extractHistoricalStreams` now drops any record whose resolved ts is implausible
 /// (< MIN_PLAUSIBLE_UNIX or > now + FUTURE_MARGIN) and tallies the drop in `Streams.droppedImplausible`.

@@ -12,7 +12,7 @@ import Charts
 // hover affordance mirror `TrendChart`; this view adds the marker layers and pins
 // the x-axis to the HR window so markers never stretch the timeline.
 //
-// Colours stay in NOOP's Titanium & Gold language (burnt-orange HR line, gold
+// Colours stay in LLB's Titanium & Gold language (burnt-orange HR line, gold
 // recovery, amber strain, blue sleep) rather than copying WHOOP's blue. Tokens
 // only — never hardcode hex.
 
@@ -72,7 +72,7 @@ public struct OverviewHRChart: View {
     @Binding public var zoomDomain: ClosedRange<Date>?
     public var zoomBounds: ClosedRange<Date>?
 
-    /// Tint for the workout glyph badges (NOOP's warm strain accent by default).
+    /// Tint for the workout glyph badges (LLB's warm strain accent by default).
     public var workoutTint: Color
 
     private let averageValue: Double

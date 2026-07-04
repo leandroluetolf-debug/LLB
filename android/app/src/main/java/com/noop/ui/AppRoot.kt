@@ -214,7 +214,7 @@ private val drawerGroups: List<DrawerGroup> = listOf(
     ), defaultExpanded = false),
     DrawerGroup("App", R.string.more_group_app, listOf(
         Destination.Automations, Destination.SmartAlarm, Destination.Notifications,
-        Destination.TestCentre, Destination.Settings, Destination.Support,
+        Destination.TestCentre, Destination.Settings,
     ), defaultExpanded = false),
 )
 
@@ -309,12 +309,10 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
                 composable(Destination.Today.route) {
                     TodayScreen(
                         viewModel = viewModel,
-                        onSupport = { nav.navigateTopLevel(Destination.Support.route) },
                         // The quick-action "+" lives in the Today header's top-right now (off the
                         // bottom bar) — it opens the same quick-action sheet the bar used to.
                         onQuickActions = { showQuickActions = true },
-                        // The Updates "ringer" — the bell sits between the Support heart and the +,
-                        // and opens the inbox sheet AppRoot presents (it owns the nav for deep-links).
+                        // The Updates inbox sheet AppRoot presents (it owns the nav for deep-links).
                         updateStore = updateStore,
                         onOpenUpdates = { showUpdatesInbox = true },
                         // The leading profile avatar opens Settings (where the photo is set/changed),
@@ -370,7 +368,6 @@ fun AppRoot(viewModel: AppViewModel = viewModel()) {
                 composable(Destination.Automations.route) { AutomationsScreen(viewModel) }
                 composable(Destination.SmartAlarm.route) { SmartAlarmScreen(viewModel) }
                 composable(Destination.Workouts.route) { WorkoutsScreen(viewModel) }
-                composable(Destination.Support.route) { SupportScreen() }
                 composable(Destination.Intelligence.route) { IntelligenceScreen(viewModel) }
 
                 // --- Placeholder routes (later waves fill these in) ---
@@ -823,10 +820,10 @@ private val NavEasing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
 private val navFadeSpec = tween<Float>(durationMillis = 240, easing = NavEasing)
 
 /**
- * BrandMark — the NOOP logo glyph at a small in-app size: an OPEN recovery ring (≈80%
+ * BrandMark — the LLB logo glyph at a small in-app size: an OPEN recovery ring (≈80%
  * arc, round caps, starting at −90° / 12 o'clock, clockwise) in the gold gradient with a
  * solid gold core dot at the centre. This is the same brand glyph the RecoveryRing hero
- * carries (the "O" of NOOP), shrunk for the top bar / drawer header so the logo reads in
+ * carries (the "O" of LLB), shrunk for the top bar / drawer header so the logo reads in
  * app. CLEAN/flat per the v3 restraint brief — no bloom, no halo, just the gradient ring.
  * Token-only (gold gradient + hairline track); decorative, so it carries no content label.
  */

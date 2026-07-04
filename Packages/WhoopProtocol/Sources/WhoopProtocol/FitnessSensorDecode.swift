@@ -11,7 +11,7 @@ import Foundation
 //   • Cycling Power (CPS)                service 0x1818   measurement 0x2A63
 //
 // Each measurement begins with a flags field whose bits gate which fields follow in a FIXED spec order.
-// We decode the fields NOOP surfaces in a live workout (speed, cadence, power, and the cumulative
+// We decode the fields LLB surfaces in a live workout (speed, cadence, power, and the cumulative
 // revolution counters CSC/CPS report) and IGNORE the rest by advancing the cursor by their spec width,
 // so an unrecognised optional field never desynchronises the ones after it.
 //
@@ -29,7 +29,7 @@ import Foundation
 // from the spec, exactly like `FTMSDecode`. The app-target standard-sensor glue calls in here.
 //
 // Reference: Bluetooth SIG "Running Speed and Cadence Service" 1.0, "Cycling Speed and Cadence Service"
-// 1.0, "Cycling Power Service" 1.1, and the GATT Specification Supplement field tables. NOOP's own clean
+// 1.0, "Cycling Power Service" 1.1, and the GATT Specification Supplement field tables. LLB's own clean
 // re-implementation of the public spec (no GPL/AGPL source consulted — facts only).
 
 /// Which standard fitness-sensor measurement produced a reading.

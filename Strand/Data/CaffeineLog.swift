@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Caffeine window (#526) — log an intake + a rough on-device "still active" estimate
 //
-// OPT-IN, MANUAL-FIRST: the user logs a caffeine intake (a time, and OPTIONALLY an amount in mg). NOOP
+// OPT-IN, MANUAL-FIRST: the user logs a caffeine intake (a time, and OPTIONALLY an amount in mg). LLB
 // then shows a plain "caffeine still active" hint on Today / Insights, computed entirely on-device from a
 // simple exponential half-life decay. This is a ROUGH GUIDE from what the user logged, NOT a measurement
 // and NOT a health claim — caffeine pharmacokinetics vary a lot between people (the ~5–6 h half-life is a

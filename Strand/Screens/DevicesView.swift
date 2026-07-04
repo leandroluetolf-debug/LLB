@@ -5,7 +5,7 @@ import OuraProtocol
 
 // MARK: - Devices
 //
-// Pair and manage the bands NOOP reads from. WHOOP-FIRST: the WHOOP is the primary, fully-supported
+// Pair and manage the bands LLB reads from. WHOOP-FIRST: the WHOOP is the primary, fully-supported
 // device; generic heart-rate straps (Polar / Wahoo / Coospo / Garmin HRM …) are an early, in-development
 // addition. The screen is a thin UI over `DeviceRegistry` (the Phase 1A/1B data layer): every mutation
 // goes through a registry op, and the `SourceCoordinator` (already wired in AppModel) reacts to the
@@ -20,7 +20,7 @@ struct DevicesView: View {
 
     var body: some View {
         ScreenScaffold(title: "Devices",
-                       subtitle: "Pair and manage the bands NOOP reads from.",
+                       subtitle: "Pair and manage the bands LLB reads from.",
                        // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends: a fixed,
                        // full-bleed time-of-day sky behind the scroll content (it does not scroll).
                        topBackground: liquidScaffoldSky()) {
@@ -31,7 +31,7 @@ struct DevicesView: View {
                 // calm pending note rather than an empty screen in that brief window.
                 DataPendingNote(
                     title: "Getting your devices ready",
-                    message: "NOOP is opening your on-device data. Your paired bands will appear here in a moment.",
+                    message: "LLB is opening your on-device data. Your paired bands will appear here in a moment.",
                     symbol: "badge.plus.radiowaves.right")
             }
         }
@@ -134,7 +134,7 @@ private struct DevicesContent: View {
             Button("Cancel", role: .cancel) { removeTarget = nil }
             Button("Remove", role: .destructive) { confirmRemove(device) }
         } message: { device in
-            Text("Remove \(device.displayName)? NOOP will stop connecting to it. Its recorded data is kept and you can re-add it any time.")
+            Text("Remove \(device.displayName)? LLB will stop connecting to it. Its recorded data is kept and you can re-add it any time.")
         }
         // Second, strongly-worded delete-data confirm (reached from the Remove card's secondary control)
         .alert("Delete all of this device's data?",
@@ -201,7 +201,7 @@ private struct DevicesContent: View {
             Image(systemName: "info.circle")
                 .foregroundStyle(StrandPalette.textTertiary)
                 .accessibilityHidden(true)
-            Text("WHOOP is NOOP's primary, fully-supported band. Other heart-rate straps are an early, in-development addition: they stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
+            Text("WHOOP is LLB's primary, fully-supported band. Other heart-rate straps are an early, in-development addition: they stream live heart rate and HRV, but not WHOOP's deeper sleep and recovery data.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -230,7 +230,7 @@ private struct DevicesContent: View {
     /// so the dialog's choices come from the still-paired devices.
     private func confirmRemove(_ device: PairedDevice) {
         let wasActive = device.status == .active
-        // #78: actually RELEASE the BLE link, not just archive the registry row — otherwise NOOP keeps
+        // #78: actually RELEASE the BLE link, not just archive the registry row — otherwise LLB keeps
         // re-grabbing the strap (reconnect timer + targeted-connect pin + iOS state restoration), holding
         // it connected so it can never enter pairing mode to be re-paired.
         model.ble.forgetDevice(device.peripheralId)
@@ -298,7 +298,7 @@ private struct DeviceCard: View {
 
                 // Honest local-takeover state row for an adopted Oura ring that is paired but not the
                 // active+connected source right now. States the single-owner reality plainly (if the ring
-                // was reset again or re-claimed in the Oura app, NOOP no longer owns it) without faking a
+                // was reset again or re-claimed in the Oura app, LLB no longer owns it) without faking a
                 // live reading. Suppressed for the active+connected ring and for removed rings.
                 if device.sourceKind == .oura && !isLiveConnected && device.status == .paired {
                     ouraLocalStateNote
@@ -308,7 +308,7 @@ private struct DeviceCard: View {
                 // mislabel e.g. a "Blood oxygen" chip when no SpO₂ % ever comes off the strap).
                 capabilityRow(symbol: "waveform.path.ecg", text: profile.captures,
                               tint: StrandPalette.textSecondary)
-                // What NOOP USES it for — the scores/screens this device drives.
+                // What LLB USES it for — the scores/screens this device drives.
                 capabilityRow(symbol: "bolt.fill", text: profile.powers,
                               tint: StrandPalette.textSecondary)
                 // Honest footnote: the "*" estimates + the SpO₂/steps caveats.
@@ -500,7 +500,7 @@ private struct DeviceCard: View {
 
     /// Honest paired-but-not-connected note for a locally-adopted Oura ring. Amber heads-up, no fabricated
     /// reading: re-states the single-owner reality so the user understands why a re-reset / Oura re-claim
-    /// would break NOOP's ownership.
+    /// would break LLB's ownership.
     private var ouraLocalStateNote: some View {
         HStack(alignment: .top, spacing: 6) {
             Image(systemName: "info.circle")
@@ -508,7 +508,7 @@ private struct DeviceCard: View {
                 .foregroundStyle(StrandPalette.statusWarning)
                 .frame(width: 14)
                 .accessibilityHidden(true)
-            Text("Paired locally. NOOP owns this ring while it holds the key. If you reset it again or set it up in the Oura app, NOOP no longer owns it and you would re-add it to take it over.")
+            Text("Paired locally. LLB owns this ring while it holds the key. If you reset it again or set it up in the Oura app, LLB no longer owns it and you would re-add it to take it over.")
                 .font(StrandFont.caption)
                 .foregroundStyle(StrandPalette.statusWarning)
                 .fixedSize(horizontal: false, vertical: true)
@@ -529,19 +529,19 @@ private struct DeviceCard: View {
 
 // MARK: - Capability profile
 
-/// Honest, per-model summary of what a device captures and what NOOP uses it for — shown on its card.
+/// Honest, per-model summary of what a device captures and what LLB uses it for — shown on its card.
 ///
 /// Derived from brand/model/sourceKind, NOT from the stored capability `Set`. The stored set is generic
 /// across WHOOP models (it would render an identical "Heart rate · HRV · Blood oxygen · Skin temp · …"
 /// line for a 4.0 and a 5/MG alike) and it mislabels: no SpO₂ **percentage** ever comes off any WHOOP
 /// strap (raw red/IR only — a real % exists only from a WHOOP CSV / Apple Health import), skin temp is a
 /// nightly ±°C sleep deviation rather than a live reading, steps are 5/MG-only and a raw motion count,
-/// and Charge/Effort/Rest are NOOP-derived scores. Verdicts are source-verified against the decode +
+/// and Charge/Effort/Rest are LLB-derived scores. Verdicts are source-verified against the decode +
 /// scoring paths (the device-capability audit). `*` in a label = an on-device estimate, not a raw sensor.
 struct DeviceCapabilityProfile {
     let displayModel: String   // clean card subtitle (replaces the redundant "WHOOP · WHOOP")
     let captures: String       // "·"-joined honest capture labels for THIS model
-    let powers: String         // the NOOP scores / screens this device drives
+    let powers: String         // the LLB scores / screens this device drives
     let footnote: String       // one short honest caveat line ("*" estimates + the SpO₂/steps notes)
 
     static func make(for d: PairedDevice) -> DeviceCapabilityProfile {
@@ -561,10 +561,10 @@ struct DeviceCapabilityProfile {
                 displayModel: String(localized: "\(d.brand) (experimental)"),
                 captures: String(localized: "Heart rate (live, best-effort)"),
                 powers: String(localized: "Powers the live console + Effort. No Charge, Rest or Sleep"),
-                footnote: String(localized: "Experimental: live heart rate where the band exposes it. Some bands need a pairing we can't do yet. NOOP will say so honestly and never show a made-up number. No sleep, recovery, skin temp, SpO₂ or steps."))
+                footnote: String(localized: "Experimental: live heart rate where the band exposes it. Some bands need a pairing we can't do yet. LLB will say so honestly and never show a made-up number. No sleep, recovery, skin temp, SpO₂ or steps."))
         }
         // EXPERIMENTAL locally-adopted Oura ring (gen 3/4/5). The gen is carried on `model` ("Oura Ring
-        // 3/4/5") and recovered with OuraRingGen.from(model:). NOOP reads the ring's OWN raw signals + open
+        // 3/4/5") and recovered with OuraRingGen.from(model:). LLB reads the ring's OWN raw signals + open
         // HRV/sleep-phase tags and computes its own Charge/Effort/Rest; it NEVER reads Oura's encrypted
         // Readiness/Sleep scores, and claims NO absolute SpO₂ %. Estimates carry "*"; a signal it can't read
         // stays "-". Per-gen copy and the canonical Beta caveat (spec
@@ -622,7 +622,7 @@ struct DeviceCapabilityProfile {
                 powers: whoopPowers,
                 footnote: String(localized: "* on-device estimate: skin temp is a nightly ±°C deviation, steps are a raw motion count (#78). No SpO₂ % off the strap; import a WHOOP CSV for a real %."))
         }
-        // WHOOP 4.0 — NOOP's primary band; no steps over BLE.
+        // WHOOP 4.0 — LLB's primary band; no steps over BLE.
         if model.contains("4") {
             return DeviceCapabilityProfile(
                 displayModel: "WHOOP 4.0",
@@ -704,7 +704,7 @@ struct DeviceCardCatalog: View {
 
     var body: some View {
         ScreenScaffold(title: "Devices",
-                       subtitle: "What each band captures (and what NOOP uses it for).",
+                       subtitle: "What each band captures (and what LLB uses it for).",
                        topBackground: liquidScaffoldSky()) {
             VStack(spacing: NoopMetrics.gap) {
                 DeviceCard(device: Self.dev("whoop-4d", "WHOOP", "4.0", Self.whoopCaps),

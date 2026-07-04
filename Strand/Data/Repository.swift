@@ -20,7 +20,7 @@ struct ImportedSleepFigures: Equatable {
 // Product surfaces (Compare, Insights, Stress, Explore, Today) historically read rows under the EXACT
 // requested source. That hid freshly-computed and Apple-compatible data that sat under a different
 // device id. `Repository.resolvedSeries` resolves a metric over an explicit source PRECEDENCE , imported
-// WHOOP wins, NOOP-computed fills the days it doesn't cover, and Apple Health only fills declared-
+// WHOOP wins, LLB-computed fills the days it doesn't cover, and Apple Health only fills declared-
 // compatible vitals on days neither strap source has. These types model that resolution; the exact-source
 // reads (`series(key:source:)`) stay available for surfaces that must not mix sources.
 
@@ -169,7 +169,7 @@ final class Repository: ObservableObject {
     /// Data Sources "Freshness Pipeline" card so the user can see imported vs computed vs Apple coverage.
     @Published private(set) var freshness: RepositoryFreshness = .empty
     /// Daily metric rows with source provenance, used by vital-sign surfaces that need honest
-    /// "WHOOP import / NOOP computed / Apple Health" captions instead of a silent merged row.
+    /// "WHOOP import / LLB computed / Apple Health" captions instead of a silent merged row.
     @Published private(set) var vitalRows: [SourcedDailyMetric] = []
     /// Monotonic counter bumped on every successful `refresh()`. Intraday-updating views key their
     /// data load on this so they reload when fresh strap data lands , `today?.day` alone is a stable
@@ -439,7 +439,7 @@ final class Repository: ObservableObject {
     static let healthConnectSource = "health-connect"
 
     /// Imported wearable-export sources whose DAILY aggregates (HRV / resting HR / sleep) can be scored
-    /// for a NOOP Charge/Rest on an import-only day, exactly like a live day (#823). These carry no raw HR
+    /// for a LLB Charge/Rest on an import-only day, exactly like a live day (#823). These carry no raw HR
     /// stream, so the source-only fold in IntelligenceEngine scores them from the daily aggregate vs the
     /// person's own baseline. Matches `WearableBrand.sourceId` plus Health Connect (Android imports HC's
     /// daily metrics under the strap source, but a sideloaded/standalone HC source id is covered too).
@@ -1329,7 +1329,7 @@ final class Repository: ObservableObject {
             case .motion: return String(localized: "Motion")
             // #175: the strap's OWN band sleep_state track (0 wake/1 still/2 asleep/3 up), shown as a
             // distinct stepped track alongside the derived hypnogram. This is the band's reported state,
-            // NOT a stage NOOP trusts as truth — the pill names it "Band Sleep State" so it can't be
+            // NOT a stage LLB trusts as truth — the pill names it "Band Sleep State" so it can't be
             // mistaken for the derived stages.
             case .bandSleepState: return String(localized: "Band Sleep State")
             }
@@ -1580,7 +1580,7 @@ final class Repository: ObservableObject {
     /// Product-facing daily series for a metric across every COMPATIBLE source, freshest-wins. Use this
     /// on surfaces where the user expects the best available signal (Compare/Insights/Stress/Explore/
     /// Today); use `series(key:source:)` where a single source must be honoured verbatim. Precedence is
-    /// explicit per `sourceCandidates`: imported WHOOP > NOOP-computed > declared-compatible Apple Health.
+    /// explicit per `sourceCandidates`: imported WHOOP > LLB-computed > declared-compatible Apple Health.
     /// #833/v7.7.2: `fullHistory` forces the full recordable epoch ("0000-01-01" ... "9999-12-31")
     /// regardless of `days`; false (the default) honours `days` exactly as before, so existing callers are
     /// byte-identical.
@@ -1695,7 +1695,7 @@ final class Repository: ObservableObject {
         }
     }
 
-    /// Whether the NOOP-computed strap source may fill an Apple-preferred metric. Only the two daily
+    /// Whether the LLB-computed strap source may fill an Apple-preferred metric. Only the two daily
     /// totals the strap genuinely estimates (steps, calories) , never a derived WHOOP score.
     private static func noopComputedCanFillAppleMetric(_ key: String) -> Bool {
         switch key {

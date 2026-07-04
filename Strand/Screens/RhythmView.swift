@@ -54,7 +54,7 @@ public enum RhythmConsent {
         (String(localized: "Variation is normal and often benign"),
          String(localized: "Beat-to-beat timing varies for many ordinary reasons: breathing, movement, an imperfect optical reading, or the occasional extra or skipped beat that most healthy people have.")),
         (String(localized: "It is not a substitute for a professional"),
-         String(localized: "If you feel unwell or are worried about your heart, contact a qualified professional; in an emergency, your local emergency service. Do not rely on NOOP.")),
+         String(localized: "If you feel unwell or are worried about your heart, contact a qualified professional; in an emergency, your local emergency service. Do not rely on LLB.")),
         (String(localized: "Everything stays on your device"),
          String(localized: "All of this is computed on your own device from data you already have. No heartbeat data leaves it.")),
     ]
@@ -474,7 +474,7 @@ struct RhythmView: View {
         StrandCard {
             VStack(alignment: .leading, spacing: 8) {
                 Text("How this is measured").strandOverline()
-                Text("During quiet, still, resting windows, NOOP looks at the timing between your heartbeats (R-R intervals) and draws their Poincaré scatter. From the cloud it computes its short and long axes (SD1, SD2) and a few plain regularity numbers. Movement and noisy windows are skipped, not shown. These are transparent, published descriptive statistics: a picture of your timing, never a clinical measurement.")
+                Text("During quiet, still, resting windows, LLB looks at the timing between your heartbeats (R-R intervals) and draws their Poincaré scatter. From the cloud it computes its short and long axes (SD1, SD2) and a few plain regularity numbers. Movement and noisy windows are skipped, not shown. These are transparent, published descriptive statistics: a picture of your timing, never a clinical measurement.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -78,7 +78,7 @@ struct BodyVitalReading: Identifiable {
             return String(localized: "WHOOP import")
         case .noopComputed:
             if key == "skin" { return String(localized: "Overnight computed") }
-            return String(localized: "NOOP computed")
+            return String(localized: "LLB computed")
         case .appleHealth:
             return String(localized: "Apple Health")
         case .localCache:

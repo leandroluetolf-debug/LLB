@@ -16,9 +16,9 @@ import SwiftUI
 // optional supporting line.
 //
 // This is also the app's BRAND GLYPH: an open ~80% ring + a SOLID ACCENT CORE DOT
-// ("on-device core"). The recovery ring uniquely carries a micro "NOOP" wordmark
+// ("on-device core"). The recovery ring uniquely carries a micro "LLB" wordmark
 // above the number (letter-spacing ≈ .34em, tertiary) so the lock-up reads as the
-// "O" in NOOP. The arc geometry, gradient stroke, track and centre number live in
+// "O" in LLB. The arc geometry, gradient stroke, track and centre number live in
 // the shared `BevelGauge`; this view layers the wordmark + core dot on top.
 
 #if !os(watchOS)
@@ -34,7 +34,7 @@ public struct RecoveryRing: View {
     public var lineWidth: CGFloat
     /// Whether to show the center read-out (number + state + supporting).
     public var showsLabel: Bool
-    /// Whether to draw the micro "NOOP" wordmark above the number. Turn it OFF for compact rings
+    /// Whether to draw the micro "LLB" wordmark above the number. Turn it OFF for compact rings
     /// (e.g. a three-up hero row) where the number is large relative to the ring and the wordmark
     /// would crowd it.
     public var showsWordmark: Bool
@@ -93,7 +93,7 @@ public struct RecoveryRing: View {
                 bloomActive: bloomPulse
             )
             // Brand layers over the shared gauge: the solid gold CORE DOT (so the
-            // open-ring + core-dot lock-up reads), then the micro "NOOP" wordmark
+            // open-ring + core-dot lock-up reads), then the micro "LLB" wordmark
             // sitting just ABOVE the centre number.
             coreDot
             if showsLabel && showsWordmark { wordmark }
@@ -140,13 +140,13 @@ public struct RecoveryRing: View {
 
     // MARK: Brand layers
 
-    /// Micro "NOOP" wordmark above the number — the recovery ring carries the
-    /// lock-up so its centre reads as the "O" in NOOP. ALL-CAPS, tertiary,
+    /// Micro "LLB" wordmark above the number — the recovery ring carries the
+    /// lock-up so its centre reads as the "O" in LLB. ALL-CAPS, tertiary,
     /// letter-spacing ≈ .34em (× the cap height per the spec). Nudged up so it
     /// sits clear above BevelGauge's centred number.
     private var wordmark: some View {
         let size = diameter * 0.052
-        return Text("NOOP")
+        return Text("LLB")
             .font(StrandFont.rounded(size, weight: .bold))
             .tracking(size * 0.34)                 // ≈ .34em
             .foregroundStyle(StrandPalette.textTertiary)
@@ -159,7 +159,7 @@ public struct RecoveryRing: View {
     /// gold). It belongs to the glyph-only brand lock-up (logo / nav / onboarding), where it reads as
     /// the core of the open ring. On a METRIC gauge the centre is occupied by the read-out number, and
     /// a dot sitting behind the digits just muddies them (community feedback at the v3 launch), so it
-    /// is hidden whenever a number is shown — leaving a clean ring + number + micro-NOOP wordmark.
+    /// is hidden whenever a number is shown — leaving a clean ring + number + micro-LLB wordmark.
     private var coreDot: some View {
         Circle()
             .fill(StrandPalette.accent)

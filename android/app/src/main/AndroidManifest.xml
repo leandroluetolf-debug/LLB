@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!--
-      NOOP is an OFFLINE WHOOP companion. It talks to the strap over BLE and stores
+      LLB is an OFFLINE WHOOP companion. It talks to the strap over BLE and stores
       everything locally (Room). The ONLY outbound network is the opt-in AI Coach
       (bring-your-own OpenAI/Anthropic key) — nothing is sent unless the user adds a
       key and asks a question. Hence the single INTERNET permission below.
@@ -20,7 +20,7 @@
     <uses-permission
         android:name="android.permission.BLUETOOTH_CONNECT"
         tools:targetApi="s" />
-    <!-- Android 12+ (API 31+): broadcasting NOOP's live HR back out as a standard BLE Heart Rate
+    <!-- Android 12+ (API 31+): broadcasting LLB's live HR back out as a standard BLE Heart Rate
          peripheral (0x180D) so gym kit can read it needs the advertise permission. Opt-in only:
          the "Broadcast heart rate" toggle in Data Sources is OFF by default, and the permission is
          requested at runtime right before the broadcast starts (see rememberRequestAdvertise). -->
@@ -57,7 +57,7 @@
          must be granted at runtime. Requested in MainActivity alongside the BLE permissions. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- Optional call alerts. Requested only when the user enables "Phone calls"; NOOP does not
+    <!-- Optional call alerts. Requested only when the user enables "Phone calls"; LLB does not
          request READ_CALL_LOG and never reads incoming numbers, contacts, or call history. -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -90,8 +90,8 @@
     <uses-permission android:name="android.permission.health.READ_SLEEP" />
     <uses-permission android:name="android.permission.health.READ_OXYGEN_SATURATION" />
     <uses-permission android:name="android.permission.health.READ_RESPIRATORY_RATE" />
-    <!-- Health Connect writeback (optional, opt-in, default OFF): lets NOOP contribute its
-         on-device computed nightly metrics so other apps can read them. Only what NOOP itself
+    <!-- Health Connect writeback (optional, opt-in, default OFF): lets LLB contribute its
+         on-device computed nightly metrics so other apps can read them. Only what LLB itself
          computed from the strap is written — imported data is never echoed back. -->
     <uses-permission android:name="android.permission.health.WRITE_RESTING_HEART_RATE" />
     <uses-permission android:name="android.permission.health.WRITE_HEART_RATE_VARIABILITY" />
@@ -130,7 +130,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NOOP"
+        android:theme="@style/Theme.LLB"
         tools:targetApi="34">
 
         <!--
@@ -145,7 +145,7 @@
             android:name="com.noop.ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NOOP">
+            android:theme="@style/Theme.LLB">
             <!-- Health Connect permissions-rationale route (Android 13 and below). -->
             <intent-filter>
                 <action android:name="androidx.health.connect.action.SHOW_PERMISSIONS_RATIONALE" />
@@ -207,13 +207,13 @@
             android:exported="false"
             android:foregroundServiceType="connectedDevice|location" />
 
-        <!-- Wrist alerts: this is what makes NOOP appear in Android's Notification Access list. The
+        <!-- Wrist alerts: this is what makes LLB appear in Android's Notification Access list. The
              system binds it (guarded by BIND_NOTIFICATION_LISTENER_SERVICE) only after the user grants
              access; it reads which app posted a notification — never the content — to buzz the strap,
              gated by the Notifications-screen settings. Does nothing until access is granted + enabled. -->
         <service
             android:name="com.noop.notif.NoopNotificationListener"
-            android:label="NOOP wrist alerts"
+            android:label="LLB wrist alerts"
             android:exported="false"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>

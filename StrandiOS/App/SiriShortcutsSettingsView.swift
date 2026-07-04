@@ -3,7 +3,7 @@ import SwiftUI
 import AppIntents
 import StrandDesign
 
-/// Surfaces NOOP's already-registered App Intents (see StrandiOS/System/NOOPAppIntents.swift) in the
+/// Surfaces LLB's already-registered App Intents (see StrandiOS/System/NOOPAppIntents.swift) in the
 /// UI so users discover them. `NOOPShortcuts` auto-registers "Buzz Strap" and "Mark a Moment" with
 /// Siri/Spotlight/Shortcuts, but nothing in-app advertised them — this is the iOS analogue of the
 /// Mac's strap-double-tap-runs-a-Shortcut feature. Apple's `SiriTipView`/`ShortcutsLink` (iOS 16+)
@@ -12,7 +12,7 @@ import StrandDesign
 struct SiriShortcutsSettingsView: View {
     var body: some View {
         ScreenScaffold(title: "Siri & Shortcuts",
-                       subtitle: "Run NOOP actions hands-free.") {
+                       subtitle: "Run LLB actions hands-free.") {
             tips
             shortcutsCard
         }
@@ -52,7 +52,7 @@ struct SiriShortcutsSettingsView: View {
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
-                Text("Wire NOOP's actions into a Back-Tap, a focus automation, or a longer Shortcut. For example, double-tap the back of your iPhone to buzz the strap.")
+                Text("Wire LLB's actions into a Back-Tap, a focus automation, or a longer Shortcut. For example, double-tap the back of your iPhone to buzz the strap.")
                     .font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)

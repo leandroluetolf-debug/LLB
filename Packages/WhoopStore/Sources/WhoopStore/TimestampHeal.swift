@@ -18,7 +18,7 @@ extension WhoopStore {
     }
 
     /// ONE-TIME repair of a database polluted by a bad-clock strap (#547, pikapik). Before the ingest
-    /// gate landed, NOOP trusted each type-47 record's own unix timestamp verbatim, so a WHOOP with a
+    /// gate landed, LLB trusted each type-47 record's own unix timestamp verbatim, so a WHOOP with a
     /// broken clock/flash (repeated trim=0xFFFFFFFF) wrote rows dated to scattered garbage — far-past
     /// (2024/2029), a bogus 2027=1827642881, and FUTURE dates. The day-windows overlap, so one ~12h
     /// polluted block was re-attributed to every day (the repeated totalSleepMin=721 across 06-14..06-21)

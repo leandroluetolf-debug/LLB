@@ -4,7 +4,7 @@ import Foundation
 //
 // The GDPR ZIP holds, under DI_CONNECT/DI_Connect_Wellness/, dated wellness JSON files. The FIT
 // activity files in the same ZIP are wave-1's `ActivityFileImporter` lane; this lane reads the
-// WELLNESS rollups only (documented GDPR export field names; NOOP's own clean parser):
+// WELLNESS rollups only (documented GDPR export field names; LLB's own clean parser):
 //
 //   *_sleepData.json   — array of nights: calendarDate, sleepStartTimestampGMT / sleepEndTimestampGMT
 //                        (epoch MILLIS or ISO), deepSleepSeconds, lightSleepSeconds, remSleepSeconds,

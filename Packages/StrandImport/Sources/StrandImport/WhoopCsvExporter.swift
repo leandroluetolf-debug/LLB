@@ -2,7 +2,7 @@ import Foundation
 import ZIPFoundation
 import WhoopStore
 
-/// Serializes NOOP's own cached rows back into WHOOP's 4-CSV export shape so NOOP's OWN importer
+/// Serializes LLB's own cached rows back into WHOOP's 4-CSV export shape so LLB's OWN importer
 /// (WhoopExportImporter here, WhoopCsvImporter on Android) re-imports them losslessly. The
 /// round-trip is the whole point and is pinned by WhoopCsvExporterTests, which re-parses this
 /// output with the REAL importer and asserts field-level equality — so any header/format drift
@@ -10,10 +10,10 @@ import WhoopStore
 ///
 /// Header strings are byte-identical to a real WHOOP export (the importer normalises them down to
 /// `recovery_score_pct` etc., so they must match exactly). Everything is emitted in UTC with a
-/// literal "UTC+00:00" timezone column: NOOP stores epoch seconds and tz-less day strings, so UTC
+/// literal "UTC+00:00" timezone column: LLB stores epoch seconds and tz-less day strings, so UTC
 /// is the only encoding that round-trips a timestamp to the same instant. A trailing "Source"
 /// column (which both parsers provably ignore — they key off named columns, never position) marks
-/// on-device computed rows as "noop (APPROXIMATE)" per the house rules. A noop_metric_series.json
+/// on-device computed rows as "llb (APPROXIMATE)" per the house rules. A llb_metric_series.json
 /// sidecar carries the full metricSeries for fidelity and is deliberately NOT re-imported — the
 /// .sqlite backup remains the lossless restore path; this zip is the portable, WHOOP-shaped one.
 public enum WhoopCsvExporter {
@@ -66,7 +66,7 @@ public enum WhoopCsvExporter {
 
     // MARK: - Tolerant decoders for the cache's polymorphic JSON columns
 
-    /// Stage minutes recovered from any persisted stagesJSON shape NOOP has ever written:
+    /// Stage minutes recovered from any persisted stagesJSON shape LLB has ever written:
     ///   - {"light":min,…}            — macOS WHOOP import (WhoopImporter)
     ///   - [{"stage","min"}]          — Android import / demo seeds
     ///   - [{"start","end","stage"}]  — the on-device SleepStager ("wake" == awake)
@@ -151,7 +151,7 @@ public enum WhoopCsvExporter {
                 d.day + " 00:00:00", "", "UTC+00:00",
                 num(d.recovery), num(d.restingHr), num(d.avgHrv), num(d.skinTempDevC), num(d.spo2Pct),
                 // Day Strain column is WHOOP's 0–21 scale → convert our 0–100 Effort down so the CSV is
-                // WHOOP-format and a NOOP→NOOP round-trip is lossless (importer scales it back up).
+                // WHOOP-format and a LLB→LLB round-trip is lossless (importer scales it back up).
                 num(WhoopExportImporter.whoopDayStrainFromEffort(d.strain)), num(s["energy_kcal"]), num(s["max_hr"]), num(s["avg_hr"]),
                 "", "",                              // sleep/wake onset live in sleeps.csv, not here
                 num(s["sleep_performance"]), num(d.respRateBpm), num(d.totalSleepMin), num(s["in_bed_min"]),
@@ -190,7 +190,7 @@ public enum WhoopCsvExporter {
             let inBedMin: Double? = s.endTs > s.startTs ? Double(s.endTs - s.startTs) / 60.0 : nil
             let cols: [String] = [
                 cycleStart(s), utc(s.startTs), utc(s.endTs), "UTC+00:00",
-                // NOOP never stores a nap flag — everything exports as a main sleep so the importer
+                // LLB never stores a nap flag — everything exports as a main sleep so the importer
                 // keeps it (it drops `isNap` rows).
                 "false", "", "",
                 num(stages.asleep), num(inBedMin),

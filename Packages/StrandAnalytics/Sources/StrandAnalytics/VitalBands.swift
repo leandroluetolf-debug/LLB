@@ -75,7 +75,7 @@ public enum VitalBands {
 
     /// A skin-temp value >= 20 °C is read as an ABSOLUTE skin temperature; smaller magnitudes
     /// are read as a ±°C deviation. The WHOOP CSV export stores absolute °C in its skin-temp
-    /// column while NOOP's on-device pipeline stores a deviation from the personal baseline, so
+    /// column while LLB's on-device pipeline stores a deviation from the personal baseline, so
     /// a merged series is bimodal. The displayed value picks which kind its history keeps.
     /// Heuristic but physically safe: no real wrist skin temp is below 20 °C, and no real
     /// nightly deviation reaches ±20 °C.

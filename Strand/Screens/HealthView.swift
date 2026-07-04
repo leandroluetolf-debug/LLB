@@ -4,11 +4,11 @@ import StrandDesign
 import StrandAnalytics
 import WhoopStore
 
-/// NOOP — Health Monitor.
+/// LLB — Health Monitor.
 /// Live heart rate hero (ChartCard with a streaming sparkline + HR-zone footer),
 /// then a uniform LazyVGrid of the body's vital signs (respiratory rate, blood
 /// oxygen, resting HR, HRV, skin temp) as fixed-height StatTiles, each tinted and
-/// captioned with its in-range state. Re-skinned to the locked NOOP component
+/// captioned with its in-range state. Re-skinned to the locked LLB component
 /// system: every surface is a NoopCard, every metric is a StatTile, every chart is
 /// a ChartCard — no ad-hoc card heights or paddings.
 struct HealthView: View {
@@ -146,7 +146,7 @@ private struct SyncStatusSection: View {
                 VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                     statusRow
 
-                    // Route the manual offload kick through the unified NOOP button system so the
+                    // Route the manual offload kick through the unified LLB button system so the
                     // label sits centred at controlHeight like every other primary control. Reaches
                     // the BLE engine's gated entry point directly (same idiom as SettingsView's
                     // `model.ble.enableWhoop5DeepData()`); BLEManager.syncNow() is the honest gate —
@@ -1154,7 +1154,7 @@ private struct VitalsSection: View {
                         .staggeredAppear(index: idx)
                 }
             }
-            Text("Once NOOP has 14 nights of history, in-range compares each vital to your own baseline (approximate, not medical advice); until then, typical adult ranges apply.")
+            Text("Once LLB has 14 nights of history, in-range compares each vital to your own baseline (approximate, not medical advice); until then, typical adult ranges apply.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)

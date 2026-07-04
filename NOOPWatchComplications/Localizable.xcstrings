@@ -133,12 +133,12 @@
         }
       }
     },
-    "Charge out of date, last synced %@. Open NOOP on iPhone.": {
+    "Charge out of date, last synced %@. Open LLB on iPhone.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Charge out of date, last synced %@. Open NOOP on iPhone."
+            "value": "Charge out of date, last synced %@. Open LLB on iPhone."
           }
         }
       }
@@ -245,96 +245,96 @@
         }
       }
     },
-    "NOOP Charge": {
+    "LLB Charge": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP Charge"
+            "value": "LLB Charge"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carga de NOOP"
+            "value": "Carga de LLB"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carica NOOP"
+            "value": "Carica LLB"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP 能量"
+            "value": "LLB 能量"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP 能量"
+            "value": "LLB 能量"
           }
         }
       }
     },
-    "NOOP · open on iPhone": {
+    "LLB · open on iPhone": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP · open on iPhone"
+            "value": "LLB · open on iPhone"
           }
         }
       }
     },
-    "NOOP. %@, %@, %@.": {
+    "LLB. %@, %@, %@.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP. %@, %@, %@."
+            "value": "LLB. %@, %@, %@."
           }
         }
       }
     },
-    "NOOP. No data yet, open NOOP on your iPhone to sync.": {
+    "LLB. No data yet, open LLB on your iPhone to sync.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP. No data yet, open NOOP on your iPhone to sync."
+            "value": "LLB. No data yet, open LLB on your iPhone to sync."
           }
         }
       }
     },
-    "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh.": {
+    "LLB. Scores out of date, last synced %@. Open LLB on iPhone to refresh.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh."
+            "value": "LLB. Scores out of date, last synced %@. Open LLB on iPhone to refresh."
           }
         }
       }
     },
-    "No data, open NOOP on iPhone": {
+    "No data, open LLB on iPhone": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No data, open NOOP on iPhone"
+            "value": "No data, open LLB on iPhone"
           }
         }
       }
     },
-    "Open NOOP": {
+    "Open LLB": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open NOOP"
+            "value": "Open LLB"
           }
         }
       }
