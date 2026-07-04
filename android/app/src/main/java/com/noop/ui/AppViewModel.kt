@@ -48,6 +48,7 @@ import com.noop.widget.WidgetSnapshot
 import com.noop.widget.WidgetSnapshotStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -493,20 +494,29 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     /**
-     * #78 hole-4: the app-foreground hook for the bond-loop salvage probe. Every activity resume runs
-     * [WhoopBleClient.salvageProbeIfBondLoopPaused], which no-ops unless the #747 give-up pause is
-     * latched AND its 10-minute floor has passed - so this is one cheap StateFlow read per resume in the
-     * healthy case, and the self-heal path for a paused strap the user has since freed. Registered on the
-     * Application (no lifecycle-process dependency needed); unregistered in [onCleared]. The iOS twin
-     * observes didBecomeActive inside BLEManager itself.
+     * Foreground connection keeper: while any Activity is resumed we (1) run the bond-loop salvage
+     * probe and (2) periodically ensure the strap is connected — so opening LLB keeps searching /
+     * reconnecting without tapping "Erneut scannen". Stops when the UI is fully backgrounded.
+     * Unregistered in [onCleared].
      */
+    private var foregroundActivityCount = 0
+    private var foregroundReconnectJob: Job? = null
+    /** True after an explicit user Disconnect until they tap Connect / Erneut scannen. */
+    private var userOptedOutOfConnection = false
+
     private val salvageProbeLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityResumed(activity: android.app.Activity) {
             ble.salvageProbeIfBondLoopPaused()
+            ensureConnectedInForeground(force = true)
+            if (foregroundActivityCount == 0) startForegroundReconnectLoop()
+            foregroundActivityCount++
+        }
+        override fun onActivityPaused(activity: android.app.Activity) {
+            foregroundActivityCount = (foregroundActivityCount - 1).coerceAtLeast(0)
+            if (foregroundActivityCount == 0) stopForegroundReconnectLoop()
         }
         override fun onActivityCreated(activity: android.app.Activity, savedInstanceState: android.os.Bundle?) {}
         override fun onActivityStarted(activity: android.app.Activity) {}
-        override fun onActivityPaused(activity: android.app.Activity) {}
         override fun onActivityStopped(activity: android.app.Activity) {}
         override fun onActivitySaveInstanceState(activity: android.app.Activity, outState: android.os.Bundle) {}
         override fun onActivityDestroyed(activity: android.app.Activity) {}
@@ -851,22 +861,65 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     /**
      * On launch, reconnect DIRECTLY to the strap we last bonded to (no scan), so the connection
-     * survives an app update / restart without the user tapping Connect (#67). Gated on "Keep
-     * connected in the background" (the user's keep-it-on intent) and a previously-bonded strap; the
-     * BLE client itself no-ops if already connected or the runtime permission isn't granted yet.
+     * survives an app update / restart without the user tapping Connect (#67). Always attempts the
+     * reconnect when a strap is remembered (app is open); the background-connection pref only
+     * controls the foreground service / notification.
      */
     private fun autoReconnectOnLaunch() {
         val saved = NoopPrefs.lastDevice(appContext) ?: return
         // Restore the model selection whenever a strap is remembered — deliberately NOT gated on the
         // background-connection pref, so an opted-out 5/MG user's picker and scan family still
-        // survive restarts. Only the reconnect itself respects the pref. (#78 fork)
+        // survive restarts.
         _selectedModel.value = saved.second
-        if (!NoopPrefs.backgroundConnection(appContext)) return
+        userOptedOutOfConnection = false
         // APK updates tear down the old foreground service along with the old process. Re-promote it
-        // on the first launch after update/restart before reconnecting, so the persistent notification
-        // and long-lived connection both come back without the user toggling the setting again.
-        WhoopConnectionService.start(appContext)
+        // when the user wants background keep-alive.
+        if (NoopPrefs.backgroundConnection(appContext)) {
+            WhoopConnectionService.start(appContext)
+        }
         ble.reconnectToAddress(saved.first, saved.second)
+    }
+
+    private fun startForegroundReconnectLoop() {
+        foregroundReconnectJob?.cancel()
+        foregroundReconnectJob = viewModelScope.launch {
+            while (isActive) {
+                delay(FOREGROUND_RECONNECT_INTERVAL_MS)
+                ensureConnectedInForeground(force = false)
+            }
+        }
+    }
+
+    private fun stopForegroundReconnectLoop() {
+        foregroundReconnectJob?.cancel()
+        foregroundReconnectJob = null
+    }
+
+    /**
+     * While the UI is in the foreground, keep trying to reach a known strap. Prefers a direct
+     * reconnect to the last address (no scan); falls back to a family scan if we only know we were
+     * bonded. No-ops when already connected/scanning, or after an explicit user Disconnect.
+     */
+    private fun ensureConnectedInForeground(force: Boolean) {
+        if (userOptedOutOfConnection) return
+        val state = ble.state.value
+        if (state.connected || state.scanning) return
+        val saved = NoopPrefs.lastDevice(appContext)
+        if (saved != null) {
+            _selectedModel.value = saved.second
+            if (force) ble.resetReconnectBackoff()
+            ble.reconnectToAddress(saved.first, saved.second)
+            return
+        }
+        // No saved address yet, but we still look bonded / have a last device in the BLE client —
+        // scan for the selected family so a fresh session can recover without a manual tap.
+        if (state.bonded || ble.lastDeviceAddress != null) {
+            if (force) {
+                ble.resetReconnectBackoff()
+                ble.clearPairingHintForUserConnect()
+            }
+            ble.connect(_selectedModel.value)
+        }
     }
 
     /** Snapshot the user's body profile from SharedPreferences as an analytics [UserProfile]. */
@@ -1459,6 +1512,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     // MARK: - Strap controls (thin pass-throughs to the BLE client)
 
     fun connect(promoteService: Boolean = true) {
+        userOptedOutOfConnection = false
         // An explicit user-driven Connect must start the reconnect schedule fresh — never inherit a
         // backoff delay accumulated by a prior involuntary-reconnect loop (#48, iOS connect() parity).
         ble.resetReconnectBackoff()
@@ -1486,7 +1540,10 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun disconnect() {
-        // User asked to disconnect: drop the foreground promotion first, then the link itself.
+        // User asked to disconnect: stop auto-reconnect until they tap Connect / Erneut scannen.
+        userOptedOutOfConnection = true
+        stopForegroundReconnectLoop()
+        // Drop the foreground promotion first, then the link itself.
         WhoopConnectionService.stop(appContext)
         ble.disconnect()
         hrWindow.clear()
@@ -2032,6 +2089,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         super.onCleared()
+        stopForegroundReconnectLoop()
         // #78 hole-4: drop the app-foreground salvage-probe hook with this ViewModel (the next Activity's
         // ViewModel re-registers its own), so a cleared VM can never leak resume callbacks.
         noopApp.unregisterActivityLifecycleCallbacks(salvageProbeLifecycleCallbacks)
@@ -2050,6 +2108,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private companion object {
+        /** While the UI is open, retry a lost strap link this often. */
+        const val FOREGROUND_RECONNECT_INTERVAL_MS = 12_000L
         /** Grace before the first scoring pass, letting the first BLE offload land. */
         const val FIRST_OFFLOAD_GRACE_MS = 6_000L
         /** On-device scoring cadence — 15 min, matching the strap offload cadence. */

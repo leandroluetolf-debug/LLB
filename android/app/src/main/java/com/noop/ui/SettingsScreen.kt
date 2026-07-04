@@ -2312,8 +2312,8 @@ internal fun strapStatusDetail(bonded: Boolean, connected: Boolean, scanning: Bo
     scanning -> "Suche nach deinem WHOOP… geladen, am Handgelenk, und die offizielle WHOOP-App sollte nicht verbunden sein."
     bonded && connected -> "Band ist gekoppelt und sendet Daten. Öffne Live für die Echtzeit-Herzfrequenz."
     connected -> "Verbunden. Sichere Kopplung wird abgeschlossen…"
-    bonded -> "Zuvor gekoppelt, gerade nicht verbunden. Erneut scannen zum Verbinden."
-    else -> "Kein Band verbunden. WHOOP in die Nähe legen und „Erneut scannen“ tippen."
+    bonded -> "Zuvor gekoppelt, gerade nicht verbunden. LLB sucht automatisch, solange die App offen ist — oder „Erneut scannen“ tippen."
+    else -> "Kein Band verbunden. WHOOP in die Nähe legen — LLB sucht automatisch, solange die App offen ist."
 }
 
 private fun batteryTone(pct: Double): StrandTone = when {
