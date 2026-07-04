@@ -181,12 +181,7 @@ private var todayDidSnapToTodayThisLaunch = false
 
 // MARK: - Liquid hero tokens (the liquid Today restyle)
 //
-// The hero card the score vessels float on, ported from the iOS LiquidTodayView. `heroFill` is a
-// translucent near-black (mock rgba(13,14,20,.80)) so it floats over the day-of-sky; the vessels + white
-// count-up numbers read crisp on it. Radius 26 + a white@0.11 hairline give the frosted-glass edge.
-private val LIQUID_HERO_FILL: Color = Color(red = 13f / 255f, green = 14f / 255f, blue = 20f / 255f, alpha = 0.80f)
-private val LIQUID_HERO_RADIUS: Dp = 26.dp
-
+// Score vessels float directly on the screen-level day sky — no frosted hero card behind them.
 // The Vitality vessel purple (#9b7bff) — no exact Palette token in this theme, so a fixed brand literal
 // matching the iOS liquid Today's `liquidPurple` (Color(.sRGB, red:0x9b, green:0x7b, blue:0xff)). Used by
 // the mini "Deine Karten" vessel so Vitality reads the same purple as iOS.
@@ -977,12 +972,10 @@ fun TodayScreen(
                 keyDate.format(DateTimeFormatter.ofPattern("EEEE", Locale.GERMAN))
             }
         }
-        // Human date line under the title — "Friday, 3 July" (weekday + day + month), NOT a numeric date.
-        // Dated by the row ACTUALLY on screen (selectedDayKey follows the resolver at offset 0), matching
-        // the iOS `dateLine` (EEEE, d MMMM). Mirrors iOS's date-under-title block.
+        // Human date under the title: short date only (no repeated weekday) so German lines fit cleanly.
         val humanDate = run {
             val keyDate = runCatching { LocalDate.parse(selectedDayKey) }.getOrNull() ?: selectedDay
-            keyDate.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.GERMAN))
+            keyDate.format(DateTimeFormatter.ofPattern("d. MMMM", Locale.GERMAN))
         }
         Box(modifier = Modifier.fillMaxWidth().staggeredAppear(0)) {
             LiquidTodayHeader(
@@ -1136,16 +1129,10 @@ fun TodayScreen(
         // in-card scene here, and no rounded clip (a flat hero on the screen-level backdrop). The Charge
         // ring value reads WHITE (GlowRing's centre label) with a charge-green arc, matching the iOS source.
         item {
-        // The liquid hero CARD: a translucent near-black that floats over the day-of-sky so the vessels +
-        // white count-up numbers stay crisp — the card does the contrast work, not a muted sky. A rounded
-        // 26 corner + a faint white hairline give it the frosted-glass edge of the iOS liquid heroCard
-        // (heroFill = rgba(13,14,20,.80), stroke white@0.11). Mirrors the iOS LiquidTodayView heroCard.
+        // Charge / Effort / Rest rings float directly on the day-of-sky — no card fill behind them.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(LIQUID_HERO_RADIUS))
-                .background(LIQUID_HERO_FILL)
-                .border(1.dp, Color.White.copy(alpha = 0.11f), RoundedCornerShape(LIQUID_HERO_RADIUS))
                 .staggeredAppear(1),
         ) {
             ScoreHeroRow(
@@ -1781,7 +1768,6 @@ private fun LiquidTodayHeader(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .clip(RoundedCornerShape(Metrics.cornerSm))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -1799,14 +1785,13 @@ private fun LiquidTodayHeader(
                     .copy(shadow = Shadow(color = Color.Black.copy(alpha = 0.4f), offset = Offset(0f, 1f), blurRadius = 10f)),
                 color = Color.White,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                softWrap = false,
             )
             Text(
                 humanDate,
                 style = NoopType.caption.copy(shadow = Shadow(color = Color.Black.copy(alpha = 0.35f), offset = Offset(0f, 1f), blurRadius = 8f)),
                 color = Color.White.copy(alpha = 0.78f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
             )
         }
 
@@ -2027,9 +2012,7 @@ private fun ScoreHeroRow(
     val animated = recovery != null || strain != null || restScore != null || lastScoredCharge != null
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(Metrics.cardRadius)),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         // iOS parity: the hero rings float DIRECTLY on the SCREEN-level day-cycle scene (the scaffold's
         // topBackground), not on any per-hero atmosphere or the old scenic indigo gradient, matching
@@ -2367,7 +2350,7 @@ private fun SynthesisHeroCard(
             // honestly still CALIBRATING for today, matching the iOS pill (keyed on displayDay.recovery).
             val todayRecovery = day?.recovery
             StatePill(
-                title = if (todayRecovery != null) "SOLID" else "CALIBRATING",
+                title = if (todayRecovery != null) "FEST" else "KALIBRIERT",
                 tone = if (todayRecovery != null) StrandTone.Accent else StrandTone.Neutral,
             )
         }
@@ -2377,7 +2360,7 @@ private fun SynthesisHeroCard(
         val detail = if (recoveryCalibration != null) {
             // Comma (not the old em-dash) to match the Swift canonical synthesis copy VERBATIM
             // (TodayView "Learning your baseline, N of M nights.") and the no-em-dash standing rule.
-            "Learning your baseline, $recoveryCalibration of ${Baselines.minNightsSeed} nights."
+            "Basis wird gelernt: $recoveryCalibration von ${Baselines.minNightsSeed} Nächten."
         } else if (carriedDay != null) {
             // Carried prior-day read, summarise that day + stamp it so it isn't passed off as today's.
             synthesisDetail(carriedDay) + " ${carriedCaption(carriedDay.day)}."
@@ -2398,7 +2381,7 @@ private fun SynthesisHeroCard(
             ) {
                 InsightCard(
                     modifier = Modifier.fillMaxWidth(),
-                    category = "Synthesis",
+                    category = "Zusammenfassung",
                     status = status,
                     detail = detail,
                     // The SYNTHESIS headline reads WHITE (textPrimary), not the recovery/charge colour, the
@@ -2425,7 +2408,7 @@ private fun SynthesisHeroCard(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text("SYNTHESIS", style = NoopType.overline, color = Palette.textTertiary)
+                        Text("ZUSAMMENFASSUNG", style = NoopType.overline, color = Palette.textTertiary)
                         Text(
                             status,
                             style = NoopType.headline,
@@ -5240,10 +5223,10 @@ private fun ReadinessSection(days: List<DailyMetric>, carriedDay: DailyMetric? =
  * the Swift TodayView.readinessWord.
  */
 internal fun readinessWord(level: ReadinessEngine.Level): String? = when (level) {
-    ReadinessEngine.Level.PRIMED -> "Push"
-    ReadinessEngine.Level.BALANCED -> "Maintain"
-    ReadinessEngine.Level.STRAINED -> "Rest"
-    ReadinessEngine.Level.RUNDOWN -> "Rest"
+    ReadinessEngine.Level.PRIMED -> "Belasten"
+    ReadinessEngine.Level.BALANCED -> "Halten"
+    ReadinessEngine.Level.STRAINED -> "Schonen"
+    ReadinessEngine.Level.RUNDOWN -> "Schonen"
     ReadinessEngine.Level.INSUFFICIENT -> null
 }
 
@@ -5463,34 +5446,43 @@ private fun greetingWord(): String {
     val h = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
     return when {
         h < 12 -> "Guten Morgen"
-        h < 17 -> "Good afternoon"
-        else -> "Good evening"
+        h < 17 -> "Guten Tag"
+        else -> "Guten Abend"
     }
 }
 
 private fun synthesisWord(score: Double?): String {
     if (score == null) return "Keine Daten"
     return when {
-        score < 25 -> "Depleted"
-        score < 50 -> "Low"
-        score < 70 -> "Steady"
-        score < 88 -> "Primed"
-        else -> "Peak"
+        score < 25 -> "Erschöpft"
+        score < 50 -> "Niedrig"
+        score < 70 -> "Stabil"
+        score < 88 -> "Bereit"
+        else -> "Spitzenform"
     }
 }
 
 private fun synthesisDetail(d: DailyMetric?): String {
     val rec = d?.recovery
-        ?: return "No metrics yet. Importieren your WHOOP export or wear the strap to begin."
-    val recPart = when {
-        rec < 50 -> "Charge is low"
-        rec < 70 -> "Charge is steady"
-        else -> "Charge is strong"
+        ?: return "Noch keine Kennzahlen. Importiere deinen WHOOP-Export oder trage das Band, um zu starten."
+    val sleptWell: Boolean? = d.totalSleepMin?.let { it / 60.0 >= 7 }
+    return when {
+        rec < 50 -> when (sleptWell) {
+            true -> "Charge ist niedrig und der Schlaf war ausreichend."
+            false -> "Charge ist niedrig, aber der Schlaf war zu kurz."
+            null -> "Charge ist niedrig."
+        }
+        rec < 70 -> when (sleptWell) {
+            true -> "Charge ist stabil und der Schlaf war ausreichend."
+            false -> "Charge ist stabil, aber der Schlaf war zu kurz."
+            null -> "Charge ist stabil."
+        }
+        else -> when (sleptWell) {
+            true -> "Charge ist hoch und der Schlaf war ausreichend."
+            false -> "Charge ist hoch, aber der Schlaf war zu kurz."
+            null -> "Charge ist hoch."
+        }
     }
-    val sleepPart = d.totalSleepMin?.let { mins ->
-        if (mins / 60.0 >= 7) " and sleep was consistent" else " but sleep ran short"
-    } ?: ""
-    return "$recPart$sleepPart."
 }
 
 private fun sleepValue(d: DailyMetric?): String {

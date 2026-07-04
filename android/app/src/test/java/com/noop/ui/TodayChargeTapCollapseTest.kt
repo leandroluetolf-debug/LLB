@@ -15,10 +15,10 @@ class TodayChargeTapCollapseTest {
 
     @Test
     fun readinessWord_mapsEveryLevel() {
-        assertEquals("Push", readinessWord(ReadinessEngine.Level.PRIMED))
-        assertEquals("Maintain", readinessWord(ReadinessEngine.Level.BALANCED))
-        assertEquals("Rest", readinessWord(ReadinessEngine.Level.STRAINED))
-        assertEquals("Rest", readinessWord(ReadinessEngine.Level.RUNDOWN))
+        assertEquals("Belasten", readinessWord(ReadinessEngine.Level.PRIMED))
+        assertEquals("Halten", readinessWord(ReadinessEngine.Level.BALANCED))
+        assertEquals("Schonen", readinessWord(ReadinessEngine.Level.STRAINED))
+        assertEquals("Schonen", readinessWord(ReadinessEngine.Level.RUNDOWN))
     }
 
     @Test
