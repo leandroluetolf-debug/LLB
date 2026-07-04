@@ -65,7 +65,7 @@ enum DashboardCard: String, CaseIterable, Identifiable {
         switch self {
         case .hrv:         return String(localized: "Herzfrequenzvariabilität")
         case .restingHr:   return String(localized: "Ruhepuls")
-        case .respiratory: return String(localized: "Breaths per minute")
+        case .respiratory: return String(localized: "Atemzüge pro Minute")
         case .steps:       return String(localized: "Heute")
         case .stress:      return String(localized: "Autonomic load")
         case .fitnessAge:  return String(localized: "Updated weekly")

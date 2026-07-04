@@ -1572,7 +1572,7 @@ private fun ScoreInfoButton(
     modifier: Modifier = Modifier,
     compact: Boolean = false,
 ) {
-    val label = section?.let { "How ${it.label} is calculated" } ?: "How this score is calculated"
+    val label = section?.let { "So wird ${it.label} berechnet" } ?: "So wird dieser Wert berechnet"
     val button = if (compact) 24.dp else Metrics.iconButton
     val glyph = if (compact) 16.dp else Metrics.iconSmall
     IconButton(onClick = onClick, modifier = modifier.size(button)) {
@@ -1587,7 +1587,7 @@ private fun ScoreInfoButton(
 
 /**
  * One-time "Neu hier?" card pointing first-run users at the scoring guide. A NoopCard in the Today
- * flow, never a dialog, with a primary "See how it works" action and a ✕ dismiss; both set the
+ * flow, never a dialog, with a primary "So funktioniert es" action and a ✕ dismiss; both set the
  * seen-flag at the call site so the card never returns. Copy verbatim from the approved source.
  */
 @Composable
@@ -1608,7 +1608,7 @@ private fun ScoringGuideIntroCard(onOpen: () -> Unit, onDismiss: () -> Unit) {
                     onClick = onDismiss,
                     modifier = Modifier
                         .size(Metrics.iconButton)
-                        .semantics { contentDescription = "Dismiss" },
+                        .semantics { contentDescription = "Schließen" },
                 ) {
                     Icon(
                         Icons.Filled.Close,
@@ -1619,13 +1619,13 @@ private fun ScoringGuideIntroCard(onOpen: () -> Unit, onDismiss: () -> Unit) {
                 }
             }
             Text(
-                "See how Charge, Effort and Rest are calculated, and how they differ from WHOOP.",
+                "So werden Charge, Effort und Rest berechnet — und wie sie sich von WHOOP unterscheiden.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onOpen) {
-                    Text("See how it works", style = NoopType.captionNumber, color = Palette.accent)
+                    Text("So funktioniert es", style = NoopType.captionNumber, color = Palette.accent)
                 }
             }
         }
@@ -2537,7 +2537,7 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
                 fraction = rhr?.let { (it / 100.0).coerceIn(0.0, 1.0) },
             )
             HeroVitalRow(
-                label = "Breaths per minute",
+                label = "Atemzüge pro Minute",
                 value = resp?.let { String.format(Locale.US, "%.1f rpm", it) } ?: NO_DATA,
                 tint = Palette.accent,
                 fraction = resp?.let { (it / 24.0).coerceIn(0.0, 1.0) },

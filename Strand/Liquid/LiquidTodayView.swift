@@ -589,7 +589,7 @@ struct LiquidTodayView: View {
                          StrandPalette.metricCyan, fracOver(hrv, 120))
                 vitalRow("Ruhepuls", unitText(rhr, "bpm"),
                          StrandPalette.metricRose, fracOver(rhr, 100))
-                vitalRow("Breaths per minute", unitText(resp, "rpm", decimals: 1),
+                vitalRow("Atemzüge pro Minute", unitText(resp, "rpm", decimals: 1),
                          StrandPalette.accent, fracOver(resp, 24))
             }
         }

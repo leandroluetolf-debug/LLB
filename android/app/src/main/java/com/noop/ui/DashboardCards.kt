@@ -45,7 +45,7 @@ enum class DashboardCard(
 ) {
     HRV("hrv", "HRV", "Herzfrequenzvariabilität", "ms", Icons.Filled.MonitorHeart),
     RESTING_HR("restingHr", "Ruhe-HF", "Ruhepuls", "bpm", Icons.Filled.Favorite),
-    RESPIRATORY("respiratory", "Atmung", "Breaths per minute", "rpm", Icons.Filled.Air),
+    RESPIRATORY("respiratory", "Atmung", "Atemzüge pro Minute", "rpm", Icons.Filled.Air),
     STEPS("steps", "Schritte", "Heute", "", Icons.Filled.DirectionsWalk),
     STRESS("stress", "Stress", "Autonomic load", "", Icons.Filled.Bolt),
     FITNESS_AGE("fitnessAge", "Fitnessalter", "Updated weekly", "yrs", Icons.Filled.DirectionsRun),

@@ -186,39 +186,39 @@ fun ScoringGuideScreen(
                 IntroCard()
                 ScoreCard(
                     section = ScoreSection.CHARGE,
-                    headline = "Charge: how recovered are you?",
-                    body = "Led by your heart-rate variability (HRV) measured against your own " +
-                        "personal baseline, plus resting heart rate, last night's Rest, breathing " +
-                        "rate, and a skin-temperature signal (an early illness or overreach flag). " +
-                        "Higher HRV versus your baseline means more Charge. LLB needs a few nights " +
-                        "to learn your baseline first. Until then you'll see “Kalibriert”.",
-                    vsWhoop = "Same core idea as WHOOP's Erholung % (HRV-led recovery), but our " +
-                        "weighting and baseline maths are our own, and openly documented.",
+                    headline = "Charge: Wie erholt bist du?",
+                    body = "Angeführt von deiner Herzfrequenzvariabilität (HRV) im Vergleich zu deiner " +
+                        "persönlichen Baseline, plus Ruhepuls, Rest der letzten Nacht, Atemfrequenz " +
+                        "und einem Hauttemperatur-Signal (früher Hinweis auf Krankheit oder Überlastung). " +
+                        "Höhere HRV gegenüber deiner Baseline bedeutet mehr Charge. LLB braucht ein paar " +
+                        "Nächte, um deine Baseline zu lernen. Bis dahin siehst du „Kalibriert“.",
+                    vsWhoop = "Gleiche Grundidee wie WHOOPs Erholung-% (HRV-geführte Recovery), aber " +
+                        "Gewichtung und Baseline-Mathe sind unsere eigenen und offen dokumentiert.",
                     highlighted = highlighted == ScoreSection.CHARGE,
                     onPositioned = { if (ScoreSection.CHARGE !in anchors) anchors[ScoreSection.CHARGE] = it },
                 )
                 ScoreCard(
                     section = ScoreSection.EFFORT,
-                    headline = "Effort: how hard did your heart work?",
-                    body = "Your cardiovascular load. LLB turns every second of heart rate into a " +
-                        "training-impulse using heart-rate-reserve zones (Karvonen), weights time in " +
-                        "harder zones more heavily (Edwards / Banister), and places it on a " +
-                        "logarithmic 0-100 scale, so easy days sit low and an all-out day approaches " +
-                        "100, which stays genuinely rare. A long walk with little cardio still counts, " +
-                        "through a steps / active-energy floor.",
-                    vsWhoop = "Same cardiovascular-load idea as WHOOP's Day Strain (0-21). We " +
-                        "rescaled the top of the ladder from 21 to 100 so all three scores share one " +
-                        "scale. The rungs didn't move, so a 100 is as rare as a 21.0 was.",
+                    headline = "Effort: Wie hart hat dein Herz gearbeitet?",
+                    body = "Deine kardiovaskuläre Belastung. LLB wandelt jede Sekunde Herzfrequenz in " +
+                        "einen Trainingsimpuls um (Herzfrequenz-Reserve-Zonen nach Karvonen), gewichtet " +
+                        "Zeit in härteren Zonen stärker (Edwards / Banister) und legt sie auf eine " +
+                        "logarithmische 0–100-Skala — leichte Tage liegen niedrig, ein Maximal-Tag nähert " +
+                        "sich 100, was wirklich selten bleibt. Ein langer Spaziergang mit wenig Cardio zählt " +
+                        "trotzdem über eine Schritte-/Aktivenergie-Untergrenze.",
+                    vsWhoop = "Gleiche Idee der kardiovaskulären Belastung wie WHOOPs Day Strain (0–21). " +
+                        "Wir haben die Skala von 21 auf 100 gestreckt, damit alle drei Werte dieselbe " +
+                        "Skala teilen. Die Stufen sind gleich geblieben — eine 100 ist so selten wie früher 21,0.",
                     highlighted = highlighted == ScoreSection.EFFORT,
                     onPositioned = { if (ScoreSection.EFFORT !in anchors) anchors[ScoreSection.EFFORT] = it },
                 )
                 ScoreCard(
                     section = ScoreSection.REST,
-                    headline = "Rest: how restorative was your sleep?",
-                    body = "A blend of how long you slept versus your personal need (the biggest " +
-                        "factor), how efficiently (asleep versus in bed), how much was restorative " +
-                        "(deep + REM sleep), and how consistent your sleep and wake timing is.",
-                    vsWhoop = "Similar in spirit to WHOOP's Schlaf Performance %; our composite is our own.",
+                    headline = "Rest: Wie erholsam war dein Schlaf?",
+                    body = "Eine Mischung aus Schlafdauer gegenüber deinem persönlichen Bedarf (der größte " +
+                        "Faktor), Effizienz (Schlaf vs. im Bett), wie viel erholsam war " +
+                        "(Tief- + REM-Schlaf) und wie gleichmäßig Schlaf- und Wachzeiten sind.",
+                    vsWhoop = "Ähnlich im Geist wie WHOOPs Schlaf-Performance-%; unser Verbundwert ist unser eigener.",
                     highlighted = highlighted == ScoreSection.REST,
                     onPositioned = { if (ScoreSection.REST !in anchors) anchors[ScoreSection.REST] = it },
                 )
@@ -247,7 +247,7 @@ private fun Header(onClose: () -> Unit) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Overline("Your daily scores", color = Palette.textTertiary)
+            Overline("Deine Tageswerte", color = Palette.textTertiary)
             Text("So funktionieren deine Werte", style = NoopType.display(26f), color = Palette.textPrimary)
             Text(
                 "Charge · Effort · Rest",
@@ -272,15 +272,15 @@ private fun Header(onClose: () -> Unit) {
 private fun IntroCard() {
     NoopCard(padding = 20.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Overline("The three scores")
+            Overline("Die drei Werte")
             Text(
-                "LLB gives you three daily scores (Charge, Effort and Rest), each on a 0-100 " +
-                    "scale. They're built from your strap's raw signals using published, " +
-                    "peer-reviewed sport science, and computed entirely on your device. They are " +
-                    "NOT WHOOP's scores: we don't have WHOOP's private algorithms and don't pretend " +
-                    "to. They aim at the same three questions using open science, so they'll usually " +
-                    "track WHOOP's in direction, but won't match number-for-number. And that's the " +
-                    "point.",
+                "LLB gibt dir drei Tageswerte (Charge, Effort und Rest), jeweils auf einer 0–100-" +
+                    "Skala. Sie entstehen aus den Rohsignalen deines Bands mit veröffentlichter, " +
+                    "peer-reviewter Sportwissenschaft — vollständig auf deinem Gerät. Es sind " +
+                    "NICHT WHOOPs Werte: Wir haben WHOOPs private Algorithmen nicht und tun nicht so. " +
+                    "Sie beantworten dieselben drei Fragen mit offener Wissenschaft, folgen WHOOP " +
+                    "meist in der Richtung, stimmen aber nicht Zahl für Zahl überein. Und genau das " +
+                    "ist der Punkt.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
@@ -423,20 +423,20 @@ private fun ConfidenceCard() {
     NoopCard(padding = 20.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                "How sure is LLB?  ·  Stabil · Building · Kalibriert",
+                "Wie sicher ist LLB?  ·  Stabil · Aufbauend · Kalibriert",
                 style = NoopType.headline,
                 color = Palette.textPrimary,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatePill("Stabil", tone = StrandTone.Positive, showsDot = true)
-                StatePill("Building", tone = StrandTone.Warning, showsDot = true)
+                StatePill("Aufbauend", tone = StrandTone.Warning, showsDot = true)
                 StatePill("Kalibriert", tone = StrandTone.Neutral, showsDot = true)
             }
             Text(
-                "Every score carries a small honesty label. Kalibriert means LLB is still " +
-                    "learning your baseline, or doesn't have enough data yet. Building means there's " +
-                    "enough to show, but it's thin. Stabil means full inputs are present. When LLB " +
-                    "can't compute a score honestly, it shows nothing rather than a fake number.",
+                "Jeder Wert trägt ein kleines Ehrlichkeitsetikett. Kalibriert heißt: LLB lernt noch " +
+                    "deine Baseline oder hat noch nicht genug Daten. Aufbauend heißt: genug für eine " +
+                    "Anzeige, aber noch dünn. Stabil heißt: volle Eingaben vorhanden. Wenn LLB " +
+                    "einen Wert nicht ehrlich berechnen kann, zeigt es nichts statt einer erfundenen Zahl.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
@@ -449,8 +449,8 @@ private fun ConfidenceCard() {
 @Composable
 private fun FooterNote() {
     Text(
-        "These are independent approximations from a consumer strap, built on open science: not " +
-            "medical advice, and not WHOOP's official scores.",
+        "Das sind unabhängige Näherungen von einem Consumer-Band, aufgebaut auf offener Wissenschaft: " +
+            "kein medizinischer Rat und keine offiziellen WHOOP-Werte.",
         style = NoopType.footnote,
         color = Palette.textTertiary,
         modifier = Modifier

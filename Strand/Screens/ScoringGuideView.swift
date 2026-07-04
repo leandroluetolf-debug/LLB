@@ -89,17 +89,17 @@ struct ScoringGuideView: View {
                     VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                         introCard
                         scoreCard(.charge,
-                                  headline: String(localized: "Charge: how recovered are you?"),
-                                  body: String(localized: "Led by your heart-rate variability (HRV) measured against your own personal baseline, plus resting heart rate, last night's Rest, breathing rate, and a skin-temperature signal (an early illness or overreach flag). Higher HRV versus your baseline means more Charge. LLB needs a few nights to learn your baseline first. Until then you'll see “Kalibriert”."),
-                                  vsWhoop: String(localized: "Same core idea as WHOOP's Erholung % (HRV-led recovery), but our weighting and baseline maths are our own, and openly documented."))
+                                  headline: String(localized: "Charge: Wie erholt bist du?"),
+                                  body: String(localized: "Angeführt von deiner Herzfrequenzvariabilität (HRV) im Vergleich zu deiner persönlichen Baseline, plus Ruhepuls, Rest der letzten Nacht, Atemfrequenz und einem Hauttemperatur-Signal (früher Hinweis auf Krankheit oder Überlastung). Höhere HRV gegenüber deiner Baseline bedeutet mehr Charge. LLB braucht ein paar Nächte, um deine Baseline zu lernen. Bis dahin siehst du „Kalibriert“."),
+                                  vsWhoop: String(localized: "Gleiche Grundidee wie WHOOPs Erholung-% (HRV-geführte Recovery), aber Gewichtung und Baseline-Mathe sind unsere eigenen und offen dokumentiert."))
                         scoreCard(.effort,
-                                  headline: String(localized: "Effort: how hard did your heart work?"),
-                                  body: String(localized: "Your cardiovascular load. LLB turns every second of heart rate into a training-impulse using heart-rate-reserve zones (Karvonen), weights time in harder zones more heavily (Edwards / Banister), and places it on a logarithmic 0-100 scale, so easy days sit low and an all-out day approaches 100, which stays genuinely rare. A long walk with little cardio still counts, through a steps / active-energy floor."),
-                                  vsWhoop: String(localized: "Same cardiovascular-load idea as WHOOP's Day Strain (0-21). We rescaled the top of the ladder from 21 to 100 so all three scores share one scale. The rungs didn't move, so a 100 is as rare as a 21.0 was."))
+                                  headline: String(localized: "Effort: Wie hart hat dein Herz gearbeitet?"),
+                                  body: String(localized: "Deine kardiovaskuläre Belastung. LLB wandelt jede Sekunde Herzfrequenz in einen Trainingsimpuls um (Herzfrequenz-Reserve-Zonen nach Karvonen), gewichtet Zeit in härteren Zonen stärker (Edwards / Banister) und legt sie auf eine logarithmische 0–100-Skala — leichte Tage liegen niedrig, ein Maximal-Tag nähert sich 100, was wirklich selten bleibt. Ein langer Spaziergang mit wenig Cardio zählt trotzdem über eine Schritte-/Aktivenergie-Untergrenze."),
+                                  vsWhoop: String(localized: "Gleiche Idee der kardiovaskulären Belastung wie WHOOPs Day Strain (0–21). Wir haben die Skala von 21 auf 100 gestreckt, damit alle drei Werte dieselbe Skala teilen. Die Stufen sind gleich geblieben — eine 100 ist so selten wie früher 21,0."))
                         scoreCard(.rest,
-                                  headline: String(localized: "Rest: how restorative was your sleep?"),
-                                  body: String(localized: "A blend of how long you slept versus your personal need (the biggest factor), how efficiently (asleep versus in bed), how much was restorative (deep + REM sleep), and how consistent your sleep and wake timing is."),
-                                  vsWhoop: String(localized: "Similar in spirit to WHOOP's Schlaf Performance %; our composite is our own."))
+                                  headline: String(localized: "Rest: Wie erholsam war dein Schlaf?"),
+                                  body: String(localized: "Eine Mischung aus Schlafdauer gegenüber deinem persönlichen Bedarf (der größte Faktor), Effizienz (Schlaf vs. im Bett), wie viel erholsam war (Tief- + REM-Schlaf) und wie gleichmäßig Schlaf- und Wachzeiten sind."),
+                                  vsWhoop: String(localized: "Ähnlich im Geist wie WHOOPs Schlaf-Performance-%; unser Verbundwert ist unser eigener."))
                         confidenceCard
                         footerNote
                     }
@@ -127,7 +127,7 @@ struct ScoringGuideView: View {
     private var header: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("YOUR DAILY SCORES").font(StrandFont.overline)
+                Text("DEINE TAGESWERTE").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textTertiary)
                 Text("So funktionieren deine Werte").font(StrandFont.rounded(26, weight: .bold))
@@ -165,10 +165,10 @@ struct ScoringGuideView: View {
     private var introCard: some View {
         NoopCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("THE THREE SCORES").font(StrandFont.overline)
+                Text("DIE DREI WERTE").font(StrandFont.overline)
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textSecondary)
-                Text("LLB gives you three daily scores (Charge, Effort and Rest), each on a 0-100 scale. They're built from your strap's raw signals using published, peer-reviewed sport science, and computed entirely on your device. They are NOT WHOOP's scores: we don't have WHOOP's private algorithms and don't pretend to. They aim at the same three questions using open science, so they'll usually track WHOOP's in direction, but won't match number-for-number. And that's the point.")
+                Text("LLB gibt dir drei Tageswerte (Charge, Effort und Rest), jeweils auf einer 0–100-Skala. Sie entstehen aus den Rohsignalen deines Bands mit veröffentlichter, peer-reviewter Sportwissenschaft — vollständig auf deinem Gerät. Es sind NICHT WHOOPs Werte: Wir haben WHOOPs private Algorithmen nicht und tun nicht so. Sie beantworten dieselben drei Fragen mit offener Wissenschaft, folgen WHOOP meist in der Richtung, stimmen aber nicht Zahl für Zahl überein. Und genau das ist der Punkt.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -279,17 +279,17 @@ struct ScoringGuideView: View {
     private var confidenceCard: some View {
         NoopCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("How sure is LLB?  ·  Stabil · Building · Kalibriert")
+                Text("Wie sicher ist LLB?  ·  Stabil · Aufbauend · Kalibriert")
                     .font(StrandFont.headline)
                     .foregroundStyle(StrandPalette.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                 // The three labels as the same pills used elsewhere, in their honest order.
                 HStack(spacing: 8) {
                     StatePill("Stabil", tone: .positive, showsDot: true)
-                    StatePill("Building", tone: .warning, showsDot: true)
+                    StatePill("Aufbauend", tone: .warning, showsDot: true)
                     StatePill("Kalibriert", tone: .neutral, showsDot: true)
                 }
-                Text("Every score carries a small honesty label. Kalibriert means LLB is still learning your baseline, or doesn't have enough data yet. Building means there's enough to show, but it's thin. Stabil means full inputs are present. When LLB can't compute a score honestly, it shows nothing rather than a fake number.")
+                Text("Jeder Wert trägt ein kleines Ehrlichkeitsetikett. Kalibriert heißt: LLB lernt noch deine Baseline oder hat noch nicht genug Daten. Aufbauend heißt: genug für eine Anzeige, aber noch dünn. Stabil heißt: volle Eingaben vorhanden. Wenn LLB einen Wert nicht ehrlich berechnen kann, zeigt es nichts statt einer erfundenen Zahl.")
                     .font(StrandFont.subhead)
                     .foregroundStyle(StrandPalette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -299,7 +299,7 @@ struct ScoringGuideView: View {
     }
 
     private var footerNote: some View {
-        Text("These are independent approximations from a consumer strap, built on open science: not medical advice, and not WHOOP's official scores.")
+        Text("Das sind unabhängige Näherungen von einem Consumer-Band, aufgebaut auf offener Wissenschaft: kein medizinischer Rat und keine offiziellen WHOOP-Werte.")
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textTertiary)
             .fixedSize(horizontal: false, vertical: true)

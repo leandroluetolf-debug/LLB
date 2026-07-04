@@ -1458,7 +1458,7 @@ struct TodayView: View {
                         dismissTodayCard(
                             id: "newHere",
                             title: String(localized: "Neu hier?"),
-                            message: String(localized: "How Charge, Effort and Rest are calculated, and how they differ from WHOOP.")
+                            message: String(localized: "So werden Charge, Effort und Rest berechnet — und wie sie sich von WHOOP unterscheiden.")
                         )
                     }
                 } label: {
