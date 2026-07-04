@@ -122,7 +122,7 @@ fun DevicesScreen(
     val removedDevices = all.filter { it.status == DeviceStatus.archived.name }
     val currentActiveName =
         all.firstOrNull { it.status == DeviceStatus.active.name }?.let { displayName(it) }
-            ?: "Your current strap"
+            ?: "Dein aktuelles Band"
 
     // PERF (#707): lazy scaffold — each device card is virtualized via `items(...)` (each was a direct
     // child of the eager `spacedBy(20.dp)` column, so the LazyColumn's matching spacing is identical) and
@@ -130,7 +130,7 @@ fun DevicesScreen(
     // Conditional rows use `if (cond) { item/items }` so a hidden section adds no row.
     LazyScreenScaffold(
         title = "Geräte",
-        subtitle = "Pair and manage the bands LLB reads from.",
+        subtitle = "Bänder koppeln und verwalten, von denen LLB Daten liest.",
         // LIQUID SKY BACKDROP (the pilot pattern — LiquidScreenSky.kt): the time-of-day liquid sky settles
         // into the flat canvas behind the top of the screen so the frosted device cards float over it. The
         // static sky (LiquidSkyStatic inside the helper) carries no per-frame cost on this scrolling list.
@@ -141,8 +141,8 @@ fun DevicesScreen(
             // The registry resolves a beat after launch. Show a calm pending note in that brief window.
             item {
             DataPendingNote(
-                title = "Getting your devices ready",
-                body = "LLB is opening your on-device data. Your paired bands will appear here in a moment.",
+                title = "Geräte werden vorbereitet",
+                body = "LLB öffnet deine lokalen Daten. Gekoppelte Bänder erscheinen gleich hier.",
             )
             }
             return@LazyScreenScaffold
@@ -170,7 +170,7 @@ fun DevicesScreen(
         item { AddDeviceButton(onClick = { showAddWizard = true }) }
 
         if (removedDevices.isNotEmpty()) {
-            item { Overline("Entfernend", modifier = Modifier.padding(top = 4.dp)) }
+            item { Overline("Entfernt", modifier = Modifier.padding(top = 4.dp)) }
             items(removedDevices) { device ->
                 DeviceCard(
                     device = device,
@@ -203,9 +203,9 @@ fun DevicesScreen(
     // --- Switch confirm ---
     switchTarget?.let { device ->
         ConfirmDialog(
-            title = "Make this your active strap?",
-            message = "Make ${displayName(device)} your active strap? From now on it provides your live data. " +
-                "$currentActiveName's history stays exactly as it is. Only new days come from ${displayName(device)}.",
+            title = "Als aktives Band festlegen?",
+            message = "${displayName(device)} als aktives Band festlegen? Ab jetzt liefert es deine Live-Daten. " +
+                "Der Verlauf von $currentActiveName bleibt unverändert. Nur neue Tage kommen von ${displayName(device)}.",
             confirmLabel = "Aktiv setzen",
             onConfirm = {
                 scope.launch { viewModel.setActiveDevice(device.id); reload() }
@@ -230,9 +230,9 @@ fun DevicesScreen(
     // --- Remove confirm ---
     removeTarget?.let { device ->
         ConfirmDialog(
-            title = "Entfernen this device?",
-            message = "Entfernen ${displayName(device)}? LLB will stop connecting to it. Its recorded data is " +
-                "kept and you can re-add it any time.",
+            title = "Dieses Gerät entfernen?",
+            message = "${displayName(device)} entfernen? LLB verbindet sich nicht mehr damit. Aufgezeichnete Daten " +
+                "bleiben erhalten — du kannst es jederzeit wieder hinzufügen.",
             confirmLabel = "Entfernen",
             destructive = true,
             onConfirm = {
@@ -255,9 +255,9 @@ fun DevicesScreen(
     // --- Second, strongly-worded delete-data confirm (from the Removed card's secondary control) ---
     deleteDataTarget?.let { device ->
         ConfirmDialog(
-            title = "Löschen all of this device's data?",
-            message = "This permanently deletes all data recorded from ${displayName(device)}. This can't be undone.",
-            confirmLabel = "Löschen data",
+            title = "Alle Daten dieses Geräts löschen?",
+            message = "Löscht dauerhaft alle von ${displayName(device)} aufgezeichneten Daten. Das kann nicht rückgängig gemacht werden.",
+            confirmLabel = "Daten löschen",
             destructive = true,
             onConfirm = {
                 scope.launch { viewModel.deletePairedDeviceData(device.id); reload() }
@@ -318,7 +318,7 @@ private fun DeviceCard(
         .clickable(
             interactionSource = interaction,
             indication = null,
-            onClickLabel = "Device actions for ${displayName(device)}",
+            onClickLabel = "Aktionen für ${displayName(device)}",
         ) { menuOpen = true }
 
     // The ACTIVE device is the hero: the liquid translucent-black frosted card (rgba(13,14,20,.80), radius
@@ -452,14 +452,14 @@ private fun BatteryTube(pct: Int) {
 private fun StatePill(device: PairedDeviceRow, isActive: Boolean, isLiveConnected: Boolean) {
     when {
         device.status == DeviceStatus.archived.name ->
-            StatePill("Entfernend", tone = StrandTone.Neutral, showsDot = false)
+            StatePill("Entfernt", tone = StrandTone.Neutral, showsDot = false)
         isActive ->
             StatePill(
-                if (isLiveConnected) "Active · Live" else "Active",
+                if (isLiveConnected) "Aktiv · Live" else "Aktiv",
                 tone = StrandTone.Positive,
                 pulsing = isLiveConnected,
             )
-        else -> StatePill("Paired", tone = StrandTone.Neutral)
+        else -> StatePill("Gekoppelt", tone = StrandTone.Neutral)
     }
 }
 
@@ -481,7 +481,7 @@ private fun DeviceActionsMenu(
             onClick = { onOpenChange(true) },
             modifier = Modifier
                 .size(32.dp)
-                .semantics { contentDescription = "Device actions for ${displayName(device)}" },
+                .semantics { contentDescription = "Aktionen für ${displayName(device)}" },
         ) {
             Icon(Icons.Filled.MoreVert, contentDescription = null, tint = Palette.textSecondary, modifier = Modifier.size(20.dp))
         }
@@ -490,10 +490,10 @@ private fun DeviceActionsMenu(
                 if (onReAdd != null) {
                     MenuItem("Aktiv setzen", Icons.Filled.Bolt) { onOpenChange(false); onReAdd() }
                 }
-                MenuItem("Rename", Icons.Filled.Edit) { onOpenChange(false); onRename() }
+                MenuItem("Umbenennen", Icons.Filled.Edit) { onOpenChange(false); onRename() }
                 if (onDeleteData != null) {
                     HorizontalDivider(color = Palette.hairline)
-                    MenuItem("Löschen this device's data…", Icons.Filled.Delete, destructive = true) {
+                    MenuItem("Gerätedaten löschen…", Icons.Filled.Delete, destructive = true) {
                         onOpenChange(false); onDeleteData()
                     }
                 }
@@ -501,7 +501,7 @@ private fun DeviceActionsMenu(
                 if (!isActive) {
                     MenuItem("Aktiv setzen", Icons.Filled.Bolt) { onOpenChange(false); onMakeActive() }
                 }
-                MenuItem("Rename", Icons.Filled.Edit) { onOpenChange(false); onRename() }
+                MenuItem("Umbenennen", Icons.Filled.Edit) { onOpenChange(false); onRename() }
                 if (onRemove != null) {
                     HorizontalDivider(color = Palette.hairline)
                     MenuItem("Entfernen", Icons.Filled.RemoveCircleOutline, destructive = true) {
@@ -559,9 +559,9 @@ private fun WhoopFirstFooter() {
             modifier = Modifier.size(16.dp),
         )
         Text(
-            "WHOOP is LLB's primary, fully-supported band. Sonstiges heart-rate straps are an early, " +
-                "in-development addition: they stream live heart rate and HRV, but not WHOOP's deeper " +
-                "sleep and recovery data.",
+            "WHOOP ist LLBs primäres, vollständig unterstütztes Band. Andere Herzfrequenz-Gurte sind eine frühe " +
+                "Erweiterung in Entwicklung: sie streamen Live-HF und HRV, aber nicht WHOOPs tiefere " +
+                "Schlaf- und Erholungsdaten.",
             style = NoopType.footnote,
             color = Palette.textTertiary,
         )
@@ -612,11 +612,11 @@ private fun RenameDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Palette.surfaceOverlay,
-        title = { Text("Rename device", style = NoopType.title2, color = Palette.textPrimary) },
+        title = { Text("Gerät umbenennen", style = NoopType.title2, color = Palette.textPrimary) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    "Give ${device.brand} ${device.model} a name you'll recognise.",
+                    "Gib ${device.brand} ${device.model} einen Namen, den du erkennst.",
                     style = NoopType.subhead,
                     color = Palette.textSecondary,
                 )
@@ -652,12 +652,12 @@ private fun PickActiveDialog(
     AlertDialog(
         onDismissRequest = onLeaveNone,
         containerColor = Palette.surfaceOverlay,
-        title = { Text("Pick a new active strap", style = NoopType.title2, color = Palette.textPrimary) },
+        title = { Text("Neues aktives Band wählen", style = NoopType.title2, color = Palette.textPrimary) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    "You removed your active strap. Choose which paired band provides your live data, or " +
-                        "leave none active and pair one later.",
+                    "Du hast dein aktives Band entfernt. Wähle, welches gekoppelte Band Live-Daten liefert, oder " +
+                        "lass keines aktiv und koppeln später eines.",
                     style = NoopType.subhead,
                     color = Palette.textSecondary,
                 )
@@ -679,7 +679,7 @@ private fun PickActiveDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onLeaveNone) {
-                Text("Leave none active", style = NoopType.body, color = Palette.textSecondary)
+                Text("Keines aktiv lassen", style = NoopType.body, color = Palette.textSecondary)
             }
         },
     )
@@ -777,21 +777,21 @@ private fun deviceProfile(device: PairedDeviceRow): DeviceCapabilityProfile {
     if (device.sourceKind == SourceKind.ftms.name) {
         return DeviceCapabilityProfile(
             displayModel = "Fitnessgeräte (FTMS)",
-            captures = "Speed · Cadence · Power · Distance · Energy · Herzfrequenz (if the machine sends it)",
-            powers = "Records a live machine workout, Effort-scored from HR when the machine reports it",
-            footnote = "Live machine data over Bluetooth FTMS. No sleep, recovery, skin temp or SpO₂. " +
-                "Effort needs the machine's heart rate; without it the session logs the machine metrics only.",
+            captures = "Geschwindigkeit · Kadenz · Leistung · Distanz · Energie · Herzfrequenz (falls das Gerät sie sendet)",
+            powers = "Zeichnet ein Live-Geräte-Workout auf, Effort aus HF wenn das Gerät sie meldet",
+            footnote = "Live-Gerätedaten über Bluetooth FTMS. Kein Schlaf, keine Erholung, keine Hauttemperatur oder SpO₂. " +
+                "Effort braucht die HF des Geräts; ohne sie werden nur die Gerätemetriken protokolliert.",
         )
     }
     // EXPERIMENTAL Huami device (Amazfit / Zepp / Mi Band): best-effort live HR only, honest about it.
     if (device.sourceKind == SourceKind.huami.name) {
         return DeviceCapabilityProfile(
-            displayModel = "${device.brand} (experimental)",
+            displayModel = "${device.brand} (experimentell)",
             captures = "Herzfrequenz (live, best-effort)",
-            powers = "Powers the live console + Effort. No Charge, Rest or Schlaf",
-            footnote = "Experimentell: live heart rate where the band exposes it. Some bands need a pairing " +
-                "we can't do yet. LLB will say so honestly and never show a made-up number. No sleep, " +
-                "recovery, skin temp, SpO₂ or steps.",
+            powers = "Versorgt Live-Konsole + Effort. Kein Charge, Rest oder Schlaf",
+            footnote = "Experimentell: Live-HF, soweit das Band sie liefert. Manche Bänder brauchen eine Kopplung, " +
+                "die wir noch nicht können. LLB sagt das ehrlich und zeigt keine erfundenen Zahlen. Kein Schlaf, " +
+                "keine Erholung, Hauttemperatur, SpO₂ oder Schritte.",
         )
     }
     // EXPERIMENTAL locally-adopted Oura ring (gen 3/4/5). The gen is carried on `model` ("Oura Ring
@@ -805,61 +805,61 @@ private fun deviceProfile(device: PairedDeviceRow): DeviceCapabilityProfile {
         // gen3/4 are verified-shape; gen5 ("newer") carries the least-proven caveat.
         val newer = gen == com.noop.oura.OuraRingGen.GEN5
         val captures = if (newer)
-            "Herzfrequenz* · HRV* · Schlaf* · Ruhe-HF* · Skin temp* · Akku*"
+            "Herzfrequenz* · HRV* · Schlaf* · Ruhe-HF* · Hauttemp.* · Akku*"
         else
-            "Herzfrequenz · HRV* · Schlaf · Ruhe-HF · Skin temp* · Akku"
+            "Herzfrequenz · HRV* · Schlaf · Ruhe-HF · Hauttemp.* · Akku"
         val powers = if (newer)
-            "Powers Effort now; Charge and Rest once enough nights and decode are confirmed"
+            "Versorgt Effort jetzt; Charge und Rest, sobald genug Nächte und Decode bestätigt sind"
         else
-            "Powers Charge, Effort, Rest and Schlaf"
+            "Versorgt Charge, Effort, Rest und Schlaf"
         return DeviceCapabilityProfile(
             displayModel = "${gen.displayName} (Beta)",
             captures = captures,
             powers = powers,
-            footnote = "Beta. * is an on-device estimate. Skin temp is a trend versus your own baseline, " +
-                "and HRV needs you to be still. No Oura Bereitschaft or SpO₂ " +
-                "percentage comes off the ring (import an Oura file for those).",
+            footnote = "Beta. * = Schätzung auf dem Gerät. Hauttemp. ist ein Trend zur eigenen Baseline, " +
+                "HRV braucht Ruhe. Keine Oura-Bereitschaft oder SpO₂-% " +
+                "vom Ring (dafür Oura-Datei importieren).",
         )
     }
     // Generic heart-rate strap: live HR + R-R only; drives the live console + Effort, nothing nightly.
     if (!SourceCoordinator.isWhoop(device)) {
         return DeviceCapabilityProfile(
-            displayModel = "Herz-rate strap",
+            displayModel = "Herzfrequenz-Gurt",
             captures = "Herzfrequenz · HRV (live)* · Strain",
-            powers = "Powers the live console + Effort. No Charge, Rest or Schlaf",
-            footnote = "Live-HF + R-R only · no sleep, recovery, skin temp, SpO₂, steps or battery " +
-                "(those are WHOOP-only).",
+            powers = "Versorgt Live-Konsole + Effort. Kein Charge, Rest oder Schlaf",
+            footnote = "Nur Live-HF + R-R · kein Schlaf, keine Erholung, Hauttemp., SpO₂, Schritte oder Akku " +
+                "(das ist WHOOP-only).",
         )
     }
-    val whoopPowers = "Powers Charge, Effort, Rest, Schlaf + Gesundheit Monitor"
+    val whoopPowers = "Versorgt Charge, Effort, Rest, Schlaf + Gesundheitsmonitor"
     val model = device.model.lowercase()
     // WHOOP 5.0 / MG — adds a (raw) step count the 4.0 can't read over BLE.
     if (model.contains("5") || model.contains("mg")) {
         return DeviceCapabilityProfile(
             displayModel = "WHOOP 5.0 / MG",
-            captures = "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schritte* · Schlaf · Strain · Akku",
+            captures = "Herzfrequenz · HRV · Hauttemp.* · Atemfreq.* · Schritte* · Schlaf · Strain · Akku",
             powers = whoopPowers,
-            footnote = "* on-device estimate: skin temp is a nightly ±°C deviation, steps are a raw " +
-                "motion count (#78). No SpO₂ % off the strap; import a WHOOP CSV for a real %.",
+            footnote = "* Schätzung auf dem Gerät: Hauttemp. ist nächtliche ±°C-Abweichung, Schritte ein roher " +
+                "Bewegungszähler (#78). Kein SpO₂-% vom Band; für echte % WHOOP-CSV importieren.",
         )
     }
     // WHOOP 4.0 — LLB's primary band; no steps over BLE.
     if (model.contains("4")) {
         return DeviceCapabilityProfile(
             displayModel = "WHOOP 4.0",
-            captures = "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schlaf · Strain · Akku",
+            captures = "Herzfrequenz · HRV · Hauttemp.* · Atemfreq.* · Schlaf · Strain · Akku",
             powers = whoopPowers,
-            footnote = "* on-device estimate: skin temp is a nightly ±°C deviation (firmware-dependent); " +
-                "no steps over BLE on a 4.0. No SpO₂ % off the strap; import a WHOOP CSV for a real %.",
+            footnote = "* Schätzung auf dem Gerät: Hauttemp. ist nächtliche ±°C-Abweichung (firmwareabhängig); " +
+                "keine Schritte über BLE beim 4.0. Kein SpO₂-% vom Band; für echte % WHOOP-CSV importieren.",
         )
     }
     // Legacy / unknown WHOOP (the seeded device, model just "WHOOP") — show only the common-to-all set.
     return DeviceCapabilityProfile(
         displayModel = "WHOOP",
-        captures = "Herzfrequenz · HRV · Skin temp* · Resp rate* · Schlaf · Strain · Akku",
+        captures = "Herzfrequenz · HRV · Hauttemp.* · Atemfreq.* · Schlaf · Strain · Akku",
         powers = whoopPowers,
-        footnote = "Exact model unknown. Shows what every WHOOP can do. * on-device estimate · " +
-            "no SpO₂ % off the strap (import a WHOOP CSV for that).",
+        footnote = "Genaues Modell unbekannt. Zeigt, was jedes WHOOP kann. * Schätzung auf dem Gerät · " +
+            "kein SpO₂-% vom Band (dafür WHOOP-CSV importieren).",
     )
 }
 
@@ -888,8 +888,8 @@ private fun OuraLocalStateNote() {
     ) {
         Icon(Icons.Filled.Info, contentDescription = null, tint = Palette.statusWarning, modifier = Modifier.size(14.dp))
         Text(
-            "Paired locally. LLB owns this ring while it holds the key. If you reset it again or set it " +
-                "up in the Oura app, LLB no longer owns it and you would re-add it to take it over.",
+            "Lokal gekoppelt. LLB besitzt diesen Ring, solange es den Schlüssel hält. Wenn du ihn erneut zurücksetzt oder " +
+                "in der Oura-App einrichtest, besitzt LLB ihn nicht mehr — dann erneut hinzufügen.",
             style = NoopType.caption,
             color = Palette.statusWarning,
         )
@@ -897,9 +897,9 @@ private fun OuraLocalStateNote() {
 }
 
 private fun lastSeenLine(device: PairedDeviceRow, isLiveConnected: Boolean): String = when {
-    device.status == DeviceStatus.archived.name -> "Entfernend · data kept"
-    isLiveConnected -> "Verbunden now"
-    else -> "Last seen ${relativeAgo(device.lastSeenAt)}"
+    device.status == DeviceStatus.archived.name -> "Entfernt · Daten behalten"
+    isLiveConnected -> "Jetzt verbunden"
+    else -> "Zuletzt gesehen ${relativeAgo(device.lastSeenAt)}"
 }
 
 /** Best-effort brand from the advertised name. Falls back to a neutral label. Mirrors Swift brandGuess. */
@@ -913,6 +913,6 @@ internal fun brandGuess(name: String): String {
         lower.contains("scosche") || lower.contains("rhythm") -> "Scosche"
         lower.contains("magene") -> "Magene"
         lower.contains("amazfit") || lower.contains("helio") || lower.contains("zepp") -> "Amazfit"
-        else -> "Herz-rate strap"
+        else -> "Herzfrequenz-Gurt"
     }
 }

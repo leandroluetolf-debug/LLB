@@ -14,28 +14,28 @@ class RelativeAgoTest {
     private fun ago(sec: Long) = relativeAgo(now - sec, now)
 
     @Test fun underAMinuteIsJustNow() {
-        assertEquals("just now", ago(0))
-        assertEquals("just now", ago(59))
+        assertEquals("gerade eben", ago(0))
+        assertEquals("gerade eben", ago(59))
     }
 
     @Test fun minutes() {
-        assertEquals("1 min ago", ago(60))
-        assertEquals("5 min ago", ago(5 * 60))
-        assertEquals("59 min ago", ago(59 * 60))
+        assertEquals("vor 1 Min.", ago(60))
+        assertEquals("vor 5 Min.", ago(5 * 60))
+        assertEquals("vor 59 Min.", ago(59 * 60))
     }
 
     @Test fun hours() {
-        assertEquals("1 h ago", ago(3600))
-        assertEquals("23 h ago", ago(23 * 3600))
+        assertEquals("vor 1 Std.", ago(3600))
+        assertEquals("vor 23 Std.", ago(23 * 3600))
     }
 
     @Test fun days() {
-        assertEquals("1 d ago", ago(86_400))
-        assertEquals("3 d ago", ago(3 * 86_400))
+        assertEquals("vor 1 T.", ago(86_400))
+        assertEquals("vor 3 T.", ago(3 * 86_400))
     }
 
     @Test fun futureTimestampClampsToJustNow() {
         // A strap-clock skew could put lastSyncAt slightly in the future; never render negative.
-        assertEquals("just now", relativeAgo(now + 500, now))
+        assertEquals("gerade eben", relativeAgo(now + 500, now))
     }
 }

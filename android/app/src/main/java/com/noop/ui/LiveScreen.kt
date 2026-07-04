@@ -1220,10 +1220,10 @@ private fun batteryTint(pct: Double?): Color = when {
 internal fun relativeAgo(epochSec: Long, nowSec: Long = System.currentTimeMillis() / 1000L): String {
     val d = (nowSec - epochSec).coerceAtLeast(0)
     return when {
-        d < 60L -> "just now"
-        d < 3600L -> "${d / 60L} min ago"
-        d < 86_400L -> "${d / 3600L} h ago"
-        else -> "${d / 86_400L} d ago"
+        d < 60L -> "gerade eben"
+        d < 3600L -> "vor ${d / 60L} Min."
+        d < 86_400L -> "vor ${d / 3600L} Std."
+        else -> "vor ${d / 86_400L} T."
     }
 }
 
