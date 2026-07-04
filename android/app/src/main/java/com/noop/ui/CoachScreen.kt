@@ -78,7 +78,7 @@ fun CoachScreen(vm: CoachViewModel = viewModel()) {
 
     ScreenScaffold(
         title = "Coach",
-        subtitle = "Ask about your recovery, strain, sleep and HRV, grounded in your own numbers.",
+        subtitle = "Fragen zu Erholung, Belastung, Schlaf und HRV – basierend auf deinen Zahlen.",
         // LIQUID SKY BACKDROP (the pilot pattern — LiquidScreenSky.kt): the liquid sky sits behind the
         // header and the cards float over the flat canvas below. Reuses the shared LiquidScreenSky() slot
         // verbatim; when the day-cycle background is off, the scaffold paints the plain surface instead.
@@ -109,15 +109,15 @@ private fun CoachSetup(vm: CoachViewModel) {
         Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(Icons.Filled.Lock, contentDescription = null, tint = Palette.accent, modifier = Modifier.size(18.dp))
-                Text("Connect a provider", style = NoopType.headline, color = Palette.textPrimary)
+                Text("Anbieter verbinden", style = NoopType.headline, color = Palette.textPrimary)
             }
             Text(
                 if (isCustom)
-                    "Point the coach at any OpenAI-compatible server: a local model (Ollama, LM " +
-                        "Studio, llama.cpp) keeps everything on your device; an API-Schlüssel is optional."
+                    "Verbinde den Coach mit jedem OpenAI-kompatiblen Server: ein lokales Modell (Ollama, LM " +
+                        "Studio, llama.cpp) bleibt auf dem Gerät; ein API-Schlüssel ist optional."
                 else
-                    "Bring your own API-Schlüssel. It is stored encrypted on this device and only used to " +
-                        "send your question plus a short summary of your metrics to the provider you pick.",
+                    "Eigenen API-Schlüssel verwenden. Er wird verschlüsselt auf diesem Gerät gespeichert und nur genutzt, " +
+                        "um deine Frage plus eine kurze Zusammenfassung deiner Werte an den gewählten Anbieter zu senden.",
                 style = NoopType.subhead, color = Palette.textSecondary,
             )
 
@@ -173,19 +173,19 @@ private fun CoachSetup(vm: CoachViewModel) {
 
             // Masked key field, optional for a local Custom server.
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Overline(if (isCustom) "API Key (optional)" else "API Key")
+                Overline(if (isCustom) "API-Schlüssel (optional)" else "API-Schlüssel")
                 CoachKeyField(
                     value = keyInput,
                     onValueChange = { keyInput = it },
-                    placeholder = if (isCustom) "Only if your server requires one"
-                                  else "Paste your ${provider.displayName} key",
+                    placeholder = if (isCustom) "Nur falls dein Server einen braucht"
+                                  else "${provider.displayName}-Schlüssel einfügen",
                 )
             }
 
             // Connect (Custom) / Save key (cloud).
             if (isCustom) {
                 CoachPrimaryButton(
-                    label = "Connect",
+                    label = "Verbinden",
                     enabled = customBaseUrl.isNotBlank(),
                     onClick = {
                         if (keyInput.isNotBlank()) vm.saveKey(context, keyInput)
@@ -194,7 +194,7 @@ private fun CoachSetup(vm: CoachViewModel) {
                 )
             } else {
                 CoachPrimaryButton(
-                    label = "Speichern key",
+                    label = "Schlüssel speichern",
                     enabled = keyInput.isNotBlank(),
                     onClick = { vm.saveKey(context, keyInput) },
                 )
@@ -235,7 +235,7 @@ private fun CoachChat(vm: CoachViewModel) {
                         .liquidPress(disconnectInteraction)
                         .clickable(interactionSource = disconnectInteraction, indication = null) { vm.disconnect(context) }
                         .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .semantics { contentDescription = "Trennen provider" },
+                        .semantics { contentDescription = "Anbieter trennen" },
                 )
             }
         }
@@ -247,8 +247,8 @@ private fun CoachChat(vm: CoachViewModel) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text("Coach darf meine Daten nutzen", style = NoopType.subhead, color = Palette.textPrimary)
                     Text(
-                        if (consent) "On: your recovery, sleep, HRV and workouts are shared with the provider for tailored coaching."
-                        else "Off: the coach answers generally and sends none of your metrics.",
+                        if (consent) "An: Erholung, Schlaf, HRV und Workouts werden für personalisiertes Coaching geteilt."
+                        else "Aus: Der Coach antwortet allgemein und sendet keine deiner Werte.",
                         style = NoopType.footnote, color = Palette.textTertiary,
                     )
                 }
@@ -268,7 +268,7 @@ private fun CoachChat(vm: CoachViewModel) {
             NoopCard(padding = 18.dp) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
-                        "Ask anything about your recent recovery, strain, sleep or HRV.",
+                        "Frag alles zu deiner aktuellen Erholung, Belastung, Schlaf oder HRV.",
                         style = NoopType.subhead, color = Palette.textSecondary,
                     )
                     SuggestedPrompts(onPick = { input = it })
@@ -287,7 +287,7 @@ private fun CoachChat(vm: CoachViewModel) {
                 error!!,
                 style = NoopType.subhead,
                 color = Palette.statusCritical,
-                modifier = Modifier.semantics { contentDescription = "Coach error: ${error}" },
+                modifier = Modifier.semantics { contentDescription = "Coach-Fehler: ${error}" },
             )
         }
 
@@ -309,7 +309,7 @@ private fun CoachChat(vm: CoachViewModel) {
                     if (error != null) vm.clearError()
                 },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Ask your coach…", style = NoopType.body, color = Palette.textTertiary) },
+                placeholder = { Text("Frag deinen Coach…", style = NoopType.body, color = Palette.textTertiary) },
                 textStyle = NoopType.body,
                 singleLine = false,
                 maxLines = 4,
@@ -354,15 +354,15 @@ private fun CoachInstructions(vm: CoachViewModel) {
                     .liquidPress(headerInteraction)
                     .clickable(interactionSource = headerInteraction, indication = null) { expanded = !expanded }
                     .semantics {
-                        contentDescription = if (expanded) "Collapse coach instructions" else "Bearbeiten coach instructions"
+                        contentDescription = if (expanded) "Coach-Anweisungen einklappen" else "Coach-Anweisungen bearbeiten"
                     },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text("Coach instructions", style = NoopType.subhead, color = Palette.textPrimary)
+                    Text("Coach-Anweisungen", style = NoopType.subhead, color = Palette.textPrimary)
                     Text(
-                        if (hasCustom) "Anpassend. Your edited instructions frame every reply."
-                        else "Bearbeiten how the coach thinks and talks. Takes effect on your next message.",
+                        if (hasCustom) "Angepasst. Deine Anweisungen gelten für jede Antwort."
+                        else "Lege fest, wie der Coach denkt und spricht. Wirkt ab der nächsten Nachricht.",
                         style = NoopType.footnote, color = Palette.textTertiary,
                     )
                 }
@@ -381,7 +381,7 @@ private fun CoachInstructions(vm: CoachViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 140.dp, max = 260.dp)
-                        .semantics { contentDescription = "Coach instructions editor" },
+                        .semantics { contentDescription = "Coach-Anweisungen bearbeiten" },
                     textStyle = NoopType.body,
                     singleLine = false,
                     colors = coachFieldColors(),
@@ -434,7 +434,7 @@ private fun ChatBubble(msg: ChatMsg) {
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Overline(
-                    if (isUser) "You" else "Coach",
+                    if (isUser) "Du" else "Coach",
                     color = if (isUser) Palette.accentHover else Palette.textTertiary,
                 )
                 if (isUser) {
@@ -456,7 +456,7 @@ private fun ThinkingBubble() {
                 .clip(RoundedCornerShape(16.dp))
                 .frostedCardSurface(tint = Palette.chargeColor, cornerRadius = 16.dp)
                 .padding(horizontal = 14.dp, vertical = 12.dp)
-                .semantics { contentDescription = "Coach is thinking" },
+                .semantics { contentDescription = "Coach denkt nach" },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -465,7 +465,7 @@ private fun ThinkingBubble() {
                 strokeWidth = 2.dp,
                 color = Palette.accent,
             )
-            Text("Thinking…", style = NoopType.subhead, color = Palette.textSecondary)
+            Text("Denkt nach…", style = NoopType.subhead, color = Palette.textSecondary)
         }
     }
 }
@@ -473,16 +473,16 @@ private fun ThinkingBubble() {
 // MARK: - Suggested prompts
 
 private val SUGGESTED_PROMPTS = listOf(
-    "How's my recovery trending diese Woche?",
-    "Should I train hard or take it easy today?",
-    "Why might my HRV be low lately?",
-    "How can I improve my sleep?",
+    "Wie entwickelt sich meine Erholung diese Woche?",
+    "Soll ich heute hart trainieren oder es ruhig angehen?",
+    "Warum könnte meine HRV zuletzt niedrig sein?",
+    "Wie kann ich meinen Schlaf verbessern?",
 )
 
 @Composable
 private fun SuggestedPrompts(onPick: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Overline("Try asking")
+        Overline("Zum Beispiel fragen")
         // Simple wrapped column of chips (one per row keeps long prompts readable).
         SUGGESTED_PROMPTS.forEach { prompt ->
             val shape = RoundedCornerShape(50)
@@ -499,7 +499,7 @@ private fun SuggestedPrompts(onPick: (String) -> Unit) {
                     .liquidPress(chipInteraction)
                     .clickable(interactionSource = chipInteraction, indication = null) { onPick(prompt) }
                     .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .semantics { contentDescription = "Suggested prompt: $prompt" },
+                    .semantics { contentDescription = "Vorschlag: $prompt" },
             )
         }
     }
@@ -527,7 +527,7 @@ private fun ModelDropdown(
                 .liquidPress(triggerInteraction)
                 .clickable(interactionSource = triggerInteraction, indication = null) { expanded = true }
                 .padding(horizontal = 14.dp, vertical = 12.dp)
-                .semantics { contentDescription = "Modell: $selected. Tap to change." },
+                .semantics { contentDescription = "Modell: $selected. Tippen zum Ändern." },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(selected, style = NoopType.body, color = Palette.textPrimary, modifier = Modifier.weight(1f))
@@ -555,7 +555,7 @@ private fun ModelDropdown(
             }
             // Free-text escape hatch, any model id the provider accepts can be entered.
             DropdownMenuItem(
-                text = { Text("Custom…", style = NoopType.body, color = Palette.textSecondary) },
+                text = { Text("Eigene…", style = NoopType.body, color = Palette.textSecondary) },
                 onClick = {
                     expanded = false
                     showCustom = true
@@ -588,11 +588,11 @@ private fun CustomModelDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Palette.surfaceOverlay,
-        title = { Text("Custom model", style = NoopType.headline, color = Palette.textPrimary) },
+        title = { Text("Eigenes Modell", style = NoopType.headline, color = Palette.textPrimary) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    "Enter any model id the provider accepts.",
+                    "Beliebige Modell-ID, die der Anbieter akzeptiert.",
                     style = NoopType.subhead,
                     color = Palette.textSecondary,
                 )
@@ -601,7 +601,7 @@ private fun CustomModelDialog(
                     onValueChange = { text = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .semantics { contentDescription = "Custom model id" },
+                        .semantics { contentDescription = "Eigene Modell-ID" },
                     placeholder = { Text("e.g. gpt-4o", style = NoopType.body, color = Palette.textTertiary) },
                     textStyle = NoopType.mono(13f),
                     singleLine = true,
@@ -615,7 +615,7 @@ private fun CustomModelDialog(
                 onClick = { onConfirm(text.trim()) },
                 enabled = text.isNotBlank(),
             ) {
-                Text("Use model", style = NoopType.headline, color = Palette.accent)
+                Text("Modell verwenden", style = NoopType.headline, color = Palette.accent)
             }
         },
         dismissButton = {
@@ -650,7 +650,7 @@ private fun RefreshModelsButton(
                 else it
             }
             .padding(horizontal = 10.dp, vertical = 6.dp)
-            .semantics { contentDescription = "Fetch models from provider" },
+            .semantics { contentDescription = "Modelle vom Anbieter laden" },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
