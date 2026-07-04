@@ -558,8 +558,7 @@ fun TodayScreen(
     val dismissTodayCard: (String, String, String) -> Unit = { id, title, message ->
         if (id == CARD_NEEDS_STRAP) {
             needsStrapDismissed = true
-            return@Unit
-        }
+        } else {
         TodayCardDismissal.setDismissed(context, id, true)
         when (id) {
             CARD_SCORES_BUILDING -> scoresBuildingDismissed = true
@@ -575,6 +574,7 @@ fun TodayScreen(
                 restorePayload = id,
             ),
         )
+        }
     }
     // Honour a "Auf Heute wiederherstellen" tap from the inbox: flip the matching dismissed flag back so the card
     // reappears (the inbox also cleared the shared pref directly, but this re-reads it into local state
