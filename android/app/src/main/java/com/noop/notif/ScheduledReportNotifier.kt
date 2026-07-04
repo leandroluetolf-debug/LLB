@@ -74,22 +74,22 @@ object ScheduledReportPolicy {
         durationLabel: String,
         avgHr: Int?,
     ): Pair<String, String> {
-        val title = "Workout logged: $sportLabel"
+        val title = "Training gespeichert: $sportLabel"
         val pieces = ArrayList<String>(3)
         pieces.add("Effort $effortDisplay/$effortMaxLabel")
         pieces.add(durationLabel)
-        avgHr?.let { pieces.add("avg $it bpm") }
-        val body = pieces.joinToString(" · ") + ". Summarised after your strap synced."
+        avgHr?.let { pieces.add("Ø $it bpm") }
+        val body = pieces.joinToString(" · ") + ". Zusammenfassung nach dem Sync mit dem Band."
         return title to body
     }
 
-    /** "42 min" / "1 h 8 min" from a whole-minute duration; clamps a 0/negative span to "under a minute"
-     *  so a mis-timed session never reads as "0 min". */
+    /** "42 Min." / "1 Std. 8 Min." from a whole-minute duration; clamps a 0/negative span to "unter einer Minute"
+     *  so a mis-timed session never reads as "0 Min.". */
     fun durationLabel(minutes: Int): String = when {
-        minutes <= 0 -> "under a minute"
-        minutes < 60 -> "$minutes min"
-        minutes % 60 == 0 -> "${minutes / 60} h"
-        else -> "${minutes / 60} h ${minutes % 60} min"
+        minutes <= 0 -> "unter einer Minute"
+        minutes < 60 -> "$minutes Min."
+        minutes % 60 == 0 -> "${minutes / 60} Std."
+        else -> "${minutes / 60} Std. ${minutes % 60} Min."
     }
 }
 

@@ -165,6 +165,8 @@ private const val CARD_CALIBRATING = "kalibriertBasis"
 // a small × tucks it into Updates (restorable), so it never sits permanently between the header and the
 // hero throwing off the compact liquid look. Local-only id (iOS has no twin), matching the dismiss plumbing.
 private const val CARD_CARRIED_SLEEP = "carriedSchlaf"
+// "Band nötig" / NeedsStrap note — dismissible like the other Today info cards.
+private const val CARD_NEEDS_STRAP = "needsStrap"
 
 /** #860 item 1: process-lifetime guard for the launch snap-to-today. `selectedDayOffset` is rememberSaveable
  *  so a tab-away keeps the user's chosen day (#614/#739). The same persistence, however, rides the
@@ -544,6 +546,9 @@ fun TodayScreen(
     var carriedSleepDismissed by remember {
         mutableStateOf(TodayCardDismissal.isDismissed(context, CARD_CARRIED_SLEEP))
     }
+    var needsStrapDismissed by remember {
+        mutableStateOf(TodayCardDismissal.isDismissed(context, CARD_NEEDS_STRAP))
+    }
     // Dismiss a Today info-card INTO the inbox: persist its flag, hide it, and post a restorable
     // `.dismissedCard` update carrying the card id. Mirrors the iOS `dismissTodayCard`.
     val dismissTodayCard: (String, String, String) -> Unit = { id, title, message ->
@@ -553,6 +558,7 @@ fun TodayScreen(
             CARD_NEW_HERE -> newHereDismissed = true
             CARD_CALIBRATING -> calibratingDismissed = true
             CARD_CARRIED_SLEEP -> carriedSleepDismissed = true
+            CARD_NEEDS_STRAP -> needsStrapDismissed = true
         }
         updateStore?.post(
             UpdateItem(
@@ -574,6 +580,7 @@ fun TodayScreen(
                 CARD_NEW_HERE -> newHereDismissed = false
                 CARD_CALIBRATING -> calibratingDismissed = false
                 CARD_CARRIED_SLEEP -> carriedSleepDismissed = false
+                CARD_NEEDS_STRAP -> needsStrapDismissed = false
             }
             updateStore.restoreRequest = null
         }
@@ -1021,9 +1028,23 @@ fun TodayScreen(
             // the hero with NO in-ring caption, so its "Letzte Nacht ..." note renders BELOW the rings here,
             // matching iOS explainedScoreNote. Today only; never a fabricated value.
             //
-            // #827: NeedsStrap ALWAYS shows (a today-blocking state, not a recurring nag).
-            if (selectedDayOffset == 0 && scoreState is ScoreState.NeedsStrap) {
-                ScoreStateNote(scoreState)
+            // NeedsStrap: dismissible like the other Today notes (× into Updates inbox).
+            if (selectedDayOffset == 0 && scoreState is ScoreState.NeedsStrap && !needsStrapDismissed) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    ScoreStateNote(scoreState)
+                    if (updateStore != null) {
+                        TodayCardDismissButton(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            onClick = {
+                                dismissTodayCard(
+                                    CARD_NEEDS_STRAP,
+                                    scoreState.title,
+                                    scoreState.detail,
+                                )
+                            },
+                        )
+                    }
+                }
             }
             // The carried "Latest sleep · <date>" / "Letzte Nacht · <date>" note. iOS has NOTHING in this slot,
             // and the maintainer flagged it as breaking the compact liquid look sitting permanently above the
@@ -1058,7 +1079,7 @@ fun TodayScreen(
                                 dismissTodayCard(
                                     CARD_CALIBRATING,
                                     "Basiswerte werden aufgebaut",
-                                    "Charge, Effort and Rest become personal after a few nights of wear.",
+                                    "Charge, Effort und Rest werden nach ein paar Nächten mit dem Band persönlich.",
                                 )
                             },
                         )
@@ -1069,10 +1090,10 @@ fun TodayScreen(
                 Box(modifier = Modifier.fillMaxWidth()) {
                     DataPendingNote(
                         title = "Live läuft. Deine Werte bauen sich auf.",
-                        body = "Your live heart rate is working from the strap, and recovery, strain " +
-                            "and sleep build from it over your next few nights of wear, sharpening as it " +
-                            "learns your baseline. Want your full history instantly? Importieren your WHOOP " +
-                            "export in Datenquellen and it backfills in about a minute.",
+                        body = "Dein Puls kommt live vom Band. Charge, Effort und Rest entstehen in den " +
+                            "nächsten Nächten mit dem Band und werden schärfer, sobald LLB deine Baseline " +
+                            "kennt. Willst du deine ganze Historie sofort? Importiere deinen WHOOP-Export " +
+                            "unter Datenquellen — das dauert etwa eine Minute.",
                     )
                     // The × is only meaningful for today's card (a past day's note isn't dismissed).
                     if (selectedDayOffset == 0 && updateStore != null) {
@@ -1082,7 +1103,7 @@ fun TodayScreen(
                                 dismissTodayCard(
                                     CARD_SCORES_BUILDING,
                                     "Live läuft. Deine Werte bauen sich auf.",
-                                    "Charge, Effort and Rest build over your next few nights of wear.",
+                                    "Charge, Effort und Rest entstehen in den nächsten Nächten mit dem Band.",
                                 )
                             },
                         )
@@ -1234,8 +1255,9 @@ fun TodayScreen(
                     modifier = Modifier.size(Metrics.iconSmall),
                 )
                 Text(
-                    "Noch keine Cardio-Belastung. Effort builds once your heart rate climbs into your effort " +
-                        "zone (around 50% of your heart-rate reserve). A calm day honestly reads near zero.",
+                    "Noch keine Cardio-Belastung. Effort steigt, sobald deine Herzfrequenz in die " +
+                        "Belastungszone kommt (etwa 50 % deiner Herzfrequenz-Reserve). Ein ruhiger Tag " +
+                        "liegt ehrlich nahe bei null.",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
                 )
@@ -2477,7 +2499,7 @@ private fun RingNeedsTrackedNight() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Kalibriert", style = NoopType.headline, color = Palette.textTertiary, maxLines = 1)
         Text(
-            "needs a tracked night",
+            "braucht eine erfasste Nacht",
             style = NoopType.footnote,
             color = Palette.textSecondary,
             maxLines = 1,
@@ -2503,43 +2525,33 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
     val hrv = day?.avgHrv ?: vitalsDay?.avgHrv
     val rhr = day?.restingHr ?: vitalsDay?.restingHr
     val resp = day?.respRateBpm ?: vitalsDay?.respRateBpm
-    // The caption reflects the row the shown vitals actually came from: if today supplied ANY of them the
-    // values are today's own, so don't stamp them as a prior "Letzte Nacht · <date>"; only when EVERY shown
-    // vital is carried do we stamp the carry's date (relabelled "Latest sleep · <date>" when weeks-old).
-    val carriedFromVitals = day?.avgHrv == null && day?.restingHr == null && day?.respRateBpm == null &&
-        (hrv != null || rhr != null || resp != null) && vitalsDay != null
-    // iOS `recoveryVitalsSection`: a frosted card with a "RECOVERY VITALS" header + a "last night · <date>"
-    // on the right, then three `vitalRow`s (26dp mini LIQUID VESSEL + label + value). NoopCard supplies the
-    // same neutral surfaceRaised + hairline as iOS's frosted card. Inner spacing 12, matching iOS.
+    val hrvWhen = vitalWhenLabel(dayKey = if (day?.avgHrv != null) day.day else vitalsDay?.takeIf { it.avgHrv != null }?.day)
+    val rhrWhen = vitalWhenLabel(dayKey = if (day?.restingHr != null) day.day else vitalsDay?.takeIf { it.restingHr != null }?.day)
+    val respWhen = vitalWhenLabel(dayKey = if (day?.respRateBpm != null) day.day else vitalsDay?.takeIf { it.respRateBpm != null }?.day)
     NoopCard(padding = Metrics.space16) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Metrics.space12),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Overline("Erholung vitals", modifier = Modifier.weight(1f))
-                // iOS `lastNightLine` — today's own "Letzte Nacht · <date>" unless the shown vitals are a carry.
-                Text(
-                    if (carriedFromVitals) carriedCaption(vitalsDay!!.day) else heroVitalsLastNightLine(),
-                    style = NoopType.caption,
-                    color = Palette.textTertiary,
-                )
-            }
+            Overline("Erholungswerte")
             HeroVitalRow(
                 label = "Herzfrequenzvariabilität",
                 value = hrv?.let { "${it.roundToInt()} ms" } ?: NO_DATA,
+                whenLabel = hrvWhen,
                 tint = Palette.metricCyan,
                 fraction = hrv?.let { (it / 120.0).coerceIn(0.0, 1.0) },
             )
             HeroVitalRow(
                 label = "Ruhepuls",
                 value = rhr?.let { "$it bpm" } ?: NO_DATA,
+                whenLabel = rhrWhen,
                 tint = Palette.metricRose,
                 fraction = rhr?.let { (it / 100.0).coerceIn(0.0, 1.0) },
             )
             HeroVitalRow(
                 label = "Atemzüge pro Minute",
-                value = resp?.let { String.format(Locale.US, "%.1f rpm", it) } ?: NO_DATA,
+                value = resp?.let { String.format(Locale.GERMAN, "%.1f /min", it) } ?: NO_DATA,
+                whenLabel = respWhen,
                 tint = Palette.accent,
                 fraction = resp?.let { (it / 24.0).coerceIn(0.0, 1.0) },
             )
@@ -2547,21 +2559,42 @@ private fun HeroMetricRows(day: DailyMetric?, carriedDay: DailyMetric? = null, v
     }
 }
 
-/** iOS `lastNightLine` — "Letzte Nacht · <date>" where <date> is yesterday in "d MMM" form. */
-private fun heroVitalsLastNightLine(): String {
-    val d = LocalDate.now().minusDays(1)
-    return "Letzte Nacht · ${d.format(DateTimeFormatter.ofPattern("d MMM", Locale.US))}"
+/** "Heute" / "Gestern" / "d. MMM" for a vital's source day, or null when no value. */
+private fun vitalWhenLabel(dayKey: String?): String? {
+    if (dayKey.isNullOrBlank()) return null
+    val day = runCatching { LocalDate.parse(dayKey) }.getOrNull() ?: return dayKey
+    val today = LocalDate.now()
+    return when (day) {
+        today -> "Heute"
+        today.minusDays(1) -> "Gestern"
+        else -> day.format(DateTimeFormatter.ofPattern("d. MMM", Locale.GERMAN))
+    }
 }
 
-/** One iOS `vitalRow`: a 26dp mini liquid VESSEL filled to [fraction] in [tint], the label (subhead,
- *  secondary), a spacer, and the value (number 15, primary). Replaces the old flat-Material-icon row. */
+/** One vital row: vessel + label + optional day stamp + value. */
 @Composable
-private fun HeroVitalRow(label: String, value: String, tint: Color, fraction: Double?) {
+private fun HeroVitalRow(
+    label: String,
+    value: String,
+    tint: Color,
+    fraction: Double?,
+    whenLabel: String? = null,
+) {
     val hasValue = value != NO_DATA
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .semantics { contentDescription = "$label $value" },
+            .semantics {
+                contentDescription = buildString {
+                    append(label)
+                    append(' ')
+                    append(value)
+                    if (whenLabel != null) {
+                        append(", ")
+                        append(whenLabel)
+                    }
+                }
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Metrics.space12),
     ) {
@@ -2571,7 +2604,12 @@ private fun HeroVitalRow(label: String, value: String, tint: Color, fraction: Do
             animated = false,
             modifier = Modifier.size(26.dp),
         )
-        Text(label, style = NoopType.subhead, color = Palette.textSecondary, modifier = Modifier.weight(1f))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(label, style = NoopType.subhead, color = Palette.textSecondary)
+            if (whenLabel != null && hasValue) {
+                Text(whenLabel, style = NoopType.caption, color = Palette.textTertiary)
+            }
+        }
         Text(
             value,
             style = NoopType.number(15f),
@@ -2652,6 +2690,12 @@ private fun YourCardsSection(
                         latestActiveKcal = latestActiveKcal,
                         hydrationTotalMl = hydrationTotalMl,
                         hydrationGoalMl = hydrationGoalMl,
+                    ),
+                    whenLabel = dashboardCardWhenLabel(
+                        card = card,
+                        day = day,
+                        carriedDay = carriedDay,
+                        vitalsDay = vitalsDay,
                     ),
                     // The mini liquid vessel's fill — the SAME per-card fraction iOS `liquidCard` uses.
                     fraction = dashboardCardFraction(
@@ -2870,6 +2914,30 @@ private fun dashboardCardValue(
     }
 }
 
+/** Day stamp for a dashboard card value (Heute / Gestern / d. MMM), or null when not applicable. */
+private fun dashboardCardWhenLabel(
+    card: DashboardCard,
+    day: DailyMetric?,
+    carriedDay: DailyMetric?,
+    vitalsDay: DailyMetric?,
+): String? {
+    val vd = carriedDay ?: day
+    return when (card) {
+        DashboardCard.HRV ->
+            vitalWhenLabel(if (day?.avgHrv != null) day.day else vitalsDay?.takeIf { it.avgHrv != null }?.day)
+        DashboardCard.RESTING_HR ->
+            vitalWhenLabel(if (day?.restingHr != null) day.day else vitalsDay?.takeIf { it.restingHr != null }?.day)
+        DashboardCard.RESPIRATORY ->
+            vitalWhenLabel(if (day?.respRateBpm != null) day.day else vitalsDay?.takeIf { it.respRateBpm != null }?.day)
+        DashboardCard.BLOOD_OXYGEN -> vitalWhenLabel(vd?.takeIf { it.spo2Pct != null }?.day)
+        DashboardCard.SKIN_TEMP -> vitalWhenLabel(vd?.takeIf { it.skinTempDevC != null }?.day)
+        DashboardCard.SLEEP -> vitalWhenLabel(vd?.day)
+        DashboardCard.STEPS, DashboardCard.CALORIES, DashboardCard.HYDRATION, DashboardCard.STRESS,
+        DashboardCard.FITNESS_AGE, DashboardCard.VITALITY -> vitalWhenLabel(day?.day ?: LocalDate.now().toString())
+        DashboardCard.COUPLED -> null
+    }
+}
+
 /**
  * One WHOOP "Mein Dashboard" metric row: a thin-line tinted icon tile, an UPPERCASE tracked label over a grey
  * baseline caption, the big white value + small unit, and a chevron, on the flat frosted card surface (no
@@ -2882,6 +2950,7 @@ private fun DashboardCardRow(
     value: String,
     fraction: Double?,
     tint: Color,
+    whenLabel: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
     // A real number renders white; a placeholder (No Data, or the Stress calibrating state) renders dimmed.
@@ -2932,7 +3001,7 @@ private fun DashboardCardRow(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                card.subtitle,
+                whenLabel ?: card.subtitle,
                 style = NoopType.caption,
                 color = Palette.textTertiary,
                 maxLines = 1,
@@ -3541,7 +3610,7 @@ internal data class LastCharge(val value: Double, val caption: String)
  *  the key and falls back to the raw key so the caption is never empty. Mirrors iOS lastChargeDateFmt. */
 internal fun lastChargeDateLabel(dayKey: String): String =
     runCatching {
-        LocalDate.parse(dayKey).format(DateTimeFormatter.ofPattern("d MMM", Locale.US))
+        LocalDate.parse(dayKey).format(DateTimeFormatter.ofPattern("d. MMM", Locale.GERMAN))
     }.getOrDefault(dayKey)
 
 /** Carry-over recency cap (#779): the "Letzte Nacht" framing only holds when the carried scored day is
@@ -3578,7 +3647,7 @@ internal fun freshRestScore(
  *  "Latest sleep · <date>" so a weeks-old import is never surfaced as "Letzte Nacht". Shared by every carried
  *  recovery read-out so the prior-day provenance reads identically. Mirrors iOS carriedCaption. */
 internal fun carriedCaption(priorDayKey: String, today: String = LocalDate.now().toString()): String {
-    val prefix = if (isCarryStale(priorDayKey, today)) "Latest sleep" else "Letzte Nacht"
+    val prefix = if (isCarryStale(priorDayKey, today)) "Letzter Schlaf" else "Letzte Nacht"
     return "$prefix · ${lastChargeDateLabel(priorDayKey)}"
 }
 
@@ -3623,25 +3692,24 @@ sealed class ScoreState {
         get() = when (this) {
             is Scored -> ""
             is Calibrating -> "Kalibriert"
-            is CarriedLastNight -> if (stale) "Latest sleep · $dateLabel" else "Letzte Nacht · $dateLabel"
-            NeedsStrap -> "Needs the strap"
+            is CarriedLastNight -> if (stale) "Letzter Schlaf · $dateLabel" else "Letzte Nacht · $dateLabel"
+            NeedsStrap -> "Band nötig"
         }
 
-    /** The one-line plain-English what-to-do. VERBATIM, mirror Swift exactly. The night(s) plural in
-     *  the calibrating copy follows [nightsRemaining]. */
+    /** Kurzer Hinweis, was zu tun ist. */
     val detail: String
         get() = when (this) {
             is Scored -> ""
             is Calibrating -> {
-                val nights = if (nightsRemaining == 1) "night" else "nights"
-                "Basiswerte werden aufgebaut. Über $nightsRemaining more $nights until your scores are personal."
+                val nights = if (nightsRemaining == 1) "Nacht" else "Nächte"
+                "Basiswerte werden aufgebaut. Noch $nightsRemaining $nights, bis deine Werte persönlich sind."
             }
             is CarriedLastNight ->
                 // A fresh post-rollover carry tells you tonight's score is on its way; a stale carry (an
                 // older import, #779) instead explains the number is from that earlier session, not today.
-                if (stale) "This is your last scored session. Wear the strap overnight for a fresh score."
-                else "Tonight's lands after you sleep with the strap on."
-            NeedsStrap -> "Keine Daten for today. Was your strap worn and connected overnight?"
+                if (stale) "Das ist dein letzter bewerteter Tag. Trage das Band über Nacht für einen frischen Wert."
+                else "Der heutige Wert kommt, nachdem du mit dem Band geschlafen hast."
+            NeedsStrap -> "Für heute noch keine Tageswerte. War das Band über Nacht getragen und verbunden?"
         }
 }
 
@@ -3738,19 +3806,19 @@ sealed class RecordingState {
     /** The chip's status word. VERBATIM, mirror Swift exactly. */
     val title: String
         get() = when (this) {
-            Recording -> "Recording"
-            is LastSynced -> "Last synced ${minutesAgo}m ago"
-            NotRecording -> "Not recording"
+            Recording -> "Zeichnet auf"
+            is LastSynced -> "Zuletzt vor ${minutesAgo} Min. synchronisiert"
+            NotRecording -> "Zeichnet nicht auf"
             HistoryExperimental -> "Verbunden"
         }
 
-    /** The chip's one-line detail. VERBATIM, mirror Swift exactly. */
+    /** The chip's one-line detail. */
     val detail: String
         get() = when (this) {
-            Recording -> "Your strap is connected and saving data."
-            is LastSynced -> "Reconnect to pull the latest."
-            NotRecording -> "Band nicht verbunden. Tap to connect."
-            HistoryExperimental -> "History sync is experimental on 5.0."
+            Recording -> "Dein Band ist verbunden und speichert Daten."
+            is LastSynced -> "Erneut verbinden, um die neuesten Daten zu holen."
+            NotRecording -> "Band nicht verbunden. Tippe zum Verbinden."
+            HistoryExperimental -> "Historien-Sync ist auf 5.0 noch experimentell."
         }
 
     /** Chip hue: live recording reads positive (gold/green dot), a stale-but-recent sync reads neutral,
@@ -3947,22 +4015,29 @@ private fun MetricGrid(
     val descriptors: Map<KeyMetric, KeyTileData> = mapOf(
         KeyMetric.CHARGE to run {
             val v = d?.recovery ?: lastScoredCharge?.value
+            val dayKey = when {
+                d?.recovery != null -> d.day
+                lastScoredCharge != null -> carriedDay?.day
+                else -> null
+            }
             KeyTileData(
-                label = "Erholung",
+                label = "Charge",
                 value = d?.recovery?.let { "${it.roundToInt()}" }
                     ?: recoveryCalibration?.let { "$it/${Baselines.minNightsSeed}" }
                     ?: lastScoredCharge?.let { "${it.value.roundToInt()}" } ?: NO_DATA,
                 unit = if (d?.recovery != null || lastScoredCharge != null) "%" else "",
                 tint = v?.let { Palette.recoveryColor(it) } ?: Palette.chargeColor,
                 frac = v?.let { (it / 100.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(dayKey),
             )
         },
         KeyMetric.EFFORT to KeyTileData(
-            label = "Strain",
+            label = "Effort",
             value = d?.strain?.let { UnitFormatter.effortDisplay(it, effortScale) } ?: NO_DATA,
             unit = if (d?.strain != null) "%" else "",
             tint = d?.strain?.let { Palette.effortTint(it / StrainScorer.maxStrain) } ?: Palette.effortColor,
             frac = d?.strain?.let { (it / 100.0).coerceIn(0.0, 1.0) },
+            whenLabel = vitalWhenLabel(d?.takeIf { it.strain != null }?.day),
         ),
         KeyMetric.REST to KeyTileData(
             label = "Rest",
@@ -3970,45 +4045,54 @@ private fun MetricGrid(
             unit = if (restScore != null) "%" else "",
             tint = restScore?.let { Palette.recoveryColor(it) } ?: Palette.restColor,
             frac = restScore?.let { (it / 100.0).coerceIn(0.0, 1.0) },
+            whenLabel = vitalWhenLabel(d?.day ?: carriedDay?.day)?.takeIf { restScore != null },
         ),
         KeyMetric.HRV to run {
             val v = d?.avgHrv ?: carriedDay?.avgHrv
+            val dayKey = if (d?.avgHrv != null) d.day else carriedDay?.takeIf { it.avgHrv != null }?.day
             KeyTileData(
                 label = "HRV",
                 value = v?.let { "${it.roundToInt()}" } ?: NO_DATA,
                 unit = if (v != null) "ms" else "",
                 tint = Palette.metricCyan,
                 frac = v?.let { (it / 120.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(dayKey),
             )
         },
         KeyMetric.RESTING_HR to run {
             val v = d?.restingHr ?: carriedDay?.restingHr
+            val dayKey = if (d?.restingHr != null) d.day else carriedDay?.takeIf { it.restingHr != null }?.day
             KeyTileData(
-                label = "Rest HR",
+                label = "Ruhe-HF",
                 value = v?.toString() ?: NO_DATA,
                 unit = if (v != null) "bpm" else "",
                 tint = Palette.metricRose,
                 frac = v?.let { (it / 100.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(dayKey),
             )
         },
         KeyMetric.BLOOD_OXYGEN to run {
             val v = d?.spo2Pct ?: carriedDay?.spo2Pct
+            val dayKey = if (d?.spo2Pct != null) d.day else carriedDay?.takeIf { it.spo2Pct != null }?.day
             KeyTileData(
                 label = "Sauerstoffsättigung",
                 value = v?.let { String.format(Locale.US, "%.0f", it) } ?: NO_DATA,
                 unit = if (v != null) "%" else "",
                 tint = Palette.metricCyan,
                 frac = v?.let { (it / 100.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(dayKey),
             )
         },
         KeyMetric.RESPIRATORY to run {
             val v = d?.respRateBpm ?: carriedDay?.respRateBpm
+            val dayKey = if (d?.respRateBpm != null) d.day else carriedDay?.takeIf { it.respRateBpm != null }?.day
             KeyTileData(
                 label = "Atmung",
                 value = v?.let { String.format(Locale.US, "%.1f", it) } ?: NO_DATA,
-                unit = if (v != null) "rpm" else "",
+                unit = if (v != null) "/min" else "",
                 tint = Palette.accent,
                 frac = v?.let { (it / 24.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(dayKey),
             )
         },
         KeyMetric.STEPS to run {
@@ -4021,6 +4105,7 @@ private fun MetricGrid(
                 unit = "",
                 tint = Palette.metricCyan,
                 frac = steps?.let { (it / 10000.0).coerceIn(0.0, 1.0) },
+                whenLabel = vitalWhenLabel(d?.day)?.takeIf { steps != null },
             )
         },
         KeyMetric.WEIGHT to run {
@@ -4039,6 +4124,7 @@ private fun MetricGrid(
             unit = if (d?.activeKcalEst != null) "kcal" else "",
             tint = Palette.metricAmber,
             frac = d?.activeKcalEst?.let { (it / 800.0).coerceIn(0.0, 1.0) },
+            whenLabel = vitalWhenLabel(d?.day)?.takeIf { d?.activeKcalEst != null },
         ),
     )
 
@@ -4068,7 +4154,7 @@ private fun MetricGrid(
                 colors = ButtonDefaults.textButtonColors(contentColor = Palette.accent),
             ) {
                 Text(
-                    if (metricsExpanded) "Show fewer" else "Show all metrics ($hidden)",
+                    if (metricsExpanded) "Weniger anzeigen" else "Alle Kennzahlen ($hidden)",
                     style = NoopType.subhead,
                 )
                 Spacer(Modifier.width(4.dp))
@@ -4089,6 +4175,7 @@ private data class KeyTileData(
     val unit: String,
     val tint: Color,
     val frac: Double?,
+    val whenLabel: String? = null,
 )
 
 /**
@@ -4105,7 +4192,14 @@ private fun LiquidKeyTile(data: KeyTileData, modifier: Modifier = Modifier) {
             .clip(RoundedCornerShape(16.dp))
             .frostedCardSurface(cornerRadius = 16.dp)
             .padding(horizontal = 12.dp, vertical = 11.dp)
-            .semantics { contentDescription = "${data.label} ${data.value} ${data.unit}".trim() },
+            .semantics {
+                contentDescription = buildString {
+                    append(data.label)
+                    data.whenLabel?.let { append(" "); append(it) }
+                    append(" "); append(data.value)
+                    if (data.unit.isNotEmpty()) append(" "); append(data.unit)
+                }.trim()
+            },
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(
@@ -4115,6 +4209,15 @@ private fun LiquidKeyTile(data: KeyTileData, modifier: Modifier = Modifier) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
+        if (data.whenLabel != null && hasValue) {
+            Text(
+                data.whenLabel,
+                style = NoopType.caption.copy(fontSize = 9.sp),
+                color = Palette.textTertiary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 data.value,
@@ -4852,7 +4955,7 @@ private fun TodayWorkoutsSection(workouts: List<WorkoutRow>) {
             .padding(top = Metrics.space14),
         verticalArrangement = Arrangement.spacedBy(Metrics.gap),
     ) {
-        SectionHeader("Letzte Workouts", overline = "Aktivität", trailing = "14 Tage")
+        SectionHeader("Letzte Trainings", overline = "Aktivität", trailing = "14 Tage")
         workouts.take(4).chunked(2).forEach { rowWorkouts ->
             Row(horizontalArrangement = Arrangement.spacedBy(Metrics.gap)) {
                 rowWorkouts.forEach { workout ->
@@ -5040,7 +5143,7 @@ private fun ReadinessSection(days: List<DailyMetric>, carriedDay: DailyMetric? =
     val readiness = remember(days, anchorKey) { ReadinessEngine.evaluate(days, today = anchorKey) }
     if (readiness.level == ReadinessEngine.Level.INSUFFICIENT) return
 
-    val overline = carriedDay?.let { carriedCaption(it.day) } ?: "Should you push today?"
+    val overline = carriedDay?.let { carriedCaption(it.day) } ?: "Heute belasten?"
     SectionHeader("Bereitschaft", overline = overline)
     NoopCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -5061,7 +5164,7 @@ private fun ReadinessSection(days: List<DailyMetric>, carriedDay: DailyMetric? =
                 )
                 readiness.acwr?.let { acwr ->
                     Text(
-                        "load ${String.format(Locale.US, "%.2f", acwr)}",
+                        "Last ${String.format(Locale.GERMAN, "%.2f", acwr)}",
                         style = NoopType.captionNumber,
                         color = Palette.textTertiary,
                     )

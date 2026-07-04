@@ -47,20 +47,20 @@ enum class DashboardCard(
     RESTING_HR("restingHr", "Ruhe-HF", "Ruhepuls", "bpm", Icons.Filled.Favorite),
     RESPIRATORY("respiratory", "Atmung", "Atemzüge pro Minute", "rpm", Icons.Filled.Air),
     STEPS("steps", "Schritte", "Heute", "", Icons.Filled.DirectionsWalk),
-    STRESS("stress", "Stress", "Autonomic load", "", Icons.Filled.Bolt),
-    FITNESS_AGE("fitnessAge", "Fitnessalter", "Updated weekly", "yrs", Icons.Filled.DirectionsRun),
-    VITALITY("vitality", "Vitalität", "Wellness score", "", Icons.Filled.AutoAwesome),
+    STRESS("stress", "Stress", "Autonome Belastung", "", Icons.Filled.Bolt),
+    FITNESS_AGE("fitnessAge", "Fitnessalter", "Wöchentlich aktualisiert", "J.", Icons.Filled.DirectionsRun),
+    VITALITY("vitality", "Vitalität", "Wohlfühlwert", "", Icons.Filled.AutoAwesome),
     BLOOD_OXYGEN("bloodOxygen", "Sauerstoffsättigung", "Sauerstoffsättigung", "", Icons.Filled.WaterDrop),
-    SKIN_TEMP("skinTemp", "Skin Temp", "Hauttemperatur", "", Icons.Filled.Thermostat),
+    SKIN_TEMP("skinTemp", "Hauttemp.", "Hauttemperatur", "", Icons.Filled.Thermostat),
     SLEEP("sleep", "Schlaf", "Letzte Nacht", "", Icons.Filled.Bedtime),
     CALORIES("calories", "Kalorien", "Aktive Energie", "kcal", Icons.Filled.LocalFireDepartment),
-    HYDRATION("hydration", "Flüssigkeit", "Heute's fluid", "", Icons.Filled.WaterDrop),
+    HYDRATION("hydration", "Flüssigkeit", "Heute", "", Icons.Filled.WaterDrop),
 
     // Optional, default-OFF (task #43): a tap-through to the Coupled view (the WHOOP-style day read). Unlike
     // every other card it carries NO metric value of its own, it is a navigation row that opens the full
     // CoupledScreen. It is NOT in [defaultSelection], so a fresh install never shows it until the user adds
     // it via CUSTOMISE. Mirrors iOS DashboardCard.coupled (raw "coupled", byte-identical across OS).
-    COUPLED("coupled", "Gekoppelte Ansicht", "Erholung, strain and sleep in one glance", "", Icons.Filled.Hexagon);
+    COUPLED("coupled", "Gekoppelte Ansicht", "Erholung, Belastung und Schlaf auf einen Blick", "", Icons.Filled.Hexagon);
 
     companion object {
         fun fromRaw(raw: String?): DashboardCard? = entries.firstOrNull { it.raw == raw }

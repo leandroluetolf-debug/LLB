@@ -187,38 +187,41 @@ fun ScoringGuideScreen(
                 ScoreCard(
                     section = ScoreSection.CHARGE,
                     headline = "Charge: Wie erholt bist du?",
-                    body = "Angeführt von deiner Herzfrequenzvariabilität (HRV) im Vergleich zu deiner " +
-                        "persönlichen Baseline, plus Ruhepuls, Rest der letzten Nacht, Atemfrequenz " +
-                        "und einem Hauttemperatur-Signal (früher Hinweis auf Krankheit oder Überlastung). " +
-                        "Höhere HRV gegenüber deiner Baseline bedeutet mehr Charge. LLB braucht ein paar " +
-                        "Nächte, um deine Baseline zu lernen. Bis dahin siehst du „Kalibriert“.",
-                    vsWhoop = "Gleiche Grundidee wie WHOOPs Erholung-% (HRV-geführte Recovery), aber " +
-                        "Gewichtung und Baseline-Mathe sind unsere eigenen und offen dokumentiert.",
+                    body = "Im Mittelpunkt steht deine Herzfrequenzvariabilität (HRV) im Vergleich zu " +
+                        "deiner persönlichen Baseline, ergänzt um Ruhepuls, den Rest-Wert der letzten " +
+                        "Nacht, die Atemfrequenz und ein Hauttemperatur-Signal (früher Hinweis auf " +
+                        "Krankheit oder Überlastung). Liegt deine HRV über deiner Baseline, ist Charge " +
+                        "höher. LLB braucht ein paar Nächte, um deine Baseline zu lernen — bis dahin " +
+                        "steht dort „Kalibriert“.",
+                    vsWhoop = "Dieselbe Grundidee wie WHOOPs Erholung in Prozent (HRV-geführte Recovery). " +
+                        "Gewichtung und Baseline-Rechnung sind aber unsere eigenen und offen dokumentiert.",
                     highlighted = highlighted == ScoreSection.CHARGE,
                     onPositioned = { if (ScoreSection.CHARGE !in anchors) anchors[ScoreSection.CHARGE] = it },
                 )
                 ScoreCard(
                     section = ScoreSection.EFFORT,
                     headline = "Effort: Wie hart hat dein Herz gearbeitet?",
-                    body = "Deine kardiovaskuläre Belastung. LLB wandelt jede Sekunde Herzfrequenz in " +
+                    body = "Das ist deine kardiovaskuläre Belastung. LLB wandelt jede Sekunde Puls in " +
                         "einen Trainingsimpuls um (Herzfrequenz-Reserve-Zonen nach Karvonen), gewichtet " +
-                        "Zeit in härteren Zonen stärker (Edwards / Banister) und legt sie auf eine " +
-                        "logarithmische 0–100-Skala — leichte Tage liegen niedrig, ein Maximal-Tag nähert " +
-                        "sich 100, was wirklich selten bleibt. Ein langer Spaziergang mit wenig Cardio zählt " +
-                        "trotzdem über eine Schritte-/Aktivenergie-Untergrenze.",
-                    vsWhoop = "Gleiche Idee der kardiovaskulären Belastung wie WHOOPs Day Strain (0–21). " +
-                        "Wir haben die Skala von 21 auf 100 gestreckt, damit alle drei Werte dieselbe " +
-                        "Skala teilen. Die Stufen sind gleich geblieben — eine 100 ist so selten wie früher 21,0.",
+                        "Zeit in härteren Zonen stärker (Edwards / Banister) und bildet daraus eine " +
+                        "logarithmische Skala von 0 bis 100: leichte Tage liegen niedrig, ein " +
+                        "Maximal-Tag nähert sich 100 — das bleibt selten. Ein langer Spaziergang mit " +
+                        "wenig Cardio zählt trotzdem über eine Untergrenze aus Schritten und aktiver Energie.",
+                    vsWhoop = "Dieselbe Idee wie WHOOPs Day Strain (0–21). Wir haben die Skala auf 0–100 " +
+                        "gestreckt, damit alle drei Werte dieselbe Skala teilen. Die Stufen sind gleich " +
+                        "geblieben — eine 100 ist so selten wie früher eine 21,0.",
                     highlighted = highlighted == ScoreSection.EFFORT,
                     onPositioned = { if (ScoreSection.EFFORT !in anchors) anchors[ScoreSection.EFFORT] = it },
                 )
                 ScoreCard(
                     section = ScoreSection.REST,
                     headline = "Rest: Wie erholsam war dein Schlaf?",
-                    body = "Eine Mischung aus Schlafdauer gegenüber deinem persönlichen Bedarf (der größte " +
-                        "Faktor), Effizienz (Schlaf vs. im Bett), wie viel erholsam war " +
-                        "(Tief- + REM-Schlaf) und wie gleichmäßig Schlaf- und Wachzeiten sind.",
-                    vsWhoop = "Ähnlich im Geist wie WHOOPs Schlaf-Performance-%; unser Verbundwert ist unser eigener.",
+                    body = "Eine Mischung aus Schlafdauer im Vergleich zu deinem persönlichen Bedarf " +
+                        "(der größte Faktor), Effizienz (Schlafzeit vs. Zeit im Bett), wie erholsam " +
+                        "der Schlaf war (Tief- und REM-Schlaf) und wie gleichmäßig deine Schlaf- und " +
+                        "Wachzeiten sind.",
+                    vsWhoop = "Ähnlich gedacht wie WHOOPs Schlaf-Performance in Prozent; unser " +
+                        "Gesamtwert ist aber unser eigener.",
                     highlighted = highlighted == ScoreSection.REST,
                     onPositioned = { if (ScoreSection.REST !in anchors) anchors[ScoreSection.REST] = it },
                 )
@@ -274,13 +277,13 @@ private fun IntroCard() {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Overline("Die drei Werte")
             Text(
-                "LLB gibt dir drei Tageswerte (Charge, Effort und Rest), jeweils auf einer 0–100-" +
-                    "Skala. Sie entstehen aus den Rohsignalen deines Bands mit veröffentlichter, " +
-                    "peer-reviewter Sportwissenschaft — vollständig auf deinem Gerät. Es sind " +
-                    "NICHT WHOOPs Werte: Wir haben WHOOPs private Algorithmen nicht und tun nicht so. " +
-                    "Sie beantworten dieselben drei Fragen mit offener Wissenschaft, folgen WHOOP " +
-                    "meist in der Richtung, stimmen aber nicht Zahl für Zahl überein. Und genau das " +
-                    "ist der Punkt.",
+                "LLB zeigt dir drei Tageswerte — Charge, Effort und Rest — jeweils von 0 bis 100. " +
+                    "Sie entstehen aus den Rohsignalen deines Bands, berechnet mit veröffentlichter " +
+                    "Sportwissenschaft, vollständig auf deinem Gerät. Das sind nicht WHOOPs Werte: " +
+                    "Wir kennen WHOOPs private Algorithmen nicht und geben das auch nicht vor. " +
+                    "LLB beantwortet dieselben drei Fragen mit offener Wissenschaft. Die Richtung " +
+                    "stimmt meist mit WHOOP überein, die Zahlen aber nicht eins zu eins — und genau " +
+                    "das ist der Punkt.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )
@@ -433,10 +436,10 @@ private fun ConfidenceCard() {
                 StatePill("Kalibriert", tone = StrandTone.Neutral, showsDot = true)
             }
             Text(
-                "Jeder Wert trägt ein kleines Ehrlichkeitsetikett. Kalibriert heißt: LLB lernt noch " +
-                    "deine Baseline oder hat noch nicht genug Daten. Aufbauend heißt: genug für eine " +
-                    "Anzeige, aber noch dünn. Stabil heißt: volle Eingaben vorhanden. Wenn LLB " +
-                    "einen Wert nicht ehrlich berechnen kann, zeigt es nichts statt einer erfundenen Zahl.",
+                "Jeder Wert trägt ein kleines Ehrlichkeitsetikett. „Kalibriert“ heißt: LLB lernt noch " +
+                    "deine Baseline oder hat noch nicht genug Daten. „Aufbauend“ heißt: genug für eine " +
+                    "Anzeige, aber noch dünn. „Stabil“ heißt: alle Eingaben sind da. Wenn LLB einen " +
+                    "Wert nicht ehrlich berechnen kann, zeigt es nichts — statt einer erfundenen Zahl.",
                 style = NoopType.subhead,
                 color = Palette.textSecondary,
             )

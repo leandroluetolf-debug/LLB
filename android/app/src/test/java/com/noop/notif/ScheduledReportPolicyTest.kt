@@ -95,19 +95,20 @@ class ScheduledReportPolicyTest {
 
     @Test fun workoutCopyIncludesEffortDurationAndHr() {
         val (title, body) = ScheduledReportPolicy.workoutCopy(
-            sportLabel = "Running", effortDisplay = "14.2", effortMaxLabel = "21",
-            durationLabel = "42 min", avgHr = 148,
+            sportLabel = "Laufen", effortDisplay = "14.2", effortMaxLabel = "21",
+            durationLabel = "42 Min.", avgHr = 148,
         )
-        assertTrue(title.contains("Running"))
+        assertTrue(title.contains("Laufen"))
+        assertTrue(title.contains("Training gespeichert"))
         assertTrue(body.contains("Effort 14.2/21"))
-        assertTrue(body.contains("42 min"))
-        assertTrue(body.contains("avg 148 bpm"))
+        assertTrue(body.contains("42 Min."))
+        assertTrue(body.contains("Ø 148 bpm"))
     }
 
     @Test fun workoutCopyOmitsHrWhenAbsent() {
         val (_, body) = ScheduledReportPolicy.workoutCopy(
-            sportLabel = "Cycling", effortDisplay = "60", effortMaxLabel = "100",
-            durationLabel = "1 h", avgHr = null,
+            sportLabel = "Radfahren", effortDisplay = "60", effortMaxLabel = "100",
+            durationLabel = "1 Std.", avgHr = null,
         )
         assertFalse(body.contains("bpm"))
         assertTrue(body.contains("Effort 60/100"))
@@ -116,11 +117,11 @@ class ScheduledReportPolicyTest {
     // MARK: - durationLabel
 
     @Test fun durationLabelFormats() {
-        assertEquals("under a minute", ScheduledReportPolicy.durationLabel(0))
-        assertEquals("under a minute", ScheduledReportPolicy.durationLabel(-5))
-        assertEquals("42 min", ScheduledReportPolicy.durationLabel(42))
-        assertEquals("1 h", ScheduledReportPolicy.durationLabel(60))
-        assertEquals("1 h 8 min", ScheduledReportPolicy.durationLabel(68))
-        assertEquals("2 h", ScheduledReportPolicy.durationLabel(120))
+        assertEquals("unter einer Minute", ScheduledReportPolicy.durationLabel(0))
+        assertEquals("unter einer Minute", ScheduledReportPolicy.durationLabel(-5))
+        assertEquals("42 Min.", ScheduledReportPolicy.durationLabel(42))
+        assertEquals("1 Std.", ScheduledReportPolicy.durationLabel(60))
+        assertEquals("1 Std. 8 Min.", ScheduledReportPolicy.durationLabel(68))
+        assertEquals("2 Std.", ScheduledReportPolicy.durationLabel(120))
     }
 }

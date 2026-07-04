@@ -1400,7 +1400,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 add(ScheduledReportPolicy.durationLabel(durMin))
                 row.avgHr?.let { add("avg $it bpm") }
             }
-            "Workout logged: ${WorkoutEditing.displaySport(row.sport)}" to
+            "Training gespeichert: ${WorkoutEditing.displaySport(row.sport)}" to
                 (pieces.joinToString(" · ") + ". Summarised after your strap synced.")
         }
         ScheduledReportNotifier.onWorkout(appContext, row.startTs, title, body)

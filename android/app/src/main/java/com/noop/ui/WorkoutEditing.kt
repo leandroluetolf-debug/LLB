@@ -38,12 +38,18 @@ object WorkoutEditing {
     }
 
     /**
-     * Sport-cell text. "detected" reads as a neutral "Aktivität". WHOOP sport names arrive as
-     * concatenated camelCase (e.g. "TraditionalStrengthTraining"), which reads as one long
-     * unbreakable word and truncates badly — split it into words on the lower→Upper boundary so it
-     * renders "Traditional Krafttraining". Already-spaced labels (manual/edited) pass through. (#175)
+     * Sport-cell text in German. "detected" reads as a neutral "Aktivität". WHOOP sport names arrive as
+     * concatenated camelCase (e.g. "TraditionalStrengthTraining"); they are split and translated.
+     * Already-spaced English labels (imports) and known German aliases map to the same display name.
+     * Unknown free-text labels pass through. (#175)
      */
     fun displaySport(sport: String): String {
+        val key = sportKey(sport)
+        return GERMAN_SPORT[key] ?: spacedSportLabel(sport)
+    }
+
+    /** Split camelCase tokens ("TraditionalStrengthTraining" → "Traditional Strength Training"). */
+    private fun spacedSportLabel(sport: String): String {
         if (sport == "detected") return "Aktivität"
         if (sport.isEmpty() || sport.contains(" ")) return sport
         val out = StringBuilder()
@@ -55,6 +61,13 @@ object WorkoutEditing {
             prev = ch
         }
         return out.toString()
+    }
+
+    /** Fold a sport label to a comparable token (lowercase, no spaces/hyphens). */
+    private fun normalizeSportToken(sport: String): String {
+        if (sport == "detected") return "activity"
+        val spaced = spacedSportLabel(sport)
+        return spaced.lowercase().filter { !it.isWhitespace() && it != '-' }
     }
 
     // MARK: - Dismissed detected bouts (durable across re-detection)
@@ -93,17 +106,126 @@ object WorkoutEditing {
     // dedupCrossSource bound-for-bound.
 
     /**
-     * Normalised sport key for cross-source matching. Folds the WHOOP camelCase token and a
-     * human-readable import label to the same key ("TraditionalStrengthTraining" and
-     * "Traditional Krafttraining" -> "traditionalstrengthtraining"), case- and space-insensitive.
+     * Normalised sport key for cross-source matching. Folds English, German and WHOOP camelCase labels
+     * of the same activity to one canonical English key ("Running" / "Laufen" / "running" → "running"),
+     * case- and space-insensitive. Unknown labels keep their folded form.
      */
-    fun sportKey(sport: String): String =
-        displaySport(sport).lowercase().filter { !it.isWhitespace() }
+    fun sportKey(sport: String): String {
+        val token = normalizeSportToken(sport)
+        return SPORT_ALIASES[token] ?: token
+    }
 
     /** The set of [sportKey]s for the named catalogue (Running, Cycling, … Padel, Other). Used ONLY by the
      *  TRACE path to decide whether a key is a known, non-PII catalogue sport. Mirrors Swift catalogSportKeys. */
     private val catalogSportKeys: Set<String> =
         com.noop.analytics.WorkoutSport.all.map { sportKey(it.name) }.toSet()
+
+    /** Canonical English key → German display label. */
+    private val GERMAN_SPORT: Map<String, String> = mapOf(
+        "activity" to "Aktivität",
+        "running" to "Laufen",
+        "walking" to "Gehen",
+        "hiking" to "Wandern",
+        "cycling" to "Radfahren",
+        "openwaterswim" to "Freiwasserschwimmen",
+        "rowing" to "Rudern",
+        "treadmillrun" to "Laufband",
+        "indoorcycle" to "Indoor-Rad",
+        "poolswim" to "Beckenschwimmen",
+        "rowmachine" to "Rudergerät",
+        "elliptical" to "Crosstrainer",
+        "strength" to "Kraft",
+        "strengthtraining" to "Krafttraining",
+        "traditionalstrengthtraining" to "Krafttraining",
+        "weightlifting" to "Gewichtheben",
+        "hiit" to "HIIT",
+        "yoga" to "Yoga",
+        "pilates" to "Pilates",
+        "boxing" to "Boxen",
+        "basketball" to "Basketball",
+        "soccer" to "Fußball",
+        "football" to "Fußball",
+        "baseball" to "Baseball",
+        "badminton" to "Badminton",
+        "tennis" to "Tennis",
+        "squash" to "Squash",
+        "racquetball" to "Racquetball",
+        "tabletennis" to "Tischtennis",
+        "volleyball" to "Volleyball",
+        "martialarts" to "Kampfsport",
+        "dancing" to "Tanzen",
+        "golf" to "Golf",
+        "climbing" to "Klettern",
+        "rockclimbing" to "Klettern",
+        "stretching" to "Dehnen",
+        "skiing" to "Skifahren",
+        "snowboarding" to "Snowboarden",
+        "other" to "Sonstiges",
+        "workout" to "Training",
+        "padel" to "Padel",
+        "pickleball" to "Pickleball",
+        "bowling" to "Bowling",
+        "treadmillwalk" to "Gehen (Laufband)",
+        "bodybuilding" to "Bodybuilding",
+        "cardio" to "Cardio",
+        "swimming" to "Schwimmen",
+        "crossfit" to "CrossFit",
+        "functionalfitness" to "Functional Fitness",
+    )
+
+    /** Folded alias (EN/DE/camelCase) → canonical English key used by [sportKey] / [GERMAN_SPORT]. */
+    private val SPORT_ALIASES: Map<String, String> = buildMap {
+        fun alias(canonical: String, vararg names: String) {
+            put(canonical, canonical)
+            names.forEach { put(it, canonical) }
+        }
+        alias("activity", "aktivität", "aktivitat")
+        alias("running", "laufen", "run")
+        alias("walking", "gehen", "walk")
+        alias("hiking", "wandern")
+        alias("cycling", "radfahren", "biking", "bike", "rad")
+        alias("openwaterswim", "freiwasserschwimmen", "openwaterswimming")
+        alias("rowing", "rudern")
+        alias("treadmillrun", "laufband", "treadmillrunning")
+        alias("indoorcycle", "indoorrad", "stationarybike", "indoorcycling")
+        alias("poolswim", "beckenschwimmen", "poolswimming")
+        alias("rowmachine", "rudergerät", "rudergert", "rowingmachine")
+        alias("elliptical", "crosstrainer")
+        alias("strength", "kraft")
+        alias("strengthtraining", "krafttraining", "traditionalstrengthtraining")
+        alias("weightlifting", "gewichtheben")
+        alias("hiit", "hochintensivesintervalltraining")
+        alias("yoga")
+        alias("pilates")
+        alias("boxing", "boxen")
+        alias("basketball")
+        alias("soccer", "fußball", "fussball", "football")
+        alias("baseball")
+        alias("badminton")
+        alias("tennis")
+        alias("squash")
+        alias("racquetball")
+        alias("tabletennis", "tischtennis")
+        alias("volleyball")
+        alias("martialarts", "kampfsport")
+        alias("dancing", "tanzen")
+        alias("golf")
+        alias("climbing", "klettern", "rockclimbing")
+        alias("stretching", "dehnen")
+        alias("skiing", "skifahren")
+        alias("snowboarding", "snowboarden")
+        alias("other", "sonstiges")
+        alias("workout", "training", "übung", "ubung")
+        alias("padel")
+        alias("pickleball")
+        alias("bowling")
+        alias("treadmillwalk", "gehenlaufband")
+        alias("bodybuilding")
+        alias("cardio")
+        alias("swimming", "schwimmen")
+        alias("crossfit")
+        alias("functionalfitness")
+    }
 
     /**
      * PRIVACY (TRACE PATH ONLY): a redaction-safe sport key for the Workouts test-mode trace. [sportKey]

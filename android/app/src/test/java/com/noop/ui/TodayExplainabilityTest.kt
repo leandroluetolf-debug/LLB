@@ -37,9 +37,9 @@ class TodayExplainabilityTest {
         // 1 night banked, seed 4 → "about 3 more nights". No fabricated value.
         val state = scoreStateForToday(todayRecovery = null, calibratingNights = 1, carriedDay = null, seed = 4)
         assertEquals(ScoreState.Calibrating(3), state)
-        assertEquals("Calibrating", state.title)
+        assertEquals("Kalibriert", state.title)
         assertEquals(
-            "Building your baseline. About 3 more nights until your scores are personal.",
+            "Basiswerte werden aufgebaut. Noch 3 Nächte, bis deine Werte persönlich sind.",
             state.detail,
         )
     }
@@ -50,7 +50,7 @@ class TodayExplainabilityTest {
         val state = scoreStateForToday(todayRecovery = null, calibratingNights = 3, carriedDay = null, seed = 4)
         assertEquals(ScoreState.Calibrating(1), state)
         assertEquals(
-            "Building your baseline. About 1 more night until your scores are personal.",
+            "Basiswerte werden aufgebaut. Noch 1 Nacht, bis deine Werte persönlich sind.",
             state.detail,
         )
     }
@@ -69,9 +69,9 @@ class TodayExplainabilityTest {
         val prior = day("2026-01-14", recovery = 65.0)
         val state = scoreStateForToday(todayRecovery = null, calibratingNights = null, carriedDay = prior,
             today = "2026-01-15")
-        assertEquals(ScoreState.CarriedLastNight("14 Jan", false), state)
-        assertEquals("Last night · 14 Jan", state.title)
-        assertEquals("Tonight's lands after you sleep with the strap on.", state.detail)
+        assertEquals(ScoreState.CarriedLastNight("14. Jan.", false), state)
+        assertEquals("Letzte Nacht · 14. Jan.", state.title)
+        assertEquals("Der heutige Wert kommt, nachdem du mit dem Band geschlafen hast.", state.detail)
     }
 
     @Test
@@ -81,18 +81,18 @@ class TodayExplainabilityTest {
         val prior = day("2026-01-14", recovery = 65.0)
         val state = scoreStateForToday(todayRecovery = null, calibratingNights = null, carriedDay = prior,
             today = "2026-02-11")
-        assertEquals(ScoreState.CarriedLastNight("14 Jan", true), state)
-        assertEquals("Latest sleep · 14 Jan", state.title)
-        assertEquals("This is your last scored session. Wear the strap overnight for a fresh score.", state.detail)
+        assertEquals(ScoreState.CarriedLastNight("14. Jan.", true), state)
+        assertEquals("Letzter Schlaf · 14. Jan.", state.title)
+        assertEquals("Das ist dein letzter bewerteter Tag. Trage das Band über Nacht für einen frischen Wert.", state.detail)
     }
 
     @Test
     fun carriedCaption_capsLastNightToTwoDays() {
-        // Within the cap → "Last night"; older → "Latest sleep". The cap is inclusive at 2 days. (#779)
+        // Within the cap → "Letzte Nacht"; older → "Letzter Schlaf". The cap is inclusive at 2 days. (#779)
         assertEquals(false, isCarryStale("2026-01-13", "2026-01-15"))
-        assertEquals("Last night · 13 Jan", carriedCaption("2026-01-13", "2026-01-15"))
+        assertEquals("Letzte Nacht · 13. Jan.", carriedCaption("2026-01-13", "2026-01-15"))
         assertEquals(true, isCarryStale("2026-01-12", "2026-01-15"))
-        assertEquals("Latest sleep · 12 Jan", carriedCaption("2026-01-12", "2026-01-15"))
+        assertEquals("Letzter Schlaf · 12. Jan.", carriedCaption("2026-01-12", "2026-01-15"))
         // An unparseable key never reads stale (never over-claims).
         assertEquals(false, isCarryStale("not-a-date", "2026-01-15"))
     }
@@ -101,8 +101,8 @@ class TodayExplainabilityTest {
     fun scoreState_needsStrap_whenNothingToShow() {
         val state = scoreStateForToday(todayRecovery = null, calibratingNights = null, carriedDay = null)
         assertEquals(ScoreState.NeedsStrap, state)
-        assertEquals("Needs the strap", state.title)
-        assertEquals("No data for today. Was your strap worn and connected overnight?", state.detail)
+        assertEquals("Band nötig", state.title)
+        assertEquals("Für heute noch keine Tageswerte. War das Band über Nacht getragen und verbunden?", state.detail)
     }
 
     @Test
@@ -129,8 +129,8 @@ class TodayExplainabilityTest {
     fun recording_whenConnectedAndLiveHr() {
         val state = recordingStateFor(connected = true, liveHeartRate = 58, lastSyncAtSec = null, nowSec = 1_000_000)
         assertEquals(RecordingState.Recording, state)
-        assertEquals("Recording", state.title)
-        assertEquals("Your strap is connected and saving data.", state.detail)
+        assertEquals("Zeichnet auf", state.title)
+        assertEquals("Dein Band ist verbunden und speichert Daten.", state.detail)
         assertEquals(StrandTone.Positive, state.tone)
     }
 
@@ -147,8 +147,8 @@ class TodayExplainabilityTest {
         val now = 1_000_000L
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now - 540, nowSec = now)
         assertEquals(RecordingState.LastSynced(9), state)
-        assertEquals("Last synced 9m ago", state.title)
-        assertEquals("Reconnect to pull the latest.", state.detail)
+        assertEquals("Zuletzt vor 9 Min. synchronisiert", state.title)
+        assertEquals("Erneut verbinden, um die neuesten Daten zu holen.", state.detail)
         assertEquals(StrandTone.Neutral, state.tone)
     }
 
@@ -160,7 +160,7 @@ class TodayExplainabilityTest {
         val now = 1_000_000L
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now - 30, nowSec = now)
         assertEquals(RecordingState.LastSynced(1), state)
-        assertEquals("Last synced 1m ago", state.title)
+        assertEquals("Zuletzt vor 1 Min. synchronisiert", state.title)
     }
 
     @Test
@@ -169,7 +169,7 @@ class TodayExplainabilityTest {
         val now = 1_000_000L
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now - 481, nowSec = now)
         assertEquals(RecordingState.LastSynced(9), state)
-        assertEquals("Last synced 9m ago", state.title)
+        assertEquals("Zuletzt vor 9 Min. synchronisiert", state.title)
         // 1 second ago still rounds up to a whole minute.
         val oneSecond = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now - 1, nowSec = now)
         assertEquals(RecordingState.LastSynced(1), oneSecond)
@@ -181,7 +181,7 @@ class TodayExplainabilityTest {
         val now = 1_000_000L
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now, nowSec = now)
         assertEquals(RecordingState.LastSynced(0), state)
-        assertEquals("Last synced 0m ago", state.title)
+        assertEquals("Zuletzt vor 0 Min. synchronisiert", state.title)
     }
 
     @Test
@@ -191,15 +191,15 @@ class TodayExplainabilityTest {
         val now = 1_000_000L
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = now + 30, nowSec = now)
         assertEquals(RecordingState.LastSynced(0), state)
-        assertEquals("Last synced 0m ago", state.title)
+        assertEquals("Zuletzt vor 0 Min. synchronisiert", state.title)
     }
 
     @Test
     fun notRecording_whenNoConnectionAndNoSync() {
         val state = recordingStateFor(connected = false, liveHeartRate = null, lastSyncAtSec = null, nowSec = 1_000_000)
         assertEquals(RecordingState.NotRecording, state)
-        assertEquals("Not recording", state.title)
-        assertEquals("Strap not connected. Tap to connect.", state.detail)
+        assertEquals("Zeichnet nicht auf", state.title)
+        assertEquals("Band nicht verbunden. Tippe zum Verbinden.", state.detail)
         assertEquals(StrandTone.Critical, state.tone)
     }
 

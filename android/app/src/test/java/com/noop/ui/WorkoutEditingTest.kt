@@ -49,8 +49,10 @@ class WorkoutEditingTest {
 
     @Test
     fun displaySport_renamesDetectedToken() {
-        assertEquals("Activity", WorkoutEditing.displaySport("detected"))
-        assertEquals("Running", WorkoutEditing.displaySport("Running"))
+        assertEquals("Aktivität", WorkoutEditing.displaySport("detected"))
+        assertEquals("Laufen", WorkoutEditing.displaySport("Running"))
+        assertEquals("Laufen", WorkoutEditing.displaySport("Laufen"))
+        assertEquals("Krafttraining", WorkoutEditing.displaySport("TraditionalStrengthTraining"))
     }
 
     // MARK: - dismissed markers (durable #107 filter)
@@ -404,19 +406,19 @@ class WorkoutEditingTest {
         val detected = fullRow(13000, 14000, "detected", "my-whoop-noop")
         val rows = listOf(run, manualRun, cycle, detected)
 
-        assertEquals(listOf(run, manualRun), WorkoutFilter(sport = "Running").apply(rows))
-        // "detected" folds to "Activity" for the sport facet.
-        assertEquals(listOf(detected), WorkoutFilter(sport = "Activity").apply(rows))
+        assertEquals(listOf(run, manualRun), WorkoutFilter(sport = "Laufen").apply(rows))
+        // "detected" folds to "Aktivität" for the sport facet.
+        assertEquals(listOf(detected), WorkoutFilter(sport = "Aktivität").apply(rows))
         assertEquals(listOf(manualRun, cycle), WorkoutFilter(sourceClass = WorkoutSource.MANUAL).apply(rows))
         assertEquals(
             listOf(manualRun),
-            WorkoutFilter(sport = "Running", sourceClass = WorkoutSource.MANUAL).apply(rows),
+            WorkoutFilter(sport = "Laufen", sourceClass = WorkoutSource.MANUAL).apply(rows),
         )
-        assertEquals(listOf(cycle), WorkoutFilter(search = "cyc").apply(rows))
-        assertEquals(listOf(run, manualRun), WorkoutFilter(search = "  RUN ").apply(rows))
+        assertEquals(listOf(cycle), WorkoutFilter(search = "rad").apply(rows))
+        assertEquals(listOf(run, manualRun), WorkoutFilter(search = "  LAUF ").apply(rows))
         assertEquals(
             listOf(run),
-            WorkoutFilter(sport = "Running", sourceClass = WorkoutSource.WHOOP, search = "run").apply(rows),
+            WorkoutFilter(sport = "Laufen", sourceClass = WorkoutSource.WHOOP, search = "lauf").apply(rows),
         )
     }
 
@@ -470,7 +472,7 @@ class WorkoutEditingTest {
         assertEquals("Strength Training", WorkoutMerge.merge(listOf(detected, manual))?.sport)
         val detected2 = fullRow(6000, 7000, "detected", "my-whoop-noop")
         assertNull(WorkoutMerge.resolvedSport(listOf(detected, detected2)))
-        assertEquals("Activity", WorkoutMerge.merge(listOf(detected, detected2))?.sport)
+        assertEquals("Aktivität", WorkoutMerge.merge(listOf(detected, detected2))?.sport)
         assertEquals("Yoga", WorkoutMerge.merge(listOf(detected, detected2), sport = "Yoga")?.sport)
     }
 
