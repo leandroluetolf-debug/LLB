@@ -100,7 +100,7 @@ struct HydrationView: View {
                                     font: StrandFont.rounded(40, weight: .bold),
                                     color: StrandPalette.textPrimary)
                             .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
-                        Text(String(localized: "of \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: Double(goalML)))) L"))
+                        Text(String(localized: "of \(String(format: "%.1f", HydrationGoal.litres(fromML: Double(goalML)))) L"))
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
                     }
@@ -108,7 +108,7 @@ struct HydrationView: View {
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Flüssigkeit today")
-                .accessibilityValue("\(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: totalML))) of \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: Double(goalML)))) litres")
+                .accessibilityValue("\(String(format: "%.1f", HydrationGoal.litres(fromML: totalML))) of \(String(format: "%.1f", HydrationGoal.litres(fromML: Double(goalML)))) litres")
 
                 Text("\(percent)% of today's goal")
                     .font(StrandFont.footnote)
@@ -160,7 +160,7 @@ struct HydrationView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Set custom container size")
             }
-            Text("Sip \(FlüssigkeitGoal.sipML) ml · Cup \(FlüssigkeitGoal.cupML) ml · Bottle \(FlüssigkeitGoal.bottleML) ml")
+            Text("Sip \(HydrationGoal.sipML) ml · Cup \(HydrationGoal.cupML) ml · Bottle \(HydrationGoal.bottleML) ml")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
         }
@@ -285,7 +285,7 @@ struct HydrationView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(weekdayInitial(bar.day)): \(String(format: "%.1f", FlüssigkeitGoal.litres(fromML: bar.value))) litres")
+                    .accessibilityLabel("\(weekdayInitial(bar.day)): \(String(format: "%.1f", HydrationGoal.litres(fromML: bar.value))) litres")
                 }
             }
         }

@@ -171,10 +171,10 @@ struct WeeklyDigestContent: View {
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 Spacer()
-                Text("\(digest.daysWithDaten)/7 days")
+                Text("\(digest.daysWithData)/7 days")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textSecondary)
-                    .accessibilityLabel("\(digest.daysWithDaten) of 7 days had data diese Woche")
+                    .accessibilityLabel("\(digest.daysWithData) of 7 days had data diese Woche")
             }
             .padding(NoopMetrics.cardPadding)
         }

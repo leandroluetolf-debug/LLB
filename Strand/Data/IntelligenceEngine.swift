@@ -143,7 +143,7 @@ final class IntelligenceEngine: ObservableObject {
     /// Optional sink for the per-day scoring diagnostic, fed line-by-line into the SAME shareable strap
     /// log the user already exports (PII-scrubbed by `LiveState.append(log:)`). Defaults to nil so the
     /// engine stays testable with no UI. Each line is a concise, counts-only summary ("sleep day=…
-    /// totalSchlafMin=… matched=… source=…") so the next bug report ships proof of what was computed per
+    /// totalSleepMin=… matched=… source=…") so the next bug report ships proof of what was computed per
     /// day, addressing the project's log-failures-not-successes blind spot and the data needed to settle
     /// "Rest repeats across days". (Sleep overhaul §2.5.)
     /// `AppModel` wires it to `live.append(log:domain:)`. Each line is a concise, counts-only summary,
@@ -758,7 +758,7 @@ final class IntelligenceEngine: ObservableObject {
             // day (the project's log-failures-not-successes blind spot) and lets us settle the "Rest repeats
             // across days" question with data rather than a guess. Gated by the existing strap-log export.
             let tsmLog = daily.totalSleepMin.map { String(Int($0.rounded())) } ?? "nil"
-            diagnosticSink?("sleep day=\(daily.day) totalSchlafMin=\(tsmLog) "
+            diagnosticSink?("sleep day=\(daily.day) totalSleepMin=\(tsmLog) "
                             + "matched=\(night.cachedSchlaf.count) source=\(source.logToken)", nil)
             // ── CAPTURE-B: universal dayOwner self-diagnostic (#814/#799) ────────────────────────────────
             // ONE line per scored day, tagged `.universal` so it rides EVERY Test Centre export regardless

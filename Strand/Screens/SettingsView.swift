@@ -426,7 +426,7 @@ struct SettingsView: View {
     private var stepsCalibrationSummary: String {
         if profile.stepsManualCoefficient > 0 { return String(localized: "Manual") }
         if profile.stepsCalibrationCoefficient > 0 {
-            return String(localized: "Auto · \(SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) confidence")
+            return String(localized: "Auto · \(StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) confidence")
         }
         return String(localized: "Not calibrated")
     }
@@ -2392,7 +2392,7 @@ struct StepsCalibrationSheet: View {
                                  profile.stepsCalibrationSampleDays == 1
                                      ? String(localized: "1 day your phone also counted")
                                      : String(localized: "\(profile.stepsCalibrationSampleDays) days your phone also counted"))
-                        statLine(String(localized: "Confidence"), "\(SchritteCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) · \(Int((profile.stepsCalibrationConfidence * 100).rounded()))%")
+                        statLine(String(localized: "Confidence"), "\(StepsCalibrationFormat.confidenceLabel(profile.stepsCalibrationConfidence)) · \(Int((profile.stepsCalibrationConfidence * 100).rounded()))%")
                     }
                 } else {
                     Text("Not calibrated yet")

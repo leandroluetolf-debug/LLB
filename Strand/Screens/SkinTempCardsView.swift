@@ -350,7 +350,7 @@ struct BodyClockCard: View {
             Text("Plan · \(plan.estimatedDays)-day shift")
                 .strandOverline()
             // Day 1's concrete light + lights-out cue — light + sleep timing only.
-            Text("Day 1: bright light \(clockString(firstDay.brightHellStartHour))-\(clockString(firstDay.brightHellEndHour)), lights-out around \(clockString(firstDay.targetSchlafHour)).")
+            Text("Day 1: bright light \(clockString(firstDay.brightLightStartHour))-\(clockString(firstDay.brightLightEndHour)), lights-out around \(clockString(firstDay.targetSleepHour)).")
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

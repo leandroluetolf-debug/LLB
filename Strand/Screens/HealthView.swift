@@ -498,7 +498,7 @@ private struct RecoveryContributorsSection: View {
                 if ready {
                     ScoreStatePill(.solid)
                 } else {
-                    ScoreStatePill(.calibrating, text: "Kalibriert (\(priorCount) of \(Basiss.minNightsSeed))")
+                    ScoreStatePill(.calibrating, text: "Kalibriert (\(priorCount) of \(Baselines.minNightsSeed))")
                 }
             }
             NoopCard(tint: StrandPalette.chargeColor) {
@@ -511,7 +511,7 @@ private struct RecoveryContributorsSection: View {
                     }
                 }
             }
-            Text("Basiss are learned on-device over your first 14 days. Until then, typical ranges apply.")
+            Text("Baselines are learned on-device over your first 14 days. Until then, typical ranges apply.")
                 .font(StrandFont.footnote)
                 .foregroundStyle(StrandPalette.textTertiary)
                 .fixedSize(horizontal: false, vertical: true)

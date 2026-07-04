@@ -705,7 +705,7 @@ final class AICoachEngine: ObservableObject {
         var parts: [String] = [d.day + ":"]
         parts.append("charge " + (d.recovery.map { "\(Int($0.rounded()))" } ?? "—"))
         parts.append("effort " + (d.strain.map { String(format: "%.1f", $0) } ?? "—"))
-        parts.append("rest " + (d.totalSchlafMin.map { String(format: "%.1fh", $0 / 60) } ?? "—"))
+        parts.append("rest " + (d.totalSleepMin.map { String(format: "%.1fh", $0 / 60) } ?? "—"))
         parts.append("HRV " + (d.avgHrv.map { "\(Int($0.rounded()))ms" } ?? "—"))
         parts.append("RHR " + (d.restingHr.map { "\($0)bpm" } ?? "—"))
         return parts.joined(separator: ", ")
@@ -722,7 +722,7 @@ final class AICoachEngine: ObservableObject {
     }
 
     private func avgSchlafHours(_ days: [DailyMetric]) -> String {
-        let mins = days.compactMap { $0.totalSchlafMin }
+        let mins = days.compactMap { $0.totalSleepMin }
         guard !mins.isEmpty else { return "—" }
         return String(format: "%.1f", (mins.reduce(0, +) / Double(mins.count)) / 60)
     }

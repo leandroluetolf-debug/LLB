@@ -230,7 +230,7 @@ struct CoupledView: View {
     private var heroAccessibilityLabel: String {
         if let r = recovery { return String(localized: "Erholung \(Int(r.rounded())) percent") }
         if let banked = calibrationNights {
-            return String(localized: "Erholung kalibriert, \(banked) of \(Basiss.minNightsSeed) nights")
+            return String(localized: "Erholung kalibriert, \(banked) of \(Baselines.minNightsSeed) nights")
         }
         return String(localized: "Erholung, keine Daten yet")
     }

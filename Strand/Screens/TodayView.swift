@@ -908,7 +908,7 @@ struct TodayView: View {
     }
     private var calibrationDetail: LocalizedStringKey? {
         guard let n = recoveryCalibration else { return nil }
-        return "Learning your baseline, \(n) of \(Basiss.minNightsSeed) nights."
+        return "Learning your baseline, \(n) of \(Baselines.minNightsSeed) nights."
     }
 
     /// The iOS tab is already labelled "Heute", and "Control Center" collides with the OS feature of
@@ -2214,7 +2214,7 @@ struct TodayView: View {
         } else if score != nil {
             ScoreStatePill(.solid)
         } else if let n = recoveryCalibration {
-            ScoreStatePill(.calibrating, text: "Kalibriert, \(n) of \(Basiss.minNightsSeed)")
+            ScoreStatePill(.calibrating, text: "Kalibriert, \(n) of \(Baselines.minNightsSeed)")
         } else {
             ScoreStatePill(.calibrating)
         }
@@ -2222,7 +2222,7 @@ struct TodayView: View {
         if score != nil {
             ScoreStatePill(.solid)
         } else if let n = recoveryCalibration {
-            ScoreStatePill(.calibrating, text: "Kalibriert, \(n) of \(Basiss.minNightsSeed)")
+            ScoreStatePill(.calibrating, text: "Kalibriert, \(n) of \(Baselines.minNightsSeed)")
         } else {
             ScoreStatePill(.calibrating)
         }
@@ -2741,7 +2741,7 @@ struct TodayView: View {
                 // the same lineLimit/scaleFactor guard so it never wraps, then its "N of 4" subtitle below.
                 Text("Kalibriert").font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
                     .lineLimit(1).minimumScaleFactor(0.7).fixedSize()
-                Text("\(n) of \(Basiss.minNightsSeed)").font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
+                Text("\(n) of \(Baselines.minNightsSeed)").font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
                     .lineLimit(1)
             } else {
                 ringNoData(diameter: diameter)
@@ -3092,7 +3092,7 @@ struct TodayView: View {
             StatTile(
                 label: "Charge",
                 value: d?.recovery.map { "\(Int($0.rounded()))%" }
-                    ?? recoveryCalibration.map { "\($0)/\(Basiss.minNightsSeed)" }
+                    ?? recoveryCalibration.map { "\($0)/\(Baselines.minNightsSeed)" }
                     ?? carried.map { "\(Int($0.value.rounded()))%" } ?? "—",
                 // Component 2: never a bare blank, when there's no number, no calibration count and
                 // nothing to carry, the caption states the honest "Needs the strap" rather than nothing.
