@@ -70,6 +70,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
@@ -4337,31 +4338,45 @@ private fun HeartRateTrendCard(
                         },
                 )
             }
-            // X-axis: start / midpoint / end of the loaded window. Each label is read from the
-            // ACTUAL bucket timestamp at that index, converted to the device-local wall clock,             // NOT idx*5 from midnight. hrBuckets only emits filled 5-min slots (gaps when the strap
-            // wasn't worn) and its bucket key is epoch-aligned, so idx*5 mislabelled every tick once
-            // the day had a gap and the labels drifted out of step with the time-positioned markers
-            // (an evening workout read as if it sat earlier in the day) (#544). The line/markers are
-            // already placed by real timestamp, so labelling by real timestamp makes the axis agree.
+            // X-axis: real wall-clock times (HH:mm) for the visible window — never "Start"/"Now",
+            // so every tick shows when that heart-rate sample was. Labels use the ACTUAL bucket
+            // timestamps (#544), not idx*5 from midnight.
             Row(modifier = Modifier.fillMaxWidth()) {
                 val zone = ZoneId.systemDefault()
-                val hhmm = DateTimeFormatter.ofPattern("HH:mm", Locale.US)
-                // #829 - the axis reads the RENDERED subset, so a zoomed window's ticks describe the
-                // visible curve; the "Now" end label only applies to the un-zoomed live day (a zoomed
-                // window's right edge is wherever the user panned it, so it gets its real timestamp).
+                val hhmm = DateTimeFormatter.ofPattern("HH:mm", Locale.GERMAN)
                 val bucketToTime = { idx: Int ->
                     val b = visBuckets.getOrNull(idx) ?: visBuckets.last()
                     Instant.ofEpochSecond(b.bucket).atZone(zone).format(hhmm)
                 }
-                val xLabels = if (visBuckets.size >= 3) {
-                    listOf(
+                val last = (visBuckets.size - 1).coerceAtLeast(0)
+                val xLabels = when {
+                    visBuckets.size >= 5 -> listOf(
                         bucketToTime(0),
-                        bucketToTime(visBuckets.size / 2),
-                        if (selectedDay == today && hrZoom == null) "Now" else bucketToTime(visBuckets.size - 1),
+                        bucketToTime(last / 4),
+                        bucketToTime(last / 2),
+                        bucketToTime((last * 3) / 4),
+                        bucketToTime(last),
                     )
-                } else listOf("Start", "", "Now")
-                xLabels.forEach { lbl ->
-                    Text(lbl, style = NoopType.footnote, color = Palette.textTertiary, modifier = Modifier.weight(1f))
+                    visBuckets.size >= 3 -> listOf(
+                        bucketToTime(0),
+                        bucketToTime(last / 2),
+                        bucketToTime(last),
+                    )
+                    visBuckets.size == 2 -> listOf(bucketToTime(0), bucketToTime(1))
+                    else -> listOf(bucketToTime(0))
+                }
+                xLabels.forEachIndexed { i, lbl ->
+                    Text(
+                        lbl,
+                        style = NoopType.footnote,
+                        color = Palette.textTertiary,
+                        modifier = Modifier.weight(1f),
+                        textAlign = when (i) {
+                            0 -> TextAlign.Start
+                            xLabels.lastIndex -> TextAlign.End
+                            else -> TextAlign.Center
+                        },
+                    )
                 }
             }
             Box(
@@ -4371,7 +4386,7 @@ private fun HeartRateTrendCard(
                     .background(Palette.hairline),
             )
             Row(modifier = Modifier.fillMaxWidth()) {
-                listOf("Min" to min, "Avg" to avg, "Max" to max).forEach { (label, value) ->
+                listOf("Min" to min, "Ø" to avg, "Max" to max).forEach { (label, value) ->
                     Column(modifier = Modifier.weight(1f)) {
                         Overline(label, color = Palette.textTertiary)
                         Text("$value bpm", style = NoopType.bodyNumber, color = Palette.textPrimary)
@@ -4385,7 +4400,7 @@ private fun HeartRateTrendCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    if (hrZoom == null) "Pinch to zoom · drag to pan" else "Zoomed in · drag to pan",
+                    if (hrZoom == null) "Zum Zoomen kneifen · zum Verschieben ziehen" else "Vergrößert · zum Verschieben ziehen",
                     style = NoopType.footnote,
                     color = Palette.textTertiary,
                     modifier = Modifier.weight(1f),
@@ -4397,7 +4412,7 @@ private fun HeartRateTrendCard(
                         color = Palette.accent,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .clickable(onClickLabel = "Zurücksetzen the heart rate zoom") { hrZoom = null }
+                            .clickable(onClickLabel = "Herzfrequenz-Zoom zurücksetzen") { hrZoom = null }
                             .padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }

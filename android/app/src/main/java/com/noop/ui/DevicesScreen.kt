@@ -170,13 +170,14 @@ fun DevicesScreen(
             )
         }
 
-        // Manual reconnect: safer/explicit when auto-reconnect stalls (WHOOP app bond, bond-loop pause).
-        item {
-            ReconnectDeviceButton(
-                connected = live.connected,
-                scanning = live.scanning,
-                onReconnect = requestReconnect,
-            )
+        // Manual reconnect only when not already connected (hidden while the strap is live).
+        if (!live.connected) {
+            item {
+                ReconnectDeviceButton(
+                    scanning = live.scanning,
+                    onReconnect = requestReconnect,
+                )
+            }
         }
 
         // Prominent "+ Gerät hinzufügen" button.
@@ -543,7 +544,6 @@ private fun MenuItem(
 
 @Composable
 private fun ReconnectDeviceButton(
-    connected: Boolean,
     scanning: Boolean,
     onReconnect: () -> Unit,
 ) {
@@ -551,7 +551,7 @@ private fun ReconnectDeviceButton(
         NoopButton(
             text = if (scanning) "Suche…" else "Erneut verbinden",
             leadingIcon = Icons.Filled.Refresh,
-            kind = if (connected) NoopButtonKind.Secondary else NoopButtonKind.Primary,
+            kind = NoopButtonKind.Primary,
             fullWidth = true,
             enabled = !scanning,
             modifier = Modifier.semantics {
@@ -560,11 +560,8 @@ private fun ReconnectDeviceButton(
             onClick = onReconnect,
         )
         Text(
-            when {
-                scanning -> "Suche nach deinem WHOOP…"
-                connected -> "Verbunden. Tippen, um die Verbindung neu aufzubauen."
-                else -> "Tippen, wenn das Band nicht gefunden wird. Offizielle WHOOP-App vorher beenden."
-            },
+            if (scanning) "Suche nach deinem WHOOP…"
+            else "Tippen, wenn das Band nicht gefunden wird. Offizielle WHOOP-App vorher beenden.",
             style = NoopType.footnote,
             color = Palette.textTertiary,
         )
